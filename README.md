@@ -1,2 +1,2 @@
 # ordercloud-seed
-Import and export serialized representations of full organizations
+Download and upload serialized representations of full organizations
