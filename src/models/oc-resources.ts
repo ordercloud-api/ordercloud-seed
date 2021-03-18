@@ -18,7 +18,7 @@ export interface OCResource {
     parentRefFieldName?: string; // will be populated if and only if isChild is true
     sdkObject: any;
     isAssignment?: boolean,
-    createPriority?: number; // make required. higher numbers need to be created first
+    createPriority: number; // higher numbers need to be created first
     listMethodName?: string;
     createMethodName?: string;
     //createForeignKeys?: ForeignKey[];

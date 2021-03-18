@@ -1,7 +1,7 @@
 {
   "name": "ordercloud-seed",
   "version": "1.0.0",
-  "description": "Import and export seeding files from the OrderCloud platform.",
+  "description": "Download and upload seeding files from the OrderCloud platform.",
   "type": "module",
   "scripts": {
     "download": "tsc && node dist/download.js",

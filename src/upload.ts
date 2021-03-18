@@ -27,10 +27,18 @@ async function import_fnc(username: string, password: string, env: string) {
     file.ReadFromYaml();
     
     // Upload to Ordercloud
-    var directory = OCResourceDirectory.map(ApplyDefaults);  
-    var sp = directory.find(x => x.name == OCResourceEnum.SecurityProfiles);
-    var securityProfiles = file.GetRecords(sp);
-    await OrderCloudBulk.CreateAll(sp, securityProfiles);
+    // var directory = OCResourceDirectory.map(ApplyDefaults); 
+    // for (let resource of directory.sort((a, b) => a.createPriority - b.createPriority)) {
+    //     var records = file.GetRecords(resource);
+    //     if (resource.parentRefFieldName) {
+    //         var routeParam = resource[]
+    //     } else {
+
+    //     }
+    // } 
+    //var sp = directory.find(x => x.name == OCResourceEnum.SecurityProfiles);
+    //var securityProfiles = file.GetRecords(sp);
+    //await OrderCloudBulk.CreateAll(sp, securityProfiles);
 } 
 
 await import_fnc(process.env.PORTAL_USERNAME, process.env.PORTAL_PASSWORD, process.env.OC_ENV);
