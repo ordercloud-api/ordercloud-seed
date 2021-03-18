@@ -1,13 +1,13 @@
 import { OCResourceEnum } from "./oc-resource-enum.js";
+import SeedFile from "./seed-file.js";
 
 export function ApplyDefaults(resource: OCResource): OCResource {
     resource.isAssignment = resource.isAssignment || false;
     resource.listMethodName = resource.listMethodName || (resource.isAssignment ? "ListAssignments" : "List");
     resource.createMethodName = resource.createMethodName || (resource.isAssignment ? "CreateAssignment" : "Create");
-    //config.createForeignKeys = config.createForeignKeys || [];
+    resource.foreignKeys = resource.foreignKeys || {};
     resource.children = resource.children || [];
     resource.isChild = resource.isChild || false;
-
     return resource;
 }
 
@@ -21,11 +21,13 @@ export interface OCResource {
     createPriority: number; // higher numbers need to be created first
     listMethodName?: string;
     createMethodName?: string;
-    //createForeignKeys?: ForeignKey[];
+    foreignKeys?: ForeignKeys;
 }
 
-export interface ForeignKey {
-    resource: OCResourceEnum,
-    fieldName: string
+export interface ForeignKeys {
+    [fieldName: string]: OCResourceEnum | CustomForeignKeyValidation;
 }
+
+// TODO - replace boolean with a useful error message.
+type CustomForeignKeyValidation = (fieldValue: string, file: SeedFile) => boolean
 
