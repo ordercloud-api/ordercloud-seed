@@ -2,10 +2,10 @@
   "name": "ordercloud-seed",
   "version": "1.0.0",
   "description": "Import and export seeding files from the OrderCloud platform.",
-  "main": "index.js",
   "type": "module",
   "scripts": {
-    "start": "tsc && node dist/index.js"
+    "download": "tsc && node dist/download.js",
+    "upload": "tsc && node dist/upload.js"
   },
   "author": "Oliver Heywood",
   "license": "ISC",

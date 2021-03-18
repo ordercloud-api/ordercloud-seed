@@ -2,216 +2,264 @@ import { Addresses, AdminAddresses, AdminUserGroups, AdminUsers, ApiClients, App
 import { OCResourceEnum } from "./oc-resource-enum.js";
 import { OCResource } from "./oc-resources.js";
 
-export const OCResourceDirectory = new Map<OCResourceEnum, OCResource>([
-    [OCResourceEnum.SecurityProfiles, new OCResource({ 
+export const OCResourceDirectory = [
+    { 
+        name: OCResourceEnum.SecurityProfiles,
         sdkObject: SecurityProfiles,
-    })],
-    [OCResourceEnum.ImpersonationConfigs, new OCResource({ 
+    },
+    { 
+        name: OCResourceEnum.ImpersonationConfigs,
         sdkObject: ImpersonationConfigs,
-    })],
-    [OCResourceEnum.OpenIdConnects, new OCResource({ 
-        sdkObject: OpenIdConnects,
-    })],
-    [OCResourceEnum.AdminUsers, new OCResource({ 
+    },
+    {
+        name: OCResourceEnum.OpenIdConnects,
+        sdkObject: OpenIdConnects
+    },
+    {
+        name: OCResourceEnum.AdminUsers,
         sdkObject: AdminUsers,
-    })],
-    [OCResourceEnum.AdminUserGroups, new OCResource({ 
+    },
+    {
+        name: OCResourceEnum.AdminUserGroups, 
         sdkObject: AdminUserGroups,
-    })],
-    [OCResourceEnum.AdminAddresses, new OCResource({ 
+    },
+    {
+        name: OCResourceEnum.AdminAddresses, 
         sdkObject: AdminAddresses,
-    })],
-    [OCResourceEnum.MessageSenders, new OCResource({ 
+    },
+    {
+        name: OCResourceEnum.MessageSenders,  
         sdkObject: MessageSenders,
-    })],
-    [OCResourceEnum.ApiClients, new OCResource({ 
+    },
+    {
+        name: OCResourceEnum.ApiClients, 
         sdkObject: ApiClients,
-    })],
-    [OCResourceEnum.Incrementors, new OCResource({ 
+    },
+    {
+        name: OCResourceEnum.Incrementors,
         sdkObject: Incrementors,
-    })],
-    [OCResourceEnum.Webhooks, new OCResource({ 
+    },
+    {
+        name: OCResourceEnum.Webhooks, 
         sdkObject: Webhooks,
-    })],
-    [OCResourceEnum.IntegrationEvents, new OCResource({ 
+    },
+    {
+        name: OCResourceEnum.IntegrationEvents, 
         sdkObject: IntegrationEvents,
-    })],
-    [OCResourceEnum.XpIndices, new OCResource({ 
+    },
+    {
+        name: OCResourceEnum.XpIndices, 
         sdkObject: XpIndices,
-    })],
-    [OCResourceEnum.Buyers, new OCResource({ 
+    },
+    {
+        name: OCResourceEnum.Buyers, 
         sdkObject: Buyers,
         children: [OCResourceEnum.Users, OCResourceEnum.UserGroups, OCResourceEnum.Addresses, OCResourceEnum.CostCenters, OCResourceEnum.CreditCards, OCResourceEnum.SpendingAccounts, OCResourceEnum.ApprovalRules, OCResourceEnum.UserGroupAssignments,     OCResourceEnum.SpendingAccountAssignments, OCResourceEnum.AddressAssignments, OCResourceEnum.CostCenterAssignments, OCResourceEnum.CreditCardAssignments, OCResourceEnum.SpendingAccountAssignments],
-    })],
-    [OCResourceEnum.Users, new OCResource({ 
+    },
+    {
+        name: OCResourceEnum.Users, 
         sdkObject: Users,
         parentRefFieldName: "BuyerID",
         isChild: true,
-    })],
-    [OCResourceEnum.UserGroups, new OCResource({ 
+    },
+    {
+        name: OCResourceEnum.UserGroups,
         sdkObject: UserGroups,
         parentRefFieldName: "BuyerID",
         isChild: true,
-    })],
-    [OCResourceEnum.Addresses, new OCResource({ 
+    },
+    {
+        name: OCResourceEnum.Addresses,
         sdkObject: Addresses,
         parentRefFieldName: "BuyerID",
         isChild: true,
-    })],
-    [OCResourceEnum.CostCenters, new OCResource({ 
+    },
+    {
+        name: OCResourceEnum.CostCenters,
         sdkObject: CostCenters,
         parentRefFieldName: "BuyerID",
         isChild: true,
-    })],
-    [OCResourceEnum.CreditCards, new OCResource({ 
+    },
+    {
+        name: OCResourceEnum.CreditCards,
         sdkObject: CreditCards,
         parentRefFieldName: "BuyerID",
         isChild: true,
-    })],
-    [OCResourceEnum.SpendingAccounts, new OCResource({ 
+    },
+    {
+        name: OCResourceEnum.SpendingAccounts,
         sdkObject: SpendingAccounts,
         parentRefFieldName: "BuyerID",
         isChild: true,
-    })],
-    [OCResourceEnum.ApprovalRules, new OCResource({ 
+    },
+    {
+        name: OCResourceEnum.ApprovalRules,
         sdkObject: ApprovalRules,
         parentRefFieldName: "BuyerID",
         isChild: true,
-    })],
-    [OCResourceEnum.Catalogs, new OCResource({ 
+    },
+    {
+        name: OCResourceEnum.Catalogs, 
         sdkObject: Catalogs,
         children: [OCResourceEnum.Categories, OCResourceEnum.CategoryAssignments, OCResourceEnum.CategoryProductAssignments]
-    })],
-    [OCResourceEnum.Categories, new OCResource({ 
+    },
+    {
+        name: OCResourceEnum.Categories,
         sdkObject: Categories,
         parentRefFieldName: "CatalogID",
         isChild: true,
-    })],
-    [OCResourceEnum.Suppliers, new OCResource({ 
+    },
+    {
+        name: OCResourceEnum.Suppliers, 
         sdkObject: Suppliers,
         children: [OCResourceEnum.SupplierUsers, OCResourceEnum.SupplierUserGroups, OCResourceEnum.SupplierAddresses, OCResourceEnum.SupplierUserGroupsAssignments]
-    })],
-    [OCResourceEnum.SupplierUsers, new OCResource({ 
+    },
+    {
+        name: OCResourceEnum.SupplierUsers, 
         sdkObject: SupplierUsers,
         parentRefFieldName: "SupplierID",
         isChild: true,
-    })],
-    [OCResourceEnum.SupplierUserGroups, new OCResource({ 
+    },
+    {
+        name: OCResourceEnum.SupplierUserGroups, 
         sdkObject: SupplierUserGroups,
         parentRefFieldName: "SupplierID",
         isChild: true,
-    })],
-    [OCResourceEnum.SupplierAddresses, new OCResource({ 
+    },
+    {
+        name: OCResourceEnum.SupplierAddresses,
         sdkObject: SupplierAddresses,
         parentRefFieldName: "SupplierID",
         isChild: true,
-    })],
-    [OCResourceEnum.Products, new OCResource({ 
+    },
+    {
+        name: OCResourceEnum.Products, 
         sdkObject: Products,
-    })],
-    [OCResourceEnum.PriceSchedules, new OCResource({ 
+    },
+    {
+        name: OCResourceEnum.PriceSchedules, 
         sdkObject: PriceSchedules,
-    })],
-    [OCResourceEnum.Specs, new OCResource({ 
+    },
+    {
+        name: OCResourceEnum.Specs, 
         sdkObject: Specs,
         children: [OCResourceEnum.SpecOptions]
-    })],
-    [OCResourceEnum.SpecOptions, new OCResource({ 
+    },
+    {
+        name: OCResourceEnum.SpecOptions, 
         sdkObject: Specs,
         parentRefFieldName: "SpecID",
         listMethodName: "ListOptions",
         isChild: true
-    })],
-    [OCResourceEnum.ProductFacets, new OCResource({ 
+    },
+    {
+        name: OCResourceEnum.ProductFacets,
         sdkObject: ProductFacets,
-    })],
-    [OCResourceEnum.Promotions, new OCResource({ 
+    },
+    {
+        name: OCResourceEnum.Promotions, 
         sdkObject: Promotions,
-    })],
-    [OCResourceEnum.SecurityProfileAssignments, new OCResource({ 
+    },
+    {
+        name: OCResourceEnum.SecurityProfileAssignments, 
         sdkObject: SecurityProfiles,
         isAssignment: true,
-    })],
-    [OCResourceEnum.AdminUserGroupAssignments, new OCResource({ 
+    },
+    {
+        name: OCResourceEnum.AdminUserGroupAssignments, 
         sdkObject: AdminUserGroups,
         isAssignment: true,
         listMethodName: 'ListUserAssignments'
-    })],
-    [OCResourceEnum.ApiClientAssignments, new OCResource({ 
+    },
+    {
+        name: OCResourceEnum.ApiClientAssignments, 
         sdkObject: ApiClients,
         isAssignment: true,
-    })],
-    [OCResourceEnum.UserGroupAssignments, new OCResource({ 
+    },
+    {
+        name: OCResourceEnum.UserGroupAssignments, 
         sdkObject: UserGroups,
         isAssignment: true,
         parentRefFieldName: "BuyerID",
         isChild: true,
         listMethodName: 'ListUserAssignments'
-    })],
-    [OCResourceEnum.AddressAssignments, new OCResource({ 
+    },
+    {
+        name: OCResourceEnum.AddressAssignments, 
         sdkObject: Addresses,
         isAssignment: true,
         parentRefFieldName: "BuyerID",
         isChild: true,
-    })],
-    [OCResourceEnum.CostCenterAssignments, new OCResource({ 
+    },
+    {
+        name: OCResourceEnum.CostCenterAssignments, 
         sdkObject: CostCenters,
         isAssignment: true,
         parentRefFieldName: "BuyerID",
         isChild: true,
-    })],
-    [OCResourceEnum.CreditCardAssignments, new OCResource({ 
+    },
+    {
+        name: OCResourceEnum.CreditCardAssignments, 
         sdkObject: CreditCards,
         isAssignment: true,
         parentRefFieldName: "BuyerID",
         isChild: true,
-    })],
-    [OCResourceEnum.SpendingAccountAssignments, new OCResource({ 
+    },
+    {
+        name: OCResourceEnum.SpendingAccountAssignments, 
         sdkObject: SpendingAccounts,
         isAssignment: true,
         parentRefFieldName: "BuyerID",
         isChild: true,
-    })],
-    [OCResourceEnum.SupplierUserGroupsAssignments, new OCResource({ 
+    },
+    {
+        name: OCResourceEnum.SupplierUserGroupsAssignments, 
         sdkObject: SupplierUserGroups,
         isAssignment: true,
         parentRefFieldName: "SupplierID",
         isChild: true,
         listMethodName: 'ListUserAssignments'
-    })],
-    [OCResourceEnum.ProductAssignments, new OCResource({ 
+    },
+    {
+        name: OCResourceEnum.ProductAssignments, 
         sdkObject: Products,
         isAssignment: true,
-    })],
-    [OCResourceEnum.CatalogAssignments, new OCResource({ 
+    },
+    {
+        name: OCResourceEnum.CatalogAssignments,
         sdkObject: Catalogs,
         isAssignment: true,
-    })],
-    [OCResourceEnum.CatalogProductAssignment, new OCResource({ 
+    },
+    {
+        name: OCResourceEnum.CatalogProductAssignment, 
         sdkObject: Catalogs,
         isAssignment: true,
         listMethodName: 'ListProductAssignments'
-    })],
-    [OCResourceEnum.CategoryAssignments, new OCResource({ 
+    },
+    {
+        name: OCResourceEnum.CategoryAssignments, 
         sdkObject: Categories,
         isAssignment: true,
         parentRefFieldName: "CatalogID",
         isChild: true,
-    })],
-    [OCResourceEnum.CategoryProductAssignments, new OCResource({ 
+    },
+    {
+        name: OCResourceEnum.CategoryProductAssignments, 
         sdkObject: Categories,
         isAssignment: true,
         parentRefFieldName: "CatalogID",
         isChild: true,
         listMethodName: 'ListProductAssignments'
-    })],
-    [OCResourceEnum.SpecProductAssignments, new OCResource({ 
+    },
+    {
+        name: OCResourceEnum.SpecProductAssignments, 
         sdkObject: Specs,
         isAssignment: true,
         listMethodName: 'ListProductAssignments'
-    })],
-    [OCResourceEnum.PromotionAssignment, new OCResource({ 
+    },
+    {
+        name: OCResourceEnum.PromotionAssignment, 
         sdkObject: Promotions,
         isAssignment: true,
-    })],
-]);
+    },
+] as OCResource[];

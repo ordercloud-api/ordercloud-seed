@@ -2,7 +2,7 @@ import axios from "axios";
 import qs from 'qs';
 
 export default class Portal {
-    private static readonly baseUrl = "https://portal.ordercloud.io/api/v1/";
+    private static readonly baseUrl = "https://portal.ordercloud.io/api/v1";
 
     static async login(username: string, password: string): Promise<string> {
         var response = await axios.post(`${this.baseUrl}/oauth/token`, 
@@ -29,4 +29,27 @@ export default class Portal {
         });
         return response.data.access_token;
     }
+
+    static async CreateOrganization(org: PortalOrganization, portalToken: string): Promise<void> {
+        await axios.put(`${this.baseUrl}/organizations/${org.Id}`, org,
+        {
+            headers: {
+                'Authorization': `Bearer ${portalToken}`
+            }
+        });
+    }
+}
+
+export interface PortalOrganization {
+    Id: string,
+    Name?: string,
+    Owner?: PortalUser
+    Environment?: string
+}
+
+export interface PortalUser {
+    Email?: string,
+    Username?: string,
+    Name?: string,
+    CanCreateProductionOrgs?: boolean
 }
