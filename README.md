@@ -28,7 +28,7 @@ In rough order of priority
 
 ### 1. Validate 
 
-The reason to have a validate command it to prevent partially successfull uploads that leave the org in wierd state. Ideally, upload should totally succeed or be blocked in the validate step.
+The reason to have a validate command it to prevent partially successfull uploads that leave the org in weird state. Ideally, upload should totally succeed or be blocked in the validate step.
 
 - Output is a list of errors with lines in the yaml file. If list is empty, validation passes.
 - Command looks something like `ordercloud-seed validate {file-path}` (note no auth required)  
