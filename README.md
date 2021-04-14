@@ -15,3 +15,25 @@ OC_ENV="sandbox"           // "sandbox", "staging", or "" for production
 ```
 - Run `npm install`
 - Run `npm run download`. This should create a file ordercloud-seed.yml with all the data in your organization. 
+
+
+## Vision of what needs to be done 
+
+In rough order of priority
+- Get a validate (upload) command working that reads a potential upload file and returns any errors
+- Get the upload command working.
+- Write automated tests of the validate command.
+- Create nice CLI entry points to this functionality
+- Nice to have features
+
+### Validate 
+- Output is a list of errors with lines in the yaml file. If list is empty, validation passes.
+- Command looks something like `ordercloud-seed validate {file-path}`
+- Import has many error scenarios. Validate catches as many as it can before writing to Ordercloud to prevent a partial success. 
+  - Bad Inputs
+  - Malformed YAML
+  - Malformed Schema
+  - Duplicate IDs
+  - Wrong type provided for field (use swagger, https://api.ordercloud.io/v1/openapi/v3)
+  - Missing required field (use swagger)
+  -Broken foriegn key between resources
