@@ -9,7 +9,7 @@ Un-tested download functionality works. This is a good entry point for learning 
 - At the root of the project, create a .env file
 ```
 PORTAL_USERNAME="xxxxxxxx" // username and password you use to login to https://portal.ordercloud.io/
-PORTAL_PASSWORD="Pots5555"
+PORTAL_PASSWORD="xxxxxxxx"
 ORG_ID="SShyjwitRe4ibpum"  // Organization ID of the data you want to download
 OC_ENV="sandbox"           // "sandbox", "staging", or "" for production
 ```
