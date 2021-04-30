@@ -3,7 +3,7 @@ import RunThrottled from "./throttler.js";
 import { OCResource } from "../models/oc-resources.js";
 const { flatten, range } = pkg;
 
-export default  class OrderCloudBulk {
+export default class OrderCloudBulk {
     static async ListAll(resource: OCResource, ...routeParams: string[]): Promise<any[]> {
         const listFunc = resource.sdkObject[resource.listMethodName] as Function; 
         const page1 = await listFunc(...routeParams, { page: 1, pageSize: 100})
@@ -20,6 +20,4 @@ export default  class OrderCloudBulk {
       
         await RunThrottled(records, 8, record => createFunc(...routeParams, record));
     }
-
-
 }

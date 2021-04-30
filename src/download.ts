@@ -1,14 +1,14 @@
 import dotenv from 'dotenv';
 import Portal from './services/portal.js'; // why do I have to add the .js here?
 import { Configuration, Tokens } from 'ordercloud-javascript-sdk';
-import { OCResourceDirectory } from './models/oc-resource-directory.js';
 import SeedFile from './models/seed-file.js';
 import OrderCloudBulk from './services/ordercloud-bulk.js';
-import { ApplyDefaults } from './models/oc-resources.js';
+import { log } from './models/validate-response.js';
+import { BuildResourceDirectory } from './models/oc-resource-directory.js';
 
 dotenv.config({ path: '.env' }); // everything in here should be command line args eventually
 
-async function export_fnc(username: string, password: string, env: string, orgID: string,) {
+async function download(username: string, password: string, env: string, orgID: string,) {
     // Set up configuration
     Configuration.Set({
         baseApiUrl: `https://${env}api.ordercloud.io`,
@@ -21,7 +21,7 @@ async function export_fnc(username: string, password: string, env: string, orgID
 
     // Pull Data from Ordercloud
     var file = new SeedFile();  
-    var directory = OCResourceDirectory.map(ApplyDefaults)  
+    var directory = await BuildResourceDirectory(false) 
     for (let resource of directory) {
         if (resource.isChild) {
             continue; // resource will be handled as part of its parent
@@ -38,11 +38,13 @@ async function export_fnc(username: string, password: string, env: string, orgID
                 }
                 file.AddRecords(childResource, childRecords);
             }
+            log("Finished " + childRecords.length + " " + childResourceName);
+
         }
-        console.log("Finished ", resource.name);
+        log("Finished " + records.length + " " + resource.name);
     }
     // Write to file
-    file.WriteToYaml();
+    file.WriteToYaml('ordercloud-seed.yml');
 } 
 
-await export_fnc(process.env.PORTAL_USERNAME, process.env.PORTAL_PASSWORD, process.env.OC_ENV, process.env.ORG_ID);
+await download(process.env.PORTAL_USERNAME, process.env.PORTAL_PASSWORD, process.env.OC_ENV, process.env.ORG_ID);

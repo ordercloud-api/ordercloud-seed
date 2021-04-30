@@ -1,7 +1,7 @@
-import { OCResourceEnum } from "./oc-resource-enum.js";
 import { OCResource } from "./oc-resources.js";
 import fs from 'fs';
 import yaml from 'js-yaml';
+import { ValidateResponse, log } from './validate-response.js';
 
 export default class SeedFile {
     private file = {
@@ -24,11 +24,39 @@ export default class SeedFile {
         return this.file?.[typeField]?.[resource.name] || [];
     }
 
-    WriteToYaml() {
-        fs.writeFileSync('ordercloud-seed.yml', yaml.dump(this.file));
+    WriteToYaml(filePath: string) {
+        fs.writeFileSync(filePath, yaml.dump(this.file));
     }
 
-    ReadFromYaml() {
-        this.file = yaml.load(fs.readFileSync('ordercloud-seed.yml', 'utf8')) // consider switching to streams
+    ReadFromYaml(filePath: string, errors: ValidateResponse) {
+        var file;
+        try {
+            file = fs.readFileSync(filePath, 'utf8') // consider switching to streams
+            log(`found file: ${filePath}`);
+        } catch (err) {
+            errors.errors.push({ lineNumber: null, message: `No such file or directory ${filePath} found` })
+        }
+        try {
+            this.file = yaml.load(file);
+            log(`valid yaml: ${filePath}`);
+        } catch (e) {
+            var ex = e as YAMLException;
+            errors.errors.push({ lineNumber: ex.mark.line, message: `YAML Exception in ${filePath}: ${ex.message}` })
+        }
     }
+}
+
+interface YAMLException {
+    name: string; // always "YAMLException"
+    reason: string;
+    message: string;
+    stack: string; 
+    mark: YAMLExceptionMark
+}
+
+interface YAMLExceptionMark {
+    postion: number; 
+    line: number;
+    column: number;
+    snippet: string; 
 }
