@@ -30,6 +30,6 @@ export enum MessageType {
 }
 
 export interface ValidateError {
-    lineNumber: number // from source file
+    lineNumber?: number // from source file
     message: string
 }
