@@ -1,7 +1,7 @@
-import { OCResource } from "./oc-resources.js";
+import { OCResource } from "./oc-resources";
 import fs from 'fs';
 import yaml from 'js-yaml';
-import { ValidateResponse, log } from './validate-response.js';
+import { ValidateResponse, log } from './validate-response';
 
 export default class SeedFile {
     private file = {
@@ -28,21 +28,25 @@ export default class SeedFile {
         fs.writeFileSync(filePath, yaml.dump(this.file));
     }
 
-    ReadFromYaml(filePath: string, errors: ValidateResponse) {
+    ReadFromYaml(filePath: string, errors: ValidateResponse): boolean {
         var file;
         try {
             file = fs.readFileSync(filePath, 'utf8') // consider switching to streams
             log(`found file: ${filePath}`);
         } catch (err) {
-            errors.errors.push({ lineNumber: null, message: `No such file or directory ${filePath} found` })
+            errors.errors.push({ lineNumber: null, message: `No such file or directory ${filePath} found` });
+            return false;
         }
         try {
-            this.file = yaml.load(file);
+            this.file = yaml.load(file) as any;
             log(`valid yaml: ${filePath}`);
         } catch (e) {
+            console.log()
             var ex = e as YAMLException;
             errors.errors.push({ lineNumber: ex.mark.line, message: `YAML Exception in ${filePath}: ${ex.message}` })
+            return false;
         }
+        return true;
     }
 }
 

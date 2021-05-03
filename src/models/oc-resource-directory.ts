@@ -1,7 +1,7 @@
 import axios from "axios";
 import { Addresses, AdminAddresses, AdminUserGroups, AdminUsers, ApiClients, ApprovalRules, Buyers, Catalogs, Categories, CostCenters, CreditCards, ImpersonationConfigs, Incrementors, IntegrationEvents, MessageSenders, OpenIdConnects, PriceSchedules, ProductFacets, Products, Promotions, SecurityProfiles, Specs, SpendingAccounts, SupplierAddresses, Suppliers, SupplierUserGroups, SupplierUsers, UserGroups, Users, Webhooks, XpIndices } from "ordercloud-javascript-sdk";
-import { OCResourceEnum } from "./oc-resource-enum.js";
-import { OCResource } from "./oc-resources.js";
+import { OCResourceEnum } from "./oc-resource-enum";
+import { OCResource } from "./oc-resources";
 
 const Directory: OCResource[] = [
     { 

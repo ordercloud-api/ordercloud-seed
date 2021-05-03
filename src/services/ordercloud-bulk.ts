@@ -1,6 +1,6 @@
 import pkg from 'lodash';
-import RunThrottled from "./throttler.js";
-import { OCResource } from "../models/oc-resources.js";
+import RunThrottled from "./throttler";
+import { OCResource } from "../models/oc-resources";
 const { flatten, range } = pkg;
 
 export default class OrderCloudBulk {

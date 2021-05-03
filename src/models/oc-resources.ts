@@ -1,5 +1,5 @@
-import { OCResourceEnum } from "./oc-resource-enum.js";
-import SeedFile from "./seed-file.js";
+import { OCResourceEnum } from "./oc-resource-enum";
+import SeedFile from "./seed-file";
 export interface OCResource {
     name: OCResourceEnum;
     modelName: string; // matches open api spec model for POST

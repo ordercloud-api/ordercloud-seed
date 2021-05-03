@@ -1,0 +1,11 @@
+Objects:
+  Buyers:
+      - ID: buyer1
+        Name: metrocoffeebuyer
+      - ID: cloud_coffee
+        Name: buyer2
+  CostCenters:
+      - ID: costcenter
+        BuyerID: buyer1
+      - ID: costcenter
+        BuyerID: buyer2
