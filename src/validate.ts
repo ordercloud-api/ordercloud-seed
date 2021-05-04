@@ -1,6 +1,6 @@
 import { validate } from "./actions/validate";
 
-validate("./tests/data/duplicateIds.yml").then(resp => {
+validate("./tests/data/lots-of-wrong-types.yml").then(resp => {
     resp.writeErrors();
 });
 

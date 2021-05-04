@@ -19,7 +19,7 @@ export interface OpenAPIProperty {
     type: 'string' | 'integer' | 'number' | 'boolean' | 'object' | 'array';
     format : 'int32' | 'float' | 'password' | 'date-time';
     readOnly : boolean;
-    maxLength : number;
+    maxLength: number;
     default: any;
     minimum: number;
     maximum: number;
@@ -34,5 +34,5 @@ export interface OpenAPIProperties {
 }
 
 // TODO - replace boolean with a useful error message.
-type CustomForeignKeyValidation = (fieldValue: string, file: SeedFile) => boolean
+export type CustomForeignKeyValidation = (fieldValue: string, file: SeedFile) => boolean
 

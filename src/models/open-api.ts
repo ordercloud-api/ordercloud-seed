@@ -1,5 +1,5 @@
 export interface OpenAPIProperty {
-    type: 'string' | 'integer' | 'number' | 'boolean' | 'object' | 'array';
+    type: OpenAPIType;
     format : 'int32' | 'float' | 'password' | 'date-time';
     readOnly : boolean;
     maxLength : number;
@@ -7,3 +7,5 @@ export interface OpenAPIProperty {
     minimum: number;
     maximum: number;
 }
+
+export type OpenAPIType = 'string' | 'integer' | 'number' | 'boolean' | 'object' | 'array';

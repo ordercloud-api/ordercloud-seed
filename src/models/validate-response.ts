@@ -13,6 +13,10 @@ export class ValidateResponse {
             log(error.message, MessageType.Error)
         }
     }
+
+    addError(message:string) {
+        this.errors.push({ message });
+    }
 }
 
 export function log(message: string, messageType: MessageType = MessageType.Progress) {

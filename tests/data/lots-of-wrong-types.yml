@@ -1,0 +1,13 @@
+Objects:
+  SecurityProfiles:
+    - ID: false
+      Name: 10
+      Roles: 3.14
+      CustomRoles:
+        property: should be an array
+      PasswordConfig: 
+        - should be an object
+        - is an array
+  PriceSchedules:
+    - Name: ps
+      MinQuantity: 5.05

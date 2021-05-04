@@ -1,0 +1,4 @@
+Objects:
+  PriceSchedules:
+      - Name: ps
+        MinQuantity: -1000

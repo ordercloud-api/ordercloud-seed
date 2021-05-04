@@ -57,7 +57,7 @@ Objects:
   OpenIdConnects: []
   AdminUsers:
     - ID: HFDBMoZbGk2S01bGsNhWVw
-      Username: nlcadmin
+      Username: 1
       Password: null
       FirstName: Jon
       LastName: Doe
@@ -76,7 +76,7 @@ Objects:
   ApiClients:
     - ID: 533320C2-623E-4E70-B96A-7D16F79F60EE
       ClientSecret: super-secret-and-secure-client-secret-key
-      AccessTokenDuration: 500
+      AccessTokenDuration: 500.1
       Active: true
       AppName: Integrations
       RefreshTokenDuration: 0
@@ -153,7 +153,7 @@ Objects:
       xp: {}
   Users:
     - ID: _e4sK4SKU0mc1JH4o7mVBw
-      Username: metrocoffeebuyer
+      Username: metrocoffeebuyerzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz
       Password: null
       FirstName: Jane
       LastName: Doe
@@ -496,7 +496,7 @@ Objects:
       ID: bar_towels
       Name: Bar Towels (Pack of 8)
       Description: Pack of 8 premium bar towels.
-      QuantityMultiplier: 8
+      QuantityMultiplier: -3
       ShipWeight: 0
       ShipHeight: 0
       ShipWidth: 0
@@ -890,7 +890,7 @@ Objects:
       RedemptionCount: 1
       Description: Get $5 off your order total when you order at least 1 Bar Towel!
       FinePrint: Metro Coffee users only.
-      StartDate: '2019-10-01T06:00:00+00:00'
+      StartDate: 'a'
       ExpirationDate: '2025-11-01T06:00:00+00:00'
       EligibleExpression: items.any(ProductID = 'bar_towels')
       ValueExpression: '5'
