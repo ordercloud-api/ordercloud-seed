@@ -4,10 +4,16 @@ import SeedFile from '../models/seed-file';
 import OrderCloudBulk from '../services/ordercloud-bulk';
 import { log, MessageType } from '../models/validate-response';
 import { BuildResourceDirectory } from '../models/oc-resource-directory';
+import jwt_decode from "jwt-decode";
 
 export async function download(username: string, password: string, environment: string, orgID: string) {
     var missingInputs: string[] = [];
     var validEnvironments = ['staging', 'sandbox', 'prod'];
+    var urls = {
+        staging: "https://stagingapi.ordercloud.io",
+        sandbox: "https://sandboxapi.ordercloud.io",
+        prod: "https://api.ordercloud.io",
+    };
 
     if (!environment) missingInputs.push("environment");
     if (!orgID) missingInputs.push("orgID");
@@ -22,13 +28,10 @@ export async function download(username: string, password: string, environment: 
         return log(`environment must be one of ${validEnvironments.join(", ")}`, MessageType.Error)
     }
 
-    if (environment === "prod") {
-        environment = "";
-    }
+    var url = urls[environment];
+
     // Set up configuration
-    Configuration.Set({
-        baseApiUrl: `https://${environment}api.ordercloud.io`,
-    });
+    Configuration.Set({ baseApiUrl: url });
 
     // Authenticate
     var portal_token: string;
@@ -43,6 +46,12 @@ export async function download(username: string, password: string, environment: 
     } catch {
         return log(`Organization with ID \"${orgID}\" not found`, MessageType.Error)
     }
+    var decoded = jwt_decode(org_token) as any;
+
+    if (decoded.aud !== url) {
+        return log(`Organization \"${orgID}\" found, but is not in specified environment \"${environment}\"`, MessageType.Error)
+    }
+
     Tokens.SetAccessToken(org_token);
 
     log("Found your organization. Beginning download.", MessageType.Success);
