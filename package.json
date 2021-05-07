@@ -2,6 +2,9 @@
   "name": "ordercloud-seed",
   "version": "1.0.0",
   "description": "Download and upload seeding files from the OrderCloud platform.",
+  "bin": {
+    "ordercloud-seed": "cli-entry.js"
+  },
   "scripts": {
     "download": "npm run rollup && node dist/download.js",
     "validate": "npm run rollup && node dist/validate.js",
@@ -27,7 +30,8 @@
     "node-emoji": "^1.10.0",
     "ordercloud-javascript-sdk": "^4.2.0",
     "qs": "^6.9.6",
-    "typescript": "^4.2.3"
+    "typescript": "^4.2.3",
+    "yargs": "^15.4.1"
   },
   "devDependencies": {
     "@types/jest": "^26.0.23",

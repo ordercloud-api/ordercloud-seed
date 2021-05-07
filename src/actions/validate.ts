@@ -5,7 +5,6 @@ import SeedFile from "../models/seed-file";
 import { ValidateResponse } from "../models/validate-response";
 import { CustomForeignKeyValidation } from '../models/oc-resources';
 import _ from "lodash";
-import { getTypeParameterOwner } from "typescript";
 import { OpenAPIType } from "../models/open-api";
 
 export async function validate(filePath: string): Promise<ValidateResponse> {

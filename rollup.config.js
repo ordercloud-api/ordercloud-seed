@@ -13,6 +13,17 @@ export default [
     ],
   },
   {
+    input: 'src/cli.ts',
+    output: [
+      { file: "dist/cli.js", format: "cjs", banner: "#!/usr/bin/env node" }
+    ],
+    plugins: [
+      typescript({
+        typescript: require('typescript'),
+      }),
+    ],
+  },
+  {
     input: 'src/download.ts',
     output: [
       { file: "dist/download.js", format: "cjs" }

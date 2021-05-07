@@ -2,19 +2,50 @@ import Portal from '../services/portal'; // why do I have to add the .js here?
 import { Configuration, Tokens } from 'ordercloud-javascript-sdk';
 import SeedFile from '../models/seed-file';
 import OrderCloudBulk from '../services/ordercloud-bulk';
-import { log } from '../models/validate-response';
+import { log, MessageType } from '../models/validate-response';
 import { BuildResourceDirectory } from '../models/oc-resource-directory';
 
-export async function download(username: string, password: string, env: string, orgID: string,) {
+export async function download(username: string, password: string, environment: string, orgID: string) {
+    var missingInputs: string[] = [];
+    var validEnvironments = ['staging', 'sandbox', 'prod'];
+
+    if (!environment) missingInputs.push("environment");
+    if (!orgID) missingInputs.push("orgID");
+    if (!username) missingInputs.push("username");
+    if (!password) missingInputs.push("password");
+
+    if (missingInputs.length >0) {
+        return log(`Missing required arguments: ${missingInputs.join(", ")}`, MessageType.Error)
+    }
+
+    if (!validEnvironments.includes(environment)) {
+        return log(`environment must be one of ${validEnvironments.join(", ")}`, MessageType.Error)
+    }
+
+    if (environment === "prod") {
+        environment = "";
+    }
     // Set up configuration
     Configuration.Set({
-        baseApiUrl: `https://${env}api.ordercloud.io`,
+        baseApiUrl: `https://${environment}api.ordercloud.io`,
     });
 
     // Authenticate
-    var portal_token = await Portal.login(username, password);
-    var org_token = await Portal.getOrganizationToken(orgID, portal_token);
+    var portal_token: string;
+    var org_token: string;
+    try {
+        portal_token = await Portal.login(username, password);
+    } catch {
+        return log(`Username \"${username}\" and Password \"${password}\" were not valid`, MessageType.Error)
+    }
+    try {
+        org_token = await Portal.getOrganizationToken(orgID, portal_token);
+    } catch {
+        return log(`Organization with ID \"${orgID}\" not found`, MessageType.Error)
+    }
     Tokens.SetAccessToken(org_token);
+
+    log("Found your organization. Beginning download.", MessageType.Success);
 
     // Pull Data from Ordercloud
     var file = new SeedFile();  
@@ -42,4 +73,5 @@ export async function download(username: string, password: string, env: string, 
     }
     // Write to file
     file.WriteToYaml('ordercloud-seed.yml');
+    log("Done! Wrote to file \"ordercloud-seed.yml\"", MessageType.Success);
 } 
