@@ -1,7 +1,7 @@
 import yargs from 'yargs';
 import { download } from './actions/download';
 
-yargs.scriptName("ordercloud-seed")
+yargs.scriptName("@ordercloud/seeding")
   .usage('$0 <cmd> [args] -')
   .command('download', 'Download all org data into a file', (yargs) => {
     yargs.option('environment', {
