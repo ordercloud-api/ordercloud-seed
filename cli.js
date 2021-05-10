@@ -100,7 +100,7 @@ class SeedFile {
         var file;
         try {
             file = fs__default['default'].readFileSync(filePath, 'utf8'); // consider switching to streams
-            log(`found file: ${filePath}`);
+            log(`found file: ${filePath}`, MessageType.Success);
         }
         catch (err) {
             errors.errors.push({ lineNumber: null, message: `No such file or directory ${filePath} found` });
@@ -108,10 +108,9 @@ class SeedFile {
         }
         try {
             this.file = yaml__default['default'].load(file);
-            log(`valid yaml: ${filePath}`);
+            log(`valid yaml: ${filePath}`, MessageType.Success);
         }
         catch (e) {
-            console.log();
             var ex = e;
             errors.errors.push({ lineNumber: ex.mark.line, message: `YAML Exception in ${filePath}: ${ex.message}` });
             return false;
@@ -207,12 +206,14 @@ const Directory = [
         modelName: 'SecurityProfile',
         sdkObject: ordercloudJavascriptSdk.SecurityProfiles,
         createPriority: 2,
+        path: "/securityprofiles"
     },
     {
         name: OCResourceEnum.ImpersonationConfigs,
         modelName: 'ImpersonationConfig',
         sdkObject: ordercloudJavascriptSdk.ImpersonationConfigs,
         createPriority: 6,
+        path: "/impersonationconfig",
         foreignKeys: {
             ClientID: OCResourceEnum.ApiClients,
             SecurityProfileID: OCResourceEnum.SecurityProfiles,
@@ -229,6 +230,7 @@ const Directory = [
         modelName: 'OpenIdConnect',
         sdkObject: ordercloudJavascriptSdk.OpenIdConnects,
         createPriority: 6,
+        path: "/openidconnects",
         foreignKeys: {
             OrderCloudApiClientID: OCResourceEnum.ApiClients,
             IntegrationEventID: OCResourceEnum.IntegrationEvents
@@ -238,24 +240,28 @@ const Directory = [
         name: OCResourceEnum.AdminUsers,
         modelName: 'User',
         sdkObject: ordercloudJavascriptSdk.AdminUsers,
+        path: "/adminusers",
         createPriority: 2
     },
     {
         name: OCResourceEnum.AdminUserGroups,
         modelName: 'UserGroup',
         sdkObject: ordercloudJavascriptSdk.AdminUserGroups,
+        path: "/usergroups",
         createPriority: 2
     },
     {
         name: OCResourceEnum.AdminAddresses,
         modelName: 'Address',
         sdkObject: ordercloudJavascriptSdk.AdminAddresses,
+        path: "/addresses",
         createPriority: 2
     },
     {
         name: OCResourceEnum.MessageSenders,
         modelName: 'MessageSender',
         sdkObject: ordercloudJavascriptSdk.MessageSenders,
+        path: "/messagesenders",
         createPriority: 2
     },
     {
@@ -263,6 +269,7 @@ const Directory = [
         modelName: 'ApiClient',
         sdkObject: ordercloudJavascriptSdk.ApiClients,
         createPriority: 5,
+        path: "/apiclients",
         foreignKeys: {
             IntegrationEventID: OCResourceEnum.IntegrationEvents,
             DefaultContextUserName: (a, b) => false, // todo. Look for usernames 
@@ -272,6 +279,7 @@ const Directory = [
         name: OCResourceEnum.Incrementors,
         modelName: 'Incrementor',
         sdkObject: ordercloudJavascriptSdk.Incrementors,
+        path: "/incrementors",
         createPriority: 1
     },
     {
@@ -279,6 +287,7 @@ const Directory = [
         modelName: 'Webhook',
         sdkObject: ordercloudJavascriptSdk.Webhooks,
         createPriority: 6,
+        path: "/webhooks",
         foreignKeys: {
             ApiClientIDs: (a, b) => false, // todo. validate list
         }
@@ -287,12 +296,14 @@ const Directory = [
         name: OCResourceEnum.IntegrationEvents,
         modelName: 'IntegrationEvent',
         sdkObject: ordercloudJavascriptSdk.IntegrationEvents,
+        path: "/integrationEvents",
         createPriority: 2
     },
     {
         name: OCResourceEnum.XpIndices,
         modelName: "XpIndex",
         sdkObject: ordercloudJavascriptSdk.XpIndices,
+        path: "/xpindices",
         createPriority: 1
     },
     {
@@ -300,6 +311,7 @@ const Directory = [
         modelName: "Buyer",
         sdkObject: ordercloudJavascriptSdk.Buyers,
         createPriority: 3,
+        path: "/buyers",
         foreignKeys: {
             DefaultCatalogID: OCResourceEnum.Catalogs
         },
@@ -311,6 +323,7 @@ const Directory = [
         sdkObject: ordercloudJavascriptSdk.Users,
         createPriority: 4,
         parentRefFieldName: "BuyerID",
+        path: "/buyers/{buyerID}/users",
         isChild: true,
     },
     {
@@ -319,6 +332,7 @@ const Directory = [
         sdkObject: ordercloudJavascriptSdk.UserGroups,
         createPriority: 4,
         parentRefFieldName: "BuyerID",
+        path: "/buyers/{buyerID}/usergroups",
         isChild: true,
     },
     {
@@ -327,6 +341,7 @@ const Directory = [
         sdkObject: ordercloudJavascriptSdk.Addresses,
         createPriority: 4,
         parentRefFieldName: "BuyerID",
+        path: "/buyers/{buyerID}/addresses",
         isChild: true,
     },
     {
@@ -335,6 +350,7 @@ const Directory = [
         sdkObject: ordercloudJavascriptSdk.CostCenters,
         createPriority: 4,
         parentRefFieldName: "BuyerID",
+        path: "/buyers/{buyerID}/costcenters",
         isChild: true,
     },
     {
@@ -343,6 +359,7 @@ const Directory = [
         sdkObject: ordercloudJavascriptSdk.CreditCards,
         createPriority: 4,
         parentRefFieldName: "BuyerID",
+        path: "/buyers/{buyerID}/creditcards",
         isChild: true,
     },
     {
@@ -351,6 +368,7 @@ const Directory = [
         sdkObject: ordercloudJavascriptSdk.SpendingAccounts,
         createPriority: 4,
         parentRefFieldName: "BuyerID",
+        path: "/buyers/{buyerID}/spendingaccounts",
         isChild: true,
     },
     {
@@ -360,6 +378,7 @@ const Directory = [
         createPriority: 5,
         parentRefFieldName: "BuyerID",
         isChild: true,
+        path: "/buyers/{buyerID}/approvalrules",
         foreignKeys: {
             ApprovingGroupID: (a, b) => false // todo - can this be a buyer or admin group?
         }
@@ -369,6 +388,7 @@ const Directory = [
         modelName: "Catalog",
         sdkObject: ordercloudJavascriptSdk.Catalogs,
         createPriority: 2,
+        path: "/catalogs",
         children: [OCResourceEnum.Categories, OCResourceEnum.CategoryAssignments, OCResourceEnum.CategoryProductAssignments]
     },
     {
@@ -378,6 +398,7 @@ const Directory = [
         createPriority: 3,
         parentRefFieldName: "CatalogID",
         isChild: true,
+        path: "/catalogs/{catalogID}/categories",
         foreignKeys: {
             ParentID: OCResourceEnum.Categories
         }
@@ -387,6 +408,7 @@ const Directory = [
         modelName: "Supplier",
         sdkObject: ordercloudJavascriptSdk.Suppliers,
         createPriority: 2,
+        path: "/suppliers",
         children: [OCResourceEnum.SupplierUsers, OCResourceEnum.SupplierUserGroups, OCResourceEnum.SupplierAddresses, OCResourceEnum.SupplierUserGroupsAssignments]
     },
     {
@@ -395,6 +417,7 @@ const Directory = [
         sdkObject: ordercloudJavascriptSdk.SupplierUsers,
         createPriority: 3,
         parentRefFieldName: "SupplierID",
+        path: "/suppliers/{supplierID}/users",
         isChild: true,
     },
     {
@@ -403,6 +426,7 @@ const Directory = [
         sdkObject: ordercloudJavascriptSdk.SupplierUserGroups,
         createPriority: 3,
         parentRefFieldName: "SupplierID",
+        path: "/suppliers/{supplierID}/usergroups",
         isChild: true,
     },
     {
@@ -411,6 +435,7 @@ const Directory = [
         sdkObject: ordercloudJavascriptSdk.SupplierAddresses,
         createPriority: 3,
         parentRefFieldName: "SupplierID",
+        path: "/suppliers/{supplierID}/addresses",
         isChild: true,
     },
     {
@@ -418,6 +443,7 @@ const Directory = [
         modelName: "Product",
         sdkObject: ordercloudJavascriptSdk.Products,
         createPriority: 4,
+        path: "/products",
         foreignKeys: {
             DefaultPriceScheduleID: OCResourceEnum.PriceSchedules,
             ShipFromAddressID: (a, b) => false,
@@ -428,6 +454,7 @@ const Directory = [
         name: OCResourceEnum.PriceSchedules,
         modelName: "PriceSchedule",
         sdkObject: ordercloudJavascriptSdk.PriceSchedules,
+        path: "/priceschedules",
         createPriority: 2
     },
     {
@@ -435,6 +462,7 @@ const Directory = [
         modelName: "Spec",
         sdkObject: ordercloudJavascriptSdk.Specs,
         createPriority: 2,
+        path: "/specs",
         foreignKeys: {
             DefaultOptionID: OCResourceEnum.SpecOptions,
         },
@@ -445,6 +473,7 @@ const Directory = [
         modelName: "SpecOption",
         sdkObject: ordercloudJavascriptSdk.Specs,
         createPriority: 3,
+        path: "/specs/{specID}/options",
         parentRefFieldName: "SpecID",
         listMethodName: "ListOptions",
         isChild: true
@@ -453,18 +482,21 @@ const Directory = [
         name: OCResourceEnum.ProductFacets,
         modelName: "ProductFacet",
         sdkObject: ordercloudJavascriptSdk.ProductFacets,
+        path: "/productfacets",
         createPriority: 2
     },
     {
         name: OCResourceEnum.Promotions,
         modelName: "Promotion",
         sdkObject: ordercloudJavascriptSdk.Promotions,
+        path: "/promotions",
         createPriority: 2
     },
     {
         name: OCResourceEnum.SecurityProfileAssignments,
         modelName: "SecurityProfileAssignment",
         sdkObject: ordercloudJavascriptSdk.SecurityProfiles,
+        path: "/securityprofiles/assignments",
         createPriority: 5,
         isAssignment: true,
         foreignKeys: {
@@ -481,6 +513,7 @@ const Directory = [
         sdkObject: ordercloudJavascriptSdk.AdminUserGroups,
         createPriority: 3,
         isAssignment: true,
+        path: "/usergroups/assignments",
         listMethodName: 'ListUserAssignments',
         foreignKeys: {
             UserID: OCResourceEnum.AdminUsers,
@@ -493,6 +526,7 @@ const Directory = [
         sdkObject: ordercloudJavascriptSdk.ApiClients,
         createPriority: 6,
         isAssignment: true,
+        path: "/apiclients/assignments",
         foreignKeys: {
             ApiClientID: OCResourceEnum.ApiClients,
             BuyerID: OCResourceEnum.Buyers,
@@ -505,6 +539,7 @@ const Directory = [
         sdkObject: ordercloudJavascriptSdk.UserGroups,
         createPriority: 5,
         isAssignment: true,
+        path: "/usergroups/assignments",
         parentRefFieldName: "BuyerID",
         isChild: true,
         listMethodName: 'ListUserAssignments',
@@ -518,6 +553,7 @@ const Directory = [
         modelName: "AddressAssignment",
         sdkObject: ordercloudJavascriptSdk.Addresses,
         createPriority: 5,
+        path: "/apiclients/assignments",
         isAssignment: true,
         parentRefFieldName: "BuyerID",
         isChild: true,
@@ -532,6 +568,7 @@ const Directory = [
         modelName: "CostCenterAssignment",
         sdkObject: ordercloudJavascriptSdk.CostCenters,
         createPriority: 5,
+        path: "/buyers/{buyerID}/costcenters",
         isAssignment: true,
         parentRefFieldName: "BuyerID",
         isChild: true,
@@ -545,6 +582,7 @@ const Directory = [
         modelName: "CreditCardAssignment",
         sdkObject: ordercloudJavascriptSdk.CreditCards,
         createPriority: 5,
+        path: "/buyers/{buyerID}/creditcards/assignments",
         isAssignment: true,
         parentRefFieldName: "BuyerID",
         isChild: true,
@@ -559,6 +597,7 @@ const Directory = [
         modelName: "SpendingAccountAssignment",
         sdkObject: ordercloudJavascriptSdk.SpendingAccounts,
         createPriority: 5,
+        path: "/buyers/{buyerID}/spendingaccounts/assignments",
         isAssignment: true,
         parentRefFieldName: "BuyerID",
         isChild: true,
@@ -573,6 +612,7 @@ const Directory = [
         modelName: "UserGroupAssignment",
         sdkObject: ordercloudJavascriptSdk.SupplierUserGroups,
         createPriority: 4,
+        path: "/suppliers/{supplierID}/usergroups/assignments",
         isAssignment: true,
         parentRefFieldName: "SupplierID",
         isChild: true,
@@ -587,6 +627,7 @@ const Directory = [
         modelName: "ProductAssignment",
         sdkObject: ordercloudJavascriptSdk.Products,
         createPriority: 5,
+        path: "/products/assignments",
         isAssignment: true,
         foreignKeys: {
             ProductID: OCResourceEnum.Products,
@@ -600,6 +641,7 @@ const Directory = [
         modelName: "CatalogAssignment",
         sdkObject: ordercloudJavascriptSdk.Catalogs,
         createPriority: 4,
+        path: "/catalogs/assignments",
         isAssignment: true,
         foreignKeys: {
             CatalogID: OCResourceEnum.Catalogs,
@@ -611,6 +653,7 @@ const Directory = [
         modelName: "ProductCatalogAssignment",
         sdkObject: ordercloudJavascriptSdk.Catalogs,
         createPriority: 5,
+        path: "/catalogs/productassignments",
         isAssignment: true,
         listMethodName: 'ListProductAssignments',
         foreignKeys: {
@@ -623,6 +666,7 @@ const Directory = [
         modelName: "CategoryAssignment",
         sdkObject: ordercloudJavascriptSdk.Categories,
         createPriority: 5,
+        path: "/catalogs/{catalogID}/categories/assignments",
         isAssignment: true,
         parentRefFieldName: "CatalogID",
         isChild: true,
@@ -637,6 +681,7 @@ const Directory = [
         modelName: "CategoryProductAssignment",
         sdkObject: ordercloudJavascriptSdk.Categories,
         createPriority: 5,
+        path: "/catalogs/{catalogID}/categories/productassignments",
         isAssignment: true,
         parentRefFieldName: "CatalogID",
         isChild: true,
@@ -651,6 +696,7 @@ const Directory = [
         modelName: "SpecProductAssignment",
         sdkObject: ordercloudJavascriptSdk.Specs,
         createPriority: 5,
+        path: "/specs/productassignments",
         isAssignment: true,
         listMethodName: 'ListProductAssignments',
         foreignKeys: {
@@ -664,6 +710,7 @@ const Directory = [
         modelName: "PromotionAssignment",
         sdkObject: ordercloudJavascriptSdk.Promotions,
         createPriority: 5,
+        path: "/promotions/assignments",
         isAssignment: true,
         foreignKeys: {
             PromotionID: OCResourceEnum.PromotionAssignment,
@@ -673,12 +720,14 @@ const Directory = [
     },
 ];
 function ApplyDefaults(resource) {
+    var _a;
     resource.isAssignment = resource.isAssignment || false;
     resource.listMethodName = resource.listMethodName || (resource.isAssignment ? "ListAssignments" : "List");
     resource.createMethodName = resource.createMethodName || (resource.isAssignment ? "CreateAssignment" : "Create");
     resource.foreignKeys = resource.foreignKeys || {};
     resource.children = resource.children || [];
     resource.isChild = resource.isChild || false;
+    resource.requiredCreateFields = (_a = resource.requiredCreateFields) !== null && _a !== void 0 ? _a : [];
     return resource;
 }
 async function BuildResourceDirectory(includeOpenAPI = false) {
@@ -687,9 +736,23 @@ async function BuildResourceDirectory(includeOpenAPI = false) {
         openAPISpec = await axios__default['default'].get(`https://api.ordercloud.io/v1/openapi/v3`);
     }
     return Directory.map(resource => {
+        var _a, _b, _c, _d, _e;
         var modified = ApplyDefaults(resource);
         if (includeOpenAPI) {
+            var path = openAPISpec.data.paths[resource.path];
+            var operation = (_a = path.post) !== null && _a !== void 0 ? _a : path.put;
+            modified.requiredCreateFields = (_e = (_d = (_c = (_b = operation.requestBody.content) === null || _b === void 0 ? void 0 : _b["application/json"]) === null || _c === void 0 ? void 0 : _c.schema) === null || _d === void 0 ? void 0 : _d.required) !== null && _e !== void 0 ? _e : [];
             modified.openAPIProperties = openAPISpec.data.components.schemas[resource.modelName].properties;
+            if (modified.isChild) {
+                // add info about parentRefFieldName
+                modified.openAPIProperties[modified.parentRefFieldName] = {
+                    type: "string",
+                    readOnly: false
+                };
+                modified.requiredCreateFields.push(modified.parentRefFieldName);
+                modified.parentResource = Directory.find(x => x.children.includes(modified.name));
+                modified.foreignKeys[modified.parentRefFieldName] = modified.parentResource.name;
+            }
         }
         return modified;
     });
@@ -768,7 +831,7 @@ async function download(username, password, environment, orgID) {
     log("Done! Wrote to file \"ordercloud-seed.yml\"", MessageType.Success);
 }
 
-yargs__default['default'].scriptName("ordercloud-seed")
+yargs__default['default'].scriptName("@ordercloud/seeding")
     .usage('$0 <cmd> [args] -')
     .command('download', 'Download all org data into a file', (yargs) => {
     yargs.option('environment', {

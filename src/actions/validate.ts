@@ -2,9 +2,9 @@ import { BuildResourceDirectory } from "../models/oc-resource-directory";
 import { OCResourceEnum } from "../models/oc-resource-enum";
 import { OCResource, OpenAPIProperties, OpenAPIProperty } from "../models/oc-resources";
 import SeedFile from "../models/seed-file";
-import { ValidateResponse } from "../models/validate-response";
+import { log, MessageType, ValidateResponse } from "../models/validate-response";
 import { CustomForeignKeyValidation } from '../models/oc-resources';
-import _ from "lodash";
+import _, { trimEnd } from "lodash";
 import { OpenAPIType } from "../models/open-api";
 
 export async function validate(filePath: string): Promise<ValidateResponse> {
@@ -38,20 +38,17 @@ export async function validate(filePath: string): Promise<ValidateResponse> {
                 }
                 let value = record[propName];
                 let foreignKey = resource.foreignKeys[propName];
-                if (!isNullOrUndefined(value)) {
-                    validator.validateFieldTypeMatches(record[propName], spec);
+                if (isNullOrUndefined(value)) {
+                    validator.validateIsRequired(propName);
                 } else {
-                    validator.validateIsRequired(propName)
-                }
-                if (!isNullOrUndefined(foreignKey)) {
-                    validator.validateForeignKeyExists(foreignKey)
+                    var typeMatches = validator.validateFieldTypeMatches(record[propName], spec);
+                    if (typeMatches &&!isNullOrUndefined(foreignKey)) {
+                        validator.validateForeignKeyExists(foreignKey)
+                    }
                 }
             }    
         }
     }
-
-    //wrong types, missing fields
-
     return validator.response;
 }
 
@@ -79,17 +76,33 @@ class Validator {
     currentRecord: any;
     currentPropertyName: string;
 
-    validateIsRequired(fieldName: string) {
-
+    validateIsRequired(fieldName: string): boolean {
+        if (this.currentResource.requiredCreateFields.includes(fieldName)) {
+            this.response.addError(`Required field ${this.currentResource.name}.${fieldName}: cannot have value ${this.currentRecord[fieldName]}.`);
+            return false;
+        }
+        return true;
     }
 
-    validateForeignKeyExists(key: OCResourceEnum | CustomForeignKeyValidation) {
+    validateForeignKeyExists(key: OCResourceEnum | CustomForeignKeyValidation):boolean {
+        var field = this.currentPropertyName;
+        var value = this.currentRecord[field];
+        if (_.isFunction(key)) {
 
+        } else {
+            var resourceType = key as OCResourceEnum;
+            var keyExists = this.idSets[resourceType].has(value);
+            if (!keyExists) {
+                this.response.addError(`Invalid reference ${this.currentResource.name}.${field}: no ${resourceType} found with ID \"${value}\".`);
+                return false;
+            }
+        }
+        return true;
     }
     
     
     // TODO - validate things inside objects or arrays
-    validateFieldTypeMatches(value: any, spec: OpenAPIProperty) {
+    validateFieldTypeMatches(value: any, spec: OpenAPIProperty): boolean {
         // todo - need to do this differently. Get a swagger parser library
         if ((spec as any).allOf) {
             spec.type = "object";
@@ -137,12 +150,15 @@ class Validator {
         }
         if (error !== null) {
             this.response.addError(error);
+            return false;
         }
+        return true;
     }
     
-    validateDuplicateIDs() {
+    // todo - need to validate duplicates that involve more fields that simply ID. e.g. xpindex 
+    validateDuplicateIDs(): boolean {
         if (isNullOrUndefined(this.currentRecord.ID) || !hasIDProperty(this.currentResource.openAPIProperties)) {
-            return;
+            return true;
         }
         var setEntry: string = this.currentResource.isChild ? `${this.currentRecord[this.currentResource.parentRefFieldName]}/${this.currentRecord.ID}` : this.currentRecord.ID;
         if (this.idSets[this.currentResource.name].has(setEntry)) {
@@ -151,8 +167,10 @@ class Validator {
                 message = message.concat(` within the ${this.currentResource.parentRefFieldName} \"${this.currentRecord[this.currentResource.parentRefFieldName]}\"`)
             }
             this.response.addError(message)
+            return false;
         } else {
             this.idSets[this.currentResource.name].add(setEntry)
         }
+        return true;
     }
 }

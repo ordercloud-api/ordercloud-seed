@@ -2,10 +2,12 @@ Objects:
   Buyers:
       - ID: buyer1
         Name: metrocoffeebuyer
-      - ID: cloud_coffee
-        Name: buyer2
+      - ID: buyer2
+        Name: cloud_coffee
   CostCenters:
       - ID: costcenter
+        Name: required
         BuyerID: buyer1
       - ID: costcenter
+        Name: required
         BuyerID: buyer2

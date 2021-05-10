@@ -55,14 +55,39 @@ test('minimum number', async () => {
     expect(resp.errors[0].message).toBe("Minimum for PriceSchedules.MinQuantity is 1. Found -1000.");
 });
 
+test('required fields', async () => {
+    var resp = await validate("./tests/data/required-fields.yml");
+    expect(resp.isValid()).toBe(false);
+    expect(resp.errors.length).toBe(7);
+    expect(resp.errors[0].message).toBe("Required field Incrementors.LastNumber: cannot have value undefined.");
+    expect(resp.errors[1].message).toBe("Required field Incrementors.LeftPaddingCount: cannot have value undefined.");
+    expect(resp.errors[2].message).toBe("Required field Webhooks.Name: cannot have value undefined.");
+    expect(resp.errors[3].message).toBe("Required field Webhooks.Url: cannot have value undefined.");
+    expect(resp.errors[4].message).toBe("Required field Webhooks.HashKey: cannot have value undefined.");
+    expect(resp.errors[5].message).toBe("Required field ProductFacets.Name: cannot have value undefined.");
+    expect(resp.errors[6].message).toBe("Required field ProductFacets.MinCount: cannot have value undefined.");
+    //expect(resp.errors[7].message).toBe("Required field ProductAssignments.ProductID: cannot have value undefined.");
+    //expect(resp.errors[8].message).toBe("Required field ProductAssignments.BuyerID: cannot have value undefined.");
+});
+
+test('parent ref', async () => {
+    var resp = await validate("./tests/data/parent-ref.yml");
+    expect(resp.isValid()).toBe(false);
+    expect(resp.errors.length).toBe(3);
+    expect(resp.errors[0].message).toBe("Required field CostCenters.BuyerID: cannot have value undefined.");
+    expect(resp.errors[1].message).toBe("Incorrect type CostCenters.BuyerID: 123 is integer. Should be string.");
+    expect(resp.errors[2].message).toBe("Invalid reference CostCenters.BuyerID: no Buyers found with ID \"buyer2\".");
+});
+
 test('lots of wrong types', async () => {
     var resp = await validate("./tests/data/lots-of-wrong-types.yml");
     expect(resp.isValid()).toBe(false);
-    expect(resp.errors.length).toBe(6);
+    expect(resp.errors.length).toBe(7);
     expect(resp.errors[0].message).toBe("Incorrect type SecurityProfiles.ID: false is boolean. Should be string.");
     expect(resp.errors[1].message).toBe("Incorrect type SecurityProfiles.Name: 10 is integer. Should be string.");
     expect(resp.errors[2].message).toBe("Incorrect type SecurityProfiles.Roles: 3.14 is number. Should be array.");
     expect(resp.errors[3].message).toBe("Incorrect type SecurityProfiles.CustomRoles: [object Object] is object. Should be array.");
     expect(resp.errors[4].message).toBe("Incorrect type SecurityProfiles.PasswordConfig: should be an object,is an array is array. Should be object.");
-    expect(resp.errors[5].message).toBe("Incorrect type PriceSchedules.MinQuantity: 5.05 is number. Should be integer.");
+    expect(resp.errors[5].message).toBe("Required field Buyers.Name: cannot have value undefined.");
+    expect(resp.errors[6].message).toBe("Incorrect type PriceSchedules.MinQuantity: 5.05 is number. Should be integer.");
 });

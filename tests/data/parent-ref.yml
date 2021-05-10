@@ -1,0 +1,16 @@
+Objects:
+  Buyers:
+      - ID: buyer1
+        Name: buyer1
+  CostCenters:
+      - ID: costcenter
+        Name: required
+      - ID: costcenter1
+        Name: required
+        BuyerID: 123
+      - ID: costcenter2
+        Name: required
+        BuyerID: buyer2
+      - ID: costcenter3
+        Name: required
+        BuyerID: buyer1

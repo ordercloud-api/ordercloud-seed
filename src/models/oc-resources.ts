@@ -5,6 +5,7 @@ export interface OCResource {
     modelName: string; // matches open api spec model for POST
     children?: OCResourceEnum[];
     isChild?: boolean;
+    parentResource?: OCResource;
     parentRefFieldName?: string; // will be populated if and only if isChild is true
     sdkObject: any;
     isAssignment?: boolean,
@@ -12,7 +13,9 @@ export interface OCResource {
     listMethodName?: string;
     createMethodName?: string;
     foreignKeys?: ForeignKeys;
-    openAPIProperties?: OpenAPIProperties
+    openAPIProperties?: OpenAPIProperties;
+    path: string;
+    requiredCreateFields?: string[];
 }
 
 export interface OpenAPIProperty {

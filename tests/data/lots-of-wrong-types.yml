@@ -11,3 +11,5 @@ Objects:
   PriceSchedules:
     - Name: ps
       MinQuantity: 5.05
+  Buyers:
+    - ID: missing-a-name
