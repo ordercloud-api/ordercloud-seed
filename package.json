@@ -1,9 +1,9 @@
 {
-  "name": "ordercloud-seed",
-  "version": "1.0.0",
+  "name": "@ordercloud/seeding",
+  "version": "1.0.1",
   "description": "Download and upload seeding files from the OrderCloud platform.",
   "bin": {
-    "ordercloud-seed": "cli-entry.js"
+    "ordercloud-seed": "cli.js"
   },
   "scripts": {
     "download": "npm run rollup && node dist/download.js",
@@ -12,6 +12,7 @@
     "rollup": "rollup --config"
   },
   "author": "Oliver Heywood",
+  "repository": "https://github.com/ordercloud-api/ordercloud-seed",
   "license": "ISC",
   "jest": {
     "preset": "ts-jest",

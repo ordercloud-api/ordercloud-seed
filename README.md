@@ -1,30 +1,36 @@
-# ordercloud-seed
-Download and upload serialized representations of full organizations
+# @ordercloud/seeding
+Download and upload serialized representations of full ordercloud organizations
 
-## Project status
+[npm package](https://www.npmjs.com/package/@ordercloud/seeding)
 
-This project is still being prototyped. The core OrderCloud team will not have bandwidth to focus on this project until May. Any contributions are very welcome! Reach out to oheywood@four51.com with questions. 
+## CLI Usage 
 
-Un-tested download functionality works. This is a good entry point for learning about the project. Here are steps to run that. 
-- At the root of the project, create a .env file
+`npx @ordercloud/seeding download -e=sandbox -o={organizationId} -u-{username} -p={password}`
+
+`npx @ordercloud/seeding download --help`
+
+** Commands `upload` and `validate` comming.
+## Development
+
+At the root of the project, create a .env file
 ```
 PORTAL_USERNAME="xxxxxxxx" // username and password you use to login to https://portal.ordercloud.io/
 PORTAL_PASSWORD="xxxxxxxx"
-ORG_ID="SShyjwitRe4ibpum"  // Organization ID of the data you want to download
+ORG_ID="xxxxxxxxxxx"  // Organization ID of the data you want to download
 OC_ENV="sandbox"           // "sandbox", "staging", or "" for production
 ```
 - Run `npm install`
-- Run `npm run download`. This should create a file ordercloud-seed.yml with all the data in your organization. 
-
+- Run `npm run rollup` everytime you change source files.
+- Run `node ./cli.js [command]` to debug a command.
+- Run `npm run test` to run unit tests.
 
 ## Vision of what needs to be done 
 
 In rough order of priority
-1. Get a validate (upload) command working that reads a potential upload file and returns any errors
+1. Get a validate command working that reads a potential upload file and returns any errors
 2. Get the upload command working.
-3. Write automated tests of the validate command.
-4. Create nice CLI entry points to this functionality
-5. Nice to have features
+3. Expose functionality in a way that can be consumed by another node project.
+3. Nice to have features
 
 ### 1. Validate 
 
@@ -47,19 +53,7 @@ The reason to have a validate command it to prevent partially successfull upload
 - Use POSTs to create. (except for XpIndices, which has only PUT)
 - Order of operations is critical 
 - Command looks something like `ordercloud-seed import org-id [path] token`
-
-### 3. Testing
-
-### 4. CLI
-
-Want to be able to run commands like `npx ordercloud-seed validate ./path/to/my/data.yml` from any node environment. These should be the commands (upload, validate, download, --help, --version). 
-
-For reference
-https://www.twilio.com/blog/how-to-build-a-cli-with-node-js
-https://zapier.com/engineering/how-to-cli/
-
-We also want to expose these functions in a more traditional npm package way where they can be called from Javascript code. 
-
+ 
 ### 5. Nice to Have features
 - Reference other yaml files
 - Let OC define an ID and then use it as a variable in the yaml

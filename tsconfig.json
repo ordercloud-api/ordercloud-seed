@@ -7,6 +7,6 @@
       "sourceMap": true,
       "outDir": "dist"
     },
-    "include": ["src/**/*"],
+    "include": ["src/**/*", "cli-entry.ts"],
     "lib": ["es2015"]
 }
