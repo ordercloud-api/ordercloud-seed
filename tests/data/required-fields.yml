@@ -5,9 +5,9 @@ Objects:
     - ID: missing_fields
   ProductFacets:
     - ID: missing_fields
-# Assignments:    
-#   ProductAssignments:
-#     - UserGroupID: missing_fields_1
+Assignments:    
+  ProductAssignments:
+    - UserGroupID: missing_fields_1
 
 
 

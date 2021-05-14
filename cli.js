@@ -9,7 +9,7 @@ var fs = require('fs');
 var yaml = require('js-yaml');
 var chalk = require('chalk');
 var emoji = require('node-emoji');
-var pkg = require('lodash');
+var _ = require('lodash');
 var jwt_decode = require('jwt-decode');
 
 function _interopDefaultLegacy (e) { return e && typeof e === 'object' && 'default' in e ? e : { 'default': e }; }
@@ -21,7 +21,7 @@ var fs__default = /*#__PURE__*/_interopDefaultLegacy(fs);
 var yaml__default = /*#__PURE__*/_interopDefaultLegacy(yaml);
 var chalk__default = /*#__PURE__*/_interopDefaultLegacy(chalk);
 var emoji__default = /*#__PURE__*/_interopDefaultLegacy(emoji);
-var pkg__default = /*#__PURE__*/_interopDefaultLegacy(pkg);
+var ___default = /*#__PURE__*/_interopDefaultLegacy(_);
 var jwt_decode__default = /*#__PURE__*/_interopDefaultLegacy(jwt_decode);
 
 class Portal {
@@ -103,7 +103,7 @@ class SeedFile {
             log(`found file: ${filePath}`, MessageType.Success);
         }
         catch (err) {
-            errors.errors.push({ lineNumber: null, message: `No such file or directory ${filePath} found` });
+            errors.push(`No such file or directory ${filePath} found`);
             return false;
         }
         try {
@@ -112,14 +112,14 @@ class SeedFile {
         }
         catch (e) {
             var ex = e;
-            errors.errors.push({ lineNumber: ex.mark.line, message: `YAML Exception in ${filePath}: ${ex.message}` });
+            errors.push(`YAML Exception in ${filePath}: ${ex.message}`);
             return false;
         }
         return true;
     }
 }
 
-const { chunk } = pkg__default['default'];
+const { chunk } = ___default['default'];
 // Its not equivalent to the C# throttler. With some work it could be though.
 async function RunThrottled(items, maxParallelism, asyncAction) {
     let results = [];
@@ -131,7 +131,7 @@ async function RunThrottled(items, maxParallelism, asyncAction) {
     return results;
 }
 
-const { flatten, range } = pkg__default['default'];
+const { flatten, range } = ___default['default'];
 class OrderCloudBulk {
     static async ListAll(resource, ...routeParams) {
         const listFunc = resource.sdkObject[resource.listMethodName];
@@ -200,6 +200,81 @@ var OCResourceEnum;
     OCResourceEnum["PromotionAssignment"] = "PromotionAssignment";
 })(OCResourceEnum || (OCResourceEnum = {}));
 
+const ImpersonationConfigValidationFunc = (record, validator) => {
+    var impersonationBuyerID = record["ImpersonationBuyerID"];
+    var impersonationGroupID = record["ImpersonationGroupID"];
+    var impersonationUserID = record["ImpersonationUserID"];
+    var hasGroupID = !___default['default'].isNil(impersonationGroupID);
+    var hasUserID = !___default['default'].isNil(impersonationUserID);
+    if (___default['default'].isNil(impersonationBuyerID)) {
+        if (hasGroupID && !validator.idCache.has(OCResourceEnum.AdminUserGroups, impersonationGroupID)) {
+            validator.addError(`Invalid reference ImpersonationConfigs.ImpersonationGroupID: no AdminUserGroup found with ID \"${impersonationGroupID}\".`);
+        }
+        if (hasUserID && !validator.idCache.has(OCResourceEnum.AdminUsers, impersonationUserID)) {
+            validator.addError(`Invalid reference ImpersonationConfigs.impersonationUserID: no AdminUser found with ID \"${impersonationUserID}\".`);
+        }
+    }
+    else {
+        if (hasGroupID && !validator.idCache.has(OCResourceEnum.UserGroups, impersonationGroupID)) {
+            validator.addError(`Invalid reference ImpersonationConfigs.ImpersonationGroupID: no UserGroup found with ID \"${impersonationGroupID}\" and BuyerID \"${impersonationBuyerID}\".`);
+        }
+        if (hasUserID && !validator.idCache.has(OCResourceEnum.Users, impersonationUserID)) {
+            validator.addError(`Invalid reference ImpersonationConfigs.impersonationUserID: no User found with ID \"${impersonationUserID}\" and BuyerID \"${impersonationBuyerID}\".`);
+        }
+    }
+};
+const ApiClientValidationFunc = (record, validator) => {
+    var defaultContextUsername = record["DefaultContextUsername"];
+    if (!___default['default'].isNil(defaultContextUsername) && validator.usernameCache.has(defaultContextUsername)) {
+        validator.addError(`Invalid reference ApiClients.DefaultContextUserName: no User, SupplierUser or AdminUser found with Username \"${defaultContextUsername}\".`);
+    }
+};
+const WebhookValidationFunc = (record, validator) => {
+    var _a;
+    var apiClientIDs = (_a = record["ApiClientIDs"]) !== null && _a !== void 0 ? _a : [];
+    var invalidIDs = apiClientIDs.filter(id => !validator.idCache.has(OCResourceEnum.ApiClients, id));
+    if (invalidIDs.length === 0) {
+        validator.addError(`Invalid reference Webhooks.ApiClientIDs: could not find ApiClients with IDs ${invalidIDs.join(", ")}.`);
+    }
+};
+const SecurityProfileAssignmentValidationFunc = (record, validator) => {
+    var buyerID = record["BuyerID"];
+    var supplierID = record["SupplierID"];
+    var userID = record["UserID"];
+    var groupID = record["UserGroupID"];
+    var hasBuyerID = !___default['default'].isNil(buyerID);
+    var hasSupplierID = !___default['default'].isNil(supplierID);
+    var hasUserID = !___default['default'].isNil(userID);
+    var hasGroupID = !___default['default'].isNil(groupID);
+    if (hasBuyerID && hasSupplierID) {
+        return validator.addError(`SecurityProfileAssignment error: cannot include both a BuyerID and a SupplierID`);
+    }
+    else if (hasSupplierID) {
+        if (hasUserID && !validator.idCache.has(OCResourceEnum.SupplierUsers, userID)) {
+            validator.addError(`Invalid reference SecurityProfileAssignment.UserID: no SupplierUser found with ID \"${userID}\" and SupplierID \"${supplierID}\".`);
+        }
+        if (hasGroupID && !validator.idCache.has(OCResourceEnum.SupplierUserGroups, groupID)) {
+            validator.addError(`Invalid reference SecurityProfileAssignment.UserGroupID: no SupplierUserGroups found with ID \"${groupID}\" and SupplierID \"${supplierID}\".`);
+        }
+    }
+    else if (hasBuyerID) {
+        if (hasUserID && !validator.idCache.has(OCResourceEnum.Users, userID)) {
+            validator.addError(`Invalid reference SecurityProfileAssignment.UserID: no User found with ID \"${userID}\" and BuyerID \"${buyerID}\".`);
+        }
+        if (hasGroupID && !validator.idCache.has(OCResourceEnum.UserGroups, groupID)) {
+            validator.addError(`Invalid reference SecurityProfileAssignment.UserGroupID: no UserGroup found with ID \"${groupID}\" and BuyerID \"${buyerID}\".`);
+        }
+    }
+    else {
+        if (hasUserID && !validator.idCache.has(OCResourceEnum.AdminUsers, userID)) {
+            validator.addError(`Invalid reference SecurityProfileAssignment.UserID: no AdminUser found with ID \"${userID}\".`);
+        }
+        if (hasGroupID && !validator.idCache.has(OCResourceEnum.AdminUserGroups, groupID)) {
+            validator.addError(`Invalid reference SecurityProfileAssignment.UserGroupID: no AdminUserGroup found with ID \"${groupID}\".`);
+        }
+    }
+};
+
 const Directory = [
     {
         name: OCResourceEnum.SecurityProfiles,
@@ -214,6 +289,7 @@ const Directory = [
         sdkObject: ordercloudJavascriptSdk.ImpersonationConfigs,
         createPriority: 6,
         path: "/impersonationconfig",
+        customValidationFunc: ImpersonationConfigValidationFunc,
         foreignKeys: {
             ClientID: OCResourceEnum.ApiClients,
             SecurityProfileID: OCResourceEnum.SecurityProfiles,
@@ -221,8 +297,6 @@ const Directory = [
             GroupID: OCResourceEnum.UserGroups,
             UserID: OCResourceEnum.Users,
             ImpersonationBuyerID: OCResourceEnum.Buyers,
-            ImpersonationGroupID: (a, b) => false,
-            ImpersonationUserID: (a, b) => false // todo. I think this could be an admin or buyer user
         }
     },
     {
@@ -271,9 +345,9 @@ const Directory = [
         createPriority: 5,
         path: "/apiclients",
         foreignKeys: {
-            IntegrationEventID: OCResourceEnum.IntegrationEvents,
-            DefaultContextUserName: (a, b) => false, // todo. Look for usernames 
+            IntegrationEventID: OCResourceEnum.IntegrationEvents
         },
+        customValidationFunc: ApiClientValidationFunc,
     },
     {
         name: OCResourceEnum.Incrementors,
@@ -288,9 +362,8 @@ const Directory = [
         sdkObject: ordercloudJavascriptSdk.Webhooks,
         createPriority: 6,
         path: "/webhooks",
-        foreignKeys: {
-            ApiClientIDs: (a, b) => false, // todo. validate list
-        }
+        // for .ApiClientIDs
+        customValidationFunc: WebhookValidationFunc
     },
     {
         name: OCResourceEnum.IntegrationEvents,
@@ -380,7 +453,7 @@ const Directory = [
         isChild: true,
         path: "/buyers/{buyerID}/approvalrules",
         foreignKeys: {
-            ApprovingGroupID: (a, b) => false // todo - can this be a buyer or admin group?
+            ApprovingGroupID: OCResourceEnum.UserGroups
         }
     },
     {
@@ -446,7 +519,7 @@ const Directory = [
         path: "/products",
         foreignKeys: {
             DefaultPriceScheduleID: OCResourceEnum.PriceSchedules,
-            ShipFromAddressID: (a, b) => false,
+            ShipFromAddressID: OCResourceEnum.AdminAddresses,
             DefaultSupplierID: OCResourceEnum.Suppliers
         }
     },
@@ -503,9 +576,8 @@ const Directory = [
             SecurityProfileID: OCResourceEnum.SecurityProfiles,
             BuyerID: OCResourceEnum.Buyers,
             SupplierID: OCResourceEnum.Suppliers,
-            UserID: (a, b) => false,
-            UserGroupID: (a, b) => false // todo. Could be any user group type
         },
+        customValidationFunc: SecurityProfileAssignmentValidationFunc
     },
     {
         name: OCResourceEnum.AdminUserGroupAssignments,
@@ -632,7 +704,7 @@ const Directory = [
         foreignKeys: {
             ProductID: OCResourceEnum.Products,
             BuyerID: OCResourceEnum.Buyers,
-            UserGroupID: OCResourceEnum.SupplierUserGroups,
+            UserGroupID: OCResourceEnum.UserGroups,
             PriceScheduleID: OCResourceEnum.PriceSchedules
         },
     },

@@ -1,3 +1,7 @@
+export interface OpenAPIProperties {
+    [propertyName: string]: OpenAPIProperty;
+}
+
 export interface OpenAPIProperty {
     type: OpenAPIType;
     format? : 'int32' | 'float' | 'password' | 'date-time';

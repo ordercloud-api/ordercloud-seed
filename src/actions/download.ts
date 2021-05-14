@@ -2,7 +2,7 @@ import Portal from '../services/portal'; // why do I have to add the .js here?
 import { Configuration, Tokens } from 'ordercloud-javascript-sdk';
 import SeedFile from '../models/seed-file';
 import OrderCloudBulk from '../services/ordercloud-bulk';
-import { log, MessageType } from '../models/validate-response';
+import { log, MessageType } from '../services/log';
 import { BuildResourceDirectory } from '../models/oc-resource-directory';
 import jwt_decode from "jwt-decode";
 

@@ -1,32 +1,35 @@
 import { BuildResourceDirectory } from "../models/oc-resource-directory";
 import { OCResourceEnum } from "../models/oc-resource-enum";
-import { OCResource, OpenAPIProperties, OpenAPIProperty } from "../models/oc-resources";
+import { OCResource } from "../models/oc-resources";
 import SeedFile from "../models/seed-file";
-import { log, MessageType, ValidateResponse } from "../models/validate-response";
-import { CustomForeignKeyValidation } from '../models/oc-resources';
-import _, { trimEnd } from "lodash";
-import { OpenAPIType } from "../models/open-api";
+import { OpenAPIProperties, OpenAPIProperty, OpenAPIType } from "../models/open-api";
+import _ from 'lodash';
+import { IDCache } from "../services/id-cache";
 
-export async function validate(filePath: string): Promise<ValidateResponse> {
+export async function validate(filePath: string): Promise<string[]> {
     var file = new SeedFile(); 
     var validator = new Validator();
     // validates file is found and is valid yaml
-    var success = file.ReadFromYaml(filePath, validator.response); 
-    if (!success) return validator.response;
+    var success = file.ReadFromYaml(filePath, validator.errors); 
+    if (!success) return validator.errors;
 
     var directory = await BuildResourceDirectory(true);
     // validate duplicate IDs 
     for (let resource of directory) {
         validator.currentResource = resource;
-        if (hasIDProperty(resource.openAPIProperties)) {         
-            validator.idSets[resource.name] = new Set();
+        var hasUsername = "Username" in resource.openAPIProperties;
+        var hasID = hasIDProperty(resource.openAPIProperties);
+        if (hasID || hasUsername) {         
             for (let record of file.GetRecords(resource)) {
-                validator.currentRecord = record;                
-                validator.validateDuplicateIDs();
+                validator.currentRecord = record;   
+                // this step builds validator.idCache, which will be needed for forign key validation later.             
+                if (hasID) validator.validateDuplicateIDs(); 
+                if (hasUsername) validator.validateDuplicateUsernames();
             }
         }
     }
-    // now that idSets are built, can validate forigen keys
+
+    // now that idSets are built, another loop for the rest of validation
     for (let resource of directory) {
         validator.currentResource = resource;
         for (let record of file.GetRecords(resource)) {
@@ -38,26 +41,25 @@ export async function validate(filePath: string): Promise<ValidateResponse> {
                 }
                 let value = record[propName];
                 let foreignKey = resource.foreignKeys[propName];
-                if (isNullOrUndefined(value)) {
+                if (_.isNil(value)) {
                     validator.validateIsRequired(propName);
                 } else {
                     var typeMatches = validator.validateFieldTypeMatches(record[propName], spec);
-                    if (typeMatches &&!isNullOrUndefined(foreignKey)) {
+                    if (typeMatches &&!_.isNil(foreignKey)) {
                         validator.validateForeignKeyExists(foreignKey)
                     }
                 }
-            }    
+            }
+            if (resource.customValidationFunc !== undefined) {
+                resource.customValidationFunc(record, validator); 
+            }
         }
     }
-    return validator.response;
+    return validator.errors;
 }
 
 function hasIDProperty(properties: OpenAPIProperties) {
     return 'ID' in properties;
-}
-
-function isNullOrUndefined(value: any) {
-    return value === null || value === undefined;
 }
 
 function getType(value: any): OpenAPIType {
@@ -69,33 +71,34 @@ function getType(value: any): OpenAPIType {
     return 'number';
 }
 
-class Validator {
-    response = new ValidateResponse();
-    idSets: { [key in OCResourceEnum]?: Set<any> } = {};
-    currentResource : OCResource;
+export class Validator {
+    errors: string[] = [];
+    idCache = new IDCache();
+    usernameCache = new Set<string>();
+    currentResource: OCResource;
     currentRecord: any;
     currentPropertyName: string;
 
+    addError(message:string) {
+        this.errors.push(message);
+    }
+
     validateIsRequired(fieldName: string): boolean {
         if (this.currentResource.requiredCreateFields.includes(fieldName)) {
-            this.response.addError(`Required field ${this.currentResource.name}.${fieldName}: cannot have value ${this.currentRecord[fieldName]}.`);
+            this.addError(`Required field ${this.currentResource.name}.${fieldName}: cannot have value ${this.currentRecord[fieldName]}.`);
             return false;
         }
         return true;
     }
 
-    validateForeignKeyExists(key: OCResourceEnum | CustomForeignKeyValidation):boolean {
+    validateForeignKeyExists(resourceType: OCResourceEnum):boolean {
         var field = this.currentPropertyName;
         var value = this.currentRecord[field];
-        if (_.isFunction(key)) {
-
-        } else {
-            var resourceType = key as OCResourceEnum;
-            var keyExists = this.idSets[resourceType].has(value);
-            if (!keyExists) {
-                this.response.addError(`Invalid reference ${this.currentResource.name}.${field}: no ${resourceType} found with ID \"${value}\".`);
-                return false;
-            }
+        // A standard validation to find an ID of a particular reasource
+        var keyExists = this.idCache.has(resourceType, value);
+        if (!keyExists) {
+            this.addError(`Invalid reference ${this.currentResource.name}.${field}: no ${resourceType} found with ID \"${value}\".`);
+            return false;
         }
         return true;
     }
@@ -149,7 +152,7 @@ class Validator {
                 break;      
         }
         if (error !== null) {
-            this.response.addError(error);
+            this.addError(error);
             return false;
         }
         return true;
@@ -157,19 +160,35 @@ class Validator {
     
     // todo - need to validate duplicates that involve more fields that simply ID. e.g. xpindex 
     validateDuplicateIDs(): boolean {
-        if (isNullOrUndefined(this.currentRecord.ID) || !hasIDProperty(this.currentResource.openAPIProperties)) {
+        if (_.isNil(this.currentRecord.ID) || !hasIDProperty(this.currentResource.openAPIProperties)) {
             return true;
         }
-        var setEntry: string = this.currentResource.isChild ? `${this.currentRecord[this.currentResource.parentRefFieldName]}/${this.currentRecord.ID}` : this.currentRecord.ID;
-        if (this.idSets[this.currentResource.name].has(setEntry)) {
+        var setEntry: string = this.currentResource.isChild ? `${this.currentRecord[this.currentResource.parentRefFieldName]}/${this.currentRecord.ID}` : this.currentRecord.ID;     
+        if (this.idCache.has(this.currentResource.name, setEntry)) {
             var message = `Duplicate ID: multiple ${this.currentResource.name} with ID \"${this.currentRecord.ID}\"`;
             if (setEntry.includes('/')) {
                 message = message.concat(` within the ${this.currentResource.parentRefFieldName} \"${this.currentRecord[this.currentResource.parentRefFieldName]}\"`)
             }
-            this.response.addError(message)
+            this.addError(message)
             return false;
         } else {
-            this.idSets[this.currentResource.name].add(setEntry)
+            this.idCache.add(this.currentResource.name, setEntry);
+        }
+        return true;
+    }
+
+    // username needs to be unique within a marketplace
+    validateDuplicateUsernames(): boolean {
+        var username: string = this.currentRecord.Username;     
+        if (_.isNil(username) || !('Username' in this.currentResource.openAPIProperties)) {
+            return true;
+        }
+        if (this.usernameCache.has(username)) {
+            var message = `Duplicate Username: multiple users with username \"${username}\"`;
+            this.addError(message)
+            return false;
+        } else {
+            this.usernameCache.add(username);
         }
         return true;
     }

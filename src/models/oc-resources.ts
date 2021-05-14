@@ -1,5 +1,6 @@
+import { RecordValidationFunc } from "../services/custom-validation-func";
 import { OCResourceEnum } from "./oc-resource-enum";
-import SeedFile from "./seed-file";
+import { OpenAPIProperties } from "./open-api";
 export interface OCResource {
     name: OCResourceEnum;
     modelName: string; // matches open api spec model for POST
@@ -16,26 +17,11 @@ export interface OCResource {
     openAPIProperties?: OpenAPIProperties;
     path: string;
     requiredCreateFields?: string[];
+    customValidationFunc?: RecordValidationFunc
 }
-
-export interface OpenAPIProperty {
-    type: 'string' | 'integer' | 'number' | 'boolean' | 'object' | 'array';
-    format : 'int32' | 'float' | 'password' | 'date-time';
-    readOnly : boolean;
-    maxLength: number;
-    default: any;
-    minimum: number;
-    maximum: number;
-}
-
 export interface ForeignKeys {
-    [fieldName: string]: OCResourceEnum | CustomForeignKeyValidation;
+    [fieldName: string]: OCResourceEnum;
 }
 
-export interface OpenAPIProperties {
-    [propertyName: string]: OpenAPIProperty;
-}
 
-// TODO - replace boolean with a useful error message.
-export type CustomForeignKeyValidation = (fieldValue: string, file: SeedFile) => boolean
 

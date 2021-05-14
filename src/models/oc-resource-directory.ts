@@ -1,7 +1,10 @@
 import axios from "axios";
+import { isObject } from "lodash";
 import { Addresses, AdminAddresses, AdminUserGroups, AdminUsers, ApiClients, ApprovalRules, Buyers, Catalogs, Categories, CostCenters, CreditCards, ImpersonationConfigs, Incrementors, IntegrationEvents, MessageSenders, OpenIdConnects, PriceSchedules, ProductFacets, Products, Promotions, SecurityProfiles, Specs, SpendingAccounts, SupplierAddresses, Suppliers, SupplierUserGroups, SupplierUsers, UserGroups, Users, Webhooks, XpIndices } from "ordercloud-javascript-sdk";
 import { OCResourceEnum } from "./oc-resource-enum";
 import { OCResource } from "./oc-resources";
+import _ from 'lodash';
+import { ApiClientValidationFunc, ImpersonationConfigValidationFunc, SecurityProfileAssignmentValidationFunc, WebhookValidationFunc } from "../services/custom-validation-func";
 
 const Directory: OCResource[] = [
     { 
@@ -17,6 +20,7 @@ const Directory: OCResource[] = [
         sdkObject: ImpersonationConfigs,
         createPriority: 6,
         path: "/impersonationconfig",
+        customValidationFunc: ImpersonationConfigValidationFunc,
         foreignKeys: {
             ClientID: OCResourceEnum.ApiClients,
             SecurityProfileID: OCResourceEnum.SecurityProfiles,
@@ -24,8 +28,6 @@ const Directory: OCResource[] = [
             GroupID: OCResourceEnum.UserGroups,
             UserID: OCResourceEnum.Users,
             ImpersonationBuyerID: OCResourceEnum.Buyers,
-            ImpersonationGroupID: (a,b) => false, // todo. I think this could be an admin or buyer user group
-            ImpersonationUserID: (a,b,) => false // todo. I think this could be an admin or buyer user
         }
     },
     {
@@ -76,9 +78,9 @@ const Directory: OCResource[] = [
         path: "/apiclients",
         foreignKeys:
         {
-            IntegrationEventID: OCResourceEnum.IntegrationEvents,
-            DefaultContextUserName: (a,b) => false, // todo. Look for usernames 
+            IntegrationEventID: OCResourceEnum.IntegrationEvents
         },
+        customValidationFunc: ApiClientValidationFunc, 
     },
     {
         name: OCResourceEnum.Incrementors,
@@ -93,10 +95,8 @@ const Directory: OCResource[] = [
         sdkObject: Webhooks,
         createPriority: 6,
         path: "/webhooks",
-        foreignKeys:
-        {
-            ApiClientIDs:  (a,b) => false, // todo. validate list
-        }
+        // for .ApiClientIDs
+        customValidationFunc: WebhookValidationFunc
     },
     {
         name: OCResourceEnum.IntegrationEvents, 
@@ -187,7 +187,7 @@ const Directory: OCResource[] = [
         isChild: true,
         path: "/buyers/{buyerID}/approvalrules",
         foreignKeys: {
-            ApprovingGroupID: (a,b) => false // todo - can this be a buyer or admin group?
+            ApprovingGroupID: OCResourceEnum.UserGroups
         }
     },
     {
@@ -253,7 +253,7 @@ const Directory: OCResource[] = [
         path: "/products",
         foreignKeys: {
             DefaultPriceScheduleID: OCResourceEnum.PriceSchedules,
-            ShipFromAddressID: (a,b) => false, // todo. can be admin or supplier address. 
+            ShipFromAddressID: OCResourceEnum.AdminAddresses,
             DefaultSupplierID: OCResourceEnum.Suppliers
         }
     },
@@ -310,9 +310,8 @@ const Directory: OCResource[] = [
             SecurityProfileID: OCResourceEnum.SecurityProfiles,
             BuyerID: OCResourceEnum.Buyers,
             SupplierID: OCResourceEnum.Suppliers,
-            UserID: (a,b) => false, // todo. Could be any user type
-            UserGroupID: (a,b) => false // todo. Could be any user group type
         },
+        customValidationFunc: SecurityProfileAssignmentValidationFunc
     },
     {
         name: OCResourceEnum.AdminUserGroupAssignments, 
@@ -439,7 +438,7 @@ const Directory: OCResource[] = [
         foreignKeys: {
             ProductID: OCResourceEnum.Products,
             BuyerID: OCResourceEnum.Buyers,
-            UserGroupID: OCResourceEnum.SupplierUserGroups,
+            UserGroupID: OCResourceEnum.UserGroups,
             PriceScheduleID: OCResourceEnum.PriceSchedules
         },
     },
