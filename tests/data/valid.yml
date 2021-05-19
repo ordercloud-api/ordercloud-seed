@@ -1,13 +1,1186 @@
 Objects:
+  SecurityProfiles:
+    - ID: BuyerAccess
+      Name: BuyerAccess
+      Roles:
+        - BuyerImpersonation
+        - MeAddressAdmin
+        - MeAdmin
+        - MeCreditCardAdmin
+        - MeXpAdmin
+        - Shopper
+      CustomRoles: []
+      PasswordConfig: null
+    - ID: FullAccess
+      Name: FullAccess
+      Roles:
+        - FullAccess
+      CustomRoles: []
+      PasswordConfig: null
+  ImpersonationConfigs:
+    - ID: nlc_admin_impersonate_buyer
+      ImpersonationBuyerID: null
+      ImpersonationGroupID: null
+      ImpersonationUserID: HFDBMoZbGk2S01bGsNhWVw
+      BuyerID: axVUG0NjV0ml-0OW1IkWBg
+      GroupID: null
+      UserID: null
+      SecurityProfileID: BuyerAccess
+      ClientID: 961e29d7-7783-42d0-ac5d-a46ecd7f5765
+    - ID: nlc_admin_impersonate_buyer2
+      ImpersonationBuyerID: null
+      ImpersonationGroupID: null
+      ImpersonationUserID: HFDBMoZbGk2S01bGsNhWVw
+      BuyerID: cloud_coffee
+      GroupID: null
+      UserID: null
+      SecurityProfileID: BuyerAccess
+      ClientID: 961e29d7-7783-42d0-ac5d-a46ecd7f5765
+    - ID: uptown_impersonate_northeast2
+      ImpersonationBuyerID: axVUG0NjV0ml-0OW1IkWBg
+      ImpersonationGroupID: uptown
+      ImpersonationUserID: null
+      BuyerID: axVUG0NjV0ml-0OW1IkWBg
+      GroupID: northeast
+      UserID: null
+      SecurityProfileID: BuyerAccess
+      ClientID: 961e29d7-7783-42d0-ac5d-a46ecd7f5765
+    - ID: uptown_impersonate_northeast
+      ImpersonationBuyerID: cloud_coffee
+      ImpersonationGroupID: burbank
+      ImpersonationUserID: null
+      BuyerID: cloud_coffee
+      GroupID: burbank
+      UserID: null
+      SecurityProfileID: BuyerAccess
+      ClientID: 961e29d7-7783-42d0-ac5d-a46ecd7f5765
+  OpenIdConnects: []
+  AdminUsers:
+    - ID: HFDBMoZbGk2S01bGsNhWVw
+      Username: nlcadmin
+      Password: null
+      FirstName: Jon
+      LastName: Doe
+      Email: jdoe@gmail.com
+      Phone: null
+      TermsAccepted: null
+      Active: true
+      xp: null
+      AvailableRoles:
+        - FullAccess
+      DateCreated: '2020-11-12T16:06:08.56+00:00'
+      PasswordLastSetDate: '2020-11-18T14:38:28.503+00:00'
+  AdminUserGroups: []
+  AdminAddresses: []
+  MessageSenders: []
+  ApiClients:
+    - ID: 533320c2-623e-4e70-b96a-7d16f79f60ee
+      ClientSecret: <Redacted for Security>
+      AccessTokenDuration: 500
+      Active: true
+      AppName: Integrations
+      RefreshTokenDuration: 0
+      DefaultContextUserName: nlcadmin
+      xp: {}
+      AllowAnyBuyer: false
+      AllowAnySupplier: false
+      AllowSeller: true
+      IsAnonBuyer: false
+      AssignedBuyerCount: 0
+      AssignedSupplierCount: 0
+      OrderCheckoutIntegrationEventID: null
+      OrderCheckoutIntegrationEventName: null
+      MinimumRequiredRoles: []
+      MinimumRequiredCustomRoles: []
+      MaximumGrantedRoles: []
+      MaximumGrantedCustomRoles: []
+    - ID: 961e29d7-7783-42d0-ac5d-a46ecd7f5765
+      ClientSecret: null
+      AccessTokenDuration: 500
+      Active: true
+      AppName: Buyer App
+      RefreshTokenDuration: 0
+      DefaultContextUserName: bill
+      xp: null
+      AllowAnyBuyer: true
+      AllowAnySupplier: false
+      AllowSeller: false
+      IsAnonBuyer: true
+      AssignedBuyerCount: 0
+      AssignedSupplierCount: 0
+      OrderCheckoutIntegrationEventID: null
+      OrderCheckoutIntegrationEventName: null
+      MinimumRequiredRoles: []
+      MinimumRequiredCustomRoles: []
+      MaximumGrantedRoles: []
+      MaximumGrantedCustomRoles: []
+    - ID: b5c9244a-4a98-46f5-9016-e12c7ff97738
+      ClientSecret: null
+      AccessTokenDuration: 500
+      Active: true
+      AppName: Seller App
+      RefreshTokenDuration: 0
+      DefaultContextUserName: nlcadmin
+      xp: null
+      AllowAnyBuyer: false
+      AllowAnySupplier: false
+      AllowSeller: true
+      IsAnonBuyer: false
+      AssignedBuyerCount: 0
+      AssignedSupplierCount: 0
+      OrderCheckoutIntegrationEventID: null
+      OrderCheckoutIntegrationEventName: null
+      MinimumRequiredRoles: []
+      MinimumRequiredCustomRoles: []
+      MaximumGrantedRoles: []
+      MaximumGrantedCustomRoles: []
+  Incrementors: []
+  Webhooks: []
+  IntegrationEvents: []
+  XpIndices: []
   Buyers:
-      - ID: buyer1
-        Name: metrocoffeebuyer
-      - ID: buyer2
-        Name: cloud_coffee
-  CostCenters:
-      - ID: costcenter
-        Name: required
-        BuyerID: buyer1
-      - ID: costcenter
-        Name: required
-        BuyerID: buyer2
+    - ID: axVUG0NjV0ml-0OW1IkWBg
+      Name: metrocoffeebuyer
+      DefaultCatalogID: axVUG0NjV0ml-0OW1IkWBg
+      Active: true
+      DateCreated: '2020-11-12T16:07:13.86+00:00'
+      xp: null
+    - ID: cloud_coffee
+      Name: Cloud Coffee
+      DefaultCatalogID: cloud_coffee
+      Active: true
+      DateCreated: '2020-11-13T17:16:29.823+00:00'
+      xp: {}
+  Users:
+    - ID: _e4sK4SKU0mc1JH4o7mVBw
+      Username: metrocoffeebuyer
+      Password: null
+      FirstName: Jane
+      LastName: Doe
+      Email: jdoe@live.com
+      Phone: null
+      TermsAccepted: null
+      Active: true
+      xp: null
+      AvailableRoles:
+        - BuyerImpersonation
+        - MeAddressAdmin
+        - MeAdmin
+        - MeCreditCardAdmin
+        - MeXpAdmin
+        - Shopper
+      DateCreated: '2020-11-12T16:08:31.547+00:00'
+      PasswordLastSetDate: '2020-11-12T16:08:31.567+00:00'
+      BuyerID: axVUG0NjV0ml-0OW1IkWBg
+    - ID: bill
+      Username: bill
+      Password: null
+      FirstName: Bill
+      LastName: Test
+      Email: bill@test.com
+      Phone: 222-222-2222
+      TermsAccepted: '2018-01-01T06:00:00+00:00'
+      Active: true
+      xp: {}
+      AvailableRoles:
+        - BuyerImpersonation
+        - MeAddressAdmin
+        - MeAdmin
+        - MeCreditCardAdmin
+        - MeXpAdmin
+        - Shopper
+      DateCreated: '2020-11-13T16:34:16.72+00:00'
+      PasswordLastSetDate: '2020-11-13T16:34:16.75+00:00'
+      BuyerID: axVUG0NjV0ml-0OW1IkWBg
+    - ID: jill
+      Username: jill
+      Password: null
+      FirstName: Jill
+      LastName: Test
+      Email: jill@test.com
+      Phone: 222-222-2222
+      TermsAccepted: '2018-01-01T06:00:00+00:00'
+      Active: true
+      xp: {}
+      AvailableRoles:
+        - BuyerImpersonation
+        - MeAddressAdmin
+        - MeAdmin
+        - MeCreditCardAdmin
+        - MeXpAdmin
+        - Shopper
+      DateCreated: '2020-11-13T16:33:03.95+00:00'
+      PasswordLastSetDate: '2020-11-13T16:33:03.99+00:00'
+      BuyerID: axVUG0NjV0ml-0OW1IkWBg
+    - ID: jon
+      Username: jon
+      Password: null
+      FirstName: Jon
+      LastName: Test
+      Email: jon@test.com
+      Phone: 222-222-2222
+      TermsAccepted: '2018-01-01T06:00:00+00:00'
+      Active: true
+      xp: {}
+      AvailableRoles:
+        - BuyerImpersonation
+        - MeAddressAdmin
+        - MeAdmin
+        - MeCreditCardAdmin
+        - MeXpAdmin
+        - Shopper
+      DateCreated: '2020-11-13T16:34:39.437+00:00'
+      PasswordLastSetDate: '2020-11-13T16:34:39.46+00:00'
+      BuyerID: axVUG0NjV0ml-0OW1IkWBg
+    - ID: grace
+      Username: grace
+      Password: null
+      FirstName: Grace
+      LastName: Test
+      Email: grace@test.com
+      Phone: 222-222-2222
+      TermsAccepted: '2018-01-01T06:00:00+00:00'
+      Active: true
+      xp: {}
+      AvailableRoles:
+        - BuyerImpersonation
+        - MeAddressAdmin
+        - MeAdmin
+        - MeCreditCardAdmin
+        - MeXpAdmin
+        - Shopper
+      DateCreated: '2020-11-13T20:04:01.283+00:00'
+      PasswordLastSetDate: '2020-11-13T20:04:01.303+00:00'
+      BuyerID: cloud_coffee
+    - ID: june
+      Username: june
+      Password: null
+      FirstName: June
+      LastName: Test
+      Email: june@test.com
+      Phone: 222-222-2222
+      TermsAccepted: '2018-01-01T06:00:00+00:00'
+      Active: true
+      xp: {}
+      AvailableRoles:
+        - BuyerImpersonation
+        - MeAddressAdmin
+        - MeAdmin
+        - MeCreditCardAdmin
+        - MeXpAdmin
+        - Shopper
+      DateCreated: '2020-11-13T20:04:46.007+00:00'
+      PasswordLastSetDate: '2020-11-13T20:04:46.043+00:00'
+      BuyerID: cloud_coffee
+    - ID: todd
+      Username: todd
+      Password: null
+      FirstName: Todd
+      LastName: Test
+      Email: todd@test.com
+      Phone: 222-222-2222
+      TermsAccepted: '2018-01-01T06:00:00+00:00'
+      Active: true
+      xp: {}
+      AvailableRoles:
+        - BuyerImpersonation
+        - MeAddressAdmin
+        - MeAdmin
+        - MeCreditCardAdmin
+        - MeXpAdmin
+        - Shopper
+      DateCreated: '2020-11-13T20:04:54.87+00:00'
+      PasswordLastSetDate: '2020-11-13T20:04:54.893+00:00'
+      BuyerID: cloud_coffee
+  UserGroups:
+    - ID: northeast
+      Name: Northeast
+      Description: Metro Coffee - Northeast
+      xp: {}
+      BuyerID: axVUG0NjV0ml-0OW1IkWBg
+    - ID: uptown
+      Name: Uptown
+      Description: Metro Coffee - Uptown
+      xp: {}
+      BuyerID: axVUG0NjV0ml-0OW1IkWBg
+    - ID: burbank
+      Name: Burbank
+      Description: Cloud Coffee - Burbank
+      xp: {}
+      BuyerID: cloud_coffee
+    - ID: la
+      Name: Los Angeles
+      Description: Cloud Coffee - Los Angeles
+      xp: {}
+      BuyerID: cloud_coffee
+  Addresses:
+    - ID: northeast
+      DateCreated: '2020-11-13T17:13:53.33+00:00'
+      CompanyName: Metro Coffee - Northeast
+      FirstName: Bill
+      LastName: Test
+      Street1: 591 Willson St NE
+      Street2: ''
+      City: Minneapolis
+      State: MN
+      Zip: '55401'
+      Country: US
+      Phone: '6128059997'
+      AddressName: Northeast Shipping
+      xp: {}
+      BuyerID: axVUG0NjV0ml-0OW1IkWBg
+    - ID: uptown
+      DateCreated: '2020-11-13T17:13:48.423+00:00'
+      CompanyName: Metro Coffee - Uptown
+      FirstName: Jill
+      LastName: Test
+      Street1: 2504 Rocket Drive
+      Street2: ''
+      City: Minneapolis
+      State: MN
+      Zip: '55409'
+      Country: US
+      Phone: '6128244475'
+      AddressName: Uptown Shipping
+      xp: {}
+      BuyerID: axVUG0NjV0ml-0OW1IkWBg
+    - ID: burbank_shipping
+      DateCreated: '2020-11-13T20:08:12.253+00:00'
+      CompanyName: Cloud Coffee - Burbank
+      FirstName: Todd
+      LastName: Test
+      Street1: 3055 Joy Lane
+      Street2: ''
+      City: Burbank
+      State: CA
+      Zip: '91502'
+      Country: US
+      Phone: '2139260601'
+      AddressName: Burbank Shipping
+      xp: {}
+      BuyerID: cloud_coffee
+    - ID: la_shipping
+      DateCreated: '2020-11-13T20:08:09.55+00:00'
+      CompanyName: Cloud Coffee - Los Angeles
+      FirstName: Grace
+      LastName: Test
+      Street1: 804 Thompson Street
+      Street2: ''
+      City: Los Angeles
+      State: CA
+      Zip: '90017'
+      Country: US
+      Phone: '3102103355'
+      AddressName: Los Angeles Shipping
+      xp: {}
+      BuyerID: cloud_coffee
+    - ID: uptown
+      DateCreated: '2020-11-17T19:41:05.167+00:00'
+      CompanyName: Metro Coffee - Uptown
+      FirstName: Jill
+      LastName: Test
+      Street1: 2504 Rocket Drive
+      Street2: ''
+      City: Minneapolis
+      State: MN
+      Zip: '55409'
+      Country: US
+      Phone: '6128244475'
+      AddressName: Uptown Shipping
+      xp: {}
+      BuyerID: cloud_coffee
+  CostCenters: []
+  CreditCards: []
+  SpendingAccounts:
+    - ID: northeast_spending_account
+      Name: Northeast Store Budget
+      Balance: 50000
+      AllowAsPaymentMethod: true
+      RedemptionCode: null
+      StartDate: null
+      EndDate: null
+      xp: {}
+      BuyerID: axVUG0NjV0ml-0OW1IkWBg
+    - ID: uptown_spending_account
+      Name: Uptown Store Budget
+      Balance: 25000
+      AllowAsPaymentMethod: true
+      RedemptionCode: null
+      StartDate: null
+      EndDate: null
+      xp: {}
+      BuyerID: axVUG0NjV0ml-0OW1IkWBg
+    - ID: burbank_spending_account
+      Name: Burbank Store Budget
+      Balance: 50000
+      AllowAsPaymentMethod: true
+      RedemptionCode: null
+      StartDate: null
+      EndDate: null
+      xp: {}
+      BuyerID: cloud_coffee
+    - ID: la_spending_account
+      Name: Los Angeles Store Budget
+      Balance: 25000
+      AllowAsPaymentMethod: true
+      RedemptionCode: null
+      StartDate: null
+      EndDate: null
+      xp: {}
+      BuyerID: cloud_coffee
+  ApprovalRules:
+    - ID: metro_coffee_northeast_approval
+      Name: Metro Coffee - Northeast Approval
+      Description: >-
+        Approval needed for all orders over $100.00 made from Metro Coffee's
+        Northeast location.
+      ApprovingGroupID: uptown
+      RuleExpression: order.Total > 100
+      xp: {}
+      BuyerID: axVUG0NjV0ml-0OW1IkWBg
+  Catalogs:
+    - ID: cloud_coffee
+      OwnerID: SShyjwitRe4ibpum
+      Name: Cloud Coffee
+      Description: Default catalog for Cloud Coffee
+      Active: true
+      CategoryCount: 0
+      xp: null
+    - ID: axVUG0NjV0ml-0OW1IkWBg
+      OwnerID: SShyjwitRe4ibpum
+      Name: metrocoffeebuyer
+      Description: Default catalog for metrocoffeebuyer
+      Active: true
+      CategoryCount: 0
+      xp: null
+    - ID: nlc_catalog
+      OwnerID: SShyjwitRe4ibpum
+      Name: Northern Lights Coffee Product Catalog
+      Description: Products all supplied by Northern Lights Coffee Roastery
+      Active: true
+      CategoryCount: 3
+      xp: {}
+  Categories:
+    - ID: coffee_supplies
+      Name: Coffee Supplies
+      Description: Supplies for use brewing and making coffee beverages
+      ListOrder: 1
+      Active: true
+      ParentID: null
+      ChildCount: 0
+      xp: {}
+      CatalogID: nlc_catalog
+    - ID: coffeehouse_essentials
+      Name: Coffeehouse Essentials
+      Description: Essentials for everday operations at coffee establishments
+      ListOrder: 1
+      Active: true
+      ParentID: null
+      ChildCount: 0
+      xp: {}
+      CatalogID: nlc_catalog
+    - ID: coffeehouse_snacks
+      Name: Coffeehouse Snacks
+      Description: Snacks perfect to stock your bakery case.
+      ListOrder: 1
+      Active: true
+      ParentID: null
+      ChildCount: 0
+      xp: {}
+      CatalogID: nlc_catalog
+  Suppliers: []
+  Products:
+    - OwnerID: SShyjwitRe4ibpum
+      DefaultPriceScheduleID: bar_towels
+      AutoForward: false
+      ID: bar_towels
+      Name: Bar Towels (Pack of 8)
+      Description: Pack of 8 premium bar towels.
+      QuantityMultiplier: 8
+      ShipWeight: 0
+      ShipHeight: 0
+      ShipWidth: 0
+      ShipLength: 0
+      Active: true
+      SpecCount: 0
+      VariantCount: 0
+      ShipFromAddressID: null
+      Inventory:
+        Enabled: false
+        NotificationPoint: 0
+        VariantLevelTracking: false
+        OrderCanExceed: false
+        QuantityAvailable: 0
+        LastUpdated: '2021-02-22T18:21:44.967+00:00'
+      DefaultSupplierID: null
+      xp:
+        Brand: Uline
+        Size: 10x10in
+        contentfulEntryID: JwWbIpqeHI5OgdSXLmrfJ
+    - OwnerID: SShyjwitRe4ibpum
+      DefaultPriceScheduleID: barista_apron
+      AutoForward: false
+      ID: barista_apron
+      Name: Barista Apron
+      Description: Our barista aprons are the perfect mix of practicality and fashion.
+      QuantityMultiplier: 1
+      ShipWeight: 0
+      ShipHeight: 0
+      ShipWidth: 0
+      ShipLength: 0
+      Active: true
+      SpecCount: 0
+      VariantCount: 0
+      ShipFromAddressID: null
+      Inventory:
+        Enabled: false
+        NotificationPoint: 0
+        VariantLevelTracking: false
+        OrderCanExceed: false
+        QuantityAvailable: 0
+        LastUpdated: '2021-01-27T21:01:28.483+00:00'
+      DefaultSupplierID: null
+      xp:
+        Brand: Uline
+        Size: One-Size
+        contentfulEntryID: 3NmZoao4rVDUciRoL2alte
+    - OwnerID: SShyjwitRe4ibpum
+      DefaultPriceScheduleID: coffee_cups
+      AutoForward: false
+      ID: coffee_cups
+      Name: Coffee Cups
+      Description: 12oz Branded Coffee Cups
+      QuantityMultiplier: 1
+      ShipWeight: 0
+      ShipHeight: 0
+      ShipWidth: 0
+      ShipLength: 0
+      Active: true
+      SpecCount: 0
+      VariantCount: 0
+      ShipFromAddressID: null
+      Inventory:
+        Enabled: false
+        NotificationPoint: 0
+        VariantLevelTracking: false
+        OrderCanExceed: false
+        QuantityAvailable: 0
+        LastUpdated: '2021-01-27T21:02:18.943+00:00'
+      DefaultSupplierID: null
+      xp:
+        Brand: Uline
+        Size: 12oz
+        contentfulEntryID: 2UHNqgjAUGD1IcmGwnF0Nr
+    - OwnerID: SShyjwitRe4ibpum
+      DefaultPriceScheduleID: croissants
+      AutoForward: false
+      ID: croissants
+      Name: Croissants (Pack of 8)
+      Description: Pack of 8 French style croissants.
+      QuantityMultiplier: 1
+      ShipWeight: 0
+      ShipHeight: 0
+      ShipWidth: 0
+      ShipLength: 0
+      Active: true
+      SpecCount: 0
+      VariantCount: 0
+      ShipFromAddressID: null
+      Inventory:
+        Enabled: false
+        NotificationPoint: 0
+        VariantLevelTracking: false
+        OrderCanExceed: false
+        QuantityAvailable: 0
+        LastUpdated: '2020-11-16T17:29:17.5+00:00'
+      DefaultSupplierID: null
+      xp:
+        Brand: Northern Lights Coffee
+    - OwnerID: SShyjwitRe4ibpum
+      DefaultPriceScheduleID: null
+      AutoForward: false
+      ID: espresso_tamper
+      Name: Espresso Tamper
+      Description: A premium convex espresso tamper.
+      QuantityMultiplier: 1
+      ShipWeight: 0
+      ShipHeight: 0
+      ShipWidth: 0
+      ShipLength: 0
+      Active: true
+      SpecCount: 0
+      VariantCount: 0
+      ShipFromAddressID: null
+      Inventory:
+        Enabled: false
+        NotificationPoint: 0
+        VariantLevelTracking: false
+        OrderCanExceed: false
+        QuantityAvailable: 0
+        LastUpdated: '2020-11-16T17:29:01.53+00:00'
+      DefaultSupplierID: null
+      xp:
+        Brand: Benicci
+    - OwnerID: SShyjwitRe4ibpum
+      DefaultPriceScheduleID: ground_coffee_beans
+      AutoForward: false
+      ID: ground_coffee_beans
+      Name: Ground Coffee Beans
+      Description: >-
+        16oz bag of our freshly ground coffee beans. Our grind is optimal for
+        pour over coffee brewing.
+      QuantityMultiplier: 1
+      ShipWeight: 0
+      ShipHeight: 0
+      ShipWidth: 0
+      ShipLength: 0
+      Active: true
+      SpecCount: 0
+      VariantCount: 0
+      ShipFromAddressID: null
+      Inventory:
+        Enabled: false
+        NotificationPoint: 0
+        VariantLevelTracking: false
+        OrderCanExceed: false
+        QuantityAvailable: 0
+        LastUpdated: '2020-11-16T17:28:54.623+00:00'
+      DefaultSupplierID: null
+      xp:
+        Brand: Northern Lights Coffee
+        Size: 1lb
+    - OwnerID: SShyjwitRe4ibpum
+      DefaultPriceScheduleID: null
+      AutoForward: false
+      ID: 0CYlo_tur06V42DaXd7wwg
+      Name: sdfsdf
+      Description: null
+      QuantityMultiplier: 1
+      ShipWeight: null
+      ShipHeight: null
+      ShipWidth: null
+      ShipLength: null
+      Active: false
+      SpecCount: 0
+      VariantCount: 0
+      ShipFromAddressID: null
+      Inventory: null
+      DefaultSupplierID: null
+      xp: null
+    - OwnerID: SShyjwitRe4ibpum
+      DefaultPriceScheduleID: vanilla_flavoring_syrup
+      AutoForward: false
+      ID: vanilla_flavoring_syrup
+      Name: Vanilla Flavoring Syrup
+      Description: A premium syrup used for flavoring beverages.
+      QuantityMultiplier: 1
+      ShipWeight: 0
+      ShipHeight: 0
+      ShipWidth: 0
+      ShipLength: 0
+      Active: true
+      SpecCount: 0
+      VariantCount: 0
+      ShipFromAddressID: null
+      Inventory:
+        Enabled: false
+        NotificationPoint: 0
+        VariantLevelTracking: false
+        OrderCanExceed: false
+        QuantityAvailable: 0
+        LastUpdated: '2020-11-16T17:29:04.39+00:00'
+      DefaultSupplierID: null
+      xp:
+        Brand: Torani
+        Size: 750mL
+    - OwnerID: SShyjwitRe4ibpum
+      DefaultPriceScheduleID: white_chocolate_flavoring
+      AutoForward: false
+      ID: white_chocolate_flavoring
+      Name: White Chocolate Flavoring
+      Description: A premium white chocolate flavoring for use in food and beverage.
+      QuantityMultiplier: 1
+      ShipWeight: 0
+      ShipHeight: 0
+      ShipWidth: 0
+      ShipLength: 0
+      Active: true
+      SpecCount: 0
+      VariantCount: 0
+      ShipFromAddressID: null
+      Inventory:
+        Enabled: false
+        NotificationPoint: 0
+        VariantLevelTracking: false
+        OrderCanExceed: false
+        QuantityAvailable: 0
+        LastUpdated: '2020-11-16T17:29:11.093+00:00'
+      DefaultSupplierID: null
+      xp:
+        Brand: Torani
+        Size: 750mL
+    - OwnerID: SShyjwitRe4ibpum
+      DefaultPriceScheduleID: whole_coffee_beans
+      AutoForward: false
+      ID: whole_coffee_beans
+      Name: Whole Coffee Beans
+      Description: 16oz bag of our freshly roasted coffee beans.
+      QuantityMultiplier: 1
+      ShipWeight: 0
+      ShipHeight: 0
+      ShipWidth: 0
+      ShipLength: 0
+      Active: true
+      SpecCount: 0
+      VariantCount: 0
+      ShipFromAddressID: null
+      Inventory:
+        Enabled: false
+        NotificationPoint: 0
+        VariantLevelTracking: false
+        OrderCanExceed: false
+        QuantityAvailable: 0
+        LastUpdated: '2020-11-16T17:28:51.92+00:00'
+      DefaultSupplierID: null
+      xp:
+        Brand: Northern Lights Coffee
+        Size: 1lb
+  PriceSchedules:
+    - ID: bar_towels
+      Name: Bar Towels
+      ApplyTax: true
+      ApplyShipping: true
+      MinQuantity: 1
+      MaxQuantity: null
+      UseCumulativeQuantity: false
+      RestrictedQuantity: false
+      PriceBreaks:
+        - Quantity: 0
+          Price: 13.99
+      xp: {}
+    - ID: barista_apron
+      Name: Barista Apron
+      ApplyTax: false
+      ApplyShipping: true
+      MinQuantity: 1
+      MaxQuantity: null
+      UseCumulativeQuantity: false
+      RestrictedQuantity: false
+      PriceBreaks:
+        - Quantity: 1
+          Price: 24.99
+      xp: {}
+    - ID: ground_coffee_beans
+      Name: Coffee Beans - Ground
+      ApplyTax: true
+      ApplyShipping: true
+      MinQuantity: 1
+      MaxQuantity: null
+      UseCumulativeQuantity: false
+      RestrictedQuantity: false
+      PriceBreaks:
+        - Quantity: 1
+          Price: 12.98
+      xp: {}
+    - ID: whole_coffee_beans
+      Name: Coffee Beans - Whole
+      ApplyTax: true
+      ApplyShipping: true
+      MinQuantity: 1
+      MaxQuantity: null
+      UseCumulativeQuantity: false
+      RestrictedQuantity: false
+      PriceBreaks:
+        - Quantity: 1
+          Price: 12.98
+      xp: {}
+    - ID: coffee_cups
+      Name: Coffee Cups
+      ApplyTax: true
+      ApplyShipping: true
+      MinQuantity: 25
+      MaxQuantity: null
+      UseCumulativeQuantity: false
+      RestrictedQuantity: false
+      PriceBreaks:
+        - Quantity: 1
+          Price: 32.6
+      xp: {}
+    - ID: croissants
+      Name: Croissants - Pack of 8
+      ApplyTax: true
+      ApplyShipping: true
+      MinQuantity: 1
+      MaxQuantity: null
+      UseCumulativeQuantity: false
+      RestrictedQuantity: false
+      PriceBreaks:
+        - Quantity: 1
+          Price: 25.98
+      xp: {}
+    - ID: espresso_tamper_cloudcoffee
+      Name: Espresso Tamper - Cloud Coffee
+      ApplyTax: false
+      ApplyShipping: true
+      MinQuantity: 1
+      MaxQuantity: null
+      UseCumulativeQuantity: false
+      RestrictedQuantity: false
+      PriceBreaks:
+        - Quantity: 1
+          Price: 22
+      xp: {}
+    - ID: espresso_tamper_metrocoffee
+      Name: Espresso Tamper - Metro Coffee
+      ApplyTax: true
+      ApplyShipping: true
+      MinQuantity: 1
+      MaxQuantity: null
+      UseCumulativeQuantity: false
+      RestrictedQuantity: false
+      PriceBreaks:
+        - Quantity: 1
+          Price: 49.98
+      xp: {}
+    - ID: vanilla_flavoring_syrup
+      Name: Vanilla Flavoring Syrup
+      ApplyTax: true
+      ApplyShipping: true
+      MinQuantity: 1
+      MaxQuantity: null
+      UseCumulativeQuantity: false
+      RestrictedQuantity: false
+      PriceBreaks:
+        - Quantity: 1
+          Price: 8.99
+      xp: {}
+    - ID: white_chocolate_flavoring
+      Name: White Chocolatae Flavoring
+      ApplyTax: true
+      ApplyShipping: true
+      MinQuantity: 1
+      MaxQuantity: null
+      UseCumulativeQuantity: false
+      RestrictedQuantity: false
+      PriceBreaks:
+        - Quantity: 1
+          Price: 9.99
+      xp: {}
+  Specs: []
+  ProductFacets:
+    - ID: Brand
+      Name: Brand
+      XpPath: Brand
+      ListOrder: 1
+      MinCount: 0
+      xp: {}
+    - ID: Size
+      Name: Size
+      XpPath: Size
+      ListOrder: 2
+      MinCount: 0
+      xp: {}
+  Promotions:
+    - ID: 5off
+      LineItemLevel: false
+      Code: 5OFF
+      Name: $5 Off Order
+      RedemptionLimit: null
+      RedemptionLimitPerUser: null
+      RedemptionCount: 1
+      Description: Get $5 off your order total when you order at least 1 Bar Towel!
+      FinePrint: Metro Coffee users only.
+      StartDate: '2019-10-01T06:00:00+00:00'
+      ExpirationDate: '2025-11-01T06:00:00+00:00'
+      EligibleExpression: items.any(ProductID = 'bar_towels')
+      ValueExpression: '5'
+      CanCombine: false
+      AllowAllBuyers: false
+      xp: {}
+    - ID: whole_coffee_bean_BOGO
+      LineItemLevel: false
+      Code: BOGO
+      Name: BOGO Whole Coffee Beans
+      RedemptionLimit: null
+      RedemptionLimitPerUser: 2
+      RedemptionCount: 0
+      Description: Buy one of our premium whole coffee bean 1lb bags, get one free!
+      FinePrint: Limit two per customer.
+      StartDate: '2019-10-01T06:00:00+00:00'
+      ExpirationDate: '2025-11-01T06:00:00+00:00'
+      EligibleExpression: items.quantity(ProductID = 'whole_coffee_beans') > 1
+      ValueExpression: >-
+        items.total(ProductID = 'whole_coffee_beans') / items.quantity(ProductID
+        = 'whole_coffee_beans')
+      CanCombine: false
+      AllowAllBuyers: true
+      xp: {}
+Assignments:
+  UserGroupAssignments:
+    - UserGroupID: northeast
+      UserID: bill
+      BuyerID: axVUG0NjV0ml-0OW1IkWBg
+    - UserGroupID: northeast
+      UserID: jon
+      BuyerID: axVUG0NjV0ml-0OW1IkWBg
+    - UserGroupID: uptown
+      UserID: jill
+      BuyerID: axVUG0NjV0ml-0OW1IkWBg
+    - UserGroupID: burbank
+      UserID: june
+      BuyerID: cloud_coffee
+    - UserGroupID: burbank
+      UserID: todd
+      BuyerID: cloud_coffee
+    - UserGroupID: la
+      UserID: grace
+      BuyerID: cloud_coffee
+  SpendingAccountAssignments:
+    - SpendingAccountID: northeast_spending_account
+      UserID: null
+      UserGroupID: northeast
+      AllowExceed: false
+      BuyerID: axVUG0NjV0ml-0OW1IkWBg
+    - SpendingAccountID: uptown_spending_account
+      UserID: null
+      UserGroupID: uptown
+      AllowExceed: false
+      BuyerID: axVUG0NjV0ml-0OW1IkWBg
+    - SpendingAccountID: burbank_spending_account
+      UserID: null
+      UserGroupID: burbank
+      AllowExceed: false
+      BuyerID: cloud_coffee
+    - SpendingAccountID: la_spending_account
+      UserID: null
+      UserGroupID: la
+      AllowExceed: false
+      BuyerID: cloud_coffee
+    - SpendingAccountID: northeast_spending_account
+      UserID: null
+      UserGroupID: northeast
+      AllowExceed: false
+      BuyerID: axVUG0NjV0ml-0OW1IkWBg
+    - SpendingAccountID: uptown_spending_account
+      UserID: null
+      UserGroupID: uptown
+      AllowExceed: false
+      BuyerID: axVUG0NjV0ml-0OW1IkWBg
+    - SpendingAccountID: burbank_spending_account
+      UserID: null
+      UserGroupID: burbank
+      AllowExceed: false
+      BuyerID: cloud_coffee
+    - SpendingAccountID: la_spending_account
+      UserID: null
+      UserGroupID: la
+      AllowExceed: false
+      BuyerID: cloud_coffee
+  AddressAssignments:
+    - AddressID: northeast
+      UserID: null
+      UserGroupID: northeast
+      IsShipping: true
+      IsBilling: true
+      BuyerID: axVUG0NjV0ml-0OW1IkWBg
+    - AddressID: uptown
+      UserID: null
+      UserGroupID: uptown
+      IsShipping: true
+      IsBilling: true
+      BuyerID: axVUG0NjV0ml-0OW1IkWBg
+    - AddressID: burbank_shipping
+      UserID: null
+      UserGroupID: burbank
+      IsShipping: true
+      IsBilling: false
+      BuyerID: cloud_coffee
+    - AddressID: la_shipping
+      UserID: null
+      UserGroupID: la
+      IsShipping: true
+      IsBilling: false
+      BuyerID: cloud_coffee
+  CostCenterAssignments: []
+  CreditCardAssignments: []
+  CategoryAssignments:
+    - CategoryID: coffee_supplies
+      BuyerID: axVUG0NjV0ml-0OW1IkWBg
+      UserID: null
+      UserGroupID: null
+      Visible: true
+      ViewAllProducts: false
+      CatalogID: nlc_catalog
+    - CategoryID: coffee_supplies
+      BuyerID: cloud_coffee
+      UserID: null
+      UserGroupID: null
+      Visible: true
+      ViewAllProducts: true
+      CatalogID: nlc_catalog
+    - CategoryID: coffeehouse_essentials
+      BuyerID: axVUG0NjV0ml-0OW1IkWBg
+      UserID: null
+      UserGroupID: null
+      Visible: true
+      ViewAllProducts: true
+      CatalogID: nlc_catalog
+    - CategoryID: coffeehouse_essentials
+      BuyerID: cloud_coffee
+      UserID: null
+      UserGroupID: null
+      Visible: true
+      ViewAllProducts: true
+      CatalogID: nlc_catalog
+    - CategoryID: coffeehouse_snacks
+      BuyerID: axVUG0NjV0ml-0OW1IkWBg
+      UserID: null
+      UserGroupID: null
+      Visible: true
+      ViewAllProducts: true
+      CatalogID: nlc_catalog
+    - CategoryID: coffeehouse_snacks
+      BuyerID: cloud_coffee
+      UserID: null
+      UserGroupID: null
+      Visible: true
+      ViewAllProducts: true
+      CatalogID: nlc_catalog
+  CategoryProductAssignments:
+    - CategoryID: coffee_supplies
+      ProductID: ground_coffee_beans
+      ListOrder: 1
+      CatalogID: nlc_catalog
+    - CategoryID: coffee_supplies
+      ProductID: vanilla_flavoring_syrup
+      ListOrder: 1
+      CatalogID: nlc_catalog
+    - CategoryID: coffee_supplies
+      ProductID: white_chocolate_flavoring
+      ListOrder: 1
+      CatalogID: nlc_catalog
+    - CategoryID: coffee_supplies
+      ProductID: whole_coffee_beans
+      ListOrder: 1
+      CatalogID: nlc_catalog
+    - CategoryID: coffeehouse_essentials
+      ProductID: bar_towels
+      ListOrder: 1
+      CatalogID: nlc_catalog
+    - CategoryID: coffeehouse_essentials
+      ProductID: barista_apron
+      ListOrder: 1
+      CatalogID: nlc_catalog
+    - CategoryID: coffeehouse_essentials
+      ProductID: coffee_cups
+      ListOrder: 1
+      CatalogID: nlc_catalog
+    - CategoryID: coffeehouse_essentials
+      ProductID: espresso_tamper
+      ListOrder: 1
+      CatalogID: nlc_catalog
+    - CategoryID: coffeehouse_snacks
+      ProductID: croissants
+      ListOrder: 1
+      CatalogID: nlc_catalog
+  SecurityProfileAssignments:
+    - SecurityProfileID: BuyerAccess
+      BuyerID: axVUG0NjV0ml-0OW1IkWBg
+      SupplierID: null
+      UserID: null
+      UserGroupID: null
+    - SecurityProfileID: BuyerAccess
+      BuyerID: cloud_coffee
+      SupplierID: null
+      UserID: null
+      UserGroupID: null
+    - SecurityProfileID: FullAccess
+      BuyerID: null
+      SupplierID: null
+      UserID: HFDBMoZbGk2S01bGsNhWVw
+      UserGroupID: null
+  AdminUserGroupAssignments: []
+  ApiClientAssignments: []
+  ProductAssignments:
+    - ProductID: espresso_tamper
+      BuyerID: axVUG0NjV0ml-0OW1IkWBg
+      UserID: null
+      UserGroupID: null
+      PriceScheduleID: espresso_tamper_metrocoffee
+    - ProductID: espresso_tamper
+      BuyerID: cloud_coffee
+      UserID: null
+      UserGroupID: null
+      PriceScheduleID: espresso_tamper_cloudcoffee
+    - ProductID: ground_coffee_beans
+      BuyerID: axVUG0NjV0ml-0OW1IkWBg
+      UserID: null
+      UserGroupID: uptown
+      PriceScheduleID: null
+    - ProductID: ground_coffee_beans
+      BuyerID: axVUG0NjV0ml-0OW1IkWBg
+      UserID: null
+      UserGroupID: northeast
+      PriceScheduleID: null
+    - ProductID: vanilla_flavoring_syrup
+      BuyerID: axVUG0NjV0ml-0OW1IkWBg
+      UserID: null
+      UserGroupID: uptown
+      PriceScheduleID: null
+    - ProductID: white_chocolate_flavoring
+      BuyerID: axVUG0NjV0ml-0OW1IkWBg
+      UserID: null
+      UserGroupID: uptown
+      PriceScheduleID: null
+    - ProductID: whole_coffee_beans
+      BuyerID: axVUG0NjV0ml-0OW1IkWBg
+      UserID: null
+      UserGroupID: uptown
+      PriceScheduleID: null
+    - ProductID: whole_coffee_beans
+      BuyerID: axVUG0NjV0ml-0OW1IkWBg
+      UserID: null
+      UserGroupID: northeast
+      PriceScheduleID: null
+  CatalogAssignments:
+    - CatalogID: axVUG0NjV0ml-0OW1IkWBg
+      BuyerID: axVUG0NjV0ml-0OW1IkWBg
+      ViewAllCategories: true
+      ViewAllProducts: true
+    - CatalogID: cloud_coffee
+      BuyerID: cloud_coffee
+      ViewAllCategories: true
+      ViewAllProducts: true
+    - CatalogID: nlc_catalog
+      BuyerID: axVUG0NjV0ml-0OW1IkWBg
+      ViewAllCategories: false
+      ViewAllProducts: false
+    - CatalogID: nlc_catalog
+      BuyerID: cloud_coffee
+      ViewAllCategories: false
+      ViewAllProducts: false
+  ProductCatalogAssignment:
+    - CatalogID: nlc_catalog
+      ProductID: bar_towels
+    - CatalogID: nlc_catalog
+      ProductID: barista_apron
+    - CatalogID: nlc_catalog
+      ProductID: coffee_cups
+    - CatalogID: nlc_catalog
+      ProductID: croissants
+    - CatalogID: nlc_catalog
+      ProductID: espresso_tamper
+    - CatalogID: nlc_catalog
+      ProductID: ground_coffee_beans
+    - CatalogID: nlc_catalog
+      ProductID: vanilla_flavoring_syrup
+    - CatalogID: nlc_catalog
+      ProductID: white_chocolate_flavoring
+    - CatalogID: nlc_catalog
+      ProductID: whole_coffee_beans
+  SpecProductAssignments: []
+  PromotionAssignment:
+    - PromotionID: 5off
+      BuyerID: axVUG0NjV0ml-0OW1IkWBg
+      UserID: null
+      UserGroupID: null
