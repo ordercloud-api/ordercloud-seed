@@ -1,0 +1,27 @@
+Objects:   
+  Buyers:
+    - ID: buyer
+      Name: buyer
+  UserGroups:
+    - ID: user-group
+      Name: user-group 
+      BuyerID: buyer
+  AdminUserGroups:
+    - ID: admin-user-group
+      Name: admin-user-group
+  ApiClients:
+    - ID: api # todo - wrong
+      AppName: api
+      AccessTokenDuration: 1
+  SecurityProfiles:
+    - ID: sp
+      Name: sp    
+  ImpersonationConfigs:
+    - ClientID: api
+      BuyerID: buyer
+      ImpersonationGroupID: user-group # wrong
+      SecurityProfileID: sp
+    - ClientID: api
+      BuyerID: buyer
+      ImpersonationGroupID: admin-user-group
+      SecurityProfileID: sp

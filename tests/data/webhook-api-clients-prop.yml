@@ -1,0 +1,26 @@
+Objects: 
+  Webhooks:
+    - Name: a
+      Url: a
+      HashKey: a
+      ApiClientIDs:
+        - api
+        - api2
+        - wrong1
+        - wrong2
+    - Name: a
+      Url: a
+      HashKey: a
+      ApiClientIDs:
+        - api
+        - api2
+  ApiClients:
+    - ID: api # todo - wrong
+      AppName: api
+      AccessTokenDuration: 1
+    - ID: api2 # todo - wrong
+      AppName: api2
+      AccessTokenDuration: 1
+    - ID: api3 # todo - wrong
+      AppName: api3
+      AccessTokenDuration: 1

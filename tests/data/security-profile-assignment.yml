@@ -1,0 +1,71 @@
+Objects:   
+  Buyers:
+    - ID: buyer
+      Name: buyer
+    - ID: buyer2
+      Name: buyer2
+  Suppliers:
+    - ID: supplier
+      Name: supplier    
+  UserGroups:
+    - ID: user-group
+      Name: user-group 
+      BuyerID: buyer
+    - ID: user-group2
+      Name: user-group2
+      BuyerID: buyer2
+  SupplierUsers:
+    - ID: supplier-user
+      SupplierID: supplier
+      Username: supplier
+      FirstName: a
+      LastName: a
+      Email: a
+      Active: true 
+  SupplierUserGroups:
+    - ID: supplier-user-group
+      Name: supplier-user-group
+      SupplierID: supplier  
+  Users:
+    - ID: user
+      BuyerID: buyer
+      Username: user
+      FirstName: a
+      LastName: a
+      Email: a
+      Active: true   
+  AdminUsers:
+    - ID: admin-user
+      Username: admin-users
+      FirstName: a
+      LastName: a
+      Email: a
+      Active: true     
+  AdminUserGroups:
+    - ID: admin-user-group
+      Name: admin-user-group
+  SecurityProfiles:
+    - ID: sp
+      Name: sp    
+Assignments:
+  SecurityProfileAssignments:
+    - SecurityProfileID: sp
+      UserGroupID: admin-user-group
+    - SecurityProfileID: sp
+      UserGroupID: user-group
+    - SecurityProfileID: sp  
+      BuyerID: buyer
+      SupplierID: supplier
+    - SecurityProfileID: sp  
+      BuyerID: buyer
+      UserID: supplier-user   
+    - SecurityProfileID: sp  
+      BuyerID: buyer
+      UserID: user    
+    - SecurityProfileID: sp  
+      BuyerID: buyer
+      UserGroupID: user-group2   
+    - SecurityProfileID: sp  
+      BuyerID: buyer
+      UserGroupID: user-group  
+  

@@ -1,0 +1,18 @@
+Objects: 
+  AdminUsers:
+    - ID: a
+      Username: a
+      FirstName: a
+      LastName: a
+      Email: a
+      Active: true
+  ApiClients:
+    - ID: api # todo - wrong
+      AppName: api
+      AccessTokenDuration: 1
+      DefaultContextUserName: wrong
+    - ID: api2 # todo - wrong
+      AppName: api2
+      AccessTokenDuration: 1
+      DefaultContextUserName: a
+  

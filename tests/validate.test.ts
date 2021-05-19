@@ -81,3 +81,37 @@ test('lots of wrong types', async () => {
     expect(errors[5]).toBe("Required field Buyers.Name: cannot have value undefined.");
     expect(errors[6]).toBe("Incorrect type PriceSchedules.MinQuantity: 5.05 is number. Should be integer.");
 });
+
+test('impersonation config: admin user group', async () => {
+    var errors = await validate("./tests/data/impersonation-config/admin-user-group.yml");
+    expect(errors.length).toBe(1);
+    expect(errors[0]).toBe("Invalid reference ImpersonationConfigs.ImpersonationGroupID: no AdminUserGroup found with ID \"user-group\".");
+});
+
+test('impersonation config: user group', async () => {
+    var errors = await validate("./tests/data/impersonation-config/user-group.yml");
+    expect(errors.length).toBe(2);
+    expect(errors[0]).toBe("Invalid reference ImpersonationConfigs.ImpersonationGroupID: no UserGroup found with ID \"admin-user-group\" and BuyerID \"buyer\".");
+    expect(errors[1]).toBe("Invalid reference ImpersonationConfigs.ImpersonationGroupID: no UserGroup found with ID \"user-group2\" and BuyerID \"buyer\".");
+});
+
+test('api client DefaultContextUserName property', async () => {
+    var errors = await validate("./tests/data/api-client-defaultcontextusername.yml");
+    expect(errors.length).toBe(1);
+    expect(errors[0]).toBe("Invalid reference ApiClients.DefaultContextUserName: no User, SupplierUser or AdminUser found with Username \"wrong\".");
+});
+
+test('webhook ApiClientIDs property', async () => {
+    var errors = await validate("./tests/data/webhook-api-clients-prop.yml");
+    expect(errors.length).toBe(1);
+    expect(errors[0]).toBe("Invalid reference Webhooks.ApiClientIDs: could not find ApiClients with IDs wrong1, wrong2.");
+});
+
+test('security profile assignment', async () => {
+    var errors = await validate("./tests/data/security-profile-assignment.yml");
+    expect(errors.length).toBe(4);
+    expect(errors[0]).toBe("Invalid reference SecurityProfileAssignment.UserGroupID: no AdminUserGroup found with ID \"user-group\".");
+    expect(errors[1]).toBe("SecurityProfileAssignment error: cannot include both a BuyerID and a SupplierID");
+    expect(errors[2]).toBe("Invalid reference SecurityProfileAssignment.UserID: no User found with ID \"supplier-user\" and BuyerID \"buyer\".");
+    expect(errors[3]).toBe("Invalid reference SecurityProfileAssignment.UserGroupID: no UserGroup found with ID \"user-group2\" and BuyerID \"buyer\".");
+});

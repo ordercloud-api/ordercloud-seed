@@ -1,7 +1,7 @@
 import { validate } from "./actions/validate";
 import { log, MessageType } from "./services/log";
 
-validate("./tests/data/required-fields.yml").then(resp => {
+validate("./tests/data/security-profile-assignment.yml").then(resp => {
     for (const error of resp) {
         log(error, MessageType.Error)
     }

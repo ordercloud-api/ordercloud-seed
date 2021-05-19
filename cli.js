@@ -215,17 +215,17 @@ const ImpersonationConfigValidationFunc = (record, validator) => {
         }
     }
     else {
-        if (hasGroupID && !validator.idCache.has(OCResourceEnum.UserGroups, impersonationGroupID)) {
+        if (hasGroupID && !validator.idCache.has(OCResourceEnum.UserGroups, `${impersonationBuyerID}/${impersonationGroupID}`)) {
             validator.addError(`Invalid reference ImpersonationConfigs.ImpersonationGroupID: no UserGroup found with ID \"${impersonationGroupID}\" and BuyerID \"${impersonationBuyerID}\".`);
         }
-        if (hasUserID && !validator.idCache.has(OCResourceEnum.Users, impersonationUserID)) {
+        if (hasUserID && !validator.idCache.has(OCResourceEnum.Users, `${impersonationBuyerID}/${impersonationUserID}`)) {
             validator.addError(`Invalid reference ImpersonationConfigs.impersonationUserID: no User found with ID \"${impersonationUserID}\" and BuyerID \"${impersonationBuyerID}\".`);
         }
     }
 };
 const ApiClientValidationFunc = (record, validator) => {
-    var defaultContextUsername = record["DefaultContextUsername"];
-    if (!___default['default'].isNil(defaultContextUsername) && validator.usernameCache.has(defaultContextUsername)) {
+    var defaultContextUsername = record["DefaultContextUserName"];
+    if (!___default['default'].isNil(defaultContextUsername) && !validator.usernameCache.has(defaultContextUsername)) {
         validator.addError(`Invalid reference ApiClients.DefaultContextUserName: no User, SupplierUser or AdminUser found with Username \"${defaultContextUsername}\".`);
     }
 };
@@ -233,7 +233,7 @@ const WebhookValidationFunc = (record, validator) => {
     var _a;
     var apiClientIDs = (_a = record["ApiClientIDs"]) !== null && _a !== void 0 ? _a : [];
     var invalidIDs = apiClientIDs.filter(id => !validator.idCache.has(OCResourceEnum.ApiClients, id));
-    if (invalidIDs.length === 0) {
+    if (invalidIDs.length !== 0) {
         validator.addError(`Invalid reference Webhooks.ApiClientIDs: could not find ApiClients with IDs ${invalidIDs.join(", ")}.`);
     }
 };
@@ -250,18 +250,18 @@ const SecurityProfileAssignmentValidationFunc = (record, validator) => {
         return validator.addError(`SecurityProfileAssignment error: cannot include both a BuyerID and a SupplierID`);
     }
     else if (hasSupplierID) {
-        if (hasUserID && !validator.idCache.has(OCResourceEnum.SupplierUsers, userID)) {
+        if (hasUserID && !validator.idCache.has(OCResourceEnum.SupplierUsers, `${supplierID}/${userID}`)) {
             validator.addError(`Invalid reference SecurityProfileAssignment.UserID: no SupplierUser found with ID \"${userID}\" and SupplierID \"${supplierID}\".`);
         }
-        if (hasGroupID && !validator.idCache.has(OCResourceEnum.SupplierUserGroups, groupID)) {
+        if (hasGroupID && !validator.idCache.has(OCResourceEnum.SupplierUserGroups, `${supplierID}/${groupID}`)) {
             validator.addError(`Invalid reference SecurityProfileAssignment.UserGroupID: no SupplierUserGroups found with ID \"${groupID}\" and SupplierID \"${supplierID}\".`);
         }
     }
     else if (hasBuyerID) {
-        if (hasUserID && !validator.idCache.has(OCResourceEnum.Users, userID)) {
+        if (hasUserID && !validator.idCache.has(OCResourceEnum.Users, `${buyerID}/${userID}`)) {
             validator.addError(`Invalid reference SecurityProfileAssignment.UserID: no User found with ID \"${userID}\" and BuyerID \"${buyerID}\".`);
         }
-        if (hasGroupID && !validator.idCache.has(OCResourceEnum.UserGroups, groupID)) {
+        if (hasGroupID && !validator.idCache.has(OCResourceEnum.UserGroups, `${buyerID}/${groupID}`)) {
             validator.addError(`Invalid reference SecurityProfileAssignment.UserGroupID: no UserGroup found with ID \"${groupID}\" and BuyerID \"${buyerID}\".`);
         }
     }

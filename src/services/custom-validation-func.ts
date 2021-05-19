@@ -23,25 +23,24 @@ export const ImpersonationConfigValidationFunc: RecordValidationFunc = (record, 
             validator.addError(`Invalid reference ImpersonationConfigs.impersonationUserID: no AdminUser found with ID \"${impersonationUserID}\".`);
         }      
     } else {
-        if (hasGroupID && !validator.idCache.has(OCResourceEnum.UserGroups, impersonationGroupID)) {
+        if (hasGroupID && !validator.idCache.has(OCResourceEnum.UserGroups, `${impersonationBuyerID}/${impersonationGroupID}`)) {
             validator.addError(`Invalid reference ImpersonationConfigs.ImpersonationGroupID: no UserGroup found with ID \"${impersonationGroupID}\" and BuyerID \"${impersonationBuyerID}\".`);
         }
-        if (hasUserID && !validator.idCache.has(OCResourceEnum.Users, impersonationUserID)) {
+        if (hasUserID && !validator.idCache.has(OCResourceEnum.Users, `${impersonationBuyerID}/${impersonationUserID}`)) {
             validator.addError(`Invalid reference ImpersonationConfigs.impersonationUserID: no User found with ID \"${impersonationUserID}\" and BuyerID \"${impersonationBuyerID}\".`);
         } 
     }
 }
 
 export const ApiClientValidationFunc: RecordValidationFunc = (record, validator) => {
-    var defaultContextUsername: string = record["DefaultContextUsername"];
-
-    if (!_.isNil(defaultContextUsername) && validator.usernameCache.has(defaultContextUsername)) {
+    var defaultContextUsername: string = record["DefaultContextUserName"];
+    if (!_.isNil(defaultContextUsername) && !validator.usernameCache.has(defaultContextUsername)) {
         validator.addError(`Invalid reference ApiClients.DefaultContextUserName: no User, SupplierUser or AdminUser found with Username \"${defaultContextUsername}\".`);
     }
 }
 
 export const WebhookValidationFunc: RecordValidationFunc = (record, validator) => {
-    var apiClientIDs: string[] = record["ApiClientIDs"] = [];
+    var apiClientIDs: string[] = record["ApiClientIDs"] ?? [];
 
     var invalidIDs = apiClientIDs.filter(id => !validator.idCache.has(OCResourceEnum.ApiClients, id));
     if (invalidIDs.length !== 0) {
@@ -62,17 +61,17 @@ export const SecurityProfileAssignmentValidationFunc: RecordValidationFunc = (re
     if (hasBuyerID && hasSupplierID) {
         return validator.addError(`SecurityProfileAssignment error: cannot include both a BuyerID and a SupplierID`);
     } else if (hasSupplierID) {
-        if (hasUserID && !validator.idCache.has(OCResourceEnum.SupplierUsers, userID)) {
+        if (hasUserID && !validator.idCache.has(OCResourceEnum.SupplierUsers, `${supplierID}/${userID}`)) {
             validator.addError(`Invalid reference SecurityProfileAssignment.UserID: no SupplierUser found with ID \"${userID}\" and SupplierID \"${supplierID}\".`)
         }
-        if (hasGroupID && !validator.idCache.has(OCResourceEnum.SupplierUserGroups, groupID)) {
+        if (hasGroupID && !validator.idCache.has(OCResourceEnum.SupplierUserGroups, `${supplierID}/${groupID}`)) {
             validator.addError(`Invalid reference SecurityProfileAssignment.UserGroupID: no SupplierUserGroups found with ID \"${groupID}\" and SupplierID \"${supplierID}\".`)
         }
     } else if (hasBuyerID) {
-        if (hasUserID && !validator.idCache.has(OCResourceEnum.Users, userID)) {
+        if (hasUserID && !validator.idCache.has(OCResourceEnum.Users, `${buyerID}/${userID}`)) {
             validator.addError(`Invalid reference SecurityProfileAssignment.UserID: no User found with ID \"${userID}\" and BuyerID \"${buyerID}\".`)
         }
-        if (hasGroupID && !validator.idCache.has(OCResourceEnum.UserGroups, groupID)) {
+        if (hasGroupID && !validator.idCache.has(OCResourceEnum.UserGroups, `${buyerID}/${groupID}`)) {
             validator.addError(`Invalid reference SecurityProfileAssignment.UserGroupID: no UserGroup found with ID \"${groupID}\" and BuyerID \"${buyerID}\".`)
         }
     } else {
