@@ -5,8 +5,11 @@ import OrderCloudBulk from '../services/ordercloud-bulk';
 import { log, MessageType } from '../services/log';
 import { BuildResourceDirectory } from '../models/oc-resource-directory';
 import jwt_decode from "jwt-decode";
+import { OCResource } from '../models/oc-resources';
+import _ from 'lodash';
+import dotenv from 'dotenv';
 
-export async function download(username: string, password: string, environment: string, orgID: string) {
+export async function download(username: string, password: string, environment: string, orgID: string): Promise<void> {
     var missingInputs: string[] = [];
     var validEnvironments = ['staging', 'sandbox', 'prod'];
     var urls = {
@@ -58,29 +61,52 @@ export async function download(username: string, password: string, environment: 
 
     // Pull Data from Ordercloud
     var file = new SeedFile();  
-    var directory = await BuildResourceDirectory(false) 
-    for (let resource of directory) {
+    var directory = await BuildResourceDirectory(false); 
+    for (let key in directory) {
+        var resource = directory[key];
         if (resource.isChild) {
             continue; // resource will be handled as part of its parent
         }
         var records = await OrderCloudBulk.ListAll(resource);
+        RedactSensitiveFields(resource, records);
+        if (resource.downloadTransformFunc !== undefined) {
+            records = records.map(resource.downloadTransformFunc)
+        }
         file.AddRecords(resource, records);
         for (let childResourceName of resource.children)
         {
-            let childResource = directory.find(x => x.name == childResourceName);
+            let childResource = directory[childResourceName];
             for (let parentRecord of records) {
                 var childRecords = await OrderCloudBulk.ListAll(childResource, parentRecord.ID); // assume ID exists. Which is does for all parent types.
                 for (let childRecord of childRecords) {
-                    childRecord[childResource.parentRefFieldName] = parentRecord.ID;
+                    childRecord[childResource.parentRefField] = parentRecord.ID;
+                }
+                if (childResource.downloadTransformFunc !== undefined) {
+                    childRecords = childRecords.map(resource.downloadTransformFunc)
                 }
                 file.AddRecords(childResource, childRecords);
             }
             log("Finished " + childRecords.length + " " + childResourceName);
-
         }
         log("Finished " + records.length + " " + resource.name);
     }
     // Write to file
     file.WriteToYaml('ordercloud-seed.yml');
     log("Done! Wrote to file \"ordercloud-seed.yml\"", MessageType.Success);
+
+    function RedactSensitiveFields(resource: OCResource, records: any[]): void {
+        if (resource.redactFields.length === 0) return;
+
+        for (var record of records) {
+            for (var field of resource.redactFields) {
+                if (!_.isNil(record[field])) {
+                    record[field] = "<Redacted for Security>";
+                }
+            }
+        }
+    }
 } 
+
+dotenv.config({ path: '.env' });
+
+download(process.env.PORTAL_USERNAME, process.env.PORTAL_PASSWORD, process.env.OC_ENV, process.env.ORG_ID);

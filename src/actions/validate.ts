@@ -1,10 +1,11 @@
 import { BuildResourceDirectory } from "../models/oc-resource-directory";
 import { OCResourceEnum } from "../models/oc-resource-enum";
-import { OCResource } from "../models/oc-resources";
+import { ForeignKey, OCResource } from "../models/oc-resources";
 import SeedFile from "../models/seed-file";
 import { OpenAPIProperties, OpenAPIProperty, OpenAPIType } from "../models/open-api";
 import _ from 'lodash';
 import { IDCache } from "../services/id-cache";
+import { log, MessageType } from "../services/log";
 
 export async function validate(filePath: string): Promise<string[]> {
     var file = new SeedFile(); 
@@ -15,12 +16,12 @@ export async function validate(filePath: string): Promise<string[]> {
 
     var directory = await BuildResourceDirectory(true);
     // validate duplicate IDs 
-    for (let resource of directory) {
-        validator.currentResource = resource;
-        var hasUsername = "Username" in resource.openAPIProperties;
-        var hasID = hasIDProperty(resource.openAPIProperties);
+    for (let resourceEnum in directory) {
+        validator.currentResource = directory[resourceEnum];
+        var hasUsername = "Username" in validator.currentResource.openAPIProperties;
+        var hasID = hasIDProperty(validator.currentResource)
         if (hasID || hasUsername) {         
-            for (let record of file.GetRecords(resource)) {
+            for (let record of file.GetRecords(validator.currentResource)) {
                 validator.currentRecord = record;   
                 // this step builds validator.idCache, which will be needed for forign key validation later.             
                 if (hasID) validator.validateDuplicateIDs(); 
@@ -30,36 +31,47 @@ export async function validate(filePath: string): Promise<string[]> {
     }
 
     // now that idSets are built, another loop for the rest of validation
-    for (let resource of directory) {
-        validator.currentResource = resource;
-        for (let record of file.GetRecords(resource)) {
+    for (let resourceEnum in directory) {
+        validator.currentResource = directory[resourceEnum];
+        for (let record of file.GetRecords(validator.currentResource)) {
             validator.currentRecord = record;
-            for (const [propName, spec] of Object.entries(resource.openAPIProperties)) {
+            for (const [propName, spec] of Object.entries(validator.currentResource.openAPIProperties)) {
                 validator.currentPropertyName = propName;
                 if (spec.readOnly) {
                     continue;
                 }
                 let value = record[propName];
-                let foreignKey = resource.foreignKeys[propName];
+                let foreignKey = validator.currentResource.foreignKeys[propName];
                 if (_.isNil(value)) {
                     validator.validateIsRequired(propName);
                 } else {
                     var typeMatches = validator.validateFieldTypeMatches(record[propName], spec);
-                    if (typeMatches &&!_.isNil(foreignKey)) {
-                        validator.validateForeignKeyExists(foreignKey)
+                    if (typeMatches &&!_.isNil(foreignKey)) {    
+                        validator.validateForeignKeyExists(foreignKey);
                     }
                 }
             }
-            if (resource.customValidationFunc !== undefined) {
-                resource.customValidationFunc(record, validator); 
+            if (validator.currentResource.isChild) {
+                validator.currentPropertyName = validator.currentResource.parentRefField;
+                validator.validateParentRef(validator.currentResource.parentResource.name)
+            }
+            if (validator.currentResource.customValidationFunc !== undefined) {
+                validator.currentResource.customValidationFunc(record, validator); 
             }
         }
     }
+    for (const error of validator.errors) {
+        log(error, MessageType.Error)
+    }
+    if (validator.errors.length === 0) {
+        log("Is Valid!", MessageType.Success);
+    }
+
     return validator.errors;
 }
 
-function hasIDProperty(properties: OpenAPIProperties) {
-    return 'ID' in properties;
+function hasIDProperty(resource: OCResource) {
+    return 'ID' in resource.openAPIProperties || resource.name === OCResourceEnum.ApiClients;
 }
 
 function getType(value: any): OpenAPIType {
@@ -91,13 +103,35 @@ export class Validator {
         return true;
     }
 
-    validateForeignKeyExists(resourceType: OCResourceEnum):boolean {
+    validateParentRef(parentType: OCResourceEnum): boolean {
+        var value = this.currentRecord[this.currentResource.parentRefField];
+        if (_.isNil(value)) {
+            this.addError(`Required field ${this.currentResource.name}.${this.currentResource.parentRefField}: cannot have value ${value}.`);
+            return false;
+        }
+        if (!this.validateFieldTypeMatches(value, { type: "string", readOnly: false })) {
+            return false;
+        }
+        if (!this.idCache.has(parentType, value)) {
+            this.addError(`Invalid reference ${this.currentResource.name}.${this.currentResource.parentRefField}: no ${parentType} found with ID \"${value}\".`);
+            return false;
+        }
+        return true;
+    }
+
+    validateForeignKeyExists(foreignKey: ForeignKey):boolean {
         var field = this.currentPropertyName;
         var value = this.currentRecord[field];
-        // A standard validation to find an ID of a particular reasource
-        var keyExists = this.idCache.has(resourceType, value);
+        
+        var setEntry = foreignKey.foreignParentRefField === undefined ? value : `${this.currentRecord[foreignKey.foreignParentRefField]}/${value}`;
+        // find an ID of a particular resource
+        var keyExists = this.idCache.has(foreignKey.foreignResource, setEntry);
         if (!keyExists) {
-            this.addError(`Invalid reference ${this.currentResource.name}.${field}: no ${resourceType} found with ID \"${value}\".`);
+            var message = `Invalid reference ${this.currentResource.name}.${field}: no ${foreignKey.foreignResource} found with ID \"${value}\".`
+            if (setEntry.includes('/')) {
+                message = message.concat(` within the ${foreignKey.foreignParentRefField} \"${this.currentRecord[foreignKey.foreignParentRefField]}\"`)
+            }
+            this.addError(message);
             return false;
         }
         return true;
@@ -160,14 +194,14 @@ export class Validator {
     
     // todo - need to validate duplicates that involve more fields that simply ID. e.g. xpindex 
     validateDuplicateIDs(): boolean {
-        if (_.isNil(this.currentRecord.ID) || !hasIDProperty(this.currentResource.openAPIProperties)) {
+        if (_.isNil(this.currentRecord.ID) || !hasIDProperty(this.currentResource)) {
             return true;
         }
-        var setEntry: string = this.currentResource.isChild ? `${this.currentRecord[this.currentResource.parentRefFieldName]}/${this.currentRecord.ID}` : this.currentRecord.ID;     
+        var setEntry = this.currentResource.isChild ? `${this.currentRecord[this.currentResource.parentRefField]}/${this.currentRecord.ID}` : this.currentRecord.ID;     
         if (this.idCache.has(this.currentResource.name, setEntry)) {
             var message = `Duplicate ID: multiple ${this.currentResource.name} with ID \"${this.currentRecord.ID}\"`;
             if (setEntry.includes('/')) {
-                message = message.concat(` within the ${this.currentResource.parentRefFieldName} \"${this.currentRecord[this.currentResource.parentRefFieldName]}\"`)
+                message = message.concat(` within the ${this.currentResource.parentRefField} \"${this.currentRecord[this.currentResource.parentRefField]}\"`)
             }
             this.addError(message)
             return false;
@@ -193,3 +227,5 @@ export class Validator {
         return true;
     }
 }
+
+validate("./ordercloud-seed.yml");

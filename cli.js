@@ -11,6 +11,7 @@ var chalk = require('chalk');
 var emoji = require('node-emoji');
 var _ = require('lodash');
 var jwt_decode = require('jwt-decode');
+var dotenv = require('dotenv');
 
 function _interopDefaultLegacy (e) { return e && typeof e === 'object' && 'default' in e ? e : { 'default': e }; }
 
@@ -23,6 +24,7 @@ var chalk__default = /*#__PURE__*/_interopDefaultLegacy(chalk);
 var emoji__default = /*#__PURE__*/_interopDefaultLegacy(emoji);
 var ___default = /*#__PURE__*/_interopDefaultLegacy(_);
 var jwt_decode__default = /*#__PURE__*/_interopDefaultLegacy(jwt_decode);
+var dotenv__default = /*#__PURE__*/_interopDefaultLegacy(dotenv);
 
 class Portal {
     static async login(username, password) {
@@ -291,12 +293,18 @@ const Directory = [
         path: "/impersonationconfig",
         customValidationFunc: ImpersonationConfigValidationFunc,
         foreignKeys: {
-            ClientID: OCResourceEnum.ApiClients,
-            SecurityProfileID: OCResourceEnum.SecurityProfiles,
-            BuyerID: OCResourceEnum.Buyers,
-            GroupID: OCResourceEnum.UserGroups,
-            UserID: OCResourceEnum.Users,
-            ImpersonationBuyerID: OCResourceEnum.Buyers,
+            ClientID: { foreignResource: OCResourceEnum.ApiClients },
+            SecurityProfileID: { foreignResource: OCResourceEnum.SecurityProfiles },
+            BuyerID: { foreignResource: OCResourceEnum.Buyers },
+            GroupID: {
+                foreignResource: OCResourceEnum.UserGroups,
+                foreignParentRefField: "BuyerID"
+            },
+            UserID: {
+                foreignResource: OCResourceEnum.Users,
+                foreignParentRefField: "BuyerID"
+            },
+            ImpersonationBuyerID: { foreignResource: OCResourceEnum.Buyers },
         }
     },
     {
@@ -305,9 +313,10 @@ const Directory = [
         sdkObject: ordercloudJavascriptSdk.OpenIdConnects,
         createPriority: 6,
         path: "/openidconnects",
+        redactFields: ["ConnectClientSecret"],
         foreignKeys: {
-            OrderCloudApiClientID: OCResourceEnum.ApiClients,
-            IntegrationEventID: OCResourceEnum.IntegrationEvents
+            OrderCloudApiClientID: { foreignResource: OCResourceEnum.ApiClients },
+            IntegrationEventID: { foreignResource: OCResourceEnum.IntegrationEvents }
         }
     },
     {
@@ -336,7 +345,8 @@ const Directory = [
         modelName: 'MessageSender',
         sdkObject: ordercloudJavascriptSdk.MessageSenders,
         path: "/messagesenders",
-        createPriority: 2
+        createPriority: 2,
+        redactFields: ["SharedKey"],
     },
     {
         name: OCResourceEnum.ApiClients,
@@ -344,8 +354,13 @@ const Directory = [
         sdkObject: ordercloudJavascriptSdk.ApiClients,
         createPriority: 5,
         path: "/apiclients",
+        redactFields: ["ClientSecret"],
         foreignKeys: {
-            IntegrationEventID: OCResourceEnum.IntegrationEvents
+            IntegrationEventID: { foreignResource: OCResourceEnum.IntegrationEvents }
+        },
+        downloadTransformFunc: (x) => {
+            x.ID = x.ID.toLowerCase(); // funky platform thing with API CLient ID casing
+            return x;
         },
         customValidationFunc: ApiClientValidationFunc,
     },
@@ -362,6 +377,7 @@ const Directory = [
         sdkObject: ordercloudJavascriptSdk.Webhooks,
         createPriority: 6,
         path: "/webhooks",
+        redactFields: ["HashKey"],
         // for .ApiClientIDs
         customValidationFunc: WebhookValidationFunc
     },
@@ -370,7 +386,8 @@ const Directory = [
         modelName: 'IntegrationEvent',
         sdkObject: ordercloudJavascriptSdk.IntegrationEvents,
         path: "/integrationEvents",
-        createPriority: 2
+        createPriority: 2,
+        redactFields: ["HashKey"],
     },
     {
         name: OCResourceEnum.XpIndices,
@@ -386,7 +403,7 @@ const Directory = [
         createPriority: 3,
         path: "/buyers",
         foreignKeys: {
-            DefaultCatalogID: OCResourceEnum.Catalogs
+            DefaultCatalogID: { foreignResource: OCResourceEnum.Catalogs }
         },
         children: [OCResourceEnum.Users, OCResourceEnum.UserGroups, OCResourceEnum.Addresses, OCResourceEnum.CostCenters, OCResourceEnum.CreditCards, OCResourceEnum.SpendingAccounts, OCResourceEnum.ApprovalRules, OCResourceEnum.UserGroupAssignments, OCResourceEnum.SpendingAccountAssignments, OCResourceEnum.AddressAssignments, OCResourceEnum.CostCenterAssignments, OCResourceEnum.CreditCardAssignments, OCResourceEnum.SpendingAccountAssignments],
     },
@@ -395,7 +412,7 @@ const Directory = [
         modelName: "User",
         sdkObject: ordercloudJavascriptSdk.Users,
         createPriority: 4,
-        parentRefFieldName: "BuyerID",
+        parentRefField: "BuyerID",
         path: "/buyers/{buyerID}/users",
         isChild: true,
     },
@@ -404,7 +421,7 @@ const Directory = [
         modelName: "UserGroup",
         sdkObject: ordercloudJavascriptSdk.UserGroups,
         createPriority: 4,
-        parentRefFieldName: "BuyerID",
+        parentRefField: "BuyerID",
         path: "/buyers/{buyerID}/usergroups",
         isChild: true,
     },
@@ -413,7 +430,7 @@ const Directory = [
         modelName: "Address",
         sdkObject: ordercloudJavascriptSdk.Addresses,
         createPriority: 4,
-        parentRefFieldName: "BuyerID",
+        parentRefField: "BuyerID",
         path: "/buyers/{buyerID}/addresses",
         isChild: true,
     },
@@ -422,7 +439,7 @@ const Directory = [
         modelName: "CostCenter",
         sdkObject: ordercloudJavascriptSdk.CostCenters,
         createPriority: 4,
-        parentRefFieldName: "BuyerID",
+        parentRefField: "BuyerID",
         path: "/buyers/{buyerID}/costcenters",
         isChild: true,
     },
@@ -431,7 +448,7 @@ const Directory = [
         modelName: "CreditCard",
         sdkObject: ordercloudJavascriptSdk.CreditCards,
         createPriority: 4,
-        parentRefFieldName: "BuyerID",
+        parentRefField: "BuyerID",
         path: "/buyers/{buyerID}/creditcards",
         isChild: true,
     },
@@ -440,7 +457,7 @@ const Directory = [
         modelName: "SpendingAccount",
         sdkObject: ordercloudJavascriptSdk.SpendingAccounts,
         createPriority: 4,
-        parentRefFieldName: "BuyerID",
+        parentRefField: "BuyerID",
         path: "/buyers/{buyerID}/spendingaccounts",
         isChild: true,
     },
@@ -449,11 +466,14 @@ const Directory = [
         modelName: "ApprovalRule",
         sdkObject: ordercloudJavascriptSdk.ApprovalRules,
         createPriority: 5,
-        parentRefFieldName: "BuyerID",
+        parentRefField: "BuyerID",
         isChild: true,
         path: "/buyers/{buyerID}/approvalrules",
         foreignKeys: {
-            ApprovingGroupID: OCResourceEnum.UserGroups
+            ApprovingGroupID: {
+                foreignParentRefField: "BuyerID",
+                foreignResource: OCResourceEnum.UserGroups
+            }
         }
     },
     {
@@ -469,11 +489,14 @@ const Directory = [
         modelName: "Category",
         sdkObject: ordercloudJavascriptSdk.Categories,
         createPriority: 3,
-        parentRefFieldName: "CatalogID",
+        parentRefField: "CatalogID",
         isChild: true,
         path: "/catalogs/{catalogID}/categories",
         foreignKeys: {
-            ParentID: OCResourceEnum.Categories
+            ParentID: {
+                foreignParentRefField: "CatalogID",
+                foreignResource: OCResourceEnum.Categories
+            }
         }
     },
     {
@@ -489,7 +512,7 @@ const Directory = [
         modelName: "User",
         sdkObject: ordercloudJavascriptSdk.SupplierUsers,
         createPriority: 3,
-        parentRefFieldName: "SupplierID",
+        parentRefField: "SupplierID",
         path: "/suppliers/{supplierID}/users",
         isChild: true,
     },
@@ -498,7 +521,7 @@ const Directory = [
         modelName: "UserGroup",
         sdkObject: ordercloudJavascriptSdk.SupplierUserGroups,
         createPriority: 3,
-        parentRefFieldName: "SupplierID",
+        parentRefField: "SupplierID",
         path: "/suppliers/{supplierID}/usergroups",
         isChild: true,
     },
@@ -507,7 +530,7 @@ const Directory = [
         modelName: "Address",
         sdkObject: ordercloudJavascriptSdk.SupplierAddresses,
         createPriority: 3,
-        parentRefFieldName: "SupplierID",
+        parentRefField: "SupplierID",
         path: "/suppliers/{supplierID}/addresses",
         isChild: true,
     },
@@ -518,9 +541,9 @@ const Directory = [
         createPriority: 4,
         path: "/products",
         foreignKeys: {
-            DefaultPriceScheduleID: OCResourceEnum.PriceSchedules,
-            ShipFromAddressID: OCResourceEnum.AdminAddresses,
-            DefaultSupplierID: OCResourceEnum.Suppliers
+            DefaultPriceScheduleID: { foreignResource: OCResourceEnum.PriceSchedules },
+            ShipFromAddressID: { foreignResource: OCResourceEnum.AdminAddresses },
+            DefaultSupplierID: { foreignResource: OCResourceEnum.Suppliers }
         }
     },
     {
@@ -537,7 +560,7 @@ const Directory = [
         createPriority: 2,
         path: "/specs",
         foreignKeys: {
-            DefaultOptionID: OCResourceEnum.SpecOptions,
+            DefaultOptionID: { foreignResource: OCResourceEnum.SpecOptions },
         },
         children: [OCResourceEnum.SpecOptions]
     },
@@ -547,7 +570,7 @@ const Directory = [
         sdkObject: ordercloudJavascriptSdk.Specs,
         createPriority: 3,
         path: "/specs/{specID}/options",
-        parentRefFieldName: "SpecID",
+        parentRefField: "SpecID",
         listMethodName: "ListOptions",
         isChild: true
     },
@@ -573,9 +596,9 @@ const Directory = [
         createPriority: 5,
         isAssignment: true,
         foreignKeys: {
-            SecurityProfileID: OCResourceEnum.SecurityProfiles,
-            BuyerID: OCResourceEnum.Buyers,
-            SupplierID: OCResourceEnum.Suppliers,
+            SecurityProfileID: { foreignResource: OCResourceEnum.SecurityProfiles },
+            BuyerID: { foreignResource: OCResourceEnum.Buyers },
+            SupplierID: { foreignResource: OCResourceEnum.Suppliers },
         },
         customValidationFunc: SecurityProfileAssignmentValidationFunc
     },
@@ -588,8 +611,8 @@ const Directory = [
         path: "/usergroups/assignments",
         listMethodName: 'ListUserAssignments',
         foreignKeys: {
-            UserID: OCResourceEnum.AdminUsers,
-            UserGroupID: OCResourceEnum.AdminUserGroups,
+            UserID: { foreignResource: OCResourceEnum.AdminUsers },
+            UserGroupID: { foreignResource: OCResourceEnum.AdminUserGroups },
         },
     },
     {
@@ -600,9 +623,9 @@ const Directory = [
         isAssignment: true,
         path: "/apiclients/assignments",
         foreignKeys: {
-            ApiClientID: OCResourceEnum.ApiClients,
-            BuyerID: OCResourceEnum.Buyers,
-            SupplierID: OCResourceEnum.Suppliers,
+            ApiClientID: { foreignResource: OCResourceEnum.ApiClients },
+            BuyerID: { foreignResource: OCResourceEnum.Buyers },
+            SupplierID: { foreignResource: OCResourceEnum.Suppliers },
         },
     },
     {
@@ -611,13 +634,19 @@ const Directory = [
         sdkObject: ordercloudJavascriptSdk.UserGroups,
         createPriority: 5,
         isAssignment: true,
-        path: "/usergroups/assignments",
-        parentRefFieldName: "BuyerID",
+        path: "/buyers/{buyerID}/usergroups/assignments",
+        parentRefField: "BuyerID",
         isChild: true,
         listMethodName: 'ListUserAssignments',
         foreignKeys: {
-            UserID: OCResourceEnum.Users,
-            UserGroupID: OCResourceEnum.UserGroups,
+            UserID: {
+                foreignParentRefField: "BuyerID",
+                foreignResource: OCResourceEnum.Users
+            },
+            UserGroupID: {
+                foreignParentRefField: "BuyerID",
+                foreignResource: OCResourceEnum.UserGroups
+            },
         },
     },
     {
@@ -625,14 +654,23 @@ const Directory = [
         modelName: "AddressAssignment",
         sdkObject: ordercloudJavascriptSdk.Addresses,
         createPriority: 5,
-        path: "/apiclients/assignments",
+        path: "/buyers/{buyerID}/addresses/assignments",
         isAssignment: true,
-        parentRefFieldName: "BuyerID",
+        parentRefField: "BuyerID",
         isChild: true,
         foreignKeys: {
-            AddressID: OCResourceEnum.Addresses,
-            UserID: OCResourceEnum.Users,
-            UserGroupID: OCResourceEnum.UserGroups,
+            AddressID: {
+                foreignParentRefField: "BuyerID",
+                foreignResource: OCResourceEnum.Addresses
+            },
+            UserID: {
+                foreignParentRefField: "BuyerID",
+                foreignResource: OCResourceEnum.Users
+            },
+            UserGroupID: {
+                foreignParentRefField: "BuyerID",
+                foreignResource: OCResourceEnum.UserGroups
+            },
         },
     },
     {
@@ -642,11 +680,17 @@ const Directory = [
         createPriority: 5,
         path: "/buyers/{buyerID}/costcenters",
         isAssignment: true,
-        parentRefFieldName: "BuyerID",
+        parentRefField: "BuyerID",
         isChild: true,
         foreignKeys: {
-            CostCenterID: OCResourceEnum.CostCenters,
-            UserGroupID: OCResourceEnum.UserGroups,
+            CostCenterID: {
+                foreignParentRefField: "BuyerID",
+                foreignResource: OCResourceEnum.CostCenters
+            },
+            UserGroupID: {
+                foreignParentRefField: "BuyerID",
+                foreignResource: OCResourceEnum.UserGroups,
+            },
         },
     },
     {
@@ -656,12 +700,21 @@ const Directory = [
         createPriority: 5,
         path: "/buyers/{buyerID}/creditcards/assignments",
         isAssignment: true,
-        parentRefFieldName: "BuyerID",
+        parentRefField: "BuyerID",
         isChild: true,
         foreignKeys: {
-            CreditCardID: OCResourceEnum.Addresses,
-            UserID: OCResourceEnum.Users,
-            UserGroupID: OCResourceEnum.UserGroups,
+            CreditCardID: {
+                foreignParentRefField: "BuyerID",
+                foreignResource: OCResourceEnum.Addresses
+            },
+            UserID: {
+                foreignParentRefField: "BuyerID",
+                foreignResource: OCResourceEnum.Users
+            },
+            UserGroupID: {
+                foreignParentRefField: "BuyerID",
+                foreignResource: OCResourceEnum.UserGroups
+            },
         },
     },
     {
@@ -671,12 +724,21 @@ const Directory = [
         createPriority: 5,
         path: "/buyers/{buyerID}/spendingaccounts/assignments",
         isAssignment: true,
-        parentRefFieldName: "BuyerID",
+        parentRefField: "BuyerID",
         isChild: true,
         foreignKeys: {
-            SpendingAccountID: OCResourceEnum.SpendingAccounts,
-            UserID: OCResourceEnum.Users,
-            UserGroupID: OCResourceEnum.UserGroups,
+            SpendingAccountID: {
+                foreignParentRefField: "BuyerID",
+                foreignResource: OCResourceEnum.SpendingAccounts
+            },
+            UserID: {
+                foreignParentRefField: "BuyerID",
+                foreignResource: OCResourceEnum.Users
+            },
+            UserGroupID: {
+                foreignParentRefField: "BuyerID",
+                foreignResource: OCResourceEnum.UserGroups
+            },
         },
     },
     {
@@ -686,12 +748,18 @@ const Directory = [
         createPriority: 4,
         path: "/suppliers/{supplierID}/usergroups/assignments",
         isAssignment: true,
-        parentRefFieldName: "SupplierID",
+        parentRefField: "SupplierID",
         isChild: true,
         listMethodName: 'ListUserAssignments',
         foreignKeys: {
-            UserID: OCResourceEnum.SupplierUsers,
-            UserGroupID: OCResourceEnum.SupplierUserGroups,
+            UserID: {
+                foreignParentRefField: "SupplierID",
+                foreignResource: OCResourceEnum.SupplierUsers
+            },
+            UserGroupID: {
+                foreignParentRefField: "SupplierID",
+                foreignResource: OCResourceEnum.SupplierUserGroups
+            },
         },
     },
     {
@@ -702,10 +770,13 @@ const Directory = [
         path: "/products/assignments",
         isAssignment: true,
         foreignKeys: {
-            ProductID: OCResourceEnum.Products,
-            BuyerID: OCResourceEnum.Buyers,
-            UserGroupID: OCResourceEnum.UserGroups,
-            PriceScheduleID: OCResourceEnum.PriceSchedules
+            ProductID: { foreignResource: OCResourceEnum.Products },
+            BuyerID: { foreignResource: OCResourceEnum.Buyers },
+            UserGroupID: {
+                foreignParentRefField: "BuyerID",
+                foreignResource: OCResourceEnum.UserGroups
+            },
+            PriceScheduleID: { foreignResource: OCResourceEnum.PriceSchedules }
         },
     },
     {
@@ -716,8 +787,8 @@ const Directory = [
         path: "/catalogs/assignments",
         isAssignment: true,
         foreignKeys: {
-            CatalogID: OCResourceEnum.Catalogs,
-            BuyerID: OCResourceEnum.Buyers
+            CatalogID: { foreignResource: OCResourceEnum.Catalogs },
+            BuyerID: { foreignResource: OCResourceEnum.Buyers }
         },
     },
     {
@@ -729,8 +800,8 @@ const Directory = [
         isAssignment: true,
         listMethodName: 'ListProductAssignments',
         foreignKeys: {
-            CatalogID: OCResourceEnum.Catalogs,
-            ProductID: OCResourceEnum.Products
+            CatalogID: { foreignResource: OCResourceEnum.Catalogs },
+            ProductID: { foreignResource: OCResourceEnum.Products }
         },
     },
     {
@@ -740,12 +811,18 @@ const Directory = [
         createPriority: 5,
         path: "/catalogs/{catalogID}/categories/assignments",
         isAssignment: true,
-        parentRefFieldName: "CatalogID",
+        parentRefField: "CatalogID",
         isChild: true,
         foreignKeys: {
-            CategoryID: OCResourceEnum.Categories,
-            UserID: OCResourceEnum.Users,
-            UserGroupID: OCResourceEnum.UserGroups,
+            CategoryID: {
+                foreignParentRefField: "CatalogID",
+                foreignResource: OCResourceEnum.Categories
+            },
+            BuyerID: { foreignResource: OCResourceEnum.Buyers },
+            UserGroupID: {
+                foreignParentRefField: "BuyerID",
+                foreignResource: OCResourceEnum.UserGroups
+            },
         },
     },
     {
@@ -755,12 +832,15 @@ const Directory = [
         createPriority: 5,
         path: "/catalogs/{catalogID}/categories/productassignments",
         isAssignment: true,
-        parentRefFieldName: "CatalogID",
+        parentRefField: "CatalogID",
         isChild: true,
         listMethodName: 'ListProductAssignments',
         foreignKeys: {
-            CategoryID: OCResourceEnum.Categories,
-            ProductID: OCResourceEnum.Products,
+            CategoryID: {
+                foreignParentRefField: "CatalogID",
+                foreignResource: OCResourceEnum.Categories
+            },
+            ProductID: { foreignResource: OCResourceEnum.Products },
         },
     },
     {
@@ -772,9 +852,12 @@ const Directory = [
         isAssignment: true,
         listMethodName: 'ListProductAssignments',
         foreignKeys: {
-            SpecID: OCResourceEnum.Specs,
-            ProductID: OCResourceEnum.Products,
-            DefaultOptionID: OCResourceEnum.SpecOptions,
+            SpecID: { foreignResource: OCResourceEnum.Specs },
+            ProductID: { foreignResource: OCResourceEnum.Products },
+            DefaultOptionID: {
+                foreignParentRefField: "SpecID",
+                foreignResource: OCResourceEnum.SpecOptions
+            },
         },
     },
     {
@@ -785,14 +868,17 @@ const Directory = [
         path: "/promotions/assignments",
         isAssignment: true,
         foreignKeys: {
-            PromotionID: OCResourceEnum.PromotionAssignment,
-            BuyerID: OCResourceEnum.Buyers,
-            UserGroupID: OCResourceEnum.UserGroups,
+            PromotionID: { foreignResource: OCResourceEnum.Promotions },
+            BuyerID: { foreignResource: OCResourceEnum.Buyers },
+            UserGroupID: {
+                foreignParentRefField: "BuyerID",
+                foreignResource: OCResourceEnum.UserGroups
+            },
         },
     },
 ];
 function ApplyDefaults(resource) {
-    var _a;
+    var _a, _b;
     resource.isAssignment = resource.isAssignment || false;
     resource.listMethodName = resource.listMethodName || (resource.isAssignment ? "ListAssignments" : "List");
     resource.createMethodName = resource.createMethodName || (resource.isAssignment ? "CreateAssignment" : "Create");
@@ -800,6 +886,7 @@ function ApplyDefaults(resource) {
     resource.children = resource.children || [];
     resource.isChild = resource.isChild || false;
     resource.requiredCreateFields = (_a = resource.requiredCreateFields) !== null && _a !== void 0 ? _a : [];
+    resource.redactFields = (_b = resource.redactFields) !== null && _b !== void 0 ? _b : [];
     return resource;
 }
 async function BuildResourceDirectory(includeOpenAPI = false) {
@@ -816,18 +903,14 @@ async function BuildResourceDirectory(includeOpenAPI = false) {
             modified.requiredCreateFields = (_e = (_d = (_c = (_b = operation.requestBody.content) === null || _b === void 0 ? void 0 : _b["application/json"]) === null || _c === void 0 ? void 0 : _c.schema) === null || _d === void 0 ? void 0 : _d.required) !== null && _e !== void 0 ? _e : [];
             modified.openAPIProperties = openAPISpec.data.components.schemas[resource.modelName].properties;
             if (modified.isChild) {
-                // add info about parentRefFieldName
-                modified.openAPIProperties[modified.parentRefFieldName] = {
-                    type: "string",
-                    readOnly: false
-                };
-                modified.requiredCreateFields.push(modified.parentRefFieldName);
                 modified.parentResource = Directory.find(x => x.children.includes(modified.name));
-                modified.foreignKeys[modified.parentRefFieldName] = modified.parentResource.name;
             }
         }
         return modified;
-    });
+    }).reduce((acc, resource) => {
+        acc[resource.name] = resource;
+        return acc;
+    }, {});
 }
 
 async function download(username, password, environment, orgID) {
@@ -879,18 +962,26 @@ async function download(username, password, environment, orgID) {
     // Pull Data from Ordercloud
     var file = new SeedFile();
     var directory = await BuildResourceDirectory(false);
-    for (let resource of directory) {
+    for (let key in directory) {
+        var resource = directory[key];
         if (resource.isChild) {
             continue; // resource will be handled as part of its parent
         }
         var records = await OrderCloudBulk.ListAll(resource);
+        RedactSensitiveFields(resource, records);
+        if (resource.downloadTransformFunc !== undefined) {
+            records = records.map(resource.downloadTransformFunc);
+        }
         file.AddRecords(resource, records);
         for (let childResourceName of resource.children) {
-            let childResource = directory.find(x => x.name == childResourceName);
+            let childResource = directory[childResourceName];
             for (let parentRecord of records) {
                 var childRecords = await OrderCloudBulk.ListAll(childResource, parentRecord.ID); // assume ID exists. Which is does for all parent types.
                 for (let childRecord of childRecords) {
-                    childRecord[childResource.parentRefFieldName] = parentRecord.ID;
+                    childRecord[childResource.parentRefField] = parentRecord.ID;
+                }
+                if (childResource.downloadTransformFunc !== undefined) {
+                    childRecords = childRecords.map(resource.downloadTransformFunc);
                 }
                 file.AddRecords(childResource, childRecords);
             }
@@ -901,7 +992,20 @@ async function download(username, password, environment, orgID) {
     // Write to file
     file.WriteToYaml('ordercloud-seed.yml');
     log("Done! Wrote to file \"ordercloud-seed.yml\"", MessageType.Success);
+    function RedactSensitiveFields(resource, records) {
+        if (resource.redactFields.length === 0)
+            return;
+        for (var record of records) {
+            for (var field of resource.redactFields) {
+                if (!___default['default'].isNil(record[field])) {
+                    record[field] = "<Redacted for Security>";
+                }
+            }
+        }
+    }
 }
+dotenv__default['default'].config({ path: '.env' });
+download(process.env.PORTAL_USERNAME, process.env.PORTAL_PASSWORD, process.env.OC_ENV, process.env.ORG_ID);
 
 yargs__default['default'].scriptName("@ordercloud/seeding")
     .usage('$0 <cmd> [args] -')

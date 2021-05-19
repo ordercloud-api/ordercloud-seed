@@ -7,7 +7,7 @@ Objects:
     - ID: missing_fields
 Assignments:    
   ProductAssignments:
-    - UserGroupID: missing_fields_1
+    - UserGroupID: missing_fields_1  
 
 
 

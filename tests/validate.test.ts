@@ -59,7 +59,7 @@ test('required fields', async () => {
     expect(errors[6]).toBe("Required field ProductFacets.MinCount: cannot have value undefined.");
     expect(errors[7]).toBe("Required field ProductAssignments.ProductID: cannot have value undefined.");
     expect(errors[8]).toBe("Required field ProductAssignments.BuyerID: cannot have value undefined.");
-    expect(errors[9]).toBe("Invalid reference ProductAssignments.UserGroupID: no UserGroups found with ID \"missing_fields_1\".");
+    expect(errors[9]).toBe("Invalid reference ProductAssignments.UserGroupID: no UserGroups found with ID \"missing_fields_1\". within the BuyerID \"undefined\"");
 });
 
 test('parent ref', async () => {

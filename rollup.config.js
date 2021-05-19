@@ -2,7 +2,7 @@ import typescript from 'rollup-plugin-typescript2'
 
 export default [
   {
-    input: 'src/validate.ts',
+    input: 'src/actions/validate.ts',
     output: [
       { file: "dist/validate.js", format: "cjs" }
     ],
@@ -24,7 +24,7 @@ export default [
     ],
   },
   {
-    input: 'src/download.ts',
+    input: 'src/actions/download.ts',
     output: [
       { file: "dist/download.js", format: "cjs" }
     ],

@@ -7,7 +7,7 @@ export interface OCResource {
     children?: OCResourceEnum[];
     isChild?: boolean;
     parentResource?: OCResource;
-    parentRefFieldName?: string; // will be populated if and only if isChild is true
+    parentRefField?: string; // will be populated if and only if isChild is true
     sdkObject: any;
     isAssignment?: boolean,
     createPriority: number; // higher numbers need to be created first
@@ -17,10 +17,17 @@ export interface OCResource {
     openAPIProperties?: OpenAPIProperties;
     path: string;
     requiredCreateFields?: string[];
+    redactFields?: string[];
+    downloadTransformFunc?: (x: any) => any,
     customValidationFunc?: RecordValidationFunc
 }
 export interface ForeignKeys {
-    [fieldName: string]: OCResourceEnum;
+    [fieldName: string]: ForeignKey;
+}
+
+export interface ForeignKey {
+    foreignResource: OCResourceEnum,
+    foreignParentRefField?: string
 }
 
 
