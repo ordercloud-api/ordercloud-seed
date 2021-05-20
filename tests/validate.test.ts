@@ -1,4 +1,4 @@
-import { validate } from '../src/actions/validate';
+import { validate } from '../src/commands/validate';
 
 test('valid yaml should succeed', async () => {
     var errors = await validate("./tests/data/valid.yml");

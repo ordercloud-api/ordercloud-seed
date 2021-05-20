@@ -9,7 +9,7 @@ import { OCResource } from '../models/oc-resources';
 import _ from 'lodash';
 import dotenv from 'dotenv';
 
-export async function download(username: string, password: string, environment: string, orgID: string): Promise<void> {
+export async function download(username: string, password: string, environment: string, orgID: string, path: string): Promise<void> {
     var missingInputs: string[] = [];
     var validEnvironments = ['staging', 'sandbox', 'prod'];
     var urls = {
@@ -91,8 +91,8 @@ export async function download(username: string, password: string, environment: 
         log("Finished " + records.length + " " + resource.name);
     }
     // Write to file
-    file.WriteToYaml('ordercloud-seed.yml');
-    log("Done! Wrote to file \"ordercloud-seed.yml\"", MessageType.Success);
+    file.WriteToYaml(path);
+    log(`Done! Wrote to file \"${path}\"`, MessageType.Success);
 
     function RedactSensitiveFields(resource: OCResource, records: any[]): void {
         if (resource.redactFields.length === 0) return;
@@ -109,4 +109,4 @@ export async function download(username: string, password: string, environment: 
 
 dotenv.config({ path: '.env' });
 
-download(process.env.PORTAL_USERNAME, process.env.PORTAL_PASSWORD, process.env.OC_ENV, process.env.ORG_ID);
+download(process.env.PORTAL_USERNAME, process.env.PORTAL_PASSWORD, process.env.OC_ENV, process.env.ORG_ID, 'ordercloud-seed.yml');

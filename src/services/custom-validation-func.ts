@@ -1,4 +1,4 @@
-import { Validator } from "../actions/validate";
+import { Validator } from "../commands/validate";
 import _ from 'lodash';
 import { OCResourceEnum } from "../models/oc-resource-enum";
 

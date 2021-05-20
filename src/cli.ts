@@ -1,5 +1,6 @@
 import yargs from 'yargs';
-import { download } from './actions/download';
+import { download } from './commands/download';
+import { validate } from './commands/validate';
 
 yargs.scriptName("@ordercloud/seeding")
   .usage('$0 <cmd> [args] -')
@@ -24,8 +25,24 @@ yargs.scriptName("@ordercloud/seeding")
       alias: 'p',
       describe: 'Portal password'
     })
+    yargs.option('filePath', {
+      type: 'string',
+      alias: 'f',
+      default: 'ordercloud-seed.yml',
+      describe: 'File path to download data to'
+    })
   }, function (argv) {
-    download(argv.u as string, argv.p as string, argv.e as string, argv.o as string);
+    download(argv.u as string, argv.p as string, argv.e as string, argv.o as string, argv.f as string);
+  })
+  .command('validate', 'Validate a potential file for upload', (yargs) => {
+    yargs.option('filePath', {
+      type: 'string',
+      alias: 'f',
+      default: 'ordercloud-seed.yml',
+      describe: 'File path of data to validate'
+    })
+  }, function (argv) {
+    validate(argv.f as string);
   })
   .help()
   .argv

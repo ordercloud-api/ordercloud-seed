@@ -15,12 +15,12 @@ Objects:
         - api
         - api2
   ApiClients:
-    - ID: api # todo - wrong
+    - ID: api
       AppName: api
       AccessTokenDuration: 1
-    - ID: api2 # todo - wrong
+    - ID: api2
       AppName: api2
       AccessTokenDuration: 1
-    - ID: api3 # todo - wrong
+    - ID: api3
       AppName: api3
       AccessTokenDuration: 1

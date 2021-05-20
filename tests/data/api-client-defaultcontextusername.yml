@@ -7,11 +7,11 @@ Objects:
       Email: a
       Active: true
   ApiClients:
-    - ID: api # todo - wrong
+    - ID: api 
       AppName: api
       AccessTokenDuration: 1
       DefaultContextUserName: wrong
-    - ID: api2 # todo - wrong
+    - ID: api2
       AppName: api2
       AccessTokenDuration: 1
       DefaultContextUserName: a

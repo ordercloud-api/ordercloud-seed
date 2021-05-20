@@ -913,7 +913,7 @@ async function BuildResourceDirectory(includeOpenAPI = false) {
     }, {});
 }
 
-async function download(username, password, environment, orgID) {
+async function download(username, password, environment, orgID, path) {
     var missingInputs = [];
     var validEnvironments = ['staging', 'sandbox', 'prod'];
     var urls = {
@@ -990,8 +990,8 @@ async function download(username, password, environment, orgID) {
         log("Finished " + records.length + " " + resource.name);
     }
     // Write to file
-    file.WriteToYaml('ordercloud-seed.yml');
-    log("Done! Wrote to file \"ordercloud-seed.yml\"", MessageType.Success);
+    file.WriteToYaml(path);
+    log(`Done! Wrote to file \"${path}\"`, MessageType.Success);
     function RedactSensitiveFields(resource, records) {
         if (resource.redactFields.length === 0)
             return;
@@ -1005,7 +1005,246 @@ async function download(username, password, environment, orgID) {
     }
 }
 dotenv__default['default'].config({ path: '.env' });
-download(process.env.PORTAL_USERNAME, process.env.PORTAL_PASSWORD, process.env.OC_ENV, process.env.ORG_ID);
+download(process.env.PORTAL_USERNAME, process.env.PORTAL_PASSWORD, process.env.OC_ENV, process.env.ORG_ID, 'ordercloud-seed.yml');
+
+class IDCache {
+    constructor() {
+        this.idSets = {};
+    }
+    add(resourceType, key) {
+        var set = this.idSets[resourceType];
+        if (set === undefined) {
+            set = this.idSets[resourceType] = new Set();
+        }
+        set.add(key);
+    }
+    has(resourceType, key) {
+        var _a, _b;
+        return (_b = (_a = this.idSets[resourceType]) === null || _a === void 0 ? void 0 : _a.has(key)) !== null && _b !== void 0 ? _b : false;
+    }
+}
+
+async function validate(filePath) {
+    var file = new SeedFile();
+    var validator = new Validator();
+    // validates file is found and is valid yaml
+    var success = file.ReadFromYaml(filePath, validator.errors);
+    if (!success)
+        return validator.errors;
+    var directory = await BuildResourceDirectory(true);
+    // validate duplicate IDs 
+    for (let resourceEnum in directory) {
+        validator.currentResource = directory[resourceEnum];
+        var hasUsername = "Username" in validator.currentResource.openAPIProperties;
+        var hasID = hasIDProperty(validator.currentResource);
+        if (hasID || hasUsername) {
+            for (let record of file.GetRecords(validator.currentResource)) {
+                validator.currentRecord = record;
+                // this step builds validator.idCache, which will be needed for forign key validation later.             
+                if (hasID)
+                    validator.validateDuplicateIDs();
+                if (hasUsername)
+                    validator.validateDuplicateUsernames();
+            }
+        }
+    }
+    // now that idSets are built, another loop for the rest of validation
+    for (let resourceEnum in directory) {
+        validator.currentResource = directory[resourceEnum];
+        for (let record of file.GetRecords(validator.currentResource)) {
+            validator.currentRecord = record;
+            for (const [propName, spec] of Object.entries(validator.currentResource.openAPIProperties)) {
+                validator.currentPropertyName = propName;
+                if (spec.readOnly) {
+                    continue;
+                }
+                let value = record[propName];
+                let foreignKey = validator.currentResource.foreignKeys[propName];
+                if (___default['default'].isNil(value)) {
+                    validator.validateIsRequired(propName);
+                }
+                else {
+                    var typeMatches = validator.validateFieldTypeMatches(record[propName], spec);
+                    if (typeMatches && !___default['default'].isNil(foreignKey)) {
+                        validator.validateForeignKeyExists(foreignKey);
+                    }
+                }
+            }
+            if (validator.currentResource.isChild) {
+                validator.currentPropertyName = validator.currentResource.parentRefField;
+                validator.validateParentRef(validator.currentResource.parentResource.name);
+            }
+            if (validator.currentResource.customValidationFunc !== undefined) {
+                validator.currentResource.customValidationFunc(record, validator);
+            }
+        }
+    }
+    for (const error of validator.errors) {
+        log(error, MessageType.Error);
+    }
+    if (validator.errors.length === 0) {
+        log("Is Valid!", MessageType.Success);
+    }
+    return validator.errors;
+}
+function hasIDProperty(resource) {
+    return 'ID' in resource.openAPIProperties || resource.name === OCResourceEnum.ApiClients;
+}
+function getType(value) {
+    if (___default['default'].isArray(value))
+        return 'array';
+    if (___default['default'].isPlainObject(value))
+        return 'object';
+    if (___default['default'].isString(value))
+        return 'string';
+    if (___default['default'].isBoolean(value))
+        return 'boolean';
+    if (___default['default'].isInteger(value))
+        return 'integer';
+    return 'number';
+}
+class Validator {
+    constructor() {
+        this.errors = [];
+        this.idCache = new IDCache();
+        this.usernameCache = new Set();
+    }
+    addError(message) {
+        this.errors.push(message);
+    }
+    validateIsRequired(fieldName) {
+        if (this.currentResource.requiredCreateFields.includes(fieldName)) {
+            this.addError(`Required field ${this.currentResource.name}.${fieldName}: cannot have value ${this.currentRecord[fieldName]}.`);
+            return false;
+        }
+        return true;
+    }
+    validateParentRef(parentType) {
+        var value = this.currentRecord[this.currentResource.parentRefField];
+        if (___default['default'].isNil(value)) {
+            this.addError(`Required field ${this.currentResource.name}.${this.currentResource.parentRefField}: cannot have value ${value}.`);
+            return false;
+        }
+        if (!this.validateFieldTypeMatches(value, { type: "string", readOnly: false })) {
+            return false;
+        }
+        if (!this.idCache.has(parentType, value)) {
+            this.addError(`Invalid reference ${this.currentResource.name}.${this.currentResource.parentRefField}: no ${parentType} found with ID \"${value}\".`);
+            return false;
+        }
+        return true;
+    }
+    validateForeignKeyExists(foreignKey) {
+        var field = this.currentPropertyName;
+        var value = this.currentRecord[field];
+        var setEntry = foreignKey.foreignParentRefField === undefined ? value : `${this.currentRecord[foreignKey.foreignParentRefField]}/${value}`;
+        // find an ID of a particular resource
+        var keyExists = this.idCache.has(foreignKey.foreignResource, setEntry);
+        if (!keyExists) {
+            var message = `Invalid reference ${this.currentResource.name}.${field}: no ${foreignKey.foreignResource} found with ID \"${value}\".`;
+            if (setEntry.includes('/')) {
+                message = message.concat(` within the ${foreignKey.foreignParentRefField} \"${this.currentRecord[foreignKey.foreignParentRefField]}\"`);
+            }
+            this.addError(message);
+            return false;
+        }
+        return true;
+    }
+    // TODO - validate things inside objects or arrays
+    validateFieldTypeMatches(value, spec) {
+        // todo - need to do this differently. Get a swagger parser library
+        if (spec.allOf) {
+            spec.type = "object";
+        }
+        var error = null;
+        var typeError = `Incorrect type ${this.currentResource.name}.${this.currentPropertyName}: ${value} is ${getType(value)}. Should be ${spec.type}.`;
+        switch (spec.type) {
+            case 'object':
+                if (!___default['default'].isPlainObject(value))
+                    error = typeError;
+                break;
+            case 'array':
+                if (!___default['default'].isArray(value))
+                    error = typeError;
+                break;
+            case 'integer':
+                if (!___default['default'].isInteger(value)) {
+                    error = typeError;
+                }
+                else {
+                    if ((spec.maximum || Infinity) < value) {
+                        error = `Maximum for ${this.currentResource.name}.${this.currentPropertyName} is ${spec.maximum}. Found ${value}.`;
+                    }
+                    if ((spec.minimum || -Infinity) > value) {
+                        error = `Minimum for ${this.currentResource.name}.${this.currentPropertyName} is ${spec.minimum}. Found ${value}.`;
+                    }
+                }
+                break;
+            case 'number':
+                if (!___default['default'].isNumber(value))
+                    error = typeError;
+                break;
+            case 'boolean':
+                if (!___default['default'].isBoolean(value))
+                    error = typeError;
+                break;
+            case 'string':
+                if (!___default['default'].isString(value)) {
+                    error = typeError;
+                }
+                else {
+                    if ((spec.maxLength || Infinity) < value.length) {
+                        error = `Max string length for ${this.currentResource.name}.${this.currentPropertyName} is ${spec.maxLength}. Found \"${value}\".`;
+                    }
+                    if (spec.format === 'date-time' && !Date.parse(value)) {
+                        error = `${this.currentResource.name}.${this.currentPropertyName} should be a date format. Found \"${value}\".`;
+                    }
+                }
+                break;
+        }
+        if (error !== null) {
+            this.addError(error);
+            return false;
+        }
+        return true;
+    }
+    // todo - need to validate duplicates that involve more fields that simply ID. e.g. xpindex 
+    validateDuplicateIDs() {
+        if (___default['default'].isNil(this.currentRecord.ID) || !hasIDProperty(this.currentResource)) {
+            return true;
+        }
+        var setEntry = this.currentResource.isChild ? `${this.currentRecord[this.currentResource.parentRefField]}/${this.currentRecord.ID}` : this.currentRecord.ID;
+        if (this.idCache.has(this.currentResource.name, setEntry)) {
+            var message = `Duplicate ID: multiple ${this.currentResource.name} with ID \"${this.currentRecord.ID}\"`;
+            if (setEntry.includes('/')) {
+                message = message.concat(` within the ${this.currentResource.parentRefField} \"${this.currentRecord[this.currentResource.parentRefField]}\"`);
+            }
+            this.addError(message);
+            return false;
+        }
+        else {
+            this.idCache.add(this.currentResource.name, setEntry);
+        }
+        return true;
+    }
+    // username needs to be unique within a marketplace
+    validateDuplicateUsernames() {
+        var username = this.currentRecord.Username;
+        if (___default['default'].isNil(username) || !('Username' in this.currentResource.openAPIProperties)) {
+            return true;
+        }
+        if (this.usernameCache.has(username)) {
+            var message = `Duplicate Username: multiple users with username \"${username}\"`;
+            this.addError(message);
+            return false;
+        }
+        else {
+            this.usernameCache.add(username);
+        }
+        return true;
+    }
+}
+validate("./ordercloud-seed.yml");
 
 yargs__default['default'].scriptName("@ordercloud/seeding")
     .usage('$0 <cmd> [args] -')
@@ -1030,8 +1269,24 @@ yargs__default['default'].scriptName("@ordercloud/seeding")
         alias: 'p',
         describe: 'Portal password'
     });
+    yargs.option('filePath', {
+        type: 'string',
+        alias: 'f',
+        default: 'ordercloud-seed.yml',
+        describe: 'File path to download data to'
+    });
 }, function (argv) {
-    download(argv.u, argv.p, argv.e, argv.o);
+    download(argv.u, argv.p, argv.e, argv.o, argv.f);
+})
+    .command('validate', 'Validate a potential file for upload', (yargs) => {
+    yargs.option('filePath', {
+        type: 'string',
+        alias: 'f',
+        default: 'ordercloud-seed.yml',
+        describe: 'File path of data to validate'
+    });
+}, function (argv) {
+    validate(argv.f);
 })
     .help()
     .argv;
