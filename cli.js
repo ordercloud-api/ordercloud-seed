@@ -11,7 +11,6 @@ var chalk = require('chalk');
 var emoji = require('node-emoji');
 var _ = require('lodash');
 var jwt_decode = require('jwt-decode');
-var dotenv = require('dotenv');
 
 function _interopDefaultLegacy (e) { return e && typeof e === 'object' && 'default' in e ? e : { 'default': e }; }
 
@@ -24,7 +23,6 @@ var chalk__default = /*#__PURE__*/_interopDefaultLegacy(chalk);
 var emoji__default = /*#__PURE__*/_interopDefaultLegacy(emoji);
 var ___default = /*#__PURE__*/_interopDefaultLegacy(_);
 var jwt_decode__default = /*#__PURE__*/_interopDefaultLegacy(jwt_decode);
-var dotenv__default = /*#__PURE__*/_interopDefaultLegacy(dotenv);
 
 class Portal {
     static async login(username, password) {
@@ -102,19 +100,19 @@ class SeedFile {
         var file;
         try {
             file = fs__default['default'].readFileSync(filePath, 'utf8'); // consider switching to streams
-            log(`found file: ${filePath}`, MessageType.Success);
+            log(`Found file \"${filePath}\"`, MessageType.Success);
         }
         catch (err) {
-            errors.push(`No such file or directory ${filePath} found`);
+            errors.push(`No such file or directory \"${filePath}\" found`);
             return false;
         }
         try {
             this.file = yaml__default['default'].load(file);
-            log(`valid yaml: ${filePath}`, MessageType.Success);
+            log(`Valid yaml in \"${filePath}\"`, MessageType.Success);
         }
         catch (e) {
             var ex = e;
-            errors.push(`YAML Exception in ${filePath}: ${ex.message}`);
+            errors.push(`YAML Exception in \"${filePath}\": ${ex.message}`);
             return false;
         }
         return true;
@@ -1004,8 +1002,8 @@ async function download(username, password, environment, orgID, path) {
         }
     }
 }
-dotenv__default['default'].config({ path: '.env' });
-download(process.env.PORTAL_USERNAME, process.env.PORTAL_PASSWORD, process.env.OC_ENV, process.env.ORG_ID, 'ordercloud-seed.yml');
+//dotenv.config({ path: '.env' });
+//download(process.env.PORTAL_USERNAME, process.env.PORTAL_PASSWORD, process.env.OC_ENV, process.env.ORG_ID, 'ordercloud-seed.yml');
 
 class IDCache {
     constructor() {
@@ -1029,8 +1027,12 @@ async function validate(filePath) {
     var validator = new Validator();
     // validates file is found and is valid yaml
     var success = file.ReadFromYaml(filePath, validator.errors);
-    if (!success)
+    if (!success) {
+        for (const error of validator.errors) {
+            log(error, MessageType.Error);
+        }
         return validator.errors;
+    }
     var directory = await BuildResourceDirectory(true);
     // validate duplicate IDs 
     for (let resourceEnum in directory) {
@@ -1083,7 +1085,7 @@ async function validate(filePath) {
         log(error, MessageType.Error);
     }
     if (validator.errors.length === 0) {
-        log("Is Valid!", MessageType.Success);
+        log("Ready for upload!", MessageType.Success);
     }
     return validator.errors;
 }
@@ -1244,7 +1246,6 @@ class Validator {
         return true;
     }
 }
-validate("./ordercloud-seed.yml");
 
 yargs__default['default'].scriptName("@ordercloud/seeding")
     .usage('$0 <cmd> [args] -')
@@ -1269,21 +1270,21 @@ yargs__default['default'].scriptName("@ordercloud/seeding")
         alias: 'p',
         describe: 'Portal password'
     });
-    yargs.option('filePath', {
+    yargs.option('file', {
         type: 'string',
         alias: 'f',
         default: 'ordercloud-seed.yml',
-        describe: 'File path to download data to'
+        describe: 'File'
     });
 }, function (argv) {
     download(argv.u, argv.p, argv.e, argv.o, argv.f);
 })
     .command('validate', 'Validate a potential file for upload', (yargs) => {
-    yargs.option('filePath', {
+    yargs.option('file', {
         type: 'string',
         alias: 'f',
         default: 'ordercloud-seed.yml',
-        describe: 'File path of data to validate'
+        describe: 'File'
     });
 }, function (argv) {
     validate(argv.f);

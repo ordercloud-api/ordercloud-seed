@@ -2,7 +2,7 @@ import { BuildResourceDirectory } from "../models/oc-resource-directory";
 import { OCResourceEnum } from "../models/oc-resource-enum";
 import { ForeignKey, OCResource } from "../models/oc-resources";
 import SeedFile from "../models/seed-file";
-import { OpenAPIProperties, OpenAPIProperty, OpenAPIType } from "../models/open-api";
+import { OpenAPIProperty, OpenAPIType } from "../models/open-api";
 import _ from 'lodash';
 import { IDCache } from "../services/id-cache";
 import { log, MessageType } from "../services/log";
@@ -12,7 +12,12 @@ export async function validate(filePath: string): Promise<string[]> {
     var validator = new Validator();
     // validates file is found and is valid yaml
     var success = file.ReadFromYaml(filePath, validator.errors); 
-    if (!success) return validator.errors;
+    if (!success) {
+        for (const error of validator.errors) {
+            log(error, MessageType.Error)
+        }
+        return validator.errors;
+    }
 
     var directory = await BuildResourceDirectory(true);
     // validate duplicate IDs 
@@ -64,7 +69,7 @@ export async function validate(filePath: string): Promise<string[]> {
         log(error, MessageType.Error)
     }
     if (validator.errors.length === 0) {
-        log("Is Valid!", MessageType.Success);
+        log("Ready for upload!", MessageType.Success);
     }
 
     return validator.errors;
@@ -227,5 +232,3 @@ export class Validator {
         return true;
     }
 }
-
-validate("./ordercloud-seed.yml");

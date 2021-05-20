@@ -1,13 +1,11 @@
 {
   "name": "@ordercloud/seeding",
-  "version": "1.0.2",
+  "version": "1.0.3",
   "description": "Download and upload seeding files from the OrderCloud platform.",
   "bin": {
     "ordercloud-seed": "cli.js"
   },
   "scripts": {
-    "download": "npm run rollup && node dist/download.js",
-    "validate": "npm run rollup && node dist/validate.js",
     "test": "jest",
     "rollup": "rollup --config"
   },

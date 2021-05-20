@@ -107,6 +107,6 @@ export async function download(username: string, password: string, environment: 
     }
 } 
 
-dotenv.config({ path: '.env' });
+//dotenv.config({ path: '.env' });
 
-download(process.env.PORTAL_USERNAME, process.env.PORTAL_PASSWORD, process.env.OC_ENV, process.env.ORG_ID, 'ordercloud-seed.yml');
+//download(process.env.PORTAL_USERNAME, process.env.PORTAL_PASSWORD, process.env.OC_ENV, process.env.ORG_ID, 'ordercloud-seed.yml');

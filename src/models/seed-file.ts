@@ -32,17 +32,17 @@ export default class SeedFile {
         var file;
         try {
             file = fs.readFileSync(filePath, 'utf8') // consider switching to streams
-            log(`found file: ${filePath}`, MessageType.Success);
+            log(`Found file \"${filePath}\"`, MessageType.Success);
         } catch (err) {
-            errors.push(`No such file or directory ${filePath} found`);
+            errors.push(`No such file or directory \"${filePath}\" found`);
             return false;
         }
         try {
             this.file = yaml.load(file) as any;
-            log(`valid yaml: ${filePath}`, MessageType.Success);
+            log(`Valid yaml in \"${filePath}\"`, MessageType.Success);
         } catch (e) {
             var ex = e as YAMLException;
-            errors.push(`YAML Exception in ${filePath}: ${ex.message}`)
+            errors.push(`YAML Exception in \"${filePath}\": ${ex.message}`)
             return false;
         }
         return true;
