@@ -4,10 +4,11 @@ import { ForeignKey, OCResource } from "../models/oc-resources";
 import SeedFile from "../models/seed-file";
 import { OpenAPIProperty, OpenAPIType } from "../models/open-api";
 import _ from 'lodash';
-import { IDCache } from "../services/id-cache";
+import { IDCache } from "../models/id-cache";
 import { log, MessageType } from "../services/log";
+import { ValidateResponse } from "../models/validate-response";
 
-export async function validate(filePath: string): Promise<string[]> {
+export async function validate(filePath: string): Promise<ValidateResponse> {
     var file = new SeedFile(); 
     var validator = new Validator();
     // validates file is found and is valid yaml
@@ -16,13 +17,13 @@ export async function validate(filePath: string): Promise<string[]> {
         for (const error of validator.errors) {
             log(error, MessageType.Error)
         }
-        return validator.errors;
+        return { errors: validator.errors, data: null };
     }
 
     var directory = await BuildResourceDirectory(true);
     // validate duplicate IDs 
-    for (let resourceEnum in directory) {
-        validator.currentResource = directory[resourceEnum];
+    for (let resource of directory) {
+        validator.currentResource = resource;
         var hasUsername = "Username" in validator.currentResource.openAPIProperties;
         var hasID = hasIDProperty(validator.currentResource)
         if (hasID || hasUsername) {         
@@ -36,8 +37,8 @@ export async function validate(filePath: string): Promise<string[]> {
     }
 
     // now that idSets are built, another loop for the rest of validation
-    for (let resourceEnum in directory) {
-        validator.currentResource = directory[resourceEnum];
+    for (let resource of directory) {
+        validator.currentResource = resource
         for (let record of file.GetRecords(validator.currentResource)) {
             validator.currentRecord = record;
             for (const [propName, spec] of Object.entries(validator.currentResource.openAPIProperties)) {
@@ -69,10 +70,10 @@ export async function validate(filePath: string): Promise<string[]> {
         log(error, MessageType.Error)
     }
     if (validator.errors.length === 0) {
-        log("Ready for upload!", MessageType.Success);
+        log("File ready for upload!", MessageType.Success);
     }
 
-    return validator.errors;
+    return { errors: validator.errors, data: file };
 }
 
 function hasIDProperty(resource: OCResource) {

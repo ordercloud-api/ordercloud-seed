@@ -1,4 +1,4 @@
-import { OCResourceEnum } from "../models/oc-resource-enum";
+import { OCResourceEnum } from "./oc-resource-enum";
 
 export class IDCache {
     private idSets: { [key in OCResourceEnum]?: Set<string> } = {};

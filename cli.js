@@ -45,7 +45,14 @@ class Portal {
         });
         return response.data.access_token;
     }
-    static async CreateOrganization(org, portalToken) {
+    static async GetOrganization(orgID, portalToken) {
+        await axios__default['default'].get(`${this.baseUrl}/organizations/${orgID}`, {
+            headers: {
+                'Authorization': `Bearer ${portalToken}`
+            }
+        });
+    }
+    static async PutOrganization(org, portalToken) {
         await axios__default['default'].put(`${this.baseUrl}/organizations/${org.Id}`, org, {
             headers: {
                 'Authorization': `Bearer ${portalToken}`
@@ -125,8 +132,19 @@ async function RunThrottled(items, maxParallelism, asyncAction) {
     let results = [];
     const batches = chunk(items, maxParallelism);
     for (let batch of batches) {
-        const batchResults = await Promise.all(batch.map(asyncAction));
-        results = results.concat(batchResults);
+        try {
+            const batchResults = await Promise.all(batch.map(asyncAction));
+            results = results.concat(batchResults);
+        }
+        catch (err) {
+            console.log(chalk__default['default'].red("\nUnexpected error from OrderCloud. This is likely a seeding tool bug. Please create a github issue with your seed file included! https://github.com/ordercloud-api/ordercloud-seed/issues.\n"));
+            console.log("Request method:", chalk__default['default'].green(err.response.config.method.toUpperCase()));
+            console.log("Request url:", chalk__default['default'].green(err.response.config.url));
+            console.log("Request data:", chalk__default['default'].green(err.response.config.data));
+            console.log("\nResponse status:", err.status);
+            console.log("Response data:", err.errors.Errors[0]);
+            throw err;
+        }
     }
     return results;
 }
@@ -141,9 +159,30 @@ class OrderCloudBulk {
         // combine and flatten items
         return flatten([page1, ...results].map((r) => r.Items));
     }
-    static async CreateAll(resource, records, ...routeParams) {
+    static async CreateAll(resource, records) {
         const createFunc = resource.sdkObject[resource.createMethodName];
-        await RunThrottled(records, 8, record => createFunc(...routeParams, record));
+        if (resource.parentRefField) {
+            return await RunThrottled(records, 8, record => {
+                try {
+                    return createFunc(record[resource.parentRefField], record);
+                }
+                catch (err) {
+                    console.log("here");
+                    console.log(err);
+                }
+            });
+        }
+        else {
+            return await RunThrottled(records, 8, record => {
+                try {
+                    return createFunc(record);
+                }
+                catch (err) {
+                    console.log("here");
+                    console.log(err);
+                }
+            });
+        }
     }
 }
 
@@ -367,7 +406,7 @@ const Directory = [
         modelName: 'Incrementor',
         sdkObject: ordercloudJavascriptSdk.Incrementors,
         path: "/incrementors",
-        createPriority: 1
+        createPriority: 1,
     },
     {
         name: OCResourceEnum.Webhooks,
@@ -392,7 +431,8 @@ const Directory = [
         modelName: "XpIndex",
         sdkObject: ordercloudJavascriptSdk.XpIndices,
         path: "/xpindices",
-        createPriority: 1
+        createPriority: 1,
+        createMethodName: "Put"
     },
     {
         name: OCResourceEnum.Buyers,
@@ -403,7 +443,7 @@ const Directory = [
         foreignKeys: {
             DefaultCatalogID: { foreignResource: OCResourceEnum.Catalogs }
         },
-        children: [OCResourceEnum.Users, OCResourceEnum.UserGroups, OCResourceEnum.Addresses, OCResourceEnum.CostCenters, OCResourceEnum.CreditCards, OCResourceEnum.SpendingAccounts, OCResourceEnum.ApprovalRules, OCResourceEnum.UserGroupAssignments, OCResourceEnum.SpendingAccountAssignments, OCResourceEnum.AddressAssignments, OCResourceEnum.CostCenterAssignments, OCResourceEnum.CreditCardAssignments, OCResourceEnum.SpendingAccountAssignments],
+        children: [OCResourceEnum.Users, OCResourceEnum.UserGroups, OCResourceEnum.Addresses, OCResourceEnum.CostCenters, OCResourceEnum.CreditCards, OCResourceEnum.SpendingAccounts, OCResourceEnum.ApprovalRules, OCResourceEnum.UserGroupAssignments, OCResourceEnum.SpendingAccountAssignments, OCResourceEnum.AddressAssignments, OCResourceEnum.CostCenterAssignments, OCResourceEnum.CreditCardAssignments],
     },
     {
         name: OCResourceEnum.Users,
@@ -570,6 +610,7 @@ const Directory = [
         path: "/specs/{specID}/options",
         parentRefField: "SpecID",
         listMethodName: "ListOptions",
+        createMethodName: "CreateOption",
         isChild: true
     },
     {
@@ -608,6 +649,7 @@ const Directory = [
         isAssignment: true,
         path: "/usergroups/assignments",
         listMethodName: 'ListUserAssignments',
+        createMethodName: 'SaveUserAssignment',
         foreignKeys: {
             UserID: { foreignResource: OCResourceEnum.AdminUsers },
             UserGroupID: { foreignResource: OCResourceEnum.AdminUserGroups },
@@ -625,6 +667,10 @@ const Directory = [
             BuyerID: { foreignResource: OCResourceEnum.Buyers },
             SupplierID: { foreignResource: OCResourceEnum.Suppliers },
         },
+        downloadTransformFunc: (x) => {
+            x.ApiClientID = x.ApiClientID.toLowerCase(); // funky platform thing with API CLient ID casing
+            return x;
+        },
     },
     {
         name: OCResourceEnum.UserGroupAssignments,
@@ -635,6 +681,7 @@ const Directory = [
         path: "/buyers/{buyerID}/usergroups/assignments",
         parentRefField: "BuyerID",
         isChild: true,
+        createMethodName: "SaveUserAssignment",
         listMethodName: 'ListUserAssignments',
         foreignKeys: {
             UserID: {
@@ -703,7 +750,7 @@ const Directory = [
         foreignKeys: {
             CreditCardID: {
                 foreignParentRefField: "BuyerID",
-                foreignResource: OCResourceEnum.Addresses
+                foreignResource: OCResourceEnum.CreditCards
             },
             UserID: {
                 foreignParentRefField: "BuyerID",
@@ -749,6 +796,7 @@ const Directory = [
         parentRefField: "SupplierID",
         isChild: true,
         listMethodName: 'ListUserAssignments',
+        createMethodName: 'SaveUserAssignment',
         foreignKeys: {
             UserID: {
                 foreignParentRefField: "SupplierID",
@@ -764,7 +812,7 @@ const Directory = [
         name: OCResourceEnum.ProductAssignments,
         modelName: "ProductAssignment",
         sdkObject: ordercloudJavascriptSdk.Products,
-        createPriority: 5,
+        createPriority: 6,
         path: "/products/assignments",
         isAssignment: true,
         foreignKeys: {
@@ -849,6 +897,7 @@ const Directory = [
         path: "/specs/productassignments",
         isAssignment: true,
         listMethodName: 'ListProductAssignments',
+        createMethodName: 'SaveProductAssignment',
         foreignKeys: {
             SpecID: { foreignResource: OCResourceEnum.Specs },
             ProductID: { foreignResource: OCResourceEnum.Products },
@@ -879,7 +928,7 @@ function ApplyDefaults(resource) {
     var _a, _b;
     resource.isAssignment = resource.isAssignment || false;
     resource.listMethodName = resource.listMethodName || (resource.isAssignment ? "ListAssignments" : "List");
-    resource.createMethodName = resource.createMethodName || (resource.isAssignment ? "CreateAssignment" : "Create");
+    resource.createMethodName = resource.createMethodName || (resource.isAssignment ? "SaveAssignment" : "Create");
     resource.foreignKeys = resource.foreignKeys || {};
     resource.children = resource.children || [];
     resource.isChild = resource.isChild || false;
@@ -905,10 +954,7 @@ async function BuildResourceDirectory(includeOpenAPI = false) {
             }
         }
         return modified;
-    }).reduce((acc, resource) => {
-        acc[resource.name] = resource;
-        return acc;
-    }, {});
+    });
 }
 
 async function download(username, password, environment, orgID, path) {
@@ -960,8 +1006,7 @@ async function download(username, password, environment, orgID, path) {
     // Pull Data from Ordercloud
     var file = new SeedFile();
     var directory = await BuildResourceDirectory(false);
-    for (let key in directory) {
-        var resource = directory[key];
+    for (let resource of directory) {
         if (resource.isChild) {
             continue; // resource will be handled as part of its parent
         }
@@ -972,7 +1017,7 @@ async function download(username, password, environment, orgID, path) {
         }
         file.AddRecords(resource, records);
         for (let childResourceName of resource.children) {
-            let childResource = directory[childResourceName];
+            let childResource = directory.find(x => x.name === childResourceName);
             for (let parentRecord of records) {
                 var childRecords = await OrderCloudBulk.ListAll(childResource, parentRecord.ID); // assume ID exists. Which is does for all parent types.
                 for (let childRecord of childRecords) {
@@ -983,9 +1028,9 @@ async function download(username, password, environment, orgID, path) {
                 }
                 file.AddRecords(childResource, childRecords);
             }
-            log("Finished " + childRecords.length + " " + childResourceName);
+            log("Downloaded " + childRecords.length + " " + childResourceName);
         }
-        log("Finished " + records.length + " " + resource.name);
+        log("Downloaded " + records.length + " " + resource.name);
     }
     // Write to file
     file.WriteToYaml(path);
@@ -1031,12 +1076,12 @@ async function validate(filePath) {
         for (const error of validator.errors) {
             log(error, MessageType.Error);
         }
-        return validator.errors;
+        return { errors: validator.errors, data: null };
     }
     var directory = await BuildResourceDirectory(true);
     // validate duplicate IDs 
-    for (let resourceEnum in directory) {
-        validator.currentResource = directory[resourceEnum];
+    for (let resource of directory) {
+        validator.currentResource = resource;
         var hasUsername = "Username" in validator.currentResource.openAPIProperties;
         var hasID = hasIDProperty(validator.currentResource);
         if (hasID || hasUsername) {
@@ -1051,8 +1096,8 @@ async function validate(filePath) {
         }
     }
     // now that idSets are built, another loop for the rest of validation
-    for (let resourceEnum in directory) {
-        validator.currentResource = directory[resourceEnum];
+    for (let resource of directory) {
+        validator.currentResource = resource;
         for (let record of file.GetRecords(validator.currentResource)) {
             validator.currentRecord = record;
             for (const [propName, spec] of Object.entries(validator.currentResource.openAPIProperties)) {
@@ -1085,9 +1130,9 @@ async function validate(filePath) {
         log(error, MessageType.Error);
     }
     if (validator.errors.length === 0) {
-        log("Ready for upload!", MessageType.Success);
+        log("File ready for upload!", MessageType.Success);
     }
-    return validator.errors;
+    return { errors: validator.errors, data: file };
 }
 function hasIDProperty(resource) {
     return 'ID' in resource.openAPIProperties || resource.name === OCResourceEnum.ApiClients;
@@ -1247,13 +1292,129 @@ class Validator {
     }
 }
 
+async function upload(username, password, orgID, path) {
+    // First run file validation
+    var validateResponse = await validate(path);
+    if (validateResponse.errors.length !== 0)
+        return;
+    // Run command input validation
+    var missingInputs = [];
+    if (!orgID)
+        missingInputs.push("orgID");
+    if (!username)
+        missingInputs.push("username");
+    if (!password)
+        missingInputs.push("password");
+    if (missingInputs.length > 0) {
+        return log(`Missing required arguments: ${missingInputs.join(", ")}`, MessageType.Error);
+    }
+    // Authenticate To Portal
+    var portal_token;
+    try {
+        portal_token = await Portal.login(username, password);
+    }
+    catch (_a) {
+        return log(`Username \"${username}\" and Password \"${password}\" were not valid`, MessageType.Error);
+    }
+    // Confirm orgID doesn't already exist
+    try {
+        await Portal.GetOrganization(orgID, portal_token);
+        return log(`An organization with ID \"${orgID}\" already exists.`, MessageType.Error);
+    }
+    catch (_b) { }
+    // Create Organization
+    await Portal.PutOrganization({ Id: orgID, Name: orgID, Environment: "Sandbox" }, portal_token);
+    log(`Created new Organization \"${orgID}\".`, MessageType.Success);
+    // Authenticate to Core API
+    var org_token = await Portal.getOrganizationToken(orgID, portal_token);
+    ordercloudJavascriptSdk.Configuration.Set({ baseApiUrl: "https://sandboxapi.ordercloud.io" });
+    ordercloudJavascriptSdk.Tokens.SetAccessToken(org_token);
+    // Upload to Ordercloud
+    var file = validateResponse.data;
+    var apiClientIDMap = {};
+    var directory = await BuildResourceDirectory(false);
+    for (let resource of directory.sort((a, b) => a.createPriority - b.createPriority)) {
+        var records = file.GetRecords(resource);
+        if (resource.name === OCResourceEnum.ApiClients) {
+            await UploadApiClients(resource);
+        }
+        else if (resource.name === OCResourceEnum.ImpersonationConfigs) {
+            await UploadImpersonationConfigs(resource);
+        }
+        else if (resource.name === OCResourceEnum.Webhooks) {
+            await UploadWebhooks(resource);
+        }
+        else if (resource.name === OCResourceEnum.OpenIdConnects) {
+            await UploadOpenIdConnects(resource);
+        }
+        else if (resource.name === OCResourceEnum.ApiClientAssignments) {
+            await UploadApiClientAssignments(resource);
+        }
+        else {
+            await OrderCloudBulk.CreateAll(resource, records);
+        }
+        log(`Uploaded ${records.length} ${resource.name}.`, MessageType.Progress);
+    }
+    log(`Done Seeding!`, MessageType.Success);
+    async function UploadApiClients(resource) {
+        var results = await OrderCloudBulk.CreateAll(resource, records);
+        // Now that we have created the APIClients, we actually know what their IDs are.  
+        for (var i = 0; i < records.length; i++) {
+            apiClientIDMap[records[i].ID] = apiClientIDMap[results[i].ID];
+        }
+    }
+    async function UploadImpersonationConfigs(resource) {
+        var toUpload = records.map(r => r.ClientID = apiClientIDMap[r.ClientID]);
+        await OrderCloudBulk.CreateAll(resource, toUpload);
+    }
+    async function UploadOpenIdConnects(resource) {
+        var toUpload = records.map(r => r.OrderCloudApiClientID = apiClientIDMap[r.OrderCloudApiClientID]);
+        await OrderCloudBulk.CreateAll(resource, toUpload);
+    }
+    async function UploadWebhooks(resource) {
+        var toUpload = records.map(r => {
+            r.ApiClientIDs = r.ApiClientIDs.map(id => apiClientIDMap[id]);
+        });
+        await OrderCloudBulk.CreateAll(resource, toUpload);
+    }
+    async function UploadApiClientAssignments(resource) {
+        var toUpload = records.map(r => r.ApiClientID = apiClientIDMap[r.ApiClientID]);
+        await OrderCloudBulk.CreateAll(resource, toUpload);
+    }
+}
+
 yargs__default['default'].scriptName("@ordercloud/seeding")
     .usage('$0 <cmd> [args] -')
+    .command('upload', 'Create new sandbox organization from file', (yargs) => {
+    yargs.option('orgID', {
+        type: 'string',
+        alias: 'o',
+        describe: 'Organization ID'
+    });
+    yargs.option('username', {
+        type: 'string',
+        alias: 'u',
+        describe: 'Portal username'
+    });
+    yargs.option('password', {
+        type: 'string',
+        alias: 'p',
+        describe: 'Portal password'
+    });
+    yargs.option('file', {
+        type: 'string',
+        alias: 'f',
+        default: 'ordercloud-seed.yml',
+        describe: 'File'
+    });
+}, function (argv) {
+    upload(argv.u, argv.p, argv.o, argv.f);
+})
     .command('download', 'Download all org data into a file', (yargs) => {
     yargs.option('environment', {
         type: 'string',
         alias: 'e',
-        describe: 'Environment'
+        describe: 'Environment',
     });
     yargs.option('orgID', {
         type: 'string',

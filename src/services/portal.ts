@@ -30,7 +30,16 @@ export default class Portal {
         return response.data.access_token;
     }
 
-    static async CreateOrganization(org: PortalOrganization, portalToken: string): Promise<void> {
+    static async GetOrganization(orgID: string, portalToken: string): Promise<void> {
+        await axios.get(`${this.baseUrl}/organizations/${orgID}`,
+        {
+            headers: {
+                'Authorization': `Bearer ${portalToken}`
+            }
+        });
+    }
+
+    static async PutOrganization(org: PortalOrganization, portalToken: string): Promise<void> {
         await axios.put(`${this.baseUrl}/organizations/${org.Id}`, org,
         {
             headers: {

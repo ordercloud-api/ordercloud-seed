@@ -21,7 +21,7 @@ Objects:
     - ID: nlc_admin_impersonate_buyer
       ImpersonationBuyerID: null
       ImpersonationGroupID: null
-      ImpersonationUserID: HFDBMoZbGk2S01bGsNhWVw
+      ImpersonationUserID: AdminUser
       BuyerID: axVUG0NjV0ml-0OW1IkWBg
       GroupID: null
       UserID: null
@@ -30,7 +30,7 @@ Objects:
     - ID: nlc_admin_impersonate_buyer2
       ImpersonationBuyerID: null
       ImpersonationGroupID: null
-      ImpersonationUserID: HFDBMoZbGk2S01bGsNhWVw
+      ImpersonationUserID: AdminUser
       BuyerID: cloud_coffee
       GroupID: null
       UserID: null
@@ -54,9 +54,21 @@ Objects:
       UserID: null
       SecurityProfileID: BuyerAccess
       ClientID: 961e29d7-7783-42d0-ac5d-a46ecd7f5765
-  OpenIdConnects: []
+  OpenIdConnects:
+    - ID: JK9D8prIsUGNxmxiaMwTKA
+      OrderCloudApiClientID: 533320c2-623e-4e70-b96a-7d16f79f60ee
+      ConnectClientID: fake
+      ConnectClientSecret: <Redacted for Security>
+      AppStartUrl: fake
+      AuthorizationEndpoint: fake
+      TokenEndpoint: fake
+      UrlEncoded: false
+      IntegrationEventID: null
+      CallSyncUserIntegrationEvent: false
+      IntegrationEventName: null
+      AdditionalIdpScopes: null
   AdminUsers:
-    - ID: HFDBMoZbGk2S01bGsNhWVw
+    - ID: AdminUser
       Username: nlcadmin
       Password: null
       FirstName: Jon
@@ -70,9 +82,42 @@ Objects:
         - FullAccess
       DateCreated: '2020-11-12T16:06:08.56+00:00'
       PasswordLastSetDate: '2020-11-18T14:38:28.503+00:00'
-  AdminUserGroups: []
-  AdminAddresses: []
-  MessageSenders: []
+  AdminUserGroups:
+    - ID: AdminUserGroup
+      Name: AdminUserGroup
+      Description: null
+      xp: null
+  AdminAddresses:
+    - ID: AdminAddress
+      DateCreated: '2021-05-21T16:31:49.643+00:00'
+      CompanyName: null
+      FirstName: null
+      LastName: null
+      Street1: 1111 Plains
+      Street2: null
+      City: Minnneapolis
+      State: MN
+      Zip: '55409'
+      Country: US
+      Phone: null
+      AddressName: null
+      xp: null
+  MessageSenders:
+    - ID: MkWEKR-af0-uFaiKJeCFfQ
+      Name: New Message Sender
+      MessageTypes:
+        - OrderApproved
+      Description: null
+      URL: https://oc-integrations.azurewebsites.net/v1/mandrill/{messagetype}
+      ElevatedRoles: null
+      SharedKey: <Redacted for Security>
+      xp:
+        MessageTypeConfig:
+          - MessageType: OrderApproved
+            FromEmail: noreply@ordercloud.io
+            Subject: Your order has been approved
+            TemplateName: OrderApproved
+            MainContent: OrderApproved
   ApiClients:
     - ID: 533320c2-623e-4e70-b96a-7d16f79f60ee
       ClientSecret: <Redacted for Security>
@@ -102,11 +147,11 @@ Objects:
       RefreshTokenDuration: 0
       DefaultContextUserName: bill
       xp: null
-      AllowAnyBuyer: true
+      AllowAnyBuyer: false
       AllowAnySupplier: false
       AllowSeller: false
       IsAnonBuyer: true
-      AssignedBuyerCount: 0
+      AssignedBuyerCount: 2
       AssignedSupplierCount: 0
       OrderCheckoutIntegrationEventID: null
       OrderCheckoutIntegrationEventName: null
@@ -134,10 +179,37 @@ Objects:
       MinimumRequiredCustomRoles: []
       MaximumGrantedRoles: []
       MaximumGrantedCustomRoles: []
-  Incrementors: []
-  Webhooks: []
-  IntegrationEvents: []
-  XpIndices: []
+  Incrementors:
+    - ID: PVxl-GtmqU2J49MUa6l_oQ
+      Name: null
+      LastNumber: 0
+      LeftPaddingCount: 0
+  Webhooks:
+    - ID: fQBLweMQokyrhtPEamQ9jg
+      Name: New Webhook
+      Description: ''
+      Url: fake
+      HashKey: <Redacted for Security>
+      ElevatedRoles: null
+      ConfigData:
+        hello: this
+      BeforeProcessRequest: false
+      ApiClientIDs:
+        - 533320c2-623e-4e70-b96a-7d16f79f60ee
+        - 961e29d7-7783-42d0-ac5d-a46ecd7f5765
+      WebhookRoutes: []
+  IntegrationEvents:
+    - ElevatedRoles:
+        - ApiClientReader
+      ID: IntegrationEvent
+      ConfigData: null
+      EventType: OrderCheckout
+      CustomImplementationUrl: null
+      Name: IntegrationEvent
+      HashKey: <Redacted for Security>
+  XpIndices:
+    - ThingType: Address
+      Key: something
   Buyers:
     - ID: axVUG0NjV0ml-0OW1IkWBg
       Name: metrocoffeebuyer
@@ -389,8 +461,22 @@ Objects:
       AddressName: Uptown Shipping
       xp: {}
       BuyerID: cloud_coffee
-  CostCenters: []
-  CreditCards: []
+  CostCenters:
+    - ID: CostCenter
+      Name: CostCenter
+      Description: null
+      xp: null
+      BuyerID: cloud_coffee
+  CreditCards:
+    - ID: CreditCard
+      Token: null
+      DateCreated: '2021-05-21T16:38:19.917+00:00'
+      CardType: null
+      PartialAccountNumber: null
+      CardholderName: null
+      ExpirationDate: null
+      xp: null
+      BuyerID: cloud_coffee
   SpendingAccounts:
     - ID: northeast_spending_account
       Name: Northeast Store Budget
@@ -438,6 +524,13 @@ Objects:
       RuleExpression: order.Total > 100
       xp: {}
       BuyerID: axVUG0NjV0ml-0OW1IkWBg
+    - ID: mJZa-i2AgkeX_0yfWxW4eQ
+      Name: null
+      Description: null
+      ApprovingGroupID: burbank
+      RuleExpression: 'true'
+      xp: null
+      BuyerID: cloud_coffee
   Catalogs:
     - ID: cloud_coffee
       OwnerID: SShyjwitRe4ibpum
@@ -488,7 +581,49 @@ Objects:
       ChildCount: 0
       xp: {}
       CatalogID: nlc_catalog
-  Suppliers: []
+  Suppliers:
+    - ID: Supplier
+      Name: Supplier
+      Active: false
+      DateCreated: '2021-05-21T16:33:03.027+00:00'
+      xp: null
+  SupplierUsers:
+    - ID: SupplierUser
+      Username: SupplierUser
+      Password: null
+      FirstName: Test
+      LastName: User
+      Email: fake@email.com
+      Phone: null
+      TermsAccepted: null
+      Active: false
+      xp: null
+      AvailableRoles: []
+      DateCreated: '2021-05-21T16:33:27.563+00:00'
+      PasswordLastSetDate: null
+      SupplierID: Supplier
+  SupplierUserGroups:
+    - ID: SupplierUserGroup
+      Name: SupplierUserGroup
+      Description: null
+      xp: null
+      SupplierID: Supplier
+  SupplierAddresses:
+    - ID: SupplierAddress
+      DateCreated: '2021-05-21T16:34:29.677+00:00'
+      CompanyName: null
+      FirstName: null
+      LastName: null
+      Street1: 5454 street lane
+      Street2: null
+      City: Minneapolis
+      State: MN
+      Zip: '55409'
+      Country: US
+      Phone: null
+      AddressName: null
+      xp: null
+      SupplierID: Supplier
   Products:
     - OwnerID: SShyjwitRe4ibpum
       DefaultPriceScheduleID: bar_towels
@@ -502,7 +637,7 @@ Objects:
       ShipWidth: 0
       ShipLength: 0
       Active: true
-      SpecCount: 0
+      SpecCount: 1
       VariantCount: 0
       ShipFromAddressID: null
       Inventory:
@@ -866,7 +1001,79 @@ Objects:
         - Quantity: 1
           Price: 9.99
       xp: {}
-  Specs: []
+  Specs:
+    - ID: Color
+      ListOrder: 0
+      Name: Color
+      DefaultValue: null
+      Required: false
+      AllowOpenText: false
+      DefaultOptionID: null
+      DefinesVariant: false
+      xp: null
+      OptionCount: 4
+      Options:
+        - ID: ALZG7LG73k2GdGGkVxGMOg
+          Value: Purple
+          ListOrder: 0
+          IsOpenText: false
+          PriceMarkupType: NoMarkup
+          PriceMarkup: null
+          xp: null
+        - ID: g-a1FfZH0Uup1RzVetJoEw
+          Value: Red
+          ListOrder: 0
+          IsOpenText: false
+          PriceMarkupType: NoMarkup
+          PriceMarkup: null
+          xp: null
+        - ID: mzUibESPdEm8pLKQwV8zGQ
+          Value: Blue
+          ListOrder: 0
+          IsOpenText: false
+          PriceMarkupType: NoMarkup
+          PriceMarkup: null
+          xp: null
+        - ID: sJgpLYUMuEOTKNJ5NNsPrg
+          Value: Green
+          ListOrder: 0
+          IsOpenText: false
+          PriceMarkupType: NoMarkup
+          PriceMarkup: null
+          xp: null
+  SpecOptions:
+    - ID: ALZG7LG73k2GdGGkVxGMOg
+      Value: Purple
+      ListOrder: 0
+      IsOpenText: false
+      PriceMarkupType: NoMarkup
+      PriceMarkup: null
+      xp: null
+      SpecID: Color
+    - ID: g-a1FfZH0Uup1RzVetJoEw
+      Value: Red
+      ListOrder: 0
+      IsOpenText: false
+      PriceMarkupType: NoMarkup
+      PriceMarkup: null
+      xp: null
+      SpecID: Color
+    - ID: mzUibESPdEm8pLKQwV8zGQ
+      Value: Blue
+      ListOrder: 0
+      IsOpenText: false
+      PriceMarkupType: NoMarkup
+      PriceMarkup: null
+      xp: null
+      SpecID: Color
+    - ID: sJgpLYUMuEOTKNJ5NNsPrg
+      Value: Green
+      ListOrder: 0
+      IsOpenText: false
+      PriceMarkupType: NoMarkup
+      PriceMarkup: null
+      xp: null
+      SpecID: Color
   ProductFacets:
     - ID: Brand
       Name: Brand
@@ -956,26 +1163,6 @@ Assignments:
       UserGroupID: la
       AllowExceed: false
       BuyerID: cloud_coffee
-    - SpendingAccountID: northeast_spending_account
-      UserID: null
-      UserGroupID: northeast
-      AllowExceed: false
-      BuyerID: axVUG0NjV0ml-0OW1IkWBg
-    - SpendingAccountID: uptown_spending_account
-      UserID: null
-      UserGroupID: uptown
-      AllowExceed: false
-      BuyerID: axVUG0NjV0ml-0OW1IkWBg
-    - SpendingAccountID: burbank_spending_account
-      UserID: null
-      UserGroupID: burbank
-      AllowExceed: false
-      BuyerID: cloud_coffee
-    - SpendingAccountID: la_spending_account
-      UserID: null
-      UserGroupID: la
-      AllowExceed: false
-      BuyerID: cloud_coffee
   AddressAssignments:
     - AddressID: northeast
       UserID: null
@@ -1001,8 +1188,16 @@ Assignments:
       IsShipping: true
       IsBilling: false
       BuyerID: cloud_coffee
-  CostCenterAssignments: []
-  CreditCardAssignments: []
+  CostCenterAssignments:
+    - CostCenterID: CostCenter
+      UserID: null
+      UserGroupID: null
+      BuyerID: cloud_coffee
+  CreditCardAssignments:
+    - CreditCardID: CreditCard
+      UserID: null
+      UserGroupID: null
+      BuyerID: cloud_coffee
   CategoryAssignments:
     - CategoryID: coffee_supplies
       BuyerID: axVUG0NjV0ml-0OW1IkWBg
@@ -1083,6 +1278,10 @@ Assignments:
       ProductID: croissants
       ListOrder: 1
       CatalogID: nlc_catalog
+  SupplierUserGroupsAssignments:
+    - UserGroupID: SupplierUserGroup
+      UserID: SupplierUser
+      SupplierID: Supplier
   SecurityProfileAssignments:
     - SecurityProfileID: BuyerAccess
       BuyerID: axVUG0NjV0ml-0OW1IkWBg
@@ -1097,10 +1296,18 @@ Assignments:
     - SecurityProfileID: FullAccess
       BuyerID: null
       SupplierID: null
-      UserID: HFDBMoZbGk2S01bGsNhWVw
+      UserID: AdminUser
       UserGroupID: null
-  AdminUserGroupAssignments: []
-  ApiClientAssignments: []
+  AdminUserGroupAssignments:
+    - UserGroupID: AdminUserGroup
+      UserID: AdminUser
+  ApiClientAssignments:
+    - ApiClientID: 961e29d7-7783-42d0-ac5d-a46ecd7f5765
+      BuyerID: axVUG0NjV0ml-0OW1IkWBg
+      SupplierID: null
+    - ApiClientID: 961e29d7-7783-42d0-ac5d-a46ecd7f5765
+      BuyerID: cloud_coffee
+      SupplierID: null
   ProductAssignments:
     - ProductID: espresso_tamper
       BuyerID: axVUG0NjV0ml-0OW1IkWBg
@@ -1178,7 +1385,11 @@ Assignments:
       ProductID: white_chocolate_flavoring
     - CatalogID: nlc_catalog
       ProductID: whole_coffee_beans
-  SpecProductAssignments: []
+  SpecProductAssignments:
+    - SpecID: Color
+      ProductID: bar_towels
+      DefaultValue: null
+      DefaultOptionID: null
   PromotionAssignment:
     - PromotionID: 5off
       BuyerID: axVUG0NjV0ml-0OW1IkWBg

@@ -7,7 +7,6 @@ import { BuildResourceDirectory } from '../models/oc-resource-directory';
 import jwt_decode from "jwt-decode";
 import { OCResource } from '../models/oc-resources';
 import _ from 'lodash';
-import dotenv from 'dotenv';
 
 export async function download(username: string, password: string, environment: string, orgID: string, path: string): Promise<void> {
     var missingInputs: string[] = [];
@@ -62,8 +61,7 @@ export async function download(username: string, password: string, environment: 
     // Pull Data from Ordercloud
     var file = new SeedFile();  
     var directory = await BuildResourceDirectory(false); 
-    for (let key in directory) {
-        var resource = directory[key];
+    for (let resource of directory) {
         if (resource.isChild) {
             continue; // resource will be handled as part of its parent
         }
@@ -75,7 +73,7 @@ export async function download(username: string, password: string, environment: 
         file.AddRecords(resource, records);
         for (let childResourceName of resource.children)
         {
-            let childResource = directory[childResourceName];
+            let childResource = directory.find(x => x.name === childResourceName);
             for (let parentRecord of records) {
                 var childRecords = await OrderCloudBulk.ListAll(childResource, parentRecord.ID); // assume ID exists. Which is does for all parent types.
                 for (let childRecord of childRecords) {
@@ -86,9 +84,9 @@ export async function download(username: string, password: string, environment: 
                 }
                 file.AddRecords(childResource, childRecords);
             }
-            log("Finished " + childRecords.length + " " + childResourceName);
+            log("Downloaded " + childRecords.length + " " + childResourceName);
         }
-        log("Finished " + records.length + " " + resource.name);
+        log("Downloaded " + records.length + " " + resource.name);
     }
     // Write to file
     file.WriteToYaml(path);

@@ -100,7 +100,7 @@ const Directory: OCResource[] = [
         modelName: 'Incrementor',
         sdkObject: Incrementors,
         path: "/incrementors",
-        createPriority: 1
+        createPriority: 1,
     },
     {
         name: OCResourceEnum.Webhooks, 
@@ -125,7 +125,8 @@ const Directory: OCResource[] = [
         modelName: "XpIndex",
         sdkObject: XpIndices,
         path: "/xpindices",
-        createPriority: 1
+        createPriority: 1,
+        createMethodName: "Put"
     },
     {
         name: OCResourceEnum.Buyers, 
@@ -137,7 +138,7 @@ const Directory: OCResource[] = [
         {
             DefaultCatalogID: { foreignResource: OCResourceEnum.Catalogs }
         },
-        children: [OCResourceEnum.Users, OCResourceEnum.UserGroups, OCResourceEnum.Addresses, OCResourceEnum.CostCenters, OCResourceEnum.CreditCards, OCResourceEnum.SpendingAccounts, OCResourceEnum.ApprovalRules, OCResourceEnum.UserGroupAssignments, OCResourceEnum.SpendingAccountAssignments, OCResourceEnum.AddressAssignments, OCResourceEnum.CostCenterAssignments, OCResourceEnum.CreditCardAssignments, OCResourceEnum.SpendingAccountAssignments],
+        children: [OCResourceEnum.Users, OCResourceEnum.UserGroups, OCResourceEnum.Addresses, OCResourceEnum.CostCenters, OCResourceEnum.CreditCards, OCResourceEnum.SpendingAccounts, OCResourceEnum.ApprovalRules, OCResourceEnum.UserGroupAssignments, OCResourceEnum.SpendingAccountAssignments, OCResourceEnum.AddressAssignments, OCResourceEnum.CostCenterAssignments, OCResourceEnum.CreditCardAssignments],
     },
     {
         name: OCResourceEnum.Users, 
@@ -304,6 +305,7 @@ const Directory: OCResource[] = [
         path: "/specs/{specID}/options",
         parentRefField: "SpecID",
         listMethodName: "ListOptions",
+        createMethodName: "CreateOption",
         isChild: true
     },
     {
@@ -342,6 +344,7 @@ const Directory: OCResource[] = [
         isAssignment: true,
         path: "/usergroups/assignments",
         listMethodName: 'ListUserAssignments',
+        createMethodName: 'SaveUserAssignment',
         foreignKeys: {
             UserID: { foreignResource: OCResourceEnum.AdminUsers },
             UserGroupID: { foreignResource: OCResourceEnum.AdminUserGroups },
@@ -359,6 +362,10 @@ const Directory: OCResource[] = [
             BuyerID: { foreignResource: OCResourceEnum.Buyers },
             SupplierID: { foreignResource: OCResourceEnum.Suppliers },
         },
+        downloadTransformFunc: (x) => {
+            x.ApiClientID = x.ApiClientID.toLowerCase(); // funky platform thing with API CLient ID casing
+            return x;
+        },
     },
     {
         name: OCResourceEnum.UserGroupAssignments, 
@@ -369,6 +376,7 @@ const Directory: OCResource[] = [
         path: "/buyers/{buyerID}/usergroups/assignments",
         parentRefField: "BuyerID",
         isChild: true,
+        createMethodName: "SaveUserAssignment",
         listMethodName: 'ListUserAssignments',
         foreignKeys: {
             UserID: { 
@@ -437,7 +445,7 @@ const Directory: OCResource[] = [
         foreignKeys: {
             CreditCardID: { 
                 foreignParentRefField: "BuyerID",
-                foreignResource: OCResourceEnum.Addresses 
+                foreignResource: OCResourceEnum.CreditCards 
             },
             UserID: { 
                 foreignParentRefField: "BuyerID",
@@ -483,6 +491,7 @@ const Directory: OCResource[] = [
         parentRefField: "SupplierID",
         isChild: true,
         listMethodName: 'ListUserAssignments',
+        createMethodName: 'SaveUserAssignment',
         foreignKeys: {
             UserID: { 
                 foreignParentRefField: "SupplierID",
@@ -498,7 +507,7 @@ const Directory: OCResource[] = [
         name: OCResourceEnum.ProductAssignments, 
         modelName: "ProductAssignment",
         sdkObject: Products,
-        createPriority: 5,
+        createPriority: 6,
         path: "/products/assignments",
         isAssignment: true,
         foreignKeys: {
@@ -583,6 +592,7 @@ const Directory: OCResource[] = [
         path: "/specs/productassignments",
         isAssignment: true,
         listMethodName: 'ListProductAssignments',
+        createMethodName: 'SaveProductAssignment',
         foreignKeys: {
             SpecID: { foreignResource: OCResourceEnum.Specs },
             ProductID: { foreignResource: OCResourceEnum.Products },
@@ -613,7 +623,7 @@ const Directory: OCResource[] = [
 function ApplyDefaults(resource: OCResource): OCResource {
     resource.isAssignment = resource.isAssignment || false;
     resource.listMethodName = resource.listMethodName || (resource.isAssignment ? "ListAssignments" : "List");
-    resource.createMethodName = resource.createMethodName || (resource.isAssignment ? "CreateAssignment" : "Create");
+    resource.createMethodName = resource.createMethodName || (resource.isAssignment ? "SaveAssignment" : "Create");
     resource.foreignKeys = resource.foreignKeys || {};
     resource.children = resource.children || [];
     resource.isChild = resource.isChild || false;
@@ -622,11 +632,7 @@ function ApplyDefaults(resource: OCResource): OCResource {
     return resource;
 }
 
-export interface ResourceDirectory {
-    [key: string]: OCResource;
-}
-
-export async function BuildResourceDirectory(includeOpenAPI: boolean = false): Promise<ResourceDirectory> {
+export async function BuildResourceDirectory(includeOpenAPI: boolean = false): Promise<OCResource[]> {
     var openAPISpec;
     if (includeOpenAPI) {
         openAPISpec = await axios.get(`https://api.ordercloud.io/v1/openapi/v3`) 
@@ -643,9 +649,6 @@ export async function BuildResourceDirectory(includeOpenAPI: boolean = false): P
             }
         }
         return modified;
-    }).reduce((acc, resource) => {
-        acc[resource.name] = resource
-        return acc;
-    }, {});
+    });
 }
 

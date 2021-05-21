@@ -1,117 +1,117 @@
 import { validate } from '../src/commands/validate';
 
 test('valid yaml should succeed', async () => {
-    var errors = await validate("./tests/data/valid.yml");
-    expect(errors.length).toBe(0);
+    var resp = await validate("./tests/data/valid.yml");
+    expect(resp.errors.length).toBe(0);
 });
 
 test('file not found', async () => {
-    var errors = await validate("./tests/data/fake.yml");
-    expect(errors.length).toBe(1);
-    expect(errors[0]).toBe("No such file or directory ./tests/data/fake.yml found")
+    var resp = await validate("./tests/data/fake.yml");
+    expect(resp.errors.length).toBe(1);
+    expect(resp.errors[0]).toBe("No such file or directory \"./tests/data/fake.yml\" found")
 });
 
 test('not valid yaml', async () => {
-    var errors = await validate("./tests/data/bad-yaml.yml");
-    expect(errors.length).toBe(1);
-    expect(errors[0]).toContain("YAML Exception in ./tests/data/bad-yaml.yml: unexpected end of the stream within a flow collection (2:1)")
+    var resp = await validate("./tests/data/bad-yaml.yml");
+    expect(resp.errors.length).toBe(1);
+    expect(resp.errors[0]).toContain("YAML Exception in \"./tests/data/bad-yaml.yml\": unexpected end of the stream within a flow collection (2:1)")
 });
 
 test('duplicate IDs', async () => {
-    var errors = await validate("./tests/data/duplicate-ids.yml");
-    expect(errors.length).toBe(1);
-    expect(errors[0]).toBe("Duplicate ID: multiple Buyers with ID \"cloud_coffee\"");
+    var resp = await validate("./tests/data/duplicate-ids.yml");
+    expect(resp.errors.length).toBe(1);
+    expect(resp.errors[0]).toBe("Duplicate ID: multiple Buyers with ID \"cloud_coffee\"");
 });
 
 test('duplicate IDs within buyer', async () => {
-    var errors = await validate("./tests/data/duplicate-ids-2.yml");
-    expect(errors.length).toBe(1);
-    expect(errors[0]).toBe("Duplicate ID: multiple CostCenters with ID \"costcenter\" within the BuyerID \"buyer1\"");
+    var resp = await validate("./tests/data/duplicate-ids-2.yml");
+    expect(resp.errors.length).toBe(1);
+    expect(resp.errors[0]).toBe("Duplicate ID: multiple CostCenters with ID \"costcenter\" within the BuyerID \"buyer1\"");
 });
 
 test('max string length exceeded', async () => {
-    var errors = await validate("./tests/data/max-string-length.yml");
-    expect(errors.length).toBe(1);
-    expect(errors[0]).toBe("Max string length for Buyers.Name is 100. Found \"xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx\".");
+    var resp = await validate("./tests/data/max-string-length.yml");
+    expect(resp.errors.length).toBe(1);
+    expect(resp.errors[0]).toBe("Max string length for Buyers.Name is 100. Found \"xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx\".");
 });
 
 test('invalid date', async () => {
-    var errors = await validate("./tests/data/invalid-date.yml");
-    expect(errors.length).toBe(1);
-    expect(errors[0]).toBe("CreditCards.ExpirationDate should be a date format. Found \"not a date\".");
+    var resp = await validate("./tests/data/invalid-date.yml");
+    expect(resp.errors.length).toBe(1);
+    expect(resp.errors[0]).toBe("CreditCards.ExpirationDate should be a date format. Found \"not a date\".");
 });
 
 test('minimum number', async () => {
-    var errors = await validate("./tests/data/minimum-number.yml");
-    expect(errors.length).toBe(1);
-    expect(errors[0]).toBe("Minimum for PriceSchedules.MinQuantity is 1. Found -1000.");
+    var resp = await validate("./tests/data/minimum-number.yml");
+    expect(resp.errors.length).toBe(1);
+    expect(resp.errors[0]).toBe("Minimum for PriceSchedules.MinQuantity is 1. Found -1000.");
 });
 
 test('required fields', async () => {
-    var errors = await validate("./tests/data/required-fields.yml");
-    expect(errors.length).toBe(10);
-    expect(errors[0]).toBe("Required field Incrementors.LastNumber: cannot have value undefined.");
-    expect(errors[1]).toBe("Required field Incrementors.LeftPaddingCount: cannot have value undefined.");
-    expect(errors[2]).toBe("Required field Webhooks.Name: cannot have value undefined.");
-    expect(errors[3]).toBe("Required field Webhooks.Url: cannot have value undefined.");
-    expect(errors[4]).toBe("Required field Webhooks.HashKey: cannot have value undefined.");
-    expect(errors[5]).toBe("Required field ProductFacets.Name: cannot have value undefined.");
-    expect(errors[6]).toBe("Required field ProductFacets.MinCount: cannot have value undefined.");
-    expect(errors[7]).toBe("Required field ProductAssignments.ProductID: cannot have value undefined.");
-    expect(errors[8]).toBe("Required field ProductAssignments.BuyerID: cannot have value undefined.");
-    expect(errors[9]).toBe("Invalid reference ProductAssignments.UserGroupID: no UserGroups found with ID \"missing_fields_1\". within the BuyerID \"undefined\"");
+    var resp = await validate("./tests/data/required-fields.yml");
+    expect(resp.errors.length).toBe(10);
+    expect(resp.errors[0]).toBe("Required field Incrementors.LastNumber: cannot have value undefined.");
+    expect(resp.errors[1]).toBe("Required field Incrementors.LeftPaddingCount: cannot have value undefined.");
+    expect(resp.errors[2]).toBe("Required field Webhooks.Name: cannot have value undefined.");
+    expect(resp.errors[3]).toBe("Required field Webhooks.Url: cannot have value undefined.");
+    expect(resp.errors[4]).toBe("Required field Webhooks.HashKey: cannot have value undefined.");
+    expect(resp.errors[5]).toBe("Required field ProductFacets.Name: cannot have value undefined.");
+    expect(resp.errors[6]).toBe("Required field ProductFacets.MinCount: cannot have value undefined.");
+    expect(resp.errors[7]).toBe("Required field ProductAssignments.ProductID: cannot have value undefined.");
+    expect(resp.errors[8]).toBe("Required field ProductAssignments.BuyerID: cannot have value undefined.");
+    expect(resp.errors[9]).toBe("Invalid reference ProductAssignments.UserGroupID: no UserGroups found with ID \"missing_fields_1\". within the BuyerID \"undefined\"");
 });
 
 test('parent ref', async () => {
-    var errors = await validate("./tests/data/parent-ref.yml");
-    expect(errors.length).toBe(3);
-    expect(errors[0]).toBe("Required field CostCenters.BuyerID: cannot have value undefined.");
-    expect(errors[1]).toBe("Incorrect type CostCenters.BuyerID: 123 is integer. Should be string.");
-    expect(errors[2]).toBe("Invalid reference CostCenters.BuyerID: no Buyers found with ID \"buyer2\".");
+    var resp = await validate("./tests/data/parent-ref.yml");
+    expect(resp.errors.length).toBe(3);
+    expect(resp.errors[0]).toBe("Required field CostCenters.BuyerID: cannot have value undefined.");
+    expect(resp.errors[1]).toBe("Incorrect type CostCenters.BuyerID: 123 is integer. Should be string.");
+    expect(resp.errors[2]).toBe("Invalid reference CostCenters.BuyerID: no Buyers found with ID \"buyer2\".");
 });
 
 test('lots of wrong types', async () => {
-    var errors = await validate("./tests/data/lots-of-wrong-types.yml");
-    expect(errors.length).toBe(7);
-    expect(errors[0]).toBe("Incorrect type SecurityProfiles.ID: false is boolean. Should be string.");
-    expect(errors[1]).toBe("Incorrect type SecurityProfiles.Name: 10 is integer. Should be string.");
-    expect(errors[2]).toBe("Incorrect type SecurityProfiles.Roles: 3.14 is number. Should be array.");
-    expect(errors[3]).toBe("Incorrect type SecurityProfiles.CustomRoles: [object Object] is object. Should be array.");
-    expect(errors[4]).toBe("Incorrect type SecurityProfiles.PasswordConfig: should be an object,is an array is array. Should be object.");
-    expect(errors[5]).toBe("Required field Buyers.Name: cannot have value undefined.");
-    expect(errors[6]).toBe("Incorrect type PriceSchedules.MinQuantity: 5.05 is number. Should be integer.");
+    var resp = await validate("./tests/data/lots-of-wrong-types.yml");
+    expect(resp.errors.length).toBe(7);
+    expect(resp.errors[0]).toBe("Incorrect type SecurityProfiles.ID: false is boolean. Should be string.");
+    expect(resp.errors[1]).toBe("Incorrect type SecurityProfiles.Name: 10 is integer. Should be string.");
+    expect(resp.errors[2]).toBe("Incorrect type SecurityProfiles.Roles: 3.14 is number. Should be array.");
+    expect(resp.errors[3]).toBe("Incorrect type SecurityProfiles.CustomRoles: [object Object] is object. Should be array.");
+    expect(resp.errors[4]).toBe("Incorrect type SecurityProfiles.PasswordConfig: should be an object,is an array is array. Should be object.");
+    expect(resp.errors[5]).toBe("Required field Buyers.Name: cannot have value undefined.");
+    expect(resp.errors[6]).toBe("Incorrect type PriceSchedules.MinQuantity: 5.05 is number. Should be integer.");
 });
 
 test('impersonation config: admin user group', async () => {
-    var errors = await validate("./tests/data/impersonation-config/admin-user-group.yml");
-    expect(errors.length).toBe(1);
-    expect(errors[0]).toBe("Invalid reference ImpersonationConfigs.ImpersonationGroupID: no AdminUserGroup found with ID \"user-group\".");
+    var resp = await validate("./tests/data/impersonation-config/admin-user-group.yml");
+    expect(resp.errors.length).toBe(1);
+    expect(resp.errors[0]).toBe("Invalid reference ImpersonationConfigs.ImpersonationGroupID: no AdminUserGroup found with ID \"user-group\".");
 });
 
 test('impersonation config: user group', async () => {
-    var errors = await validate("./tests/data/impersonation-config/user-group.yml");
-    expect(errors.length).toBe(2);
-    expect(errors[0]).toBe("Invalid reference ImpersonationConfigs.ImpersonationGroupID: no UserGroup found with ID \"admin-user-group\" and BuyerID \"buyer\".");
-    expect(errors[1]).toBe("Invalid reference ImpersonationConfigs.ImpersonationGroupID: no UserGroup found with ID \"user-group2\" and BuyerID \"buyer\".");
+    var resp = await validate("./tests/data/impersonation-config/user-group.yml");
+    expect(resp.errors.length).toBe(2);
+    expect(resp.errors[0]).toBe("Invalid reference ImpersonationConfigs.ImpersonationGroupID: no UserGroup found with ID \"admin-user-group\" and BuyerID \"buyer\".");
+    expect(resp.errors[1]).toBe("Invalid reference ImpersonationConfigs.ImpersonationGroupID: no UserGroup found with ID \"user-group2\" and BuyerID \"buyer\".");
 });
 
 test('api client DefaultContextUserName property', async () => {
-    var errors = await validate("./tests/data/api-client-defaultcontextusername.yml");
-    expect(errors.length).toBe(1);
-    expect(errors[0]).toBe("Invalid reference ApiClients.DefaultContextUserName: no User, SupplierUser or AdminUser found with Username \"wrong\".");
+    var resp = await validate("./tests/data/api-client-defaultcontextusername.yml");
+    expect(resp.errors.length).toBe(1);
+    expect(resp.errors[0]).toBe("Invalid reference ApiClients.DefaultContextUserName: no User, SupplierUser or AdminUser found with Username \"wrong\".");
 });
 
 test('webhook ApiClientIDs property', async () => {
-    var errors = await validate("./tests/data/webhook-api-clients-prop.yml");
-    expect(errors.length).toBe(1);
-    expect(errors[0]).toBe("Invalid reference Webhooks.ApiClientIDs: could not find ApiClients with IDs wrong1, wrong2.");
+    var resp = await validate("./tests/data/webhook-api-clients-prop.yml");
+    expect(resp.errors.length).toBe(1);
+    expect(resp.errors[0]).toBe("Invalid reference Webhooks.ApiClientIDs: could not find ApiClients with IDs wrong1, wrong2.");
 });
 
 test('security profile assignment', async () => {
-    var errors = await validate("./tests/data/security-profile-assignment.yml");
-    expect(errors.length).toBe(4);
-    expect(errors[0]).toBe("Invalid reference SecurityProfileAssignment.UserGroupID: no AdminUserGroup found with ID \"user-group\".");
-    expect(errors[1]).toBe("SecurityProfileAssignment error: cannot include both a BuyerID and a SupplierID");
-    expect(errors[2]).toBe("Invalid reference SecurityProfileAssignment.UserID: no User found with ID \"supplier-user\" and BuyerID \"buyer\".");
-    expect(errors[3]).toBe("Invalid reference SecurityProfileAssignment.UserGroupID: no UserGroup found with ID \"user-group2\" and BuyerID \"buyer\".");
+    var resp = await validate("./tests/data/security-profile-assignment.yml");
+    expect(resp.errors.length).toBe(4);
+    expect(resp.errors[0]).toBe("Invalid reference SecurityProfileAssignment.UserGroupID: no AdminUserGroup found with ID \"user-group\".");
+    expect(resp.errors[1]).toBe("SecurityProfileAssignment error: cannot include both a BuyerID and a SupplierID");
+    expect(resp.errors[2]).toBe("Invalid reference SecurityProfileAssignment.UserID: no User found with ID \"supplier-user\" and BuyerID \"buyer\".");
+    expect(resp.errors[3]).toBe("Invalid reference SecurityProfileAssignment.UserGroupID: no UserGroup found with ID \"user-group2\" and BuyerID \"buyer\".");
 });

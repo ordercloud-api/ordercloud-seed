@@ -17,9 +17,26 @@ export default class OrderCloudBulk {
         return flatten([page1, ...results].map((r) => r.Items));
     }
 
-    static async CreateAll(resource: OCResource, records: any[], ...routeParams: string[]): Promise<void> {
-        const createFunc = resource.sdkObject[resource.createMethodName] as Function; 
-      
-        await RunThrottled(records, 8, record => createFunc(...routeParams, record));
+    static async CreateAll(resource: OCResource, records: any[]): Promise<any[]> {
+        const createFunc = resource.sdkObject[resource.createMethodName] as Function;
+        if (resource.parentRefField) {
+            return await RunThrottled(records, 8, record => {
+                try { 
+                    return createFunc(record[resource.parentRefField], record);
+                } catch (err) {
+                    console.log("here");
+                    console.log(err);
+                }
+            });
+        } else {
+            return await RunThrottled(records, 8, record => {
+                try { 
+                    return createFunc(record);
+                } catch (err) {
+                    console.log("here");
+                    console.log(err);
+                }
+            });
+        }
     }
 }
