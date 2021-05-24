@@ -540,6 +540,7 @@ const Directory: OCResource[] = [
         path: "/catalogs/productassignments",
         isAssignment: true,
         listMethodName: 'ListProductAssignments',
+        createMethodName: 'SaveProductAssignment',
         foreignKeys: {
             CatalogID: { foreignResource: OCResourceEnum.Catalogs },
             ProductID: { foreignResource: OCResourceEnum.Products }
@@ -576,6 +577,7 @@ const Directory: OCResource[] = [
         parentRefField: "CatalogID",
         isChild: true,
         listMethodName: 'ListProductAssignments',
+        createMethodName: 'SaveProductAssignment',
         foreignKeys: {
             CategoryID: { 
                 foreignParentRefField: "CatalogID",

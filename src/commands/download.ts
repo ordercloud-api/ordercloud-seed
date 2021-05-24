@@ -56,7 +56,7 @@ export async function download(username: string, password: string, environment: 
 
     Tokens.SetAccessToken(org_token);
 
-    log("Found your organization. Beginning download.", MessageType.Success);
+    log(`Found your organization \"${orgID}\" . Beginning download.`, MessageType.Success);
 
     // Pull Data from Ordercloud
     var file = new SeedFile();  

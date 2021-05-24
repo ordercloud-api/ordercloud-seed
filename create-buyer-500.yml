@@ -1,0 +1,29 @@
+Objects:  
+  Catalogs:
+    - ID: cloud_coffee
+      OwnerID: SShyjwitRe4ibpum
+      Name: Cloud Coffee
+      Description: Default catalog for Cloud Coffee
+      Active: true
+      CategoryCount: 0
+      xp: null
+    - ID: axVUG0NjV0ml-0OW1IkWBg
+      OwnerID: SShyjwitRe4ibpum
+      Name: metrocoffeebuyer
+      Description: Default catalog for metrocoffeebuyer
+      Active: true
+      CategoryCount: 0
+      xp: null
+  Buyers:
+    - ID: axVUG0NjV0ml-0OW1IkWBg
+      Name: metrocoffeebuyer
+      DefaultCatalogID: axVUG0NjV0ml-0OW1IkWBg
+      Active: true
+      DateCreated: '2020-11-12T16:07:13.86+00:00'
+      xp: null
+    - ID: cloud_coffee
+      Name: Cloud Coffee
+      DefaultCatalogID: cloud_coffee
+      Active: true
+      DateCreated: '2020-11-13T17:16:29.823+00:00'
+      xp: {}

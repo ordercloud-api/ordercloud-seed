@@ -75,29 +75,30 @@ export async function upload(username: string, password: string, orgID: string, 
         var results = await OrderCloudBulk.CreateAll(resource, records);
         // Now that we have created the APIClients, we actually know what their IDs are.  
         for (var i = 0; i < records.length; i++) {
-            apiClientIDMap[records[i].ID] = apiClientIDMap[results[i].ID];
+            apiClientIDMap[records[i].ID] = results[i].ID;
         }
+        
     }
 
     async function UploadImpersonationConfigs(resource: OCResource): Promise<void> {
-        var toUpload = records.map(r => r.ClientID = apiClientIDMap[r.ClientID]);
-        await OrderCloudBulk.CreateAll(resource, toUpload);
+        records.forEach(r => r.ClientID = apiClientIDMap[r.ClientID]);
+        await OrderCloudBulk.CreateAll(resource, records);
     }
 
     async function UploadOpenIdConnects(resource: OCResource): Promise<void> {
-        var toUpload = records.map(r => r.OrderCloudApiClientID = apiClientIDMap[r.OrderCloudApiClientID]);
-        await OrderCloudBulk.CreateAll(resource, toUpload);
+        records.forEach(r => r.OrderCloudApiClientID = apiClientIDMap[r.OrderCloudApiClientID]);
+        await OrderCloudBulk.CreateAll(resource, records);
     }
 
     async function UploadWebhooks(resource: OCResource): Promise<void> {
-        var toUpload = records.map(r => {
+        records.forEach(r => {
             r.ApiClientIDs = r.ApiClientIDs.map(id => apiClientIDMap[id])
         });
-        await OrderCloudBulk.CreateAll(resource, toUpload);
+        await OrderCloudBulk.CreateAll(resource, records);
     }
 
     async function UploadApiClientAssignments(resource: OCResource): Promise<void> {
-        var toUpload = records.map(r => r.ApiClientID = apiClientIDMap[r.ApiClientID]);
-        await OrderCloudBulk.CreateAll(resource, toUpload);
+        records.forEach(r => r.ApiClientID = apiClientIDMap[r.ApiClientID]);
+        await OrderCloudBulk.CreateAll(resource, records);
     }
 } 

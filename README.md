@@ -7,9 +7,11 @@ Download and upload serialized representations of full ordercloud organizations
 
 `npx @ordercloud/seeding --help`
 
-`npx @ordercloud/seeding download -e=sandbox -o={organizationId} -u-{username} -p={password}`
+`npx @ordercloud/seeding download -e=sandbox -o={existing-org-id} -u-{username} -p={password}`
 
-`npx @ordercloud/seeding validate -f=ordercloud-seed.yml`
+`npx @ordercloud/seeding upload -o={new-org-id} -u-{username} -p={password} -f="ordercloud-seed.yml"`
+
+`npx @ordercloud/seeding validate -f="ordercloud-seed.yml"`
 
 ** Command `upload` comming.
 ## Development
@@ -19,14 +21,14 @@ Download and upload serialized representations of full ordercloud organizations
 - Run `node ./cli.js [command]` to debug a command.
 - Run `npm run test` to run unit tests.
 
-## Vision of what needs to be done 
+## To be done
 
 In rough order of priority
-1. Get the upload command working.
+1. Through QA
 2. Expose functionality in a way that can be consumed by another node project.
 3. Nice to have features
 
- ## Nice to Have features
+## Nice to Have features
 - Reference other yaml files
 - Let OC define an ID and then use it as a variable in the yaml
 - Template variables in YAML for imports
@@ -38,7 +40,5 @@ In rough order of priority
 - Creating Specs - Default OptionID
 - Creating Categories - Parent CategoryID
 - Catalog-buyer nuances
-- Things that are globally unique like ApiClient.ID
 - Anything with an OwnerID (products)
-- If you delete a buyer are all buyer sub-resources automatically deleted? (e.g.)
 

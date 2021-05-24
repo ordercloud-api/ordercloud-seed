@@ -163,24 +163,12 @@ class OrderCloudBulk {
         const createFunc = resource.sdkObject[resource.createMethodName];
         if (resource.parentRefField) {
             return await RunThrottled(records, 8, record => {
-                try {
-                    return createFunc(record[resource.parentRefField], record);
-                }
-                catch (err) {
-                    console.log("here");
-                    console.log(err);
-                }
+                return createFunc(record[resource.parentRefField], record);
             });
         }
         else {
             return await RunThrottled(records, 8, record => {
-                try {
-                    return createFunc(record);
-                }
-                catch (err) {
-                    console.log("here");
-                    console.log(err);
-                }
+                return createFunc(record);
             });
         }
     }
@@ -845,6 +833,7 @@ const Directory = [
         path: "/catalogs/productassignments",
         isAssignment: true,
         listMethodName: 'ListProductAssignments',
+        createMethodName: 'SaveProductAssignment',
         foreignKeys: {
             CatalogID: { foreignResource: OCResourceEnum.Catalogs },
             ProductID: { foreignResource: OCResourceEnum.Products }
@@ -881,6 +870,7 @@ const Directory = [
         parentRefField: "CatalogID",
         isChild: true,
         listMethodName: 'ListProductAssignments',
+        createMethodName: 'SaveProductAssignment',
         foreignKeys: {
             CategoryID: {
                 foreignParentRefField: "CatalogID",
@@ -1002,7 +992,7 @@ async function download(username, password, environment, orgID, path) {
         return log(`Organization \"${orgID}\" found, but is not in specified environment \"${environment}\"`, MessageType.Error);
     }
     ordercloudJavascriptSdk.Tokens.SetAccessToken(org_token);
-    log("Found your organization. Beginning download.", MessageType.Success);
+    log(`Found your organization \"${orgID}\" . Beginning download.`, MessageType.Success);
     // Pull Data from Ordercloud
     var file = new SeedFile();
     var directory = await BuildResourceDirectory(false);
@@ -1360,26 +1350,26 @@ async function upload(username, password, orgID, path) {
         var results = await OrderCloudBulk.CreateAll(resource, records);
         // Now that we have created the APIClients, we actually know what their IDs are.  
         for (var i = 0; i < records.length; i++) {
-            apiClientIDMap[records[i].ID] = apiClientIDMap[results[i].ID];
+            apiClientIDMap[records[i].ID] = results[i].ID;
         }
     }
     async function UploadImpersonationConfigs(resource) {
-        var toUpload = records.map(r => r.ClientID = apiClientIDMap[r.ClientID]);
-        await OrderCloudBulk.CreateAll(resource, toUpload);
+        records.forEach(r => r.ClientID = apiClientIDMap[r.ClientID]);
+        await OrderCloudBulk.CreateAll(resource, records);
     }
     async function UploadOpenIdConnects(resource) {
-        var toUpload = records.map(r => r.OrderCloudApiClientID = apiClientIDMap[r.OrderCloudApiClientID]);
-        await OrderCloudBulk.CreateAll(resource, toUpload);
+        records.forEach(r => r.OrderCloudApiClientID = apiClientIDMap[r.OrderCloudApiClientID]);
+        await OrderCloudBulk.CreateAll(resource, records);
     }
     async function UploadWebhooks(resource) {
-        var toUpload = records.map(r => {
+        records.forEach(r => {
             r.ApiClientIDs = r.ApiClientIDs.map(id => apiClientIDMap[id]);
         });
-        await OrderCloudBulk.CreateAll(resource, toUpload);
+        await OrderCloudBulk.CreateAll(resource, records);
     }
     async function UploadApiClientAssignments(resource) {
-        var toUpload = records.map(r => r.ApiClientID = apiClientIDMap[r.ApiClientID]);
-        await OrderCloudBulk.CreateAll(resource, toUpload);
+        records.forEach(r => r.ApiClientID = apiClientIDMap[r.ApiClientID]);
+        await OrderCloudBulk.CreateAll(resource, records);
     }
 }
 
