@@ -23,7 +23,7 @@ Download and upload serialized representations of full ordercloud organizations
 ## To be done
 
 In rough order of priority
-1. Through QA
+1. Thorough QA
 2. Expose functionality in a way that can be consumed by another node project.
 3. Nice to have features
 
