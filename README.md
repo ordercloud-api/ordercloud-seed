@@ -13,7 +13,6 @@ Download and upload serialized representations of full ordercloud organizations
 
 `npx @ordercloud/seeding validate -f="ordercloud-seed.yml"`
 
-** Command `upload` comming.
 ## Development
 
 - Run `npm install`
