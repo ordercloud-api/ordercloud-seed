@@ -1,6 +1,6 @@
 {
   "name": "@ordercloud/seeding",
-  "version": "1.0.4",
+  "version": "1.0.5",
   "description": "Download and upload seeding files from the OrderCloud platform.",
   "bin": {
     "ordercloud-seed": "cli.js"
