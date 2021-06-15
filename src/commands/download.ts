@@ -7,16 +7,12 @@ import { BuildResourceDirectory } from '../models/oc-resource-directory';
 import jwt_decode from "jwt-decode";
 import { OCResource } from '../models/oc-resources';
 import _ from 'lodash';
+import { ORDERCLOUD_URLS, REDACTED_MESSAGE } from '../constants';
 
 export async function download(username: string, password: string, environment: string, orgID: string, path: string): Promise<void> {
     var missingInputs: string[] = [];
     var validEnvironments = ['staging', 'sandbox', 'prod'];
-    var urls = {
-        staging: "https://stagingapi.ordercloud.io",
-        sandbox: "https://sandboxapi.ordercloud.io",
-        prod: "https://api.ordercloud.io",
-    };
-
+   
     if (!environment) missingInputs.push("environment");
     if (!orgID) missingInputs.push("orgID");
     if (!username) missingInputs.push("username");
@@ -30,7 +26,7 @@ export async function download(username: string, password: string, environment: 
         return log(`environment must be one of ${validEnvironments.join(", ")}`, MessageType.Error)
     }
 
-    var url = urls[environment];
+    var url = ORDERCLOUD_URLS[environment];
 
     // Set up configuration
     Configuration.Set({ baseApiUrl: url });
@@ -98,7 +94,7 @@ export async function download(username: string, password: string, environment: 
         for (var record of records) {
             for (var field of resource.redactFields) {
                 if (!_.isNil(record[field])) {
-                    record[field] = "<Redacted for Security>";
+                    record[field] = REDACTED_MESSAGE;
                 }
             }
         }

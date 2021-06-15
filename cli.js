@@ -103,18 +103,30 @@ class SeedFile {
     WriteToYaml(filePath) {
         fs__default['default'].writeFileSync(filePath, yaml__default['default'].dump(this.file));
     }
-    ReadFromYaml(filePath, errors) {
-        var file;
-        try {
-            file = fs__default['default'].readFileSync(filePath, 'utf8'); // consider switching to streams
-            log(`Found file \"${filePath}\"`, MessageType.Success);
+    async ReadFromYaml(filePath, errors) {
+        let raw;
+        if (filePath.startsWith('http')) {
+            try {
+                raw = (await axios__default['default'].get(filePath)).data;
+                log(`Found \"${filePath}\".`, MessageType.Success);
+            }
+            catch (_a) {
+                errors.push(`Error response from \"${filePath}\".`);
+                return false;
+            }
         }
-        catch (err) {
-            errors.push(`No such file or directory \"${filePath}\" found`);
-            return false;
+        else {
+            try {
+                raw = fs__default['default'].readFileSync(filePath, 'utf8'); // consider switching to streams
+                log(`Found file \"${filePath}\"`, MessageType.Success);
+            }
+            catch (err) {
+                errors.push(`No such file or directory \"${filePath}\" found`);
+                return false;
+            }
         }
         try {
-            this.file = yaml__default['default'].load(file);
+            this.file = yaml__default['default'].load(raw);
             log(`Valid yaml in \"${filePath}\"`, MessageType.Success);
         }
         catch (e) {
@@ -153,7 +165,8 @@ const { flatten, range } = ___default['default'];
 class OrderCloudBulk {
     static async ListAll(resource, ...routeParams) {
         const listFunc = resource.sdkObject[resource.listMethodName];
-        const page1 = await listFunc(...routeParams, { page: 1, pageSize: 100 });
+        const queryParams = { page: 1, pageSize: 100, depth: 'all' }; // depth only applies to categories
+        const page1 = await listFunc(...routeParams, queryParams);
         const additionalPages = range(2, Math.max((page1 === null || page1 === void 0 ? void 0 : page1.Meta.TotalPages) + 1, 2));
         var results = await RunThrottled(additionalPages, 8, page => listFunc(...routeParams, { page, pageSize: 100 }));
         // combine and flatten items
@@ -161,16 +174,17 @@ class OrderCloudBulk {
     }
     static async CreateAll(resource, records) {
         const createFunc = resource.sdkObject[resource.createMethodName];
-        if (resource.parentRefField) {
-            return await RunThrottled(records, 8, record => {
+        return await RunThrottled(records, 8, record => {
+            if (resource.parentRefField) {
                 return createFunc(record[resource.parentRefField], record);
-            });
-        }
-        else {
-            return await RunThrottled(records, 8, record => {
+            }
+            else {
                 return createFunc(record);
-            });
-        }
+            }
+        });
+    }
+    static async sleep(t) {
+        return new Promise(resolve => setTimeout(resolve, t));
     }
 }
 
@@ -947,14 +961,16 @@ async function BuildResourceDirectory(includeOpenAPI = false) {
     });
 }
 
+const REDACTED_MESSAGE = "<Redacted. Leave unchanged.>";
+const ORDERCLOUD_URLS = {
+    staging: "https://stagingapi.ordercloud.io",
+    sandbox: "https://sandboxapi.ordercloud.io",
+    prod: "https://api.ordercloud.io",
+};
+
 async function download(username, password, environment, orgID, path) {
     var missingInputs = [];
     var validEnvironments = ['staging', 'sandbox', 'prod'];
-    var urls = {
-        staging: "https://stagingapi.ordercloud.io",
-        sandbox: "https://sandboxapi.ordercloud.io",
-        prod: "https://api.ordercloud.io",
-    };
     if (!environment)
         missingInputs.push("environment");
     if (!orgID)
@@ -969,7 +985,7 @@ async function download(username, password, environment, orgID, path) {
     if (!validEnvironments.includes(environment)) {
         return log(`environment must be one of ${validEnvironments.join(", ")}`, MessageType.Error);
     }
-    var url = urls[environment];
+    var url = ORDERCLOUD_URLS[environment];
     // Set up configuration
     ordercloudJavascriptSdk.Configuration.Set({ baseApiUrl: url });
     // Authenticate
@@ -1031,7 +1047,7 @@ async function download(username, password, environment, orgID, path) {
         for (var record of records) {
             for (var field of resource.redactFields) {
                 if (!___default['default'].isNil(record[field])) {
-                    record[field] = "<Redacted for Security>";
+                    record[field] = REDACTED_MESSAGE;
                 }
             }
         }
@@ -1282,6 +1298,23 @@ class Validator {
     }
 }
 
+class Random {
+    static generateWebhookSecret() {
+        return this.generate(20);
+    }
+    static generateClientSecret() {
+        return this.generate(60);
+    }
+    static generate(length) {
+        let retVal = "";
+        for (var i = 0, n = this.charset.length; i < length; ++i) {
+            retVal += this.charset.charAt(Math.floor(Math.random() * n));
+        }
+        return retVal;
+    }
+}
+Random.charset = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
+
 async function upload(username, password, orgID, path) {
     // First run file validation
     var validateResponse = await validate(path);
@@ -1317,11 +1350,12 @@ async function upload(username, password, orgID, path) {
     log(`Created new Organization \"${orgID}\".`, MessageType.Success);
     // Authenticate to Core API
     var org_token = await Portal.getOrganizationToken(orgID, portal_token);
-    ordercloudJavascriptSdk.Configuration.Set({ baseApiUrl: "https://sandboxapi.ordercloud.io" });
+    ordercloudJavascriptSdk.Configuration.Set({ baseApiUrl: ORDERCLOUD_URLS.sandbox }); // always sandbox for upload
     ordercloudJavascriptSdk.Tokens.SetAccessToken(org_token);
     // Upload to Ordercloud
     var file = validateResponse.data;
     var apiClientIDMap = {};
+    var webhookSecret = Random.generateWebhookSecret(); // use one webhook secret for all webhooks, integration events and message senders
     var directory = await BuildResourceDirectory(false);
     for (let resource of directory.sort((a, b) => a.createPriority - b.createPriority)) {
         var records = file.GetRecords(resource);
@@ -1340,6 +1374,15 @@ async function upload(username, password, orgID, path) {
         else if (resource.name === OCResourceEnum.ApiClientAssignments) {
             await UploadApiClientAssignments(resource);
         }
+        else if (resource.name === OCResourceEnum.MessageSenders) {
+            await UploadMessageSenders(resource);
+        }
+        else if (resource.name === OCResourceEnum.IntegrationEvents) {
+            await UploadIntegrationEvents(resource);
+        }
+        else if (resource.name === OCResourceEnum.Categories) {
+            await UploadCategories(resource);
+        }
         else {
             await OrderCloudBulk.CreateAll(resource, records);
         }
@@ -1347,6 +1390,11 @@ async function upload(username, password, orgID, path) {
     }
     log(`Done Seeding!`, MessageType.Success);
     async function UploadApiClients(resource) {
+        records.forEach(r => {
+            if (r.ClientSecret === REDACTED_MESSAGE) {
+                r.ClientSecret = Random.generateClientSecret();
+            }
+        });
         var results = await OrderCloudBulk.CreateAll(resource, records);
         // Now that we have created the APIClients, we actually know what their IDs are.  
         for (var i = 0; i < records.length; i++) {
@@ -1361,9 +1409,37 @@ async function upload(username, password, orgID, path) {
         records.forEach(r => r.OrderCloudApiClientID = apiClientIDMap[r.OrderCloudApiClientID]);
         await OrderCloudBulk.CreateAll(resource, records);
     }
+    async function UploadCategories(resource) {
+        let depthCohort = records.filter(r => r.ParentID === null); // start with top-level
+        while (depthCohort.length > 0) {
+            // create in groups based on depth in the tree
+            var results = await OrderCloudBulk.CreateAll(resource, depthCohort);
+            // get children of those just created
+            depthCohort = records.filter(r => results.some(result => r.ParentID === result.ID));
+        }
+    }
+    async function UploadMessageSenders(resource) {
+        records.forEach(r => {
+            if (r.SharedKey === REDACTED_MESSAGE) {
+                r.SharedKey = webhookSecret;
+            }
+        });
+        await OrderCloudBulk.CreateAll(resource, records);
+    }
+    async function UploadIntegrationEvents(resource) {
+        records.forEach(r => {
+            if (r.HashKey === REDACTED_MESSAGE) {
+                r.HashKey = webhookSecret;
+            }
+        });
+        await OrderCloudBulk.CreateAll(resource, records);
+    }
     async function UploadWebhooks(resource) {
         records.forEach(r => {
             r.ApiClientIDs = r.ApiClientIDs.map(id => apiClientIDMap[id]);
+            if (r.HashKey === REDACTED_MESSAGE) {
+                r.HashKey = webhookSecret;
+            }
         });
         await OrderCloudBulk.CreateAll(resource, records);
     }
@@ -1395,7 +1471,7 @@ yargs__default['default'].scriptName("@ordercloud/seeding")
         type: 'string',
         alias: 'f',
         default: 'ordercloud-seed.yml',
-        describe: 'File'
+        describe: 'File path or link'
     });
 }, function (argv) {
     upload(argv.u, argv.p, argv.o, argv.f);
@@ -1425,7 +1501,7 @@ yargs__default['default'].scriptName("@ordercloud/seeding")
         type: 'string',
         alias: 'f',
         default: 'ordercloud-seed.yml',
-        describe: 'File'
+        describe: 'File path'
     });
 }, function (argv) {
     download(argv.u, argv.p, argv.e, argv.o, argv.f);
@@ -1435,7 +1511,7 @@ yargs__default['default'].scriptName("@ordercloud/seeding")
         type: 'string',
         alias: 'f',
         default: 'ordercloud-seed.yml',
-        describe: 'File'
+        describe: 'File path or link'
     });
 }, function (argv) {
     validate(argv.f);

@@ -1,0 +1,330 @@
+Objects:
+  SecurityProfiles:
+    - ID: back-office-admin
+      Name: Back Office Admin
+      Roles:
+        - FullAccess
+      CustomRoles: []
+      PasswordConfig: null
+    - ID: shopper
+      Name: Shopper
+      Roles:
+        - MeAddressAdmin
+        - MeAdmin
+        - MeCreditCardAdmin
+        - MeXpAdmin
+        - PasswordReset
+        - Shopper
+      CustomRoles: []
+      PasswordConfig: null
+  ImpersonationConfigs: []
+  OpenIdConnects: []
+  AdminUsers:
+    - ID: integrations-default-context-user
+      Username: default-context-user
+      Password: null
+      FirstName: Default
+      LastName: Context
+      Email: fake@email.com
+      Phone: null
+      TermsAccepted: null
+      Active: true
+      xp: null
+      AvailableRoles:
+        - FullAccess
+      DateCreated: '2021-05-26T16:10:04.46+00:00'
+      PasswordLastSetDate: null
+  AdminUserGroups: []
+  AdminAddresses: []
+  MessageSenders: []
+  ApiClients:
+    - ID: 3d82e90b-b5db-4af4-9c1b-9c34fbb904c0
+      ClientSecret: null
+      AccessTokenDuration: 600
+      Active: true
+      AppName: Storefront App
+      RefreshTokenDuration: 5760
+      DefaultContextUserName: anonymous-shopper
+      xp: null
+      AllowAnyBuyer: false
+      AllowAnySupplier: false
+      AllowSeller: false
+      IsAnonBuyer: true
+      AssignedBuyerCount: 1
+      AssignedSupplierCount: 0
+      OrderCheckoutIntegrationEventID: checkout-commerce-integrations
+      OrderCheckoutIntegrationEventName: Checkout Commerce Integrations
+      MinimumRequiredRoles: []
+      MinimumRequiredCustomRoles: []
+      MaximumGrantedRoles: []
+      MaximumGrantedCustomRoles: []
+    - ID: 8864508e-cb97-47bc-bedf-7862c16888cc
+      ClientSecret: null
+      AccessTokenDuration: 600
+      Active: true
+      AppName: Back Office App
+      RefreshTokenDuration: 5760
+      DefaultContextUserName: null
+      xp: null
+      AllowAnyBuyer: false
+      AllowAnySupplier: false
+      AllowSeller: true
+      IsAnonBuyer: false
+      AssignedBuyerCount: 0
+      AssignedSupplierCount: 0
+      OrderCheckoutIntegrationEventID: null
+      OrderCheckoutIntegrationEventName: null
+      MinimumRequiredRoles: []
+      MinimumRequiredCustomRoles: []
+      MaximumGrantedRoles: []
+      MaximumGrantedCustomRoles: []
+    - ID: bf98a69d-f2dd-41f1-9bd1-ddd2c37132fa
+      ClientSecret: <Redacted. Leave unchanged.>
+      AccessTokenDuration: 600
+      Active: true
+      AppName: Middleware Integrations
+      RefreshTokenDuration: 5760
+      DefaultContextUserName: default-context-user
+      xp: null
+      AllowAnyBuyer: false
+      AllowAnySupplier: false
+      AllowSeller: true
+      IsAnonBuyer: false
+      AssignedBuyerCount: 0
+      AssignedSupplierCount: 0
+      OrderCheckoutIntegrationEventID: null
+      OrderCheckoutIntegrationEventName: null
+      MinimumRequiredRoles: []
+      MinimumRequiredCustomRoles: []
+      MaximumGrantedRoles: []
+      MaximumGrantedCustomRoles: []
+  Incrementors: []
+  Webhooks: []
+  IntegrationEvents:
+    - ElevatedRoles:
+        - FullAccess
+      ID: checkout-commerce-integrations
+      ConfigData: null
+      EventType: OrderCheckout
+      CustomImplementationUrl: https://www.replace.this.com/api/checkout
+      Name: Checkout Commerce Integrations
+      HashKey: <Redacted. Leave unchanged.>
+  XpIndices: []
+  Buyers:
+    - ID: solitary-storefront
+      Name: Solitary Storefront
+      DefaultCatalogID: solitary-storefront
+      Active: true
+      DateCreated: '2021-05-26T15:53:19.65+00:00'
+      xp: null
+  Users:
+    - ID: default-anonymous-shopper
+      Username: anonymous-shopper
+      Password: null
+      FirstName: anonymous
+      LastName: shopper
+      Email: fake@emai.com
+      Phone: null
+      TermsAccepted: null
+      Active: true
+      xp:
+        something: else
+      AvailableRoles:
+        - MeAddressAdmin
+        - MeAdmin
+        - MeCreditCardAdmin
+        - MeXpAdmin
+        - PasswordReset
+        - Shopper
+      DateCreated: '2021-05-26T16:22:57.533+00:00'
+      PasswordLastSetDate: null
+      BuyerID: solitary-storefront
+  UserGroups: []
+  Addresses: []
+  CostCenters: []
+  CreditCards: []
+  SpendingAccounts: []
+  ApprovalRules: []
+  Catalogs:
+    - ID: solitary-storefront
+      OwnerID: simple-B2C-starter
+      Name: 'Solitary Storefront '
+      Description: 'Default catalog for Solitary Storefront '
+      Active: true
+      CategoryCount: 15
+      xp: null
+  Categories:
+    - ID: womens
+      Name: Women's
+      Description: null
+      ListOrder: 1
+      Active: true
+      ParentID: null
+      ChildCount: 3
+      xp: null
+      CatalogID: solitary-storefront
+    - ID: mens
+      Name: Men's
+      Description: null
+      ListOrder: 2
+      Active: true
+      ParentID: null
+      ChildCount: 2
+      xp: null
+      CatalogID: solitary-storefront
+    - ID: kids
+      Name: Kid's
+      Description: null
+      ListOrder: 3
+      Active: true
+      ParentID: null
+      ChildCount: 3
+      xp: null
+      CatalogID: solitary-storefront
+    - ID: general
+      Name: General
+      Description: null
+      ListOrder: 4
+      Active: true
+      ParentID: null
+      ChildCount: 1
+      xp: null
+      CatalogID: solitary-storefront
+    - ID: masks
+      Name: Face Masks
+      Description: null
+      ListOrder: 1
+      Active: true
+      ParentID: general
+      ChildCount: 0
+      xp: null
+      CatalogID: solitary-storefront
+    - ID: girls
+      Name: Girls
+      Description: null
+      ListOrder: 1
+      Active: true
+      ParentID: kids
+      ChildCount: 1
+      xp: null
+      CatalogID: solitary-storefront
+    - ID: mens-jackets
+      Name: Jackets
+      Description: null
+      ListOrder: 1
+      Active: true
+      ParentID: mens
+      ChildCount: 0
+      xp: null
+      CatalogID: solitary-storefront
+    - ID: womens-jackets
+      Name: Jackets
+      Description: null
+      ListOrder: 1
+      Active: true
+      ParentID: womens
+      ChildCount: 0
+      xp: null
+      CatalogID: solitary-storefront
+    - ID: womens-bottoms
+      Name: Bottoms
+      Description: null
+      ListOrder: 2
+      Active: true
+      ParentID: womens
+      ChildCount: 0
+      xp: null
+      CatalogID: solitary-storefront
+    - ID: mens-bottoms
+      Name: Bottoms
+      Description: null
+      ListOrder: 2
+      Active: true
+      ParentID: mens
+      ChildCount: 0
+      xp: null
+      CatalogID: solitary-storefront
+    - ID: boys
+      Name: Boys
+      Description: null
+      ListOrder: 2
+      Active: true
+      ParentID: kids
+      ChildCount: 1
+      xp: null
+      CatalogID: solitary-storefront
+    - ID: toddlers
+      Name: Toddlers'
+      Description: null
+      ListOrder: 3
+      Active: true
+      ParentID: kids
+      ChildCount: 0
+      xp: null
+      CatalogID: solitary-storefront
+    - ID: womens-socks
+      Name: Socks
+      Description: null
+      ListOrder: 3
+      Active: true
+      ParentID: womens
+      ChildCount: 0
+      xp: null
+      CatalogID: solitary-storefront
+    - ID: girls-shoes
+      Name: Shoes
+      Description: null
+      ListOrder: 1
+      Active: true
+      ParentID: girls
+      ChildCount: 0
+      xp: null
+      CatalogID: solitary-storefront
+    - ID: boys-shoes
+      Name: Shoes
+      Description: null
+      ListOrder: 2
+      Active: true
+      ParentID: boys
+      ChildCount: 0
+      xp: null
+      CatalogID: solitary-storefront
+  Suppliers: []
+  Products: []
+  PriceSchedules: []
+  Specs: []
+  ProductFacets: []
+  Promotions: []
+Assignments:
+  UserGroupAssignments: []
+  SpendingAccountAssignments: []
+  AddressAssignments: []
+  CostCenterAssignments: []
+  CreditCardAssignments: []
+  CategoryAssignments: []
+  CategoryProductAssignments: []
+  SecurityProfileAssignments:
+    - SecurityProfileID: back-office-admin
+      BuyerID: null
+      SupplierID: null
+      UserID: null
+      UserGroupID: null
+    - SecurityProfileID: shopper
+      BuyerID: solitary-storefront
+      SupplierID: null
+      UserID: null
+      UserGroupID: null
+  AdminUserGroupAssignments: []
+  ApiClientAssignments:
+    - ApiClientID: 3d82e90b-b5db-4af4-9c1b-9c34fbb904c0
+      BuyerID: solitary-storefront
+      SupplierID: null
+  ProductAssignments: []
+  CatalogAssignments:
+    - CatalogID: solitary-storefront
+      BuyerID: solitary-storefront
+      ViewAllCategories: true
+      ViewAllProducts: true
+  ProductCatalogAssignment: []
+  SpecProductAssignments: []
+  PromotionAssignment: []

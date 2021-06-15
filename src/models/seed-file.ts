@@ -2,6 +2,7 @@ import { OCResource } from "./oc-resources";
 import fs from 'fs';
 import yaml from 'js-yaml';
 import { log, MessageType } from '../services/log';
+import axios from "axios";
 
 export default class SeedFile {
     private file = {
@@ -28,17 +29,27 @@ export default class SeedFile {
         fs.writeFileSync(filePath, yaml.dump(this.file));
     }
 
-    ReadFromYaml(filePath: string, errors: string[]): boolean {
-        var file;
-        try {
-            file = fs.readFileSync(filePath, 'utf8') // consider switching to streams
-            log(`Found file \"${filePath}\"`, MessageType.Success);
-        } catch (err) {
-            errors.push(`No such file or directory \"${filePath}\" found`);
-            return false;
+    async ReadFromYaml(filePath: string, errors: string[]): Promise<boolean> {
+        let raw;
+        if (filePath.startsWith('http')) {
+            try {
+                raw = (await axios.get(filePath)).data;
+                log(`Found \"${filePath}\".`, MessageType.Success);
+            } catch {
+                errors.push(`Error response from \"${filePath}\".`);
+                return false;
+            }
+        } else {
+            try {
+                raw = fs.readFileSync(filePath, 'utf8') // consider switching to streams
+                log(`Found file \"${filePath}\"`, MessageType.Success);
+            } catch (err) {
+                errors.push(`No such file or directory \"${filePath}\" found`);
+                return false;
+            }
         }
         try {
-            this.file = yaml.load(file) as any;
+            this.file = yaml.load(raw) as any;
             log(`Valid yaml in \"${filePath}\"`, MessageType.Success);
         } catch (e) {
             var ex = e as YAMLException;

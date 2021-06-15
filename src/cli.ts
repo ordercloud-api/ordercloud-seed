@@ -25,7 +25,7 @@ yargs.scriptName("@ordercloud/seeding")
       type: 'string',
       alias: 'f',
       default: 'ordercloud-seed.yml',
-      describe: 'File'
+      describe: 'File path or link'
     })
   }, function (argv) {
     upload(argv.u as string, argv.p as string, argv.o as string, argv.f as string);
@@ -55,7 +55,7 @@ yargs.scriptName("@ordercloud/seeding")
       type: 'string',
       alias: 'f',
       default: 'ordercloud-seed.yml',
-      describe: 'File'
+      describe: 'File path'
     })
   }, function (argv) {
     download(argv.u as string, argv.p as string, argv.e as string, argv.o as string, argv.f as string);
@@ -65,7 +65,7 @@ yargs.scriptName("@ordercloud/seeding")
       type: 'string',
       alias: 'f',
       default: 'ordercloud-seed.yml',
-      describe: 'File'
+      describe: 'File path or link'
     })
   }, function (argv) {
       validate(argv.f as string);

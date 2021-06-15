@@ -7,7 +7,8 @@ export default class OrderCloudBulk {
     static async ListAll(resource: OCResource, ...routeParams: string[]): Promise<any[]> {
         const listFunc = resource.sdkObject[resource.listMethodName] as Function; 
 
-        const page1 = await listFunc(...routeParams, { page: 1, pageSize: 100});
+        const queryParams = { page: 1, pageSize: 100, depth: 'all'}; // depth only applies to categories
+        const page1 = await listFunc(...routeParams, queryParams);
 
         const additionalPages = range(2, Math.max(page1?.Meta.TotalPages + 1, 2)) as number[];
       
@@ -18,15 +19,17 @@ export default class OrderCloudBulk {
     }
 
     static async CreateAll(resource: OCResource, records: any[]): Promise<any[]> {
-        const createFunc = resource.sdkObject[resource.createMethodName] as Function;
-        if (resource.parentRefField) {
-            return await RunThrottled(records, 8, record => {           
-                return createFunc(record[resource.parentRefField], record);          
-            });
-        } else {
-            return await RunThrottled(records, 8, record => {          
-                return createFunc(record);         
-            });
-        }
+        const createFunc = resource.sdkObject[resource.createMethodName] as Function;    
+        return await RunThrottled(records, 8, record => {
+            if (resource.parentRefField) {          
+                return createFunc(record[resource.parentRefField], record);  
+            } else {
+                return createFunc(record); 
+            }       
+        })
     }
+
+    static async sleep(t) {
+        return new Promise(resolve => setTimeout(resolve, t));
+     }
 }
