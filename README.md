@@ -9,6 +9,8 @@ Download and upload serialized representations of full ordercloud organizations
 
 `npx @ordercloud/seeding download -e=sandbox -o={existing-org-id} -u-{username} -p={password}`
 
+Create an org based on a local file.
+
 `npx @ordercloud/seeding upload -o={new-org-id} -u-{username} -p={password} -f="ordercloud-seed.yml"`
 
 `npx @ordercloud/seeding validate -f="ordercloud-seed.yml"`
