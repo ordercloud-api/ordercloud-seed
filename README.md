@@ -13,6 +13,11 @@ Download and upload serialized representations of full ordercloud organizations
 
 `npx @ordercloud/seeding validate -f="ordercloud-seed.yml"`
 
+Create a new org based on a config at a public url. This one is a simple B2C ecommerce site. 
+
+`npx @ordercloud/seeding ./cli.js upload -f="https://raw.githubusercontent.com/ordercloud-api/ordercloud-seed/main/seeds/Simple-B2C.yml" -e=sandbox -o=MyOrganizationID -u=xxxxxxxx -p=xxxxxxxxxxx`
+`
+
 ## Development
 
 - Run `npm install`
