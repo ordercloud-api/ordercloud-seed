@@ -29,7 +29,7 @@ Create a new org based on a config at a public url. This one is a simple B2C eco
 ## To be done
 
 In rough order of priority
-1. Thorough QA
+1. Publish OS executables 
 2. Expose functionality in a way that can be consumed by another node project.
 3. Nice to have features
 
@@ -42,8 +42,5 @@ In rough order of priority
 
 ## OrderCloud corner cases to beware
 - Generate product variants
-- Creating Specs - Default OptionID
-- Creating Categories - Parent CategoryID
-- Catalog-buyer nuances
 - Anything with an OwnerID (products)
 

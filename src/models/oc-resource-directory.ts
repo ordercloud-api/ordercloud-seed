@@ -293,7 +293,7 @@ const Directory: OCResource[] = [
         createPriority: 2,
         path: "/specs",
         foreignKeys: {
-            DefaultOptionID: { foreignResource: OCResourceEnum.SpecOptions },
+            DefaultOptionID: { foreignResource: OCResourceEnum.SpecOptions, foreignParentRefField: "ID" },
         },
         children: [OCResourceEnum.SpecOptions]
     },

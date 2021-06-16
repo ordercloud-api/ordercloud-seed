@@ -1,5 +1,11 @@
 Objects:
   SecurityProfiles:
+    - ID: anon-shopper
+      Name: Anonymous Shopper
+      Roles:
+        - Shopper
+      CustomRoles: []
+      PasswordConfig: null
     - ID: back-office-admin
       Name: Back Office Admin
       Roles:
@@ -290,10 +296,584 @@ Objects:
       xp: null
       CatalogID: solitary-storefront
   Suppliers: []
-  Products: []
-  PriceSchedules: []
-  Specs: []
-  ProductFacets: []
+  Products:
+    - OwnerID: simple-B2C-starter
+      DefaultPriceScheduleID: mulberry-silk-facemask
+      AutoForward: false
+      ID: mulberry-silk-facemask
+      Name: ' Mulberry Silk Facemask'
+      Description: >-
+        A luxurious fabric, mulberry silk is named for the mulberry leaves the
+        uniquely bred silkworms feed on. A mask for your face.
+      QuantityMultiplier: 1
+      ShipWeight: 5
+      ShipHeight: null
+      ShipWidth: null
+      ShipLength: null
+      Active: true
+      SpecCount: 1
+      VariantCount: 0
+      ShipFromAddressID: null
+      Inventory:
+        Enabled: true
+        NotificationPoint: null
+        VariantLevelTracking: false
+        OrderCanExceed: false
+        QuantityAvailable: 30
+        LastUpdated: '2021-06-16T15:51:38.613+00:00'
+      DefaultSupplierID: null
+      xp:
+        Facets:
+          Color:
+            - yellow
+            - red
+            - blue
+    - OwnerID: simple-B2C-starter
+      DefaultPriceScheduleID: boys-turkish-leather-caliage
+      AutoForward: false
+      ID: boys-turkish-leather-caliage
+      Name: Boy's Turkish Leather Caliage
+      Description: >-
+        Hobnailed sandal-boots used by the roman military, Caliage will go
+        toe-to-toe with Air Jordans in intimidating your child's classmates.  
+      QuantityMultiplier: 1
+      ShipWeight: 10
+      ShipHeight: null
+      ShipWidth: null
+      ShipLength: null
+      Active: true
+      SpecCount: 0
+      VariantCount: 0
+      ShipFromAddressID: null
+      Inventory:
+        Enabled: true
+        NotificationPoint: null
+        VariantLevelTracking: false
+        OrderCanExceed: false
+        QuantityAvailable: 30
+        LastUpdated: '2021-06-16T15:51:10.27+00:00'
+      DefaultSupplierID: null
+      xp:
+        Facets:
+          Color:
+            - orange
+            - black
+    - OwnerID: simple-B2C-starter
+      DefaultPriceScheduleID: girls-turkish-leather-caliage
+      AutoForward: false
+      ID: girls-turkish-leather-caliage
+      Name: Girl's Turkish Leather Caliage
+      Description: >-
+        Hobnailed sandal-boots used by the roman military, Caliage will go
+        toe-to-toe with Air Jordans in intimidating your child's classmates.
+        Same as the boy's version, but comes in pink.
+      QuantityMultiplier: 1
+      ShipWeight: 10
+      ShipHeight: null
+      ShipWidth: null
+      ShipLength: null
+      Active: true
+      SpecCount: 0
+      VariantCount: 0
+      ShipFromAddressID: null
+      Inventory:
+        Enabled: true
+        NotificationPoint: null
+        VariantLevelTracking: false
+        OrderCanExceed: false
+        QuantityAvailable: 30
+        LastUpdated: '2021-06-16T15:51:14.53+00:00'
+      DefaultSupplierID: null
+      xp:
+        Facets:
+          Color:
+            - orange
+            - black
+    - OwnerID: simple-B2C-starter
+      DefaultPriceScheduleID: mens-hellion-onyx-jacket
+      AutoForward: false
+      ID: mens-hellion-onyx-jacket
+      Name: Men's Helion Onyx Jacket
+      Description: >-
+        Bright like the sun and dark like midnight. A blindingly perfect jacket.
+        Comes in colors. 
+      QuantityMultiplier: 1
+      ShipWeight: 22
+      ShipHeight: null
+      ShipWidth: null
+      ShipLength: null
+      Active: true
+      SpecCount: 1
+      VariantCount: 0
+      ShipFromAddressID: null
+      Inventory:
+        Enabled: true
+        NotificationPoint: null
+        VariantLevelTracking: false
+        OrderCanExceed: false
+        QuantityAvailable: 30
+        LastUpdated: '2021-06-16T15:52:24.187+00:00'
+      DefaultSupplierID: null
+      xp:
+        Facets:
+          Color:
+            - yellow
+            - black
+    - OwnerID: simple-B2C-starter
+      DefaultPriceScheduleID: mens-intrigue-active-shorts
+      AutoForward: false
+      ID: mens-intrigue-active-shorts
+      Name: Men's Intrigue(TM) Active Shorts
+      Description: 'Intrigued? These shorts inspire curiosity, interest, even fascination.  '
+      QuantityMultiplier: 1
+      ShipWeight: 5
+      ShipHeight: null
+      ShipWidth: null
+      ShipLength: null
+      Active: true
+      SpecCount: 2
+      VariantCount: 0
+      ShipFromAddressID: null
+      Inventory:
+        Enabled: true
+        NotificationPoint: null
+        VariantLevelTracking: false
+        OrderCanExceed: false
+        QuantityAvailable: 30
+        LastUpdated: '2021-06-16T16:00:44.017+00:00'
+      DefaultSupplierID: null
+      xp:
+        Facets:
+          Color:
+            - purple
+            - orange
+            - green
+    - OwnerID: simple-B2C-starter
+      DefaultPriceScheduleID: penquin-feather-onesie
+      AutoForward: false
+      ID: penquin-feather-onesie
+      Name: Penguin Feather Onesie
+      Description: >-
+        Material is 100% A-grade penquin feathers. Feather's harvested humanely
+        and sustainably from free-range penguins. 
+      QuantityMultiplier: 1
+      ShipWeight: 10
+      ShipHeight: null
+      ShipWidth: null
+      ShipLength: null
+      Active: true
+      SpecCount: 0
+      VariantCount: 0
+      ShipFromAddressID: null
+      Inventory:
+        Enabled: true
+        NotificationPoint: null
+        VariantLevelTracking: false
+        OrderCanExceed: false
+        QuantityAvailable: 30
+        LastUpdated: '2021-06-16T16:01:27.723+00:00'
+      DefaultSupplierID: null
+      xp:
+        Facets:
+          Color:
+            - white
+            - black
+    - OwnerID: simple-B2C-starter
+      DefaultPriceScheduleID: womens-hellion-onyx-jacket
+      AutoForward: false
+      ID: womens-hellion-onyx-jacket
+      Name: Women's Helion Onyx Jacket
+      Description: >-
+        Bright like the sun and dark like midnight. A blindingly perfect jacket.
+        Comes in colors. 
+      QuantityMultiplier: 1
+      ShipWeight: 21
+      ShipHeight: null
+      ShipWidth: null
+      ShipLength: null
+      Active: true
+      SpecCount: 1
+      VariantCount: 0
+      ShipFromAddressID: null
+      Inventory:
+        Enabled: true
+        NotificationPoint: null
+        VariantLevelTracking: false
+        OrderCanExceed: false
+        QuantityAvailable: 30
+        LastUpdated: '2021-06-16T15:52:54.773+00:00'
+      DefaultSupplierID: null
+      xp:
+        Facets:
+          Color:
+            - yellow
+            - black
+    - OwnerID: simple-B2C-starter
+      DefaultPriceScheduleID: womens-intrigue-active-shorts
+      AutoForward: false
+      ID: womens-intrigue-active-shorts
+      Name: Women's Intrigue(TM) Active Shorts
+      Description: 'Intrigued? These shorts inspire curiosity, interest, even fascination.  '
+      QuantityMultiplier: 1
+      ShipWeight: 10
+      ShipHeight: null
+      ShipWidth: null
+      ShipLength: null
+      Active: true
+      SpecCount: 2
+      VariantCount: 0
+      ShipFromAddressID: null
+      Inventory:
+        Enabled: true
+        NotificationPoint: null
+        VariantLevelTracking: false
+        OrderCanExceed: false
+        QuantityAvailable: 30
+        LastUpdated: '2021-06-16T16:00:52.94+00:00'
+      DefaultSupplierID: null
+      xp:
+        Facets:
+          Color:
+            - purple
+            - orange
+            - green
+    - OwnerID: simple-B2C-starter
+      DefaultPriceScheduleID: womens-spiked-wool-socks
+      AutoForward: false
+      ID: womens-spiked-wool-socks
+      Name: Women's Spiked Wool Socks
+      Description: >-
+        Metal spikes embedded in a carbon fiber plate give these socks
+        outstanding grip for navigating ice. Finally, traverse a frozen crevasse
+        without sacrificing comfort. 
+      QuantityMultiplier: 1
+      ShipWeight: 5
+      ShipHeight: null
+      ShipWidth: null
+      ShipLength: null
+      Active: true
+      SpecCount: 0
+      VariantCount: 0
+      ShipFromAddressID: null
+      Inventory:
+        Enabled: true
+        NotificationPoint: null
+        VariantLevelTracking: false
+        OrderCanExceed: false
+        QuantityAvailable: 30
+        LastUpdated: '2021-06-16T15:06:25.357+00:00'
+      DefaultSupplierID: null
+      xp: null
+  PriceSchedules:
+    - ID: boys-turkish-leather-caliage
+      Name: boys-turkish-leather-caliage
+      ApplyTax: true
+      ApplyShipping: true
+      MinQuantity: 1
+      MaxQuantity: null
+      UseCumulativeQuantity: false
+      RestrictedQuantity: false
+      PriceBreaks:
+        - Quantity: 1
+          Price: 140
+      xp: null
+    - ID: girls-turkish-leather-caliage
+      Name: girls-turkish-leather-caliage
+      ApplyTax: true
+      ApplyShipping: true
+      MinQuantity: 1
+      MaxQuantity: null
+      UseCumulativeQuantity: false
+      RestrictedQuantity: false
+      PriceBreaks:
+        - Quantity: 1
+          Price: 140
+      xp: null
+    - ID: mens-hellion-onyx-jacket
+      Name: mens-hellion-onyx-jacket
+      ApplyTax: true
+      ApplyShipping: true
+      MinQuantity: 1
+      MaxQuantity: null
+      UseCumulativeQuantity: false
+      RestrictedQuantity: false
+      PriceBreaks:
+        - Quantity: 1
+          Price: 140
+      xp: null
+    - ID: mens-intrigue-active-shorts
+      Name: mens-intrigue-active-shorts
+      ApplyTax: true
+      ApplyShipping: true
+      MinQuantity: 1
+      MaxQuantity: null
+      UseCumulativeQuantity: false
+      RestrictedQuantity: false
+      PriceBreaks:
+        - Quantity: 1
+          Price: 85
+      xp: null
+    - ID: mulberry-silk-facemask
+      Name: mulberry-silk-facemask
+      ApplyTax: true
+      ApplyShipping: true
+      MinQuantity: 1
+      MaxQuantity: null
+      UseCumulativeQuantity: false
+      RestrictedQuantity: false
+      PriceBreaks:
+        - Quantity: 1
+          Price: 35
+      xp: null
+    - ID: penquin-feather-onesie
+      Name: penquin-feather-onesie
+      ApplyTax: true
+      ApplyShipping: true
+      MinQuantity: 1
+      MaxQuantity: null
+      UseCumulativeQuantity: false
+      RestrictedQuantity: false
+      PriceBreaks:
+        - Quantity: 1
+          Price: 70
+      xp: null
+    - ID: womens-hellion-onyx-jacket
+      Name: womens-hellion-onyx-jacket
+      ApplyTax: true
+      ApplyShipping: true
+      MinQuantity: 1
+      MaxQuantity: null
+      UseCumulativeQuantity: false
+      RestrictedQuantity: false
+      PriceBreaks:
+        - Quantity: 1
+          Price: 130
+      xp: null
+    - ID: womens-intrigue-active-shorts
+      Name: womens-intrigue-active-shorts
+      ApplyTax: true
+      ApplyShipping: true
+      MinQuantity: 1
+      MaxQuantity: null
+      UseCumulativeQuantity: false
+      RestrictedQuantity: false
+      PriceBreaks:
+        - Quantity: 1
+          Price: 75
+      xp: null
+    - ID: womens-spiked-wool-socks
+      Name: womens-spiked-wool-socks
+      ApplyTax: true
+      ApplyShipping: true
+      MinQuantity: 1
+      MaxQuantity: null
+      UseCumulativeQuantity: false
+      RestrictedQuantity: false
+      PriceBreaks:
+        - Quantity: 1
+          Price: 40
+      xp: null
+  Specs:
+    - ID: intrigue-active-shorts-color
+      ListOrder: 0
+      Name: Color
+      DefaultValue: null
+      Required: true
+      AllowOpenText: false
+      DefaultOptionID: obsession-umber
+      DefinesVariant: false
+      xp: null
+      OptionCount: 3
+      Options:
+        - ID: mysterious-mint
+          Value: Mysterious Mint
+          ListOrder: 0
+          IsOpenText: false
+          PriceMarkupType: NoMarkup
+          PriceMarkup: null
+          xp: null
+        - ID: obsession-umber
+          Value: Obsession Umber
+          ListOrder: 0
+          IsOpenText: false
+          PriceMarkupType: NoMarkup
+          PriceMarkup: null
+          xp: null
+        - ID: paranoid-purple
+          Value: Paranoid Purple
+          ListOrder: 0
+          IsOpenText: false
+          PriceMarkupType: NoMarkup
+          PriceMarkup: null
+          xp: null
+    - ID: mulberry-silk-facemask-color
+      ListOrder: 0
+      Name: Color
+      DefaultValue: null
+      Required: true
+      AllowOpenText: false
+      DefaultOptionID: blue
+      DefinesVariant: false
+      xp: null
+      OptionCount: 3
+      Options:
+        - ID: blue
+          Value: Blue
+          ListOrder: 0
+          IsOpenText: false
+          PriceMarkupType: NoMarkup
+          PriceMarkup: null
+          xp: null
+        - ID: red
+          Value: Red
+          ListOrder: 0
+          IsOpenText: false
+          PriceMarkupType: NoMarkup
+          PriceMarkup: null
+          xp: null
+        - ID: yellow
+          Value: Yellow
+          ListOrder: 0
+          IsOpenText: false
+          PriceMarkupType: NoMarkup
+          PriceMarkup: null
+          xp: null
+    - ID: cross-product-size
+      ListOrder: 0
+      Name: Size
+      DefaultValue: null
+      Required: true
+      AllowOpenText: false
+      DefaultOptionID: null
+      DefinesVariant: false
+      xp: null
+      OptionCount: 4
+      Options:
+        - ID: L
+          Value: Large
+          ListOrder: 0
+          IsOpenText: false
+          PriceMarkupType: NoMarkup
+          PriceMarkup: null
+          xp: null
+        - ID: m
+          Value: Medium
+          ListOrder: 0
+          IsOpenText: false
+          PriceMarkupType: NoMarkup
+          PriceMarkup: null
+          xp: null
+        - ID: s
+          Value: Small
+          ListOrder: 0
+          IsOpenText: false
+          PriceMarkupType: NoMarkup
+          PriceMarkup: null
+          xp: null
+        - ID: XL
+          Value: Extra Large
+          ListOrder: 0
+          IsOpenText: false
+          PriceMarkupType: NoMarkup
+          PriceMarkup: null
+          xp: null
+  SpecOptions:
+    - ID: mysterious-mint
+      Value: Mysterious Mint
+      ListOrder: 0
+      IsOpenText: false
+      PriceMarkupType: NoMarkup
+      PriceMarkup: null
+      xp: null
+      SpecID: intrigue-active-shorts-color
+    - ID: obsession-umber
+      Value: Obsession Umber
+      ListOrder: 0
+      IsOpenText: false
+      PriceMarkupType: NoMarkup
+      PriceMarkup: null
+      xp: null
+      SpecID: intrigue-active-shorts-color
+    - ID: paranoid-purple
+      Value: Paranoid Purple
+      ListOrder: 0
+      IsOpenText: false
+      PriceMarkupType: NoMarkup
+      PriceMarkup: null
+      xp: null
+      SpecID: intrigue-active-shorts-color
+    - ID: blue
+      Value: Blue
+      ListOrder: 0
+      IsOpenText: false
+      PriceMarkupType: NoMarkup
+      PriceMarkup: null
+      xp: null
+      SpecID: mulberry-silk-facemask-color
+    - ID: red
+      Value: Red
+      ListOrder: 0
+      IsOpenText: false
+      PriceMarkupType: NoMarkup
+      PriceMarkup: null
+      xp: null
+      SpecID: mulberry-silk-facemask-color
+    - ID: yellow
+      Value: Yellow
+      ListOrder: 0
+      IsOpenText: false
+      PriceMarkupType: NoMarkup
+      PriceMarkup: null
+      xp: null
+      SpecID: mulberry-silk-facemask-color
+    - ID: L
+      Value: Large
+      ListOrder: 0
+      IsOpenText: false
+      PriceMarkupType: NoMarkup
+      PriceMarkup: null
+      xp: null
+      SpecID: cross-product-size
+    - ID: m
+      Value: Medium
+      ListOrder: 0
+      IsOpenText: false
+      PriceMarkupType: NoMarkup
+      PriceMarkup: null
+      xp: null
+      SpecID: cross-product-size
+    - ID: s
+      Value: Small
+      ListOrder: 0
+      IsOpenText: false
+      PriceMarkupType: NoMarkup
+      PriceMarkup: null
+      xp: null
+      SpecID: cross-product-size
+    - ID: XL
+      Value: Extra Large
+      ListOrder: 0
+      IsOpenText: false
+      PriceMarkupType: NoMarkup
+      PriceMarkup: null
+      xp: null
+      SpecID: cross-product-size
+  ProductFacets:
+    - ID: color
+      Name: Color
+      XpPath: Facets.Color
+      ListOrder: 0
+      MinCount: 1
+      xp:
+        options:
+          - black
+          - white
+          - yellow
+          - red
+          - blue
+          - green
+          - orange
+          - purple
   Promotions: []
 Assignments:
   UserGroupAssignments: []
@@ -302,8 +882,49 @@ Assignments:
   CostCenterAssignments: []
   CreditCardAssignments: []
   CategoryAssignments: []
-  CategoryProductAssignments: []
+  CategoryProductAssignments:
+    - CategoryID: boys-shoes
+      ProductID: boys-turkish-leather-caliage
+      ListOrder: null
+      CatalogID: solitary-storefront
+    - CategoryID: girls-shoes
+      ProductID: girls-turkish-leather-caliage
+      ListOrder: null
+      CatalogID: solitary-storefront
+    - CategoryID: masks
+      ProductID: mulberry-silk-facemask
+      ListOrder: null
+      CatalogID: solitary-storefront
+    - CategoryID: mens-bottoms
+      ProductID: mens-intrigue-active-shorts
+      ListOrder: null
+      CatalogID: solitary-storefront
+    - CategoryID: mens-jackets
+      ProductID: mens-hellion-onyx-jacket
+      ListOrder: null
+      CatalogID: solitary-storefront
+    - CategoryID: toddlers
+      ProductID: penquin-feather-onesie
+      ListOrder: null
+      CatalogID: solitary-storefront
+    - CategoryID: womens-bottoms
+      ProductID: womens-intrigue-active-shorts
+      ListOrder: null
+      CatalogID: solitary-storefront
+    - CategoryID: womens-jackets
+      ProductID: womens-hellion-onyx-jacket
+      ListOrder: null
+      CatalogID: solitary-storefront
+    - CategoryID: womens-socks
+      ProductID: womens-spiked-wool-socks
+      ListOrder: null
+      CatalogID: solitary-storefront
   SecurityProfileAssignments:
+    - SecurityProfileID: anon-shopper
+      BuyerID: solitary-storefront
+      SupplierID: null
+      UserID: null
+      UserGroupID: null
     - SecurityProfileID: back-office-admin
       BuyerID: null
       SupplierID: null
@@ -325,6 +946,52 @@ Assignments:
       BuyerID: solitary-storefront
       ViewAllCategories: true
       ViewAllProducts: true
-  ProductCatalogAssignment: []
-  SpecProductAssignments: []
+  ProductCatalogAssignment:
+    - CatalogID: solitary-storefront
+      ProductID: boys-turkish-leather-caliage
+    - CatalogID: solitary-storefront
+      ProductID: girls-turkish-leather-caliage
+    - CatalogID: solitary-storefront
+      ProductID: mens-hellion-onyx-jacket
+    - CatalogID: solitary-storefront
+      ProductID: mens-intrigue-active-shorts
+    - CatalogID: solitary-storefront
+      ProductID: mulberry-silk-facemask
+    - CatalogID: solitary-storefront
+      ProductID: penquin-feather-onesie
+    - CatalogID: solitary-storefront
+      ProductID: womens-hellion-onyx-jacket
+    - CatalogID: solitary-storefront
+      ProductID: womens-intrigue-active-shorts
+    - CatalogID: solitary-storefront
+      ProductID: womens-spiked-wool-socks
+  SpecProductAssignments:
+    - SpecID: cross-product-size
+      ProductID: mens-hellion-onyx-jacket
+      DefaultValue: null
+      DefaultOptionID: null
+    - SpecID: cross-product-size
+      ProductID: mens-intrigue-active-shorts
+      DefaultValue: null
+      DefaultOptionID: null
+    - SpecID: cross-product-size
+      ProductID: womens-hellion-onyx-jacket
+      DefaultValue: null
+      DefaultOptionID: null
+    - SpecID: cross-product-size
+      ProductID: womens-intrigue-active-shorts
+      DefaultValue: null
+      DefaultOptionID: null
+    - SpecID: intrigue-active-shorts-color
+      ProductID: mens-intrigue-active-shorts
+      DefaultValue: null
+      DefaultOptionID: obsession-umber
+    - SpecID: intrigue-active-shorts-color
+      ProductID: womens-intrigue-active-shorts
+      DefaultValue: null
+      DefaultOptionID: obsession-umber
+    - SpecID: mulberry-silk-facemask-color
+      ProductID: mulberry-silk-facemask
+      DefaultValue: null
+      DefaultOptionID: blue
   PromotionAssignment: []

@@ -866,7 +866,26 @@ Objects:
         - Quantity: 1
           Price: 9.99
       xp: {}
-  Specs: []
+  Specs: 
+    - ID: color
+      ListOrder: 0
+      Name: Color
+      DefaultValue: null
+      Required: true
+      AllowOpenText: false
+      DefaultOptionID: blue
+      DefinesVariant: false
+      xp: null
+      OptionCount: 1
+  SpecOptions:
+    - ID: blue
+      Value: blue
+      ListOrder: 0
+      IsOpenText: false
+      PriceMarkupType: NoMarkup
+      PriceMarkup: null
+      xp: null
+      SpecID: color
   ProductFacets:
     - ID: Brand
       Name: Brand

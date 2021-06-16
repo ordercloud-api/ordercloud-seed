@@ -131,6 +131,7 @@ export class Validator {
         
         var setEntry = foreignKey.foreignParentRefField === undefined ? value : `${this.currentRecord[foreignKey.foreignParentRefField]}/${value}`;
         // find an ID of a particular resource
+
         var keyExists = this.idCache.has(foreignKey.foreignResource, setEntry);
         if (!keyExists) {
             var message = `Invalid reference ${this.currentResource.name}.${field}: no ${foreignKey.foreignResource} found with ID \"${value}\".`

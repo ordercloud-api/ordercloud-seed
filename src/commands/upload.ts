@@ -1,5 +1,5 @@
 import Portal from '../services/portal';
-import { Configuration, Tokens } from 'ordercloud-javascript-sdk';
+import { Configuration, Specs, Tokens } from 'ordercloud-javascript-sdk';
 import OrderCloudBulk from '../services/ordercloud-bulk';
 import _ from 'lodash';
 import { log, MessageType } from '../services/log';
@@ -9,6 +9,7 @@ import { OCResourceEnum } from '../models/oc-resource-enum';
 import { OCResource } from '../models/oc-resources';
 import Random from '../services/random';
 import { REDACTED_MESSAGE, ORDERCLOUD_URLS } from '../constants';
+import RunThrottled from '../services/throttler';
 
 export async function upload(username: string, password: string, orgID: string, path: string) {
     // First run file validation
@@ -52,6 +53,7 @@ export async function upload(username: string, password: string, orgID: string, 
     // Upload to Ordercloud
     var file = validateResponse.data;
     var apiClientIDMap = {};
+    var specDefaultOptionIDList = [];
     var webhookSecret = Random.generateWebhookSecret(); // use one webhook secret for all webhooks, integration events and message senders
     var directory = await BuildResourceDirectory(false);
     for (let resource of directory.sort((a, b) => a.createPriority - b.createPriority)) {
@@ -60,6 +62,10 @@ export async function upload(username: string, password: string, orgID: string, 
             await UploadApiClients(resource);
         } else if (resource.name === OCResourceEnum.ImpersonationConfigs) {
             await UploadImpersonationConfigs(resource);
+        } else if (resource.name === OCResourceEnum.Specs) {
+            await UploadSpecs(resource);
+        } else if (resource.name === OCResourceEnum.SpecOptions) {
+            await UploadSpecOptions(resource);
         } else if (resource.name === OCResourceEnum.Webhooks) {
             await UploadWebhooks(resource);
         } else if (resource.name === OCResourceEnum.OpenIdConnects) {
@@ -79,6 +85,22 @@ export async function upload(username: string, password: string, orgID: string, 
     }
     log(`Done Seeding!`, MessageType.Success); 
 
+    // Need to remove and cache Spec.DefaultOptionID in order to PATCH it after the options are created.
+    async function UploadSpecs(resource: OCResource): Promise<void> {
+        records.forEach(r => {
+            if (!_.isNil(r.DefaultOptionID)) { 
+                specDefaultOptionIDList.push({ ID: r.ID, DefaultOptionID: r.DefaultOptionID}); // save for later step
+                r.DefaultOptionID = null; // set null so create spec succeeds 
+            }
+        });
+        await OrderCloudBulk.CreateAll(resource, records);
+    }
+
+    // Patch Spec.DefaultOptionID after the options are created.
+    async function UploadSpecOptions(resource: OCResource): Promise<void> {
+        await OrderCloudBulk.CreateAll(resource, records); 
+        await RunThrottled(specDefaultOptionIDList, 8, x => Specs.Patch(x.ID, { DefaultOptionID: x.DefaultOptionID }));
+    }
 
     async function UploadApiClients(resource: OCResource): Promise<void> {
         records.forEach(r => {

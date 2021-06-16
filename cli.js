@@ -600,7 +600,7 @@ const Directory = [
         createPriority: 2,
         path: "/specs",
         foreignKeys: {
-            DefaultOptionID: { foreignResource: OCResourceEnum.SpecOptions },
+            DefaultOptionID: { foreignResource: OCResourceEnum.SpecOptions, foreignParentRefField: "ID" },
         },
         children: [OCResourceEnum.SpecOptions]
     },
@@ -1355,6 +1355,7 @@ async function upload(username, password, orgID, path) {
     // Upload to Ordercloud
     var file = validateResponse.data;
     var apiClientIDMap = {};
+    var specDefaultOptionIDList = [];
     var webhookSecret = Random.generateWebhookSecret(); // use one webhook secret for all webhooks, integration events and message senders
     var directory = await BuildResourceDirectory(false);
     for (let resource of directory.sort((a, b) => a.createPriority - b.createPriority)) {
@@ -1364,6 +1365,12 @@ async function upload(username, password, orgID, path) {
         }
         else if (resource.name === OCResourceEnum.ImpersonationConfigs) {
             await UploadImpersonationConfigs(resource);
+        }
+        else if (resource.name === OCResourceEnum.Specs) {
+            await UploadSpecs(resource);
+        }
+        else if (resource.name === OCResourceEnum.SpecOptions) {
+            await UploadSpecOptions(resource);
         }
         else if (resource.name === OCResourceEnum.Webhooks) {
             await UploadWebhooks(resource);
@@ -1389,6 +1396,21 @@ async function upload(username, password, orgID, path) {
         log(`Uploaded ${records.length} ${resource.name}.`, MessageType.Progress);
     }
     log(`Done Seeding!`, MessageType.Success);
+    // Need to remove and cache Spec.DefaultOptionID in order to PATCH it after the options are created.
+    async function UploadSpecs(resource) {
+        records.forEach(r => {
+            if (!___default['default'].isNil(r.DefaultOptionID)) {
+                specDefaultOptionIDList.push({ ID: r.ID, DefaultOptionID: r.DefaultOptionID }); // save for later step
+                r.DefaultOptionID = null; // set null so create spec succeeds 
+            }
+        });
+        await OrderCloudBulk.CreateAll(resource, records);
+    }
+    // Patch Spec.DefaultOptionID after the options are created.
+    async function UploadSpecOptions(resource) {
+        await OrderCloudBulk.CreateAll(resource, records);
+        await RunThrottled(specDefaultOptionIDList, 8, x => ordercloudJavascriptSdk.Specs.Patch(x.ID, { DefaultOptionID: x.DefaultOptionID }));
+    }
     async function UploadApiClients(resource) {
         records.forEach(r => {
             if (r.ClientSecret === REDACTED_MESSAGE) {
