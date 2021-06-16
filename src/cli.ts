@@ -5,12 +5,13 @@ import { upload } from './commands/upload';
 
 yargs.scriptName("@ordercloud/seeding")
   .usage('$0 <cmd> [args] -')
-  .command('upload', 'Create new sandbox organization from file', (yargs) => {
-    yargs.option('orgID', {
+  .command('seed [data]', 'Create a new sandbox organization and seed data.', (yargs) => {
+    yargs.positional('data', {
       type: 'string',
-      alias: 'o',
-      describe: 'Organization ID'
-    })
+      alias: 'd',
+      default: 'ordercloud-seed.yml',
+      describe: 'Local file path or HTTP(S) link'
+    });
     yargs.option('username', {
       type: 'string',
       alias: 'u',
@@ -21,16 +22,15 @@ yargs.scriptName("@ordercloud/seeding")
       alias: 'p',
       describe: 'Portal password'
     })
-    yargs.option('file', {
+    yargs.option('orgID', {
       type: 'string',
-      alias: 'f',
-      default: 'ordercloud-seed.yml',
-      describe: 'File path or link'
+      alias: 'o',
+      describe: 'Organization ID'
     })
   }, function (argv) {
-    upload(argv.u as string, argv.p as string, argv.o as string, argv.f as string);
+    upload(argv.u as string, argv.p as string, argv.o as string, argv.d as string);
   })
-  .command('download', 'Download all org data into a file', (yargs) => {
+  .command('download [filePath]', 'Create a local seed file from an existing organization.', (yargs) => {
     yargs.option('environment', {
       type: 'string',
       alias: 'e',
@@ -51,7 +51,7 @@ yargs.scriptName("@ordercloud/seeding")
       alias: 'p',
       describe: 'Portal password'
     })
-    yargs.option('file', {
+    yargs.positional('filePath', {
       type: 'string',
       alias: 'f',
       default: 'ordercloud-seed.yml',
@@ -60,15 +60,15 @@ yargs.scriptName("@ordercloud/seeding")
   }, function (argv) {
     download(argv.u as string, argv.p as string, argv.e as string, argv.o as string, argv.f as string);
   })
-  .command('validate', 'Validate a potential file for upload', (yargs) => {
-    yargs.option('file', {
+  .command('validate [data]', 'Validate a potential data source for seeding.', (yargs) => {
+    yargs.positional('data', {
       type: 'string',
-      alias: 'f',
+      alias: 'd',
       default: 'ordercloud-seed.yml',
-      describe: 'File path or link'
+      describe: 'Local file path or HTTP(S) link'
     })
   }, function (argv) {
-      validate(argv.f as string);
+      validate(argv.d as string);
   })
   .help()
   .argv

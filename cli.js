@@ -1136,7 +1136,7 @@ async function validate(filePath) {
         log(error, MessageType.Error);
     }
     if (validator.errors.length === 0) {
-        log("File ready for upload!", MessageType.Success);
+        log("Data source ready for seeding!", MessageType.Success);
     }
     return { errors: validator.errors, data: file };
 }
@@ -1305,6 +1305,9 @@ class Random {
     static generateClientSecret() {
         return this.generate(60);
     }
+    static generateOrgID() {
+        return this.generate(16);
+    }
     static generate(length) {
         let retVal = "";
         for (var i = 0, n = this.charset.length; i < length; ++i) {
@@ -1315,15 +1318,21 @@ class Random {
 }
 Random.charset = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
 
+const SeedingAliasMap = {
+    "Simple-B2C": "https://raw.githubusercontent.com/ordercloud-api/ordercloud-seed/main/seeds/Simple-B2C.yml"
+};
+
 async function upload(username, password, orgID, path) {
-    // First run file validation
+    // Check for short-cut aliases
+    if (!___default['default'].isNil(SeedingAliasMap[path])) {
+        path = SeedingAliasMap[path];
+    }
+    // Run file validation
     var validateResponse = await validate(path);
     if (validateResponse.errors.length !== 0)
         return;
     // Run command input validation
     var missingInputs = [];
-    if (!orgID)
-        missingInputs.push("orgID");
     if (!username)
         missingInputs.push("username");
     if (!password)
@@ -1340,14 +1349,16 @@ async function upload(username, password, orgID, path) {
         return log(`Username \"${username}\" and Password \"${password}\" were not valid`, MessageType.Error);
     }
     // Confirm orgID doesn't already exist
+    orgID = orgID || Random.generateOrgID();
     try {
         await Portal.GetOrganization(orgID, portal_token);
         return log(`An organization with ID \"${orgID}\" already exists.`, MessageType.Error);
     }
     catch (_b) { }
     // Create Organization
-    await Portal.PutOrganization({ Id: orgID, Name: orgID, Environment: "Sandbox" }, portal_token);
-    log(`Created new Organization \"${orgID}\".`, MessageType.Success);
+    var Name = path.split("/").pop().split(".")[0];
+    await Portal.PutOrganization({ Id: orgID, Name, Environment: "Sandbox" }, portal_token);
+    log(`Created new Organization with Name \"${Name}\" and ID \"${orgID}\".`, MessageType.Success);
     // Authenticate to Core API
     var org_token = await Portal.getOrganizationToken(orgID, portal_token);
     ordercloudJavascriptSdk.Configuration.Set({ baseApiUrl: ORDERCLOUD_URLS.sandbox }); // always sandbox for upload
@@ -1473,11 +1484,12 @@ async function upload(username, password, orgID, path) {
 
 yargs__default['default'].scriptName("@ordercloud/seeding")
     .usage('$0 <cmd> [args] -')
-    .command('upload', 'Create new sandbox organization from file', (yargs) => {
-    yargs.option('orgID', {
+    .command('seed [data]', 'Create a new sandbox organization and seed data.', (yargs) => {
+    yargs.positional('data', {
         type: 'string',
-        alias: 'o',
-        describe: 'Organization ID'
+        alias: 'd',
+        default: 'ordercloud-seed.yml',
+        describe: 'Local file path or HTTP(S) link'
     });
     yargs.option('username', {
         type: 'string',
@@ -1489,16 +1501,15 @@ yargs__default['default'].scriptName("@ordercloud/seeding")
         alias: 'p',
         describe: 'Portal password'
     });
-    yargs.option('file', {
+    yargs.option('orgID', {
         type: 'string',
-        alias: 'f',
-        default: 'ordercloud-seed.yml',
-        describe: 'File path or link'
+        alias: 'o',
+        describe: 'Organization ID'
     });
 }, function (argv) {
-    upload(argv.u, argv.p, argv.o, argv.f);
+    upload(argv.u, argv.p, argv.o, argv.d);
 })
-    .command('download', 'Download all org data into a file', (yargs) => {
+    .command('download [filePath]', 'Create a local seed file from an existing organization.', (yargs) => {
     yargs.option('environment', {
         type: 'string',
         alias: 'e',
@@ -1519,7 +1530,7 @@ yargs__default['default'].scriptName("@ordercloud/seeding")
         alias: 'p',
         describe: 'Portal password'
     });
-    yargs.option('file', {
+    yargs.positional('filePath', {
         type: 'string',
         alias: 'f',
         default: 'ordercloud-seed.yml',
@@ -1528,15 +1539,15 @@ yargs__default['default'].scriptName("@ordercloud/seeding")
 }, function (argv) {
     download(argv.u, argv.p, argv.e, argv.o, argv.f);
 })
-    .command('validate', 'Validate a potential file for upload', (yargs) => {
-    yargs.option('file', {
+    .command('validate [data]', 'Validate a potential data source for seeding.', (yargs) => {
+    yargs.positional('data', {
         type: 'string',
-        alias: 'f',
+        alias: 'd',
         default: 'ordercloud-seed.yml',
-        describe: 'File path or link'
+        describe: 'Local file path or HTTP(S) link'
     });
 }, function (argv) {
-    validate(argv.f);
+    validate(argv.d);
 })
     .help()
     .argv;

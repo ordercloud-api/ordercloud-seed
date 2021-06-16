@@ -10,16 +10,20 @@ import { OCResource } from '../models/oc-resources';
 import Random from '../services/random';
 import { REDACTED_MESSAGE, ORDERCLOUD_URLS } from '../constants';
 import RunThrottled from '../services/throttler';
+import { SeedingAliasMap } from '../models/seeding-alias-map';
 
 export async function upload(username: string, password: string, orgID: string, path: string) {
-    // First run file validation
+    // Check for short-cut aliases
+    if (!_.isNil(SeedingAliasMap[path])) {
+        path = SeedingAliasMap[path];
+    }
+    // Run file validation
     var validateResponse = await validate(path);
     if (validateResponse.errors.length !== 0) return;
 
     // Run command input validation
     var missingInputs: string[] = [];
 
-    if (!orgID) missingInputs.push("orgID");
     if (!username) missingInputs.push("username");
     if (!password) missingInputs.push("password");
 
@@ -36,14 +40,16 @@ export async function upload(username: string, password: string, orgID: string, 
     }
 
     // Confirm orgID doesn't already exist
+    orgID = orgID || Random.generateOrgID();
     try {
         await Portal.GetOrganization(orgID, portal_token);
         return log(`An organization with ID \"${orgID}\" already exists.`, MessageType.Error)
     } catch {}
 
     // Create Organization
-    await Portal.PutOrganization({ Id: orgID, Name: orgID, Environment: "Sandbox" }, portal_token);
-    log(`Created new Organization \"${orgID}\".`, MessageType.Success); 
+    var Name = path.split("/").pop().split(".")[0];
+    await Portal.PutOrganization({ Id: orgID, Name, Environment: "Sandbox" }, portal_token);
+    log(`Created new Organization with Name \"${Name}\" and ID \"${orgID}\".`, MessageType.Success); 
 
     // Authenticate to Core API
     var org_token = await Portal.getOrganizationToken(orgID, portal_token);

@@ -5,19 +5,26 @@ Download and upload serialized representations of full ordercloud organizations
 
 ## CLI Usage 
 
-`npx @ordercloud/seeding --help`
+Create a simple B2C organization - `npx @ordercloud/seeding seed Simple-B2C -u-{username} -p={password}`
 
-`npx @ordercloud/seeding download -e=sandbox -o={existing-org-id} -u-{username} -p={password}`
+Create an organization based on a local file - `npx @ordercloud/seeding seed ./folder/seed-data.yml -u-{username} -p={password}`
 
-Create an org based on a local file.
+Create an organization based on a public url - `npx @ordercloud/seeding seed https://raw.githubusercontent.com/ordercloud-api/ordercloud-seed/main/seeds/Simple-B2C.yml -u-{username} -p={password}`
 
-`npx @ordercloud/seeding upload -o={new-org-id} -u-{username} -p={password} -f="ordercloud-seed.yml"`
+Create a local seed file - `npx @ordercloud/seeding download ./folder/seed-data.yml -e=sandbox -o={existing-org-id} -u-{username} -p={password}`
 
-`npx @ordercloud/seeding validate -f="ordercloud-seed.yml"`
+Validate a local seed file - `npx @ordercloud/seeding validate ./folder/seed-data.yml` 
 
-Create a new org based on a config at a public url. This one is a simple B2C ecommerce site. 
+See options - `npx @ordercloud/seeding --help`
 
-`npx @ordercloud/seeding upload -f="https://raw.githubusercontent.com/ordercloud-api/ordercloud-seed/main/seeds/Simple-B2C.yml" -e=sandbox -o=MyOrganizationID -u=xxxxxxxx -p=xxxxxxxxxxx`
+## Supported Organization Templates
+
+These are seeding files maintained as part of this repo that represent templates for common ordercloud use cases. 
+
+| Command Alias | Raw URL |
+| --- | --- |                                
+| `seed Simple-B2C` | https://raw.githubusercontent.com/ordercloud-api/ordercloud-seed/main/seeds/Simple-B2C.yml |
+
 
 ## Development
 

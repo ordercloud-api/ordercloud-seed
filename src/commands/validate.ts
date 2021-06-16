@@ -70,7 +70,7 @@ export async function validate(filePath: string): Promise<ValidateResponse> {
         log(error, MessageType.Error)
     }
     if (validator.errors.length === 0) {
-        log("File ready for upload!", MessageType.Success);
+        log("Data source ready for seeding!", MessageType.Success);
     }
 
     return { errors: validator.errors, data: file };
