@@ -17,7 +17,7 @@ Create an org based on a local file.
 
 Create a new org based on a config at a public url. This one is a simple B2C ecommerce site. 
 
-`npx @ordercloud/seeding upload -f="https://raw.githubusercontent.com/ordercloud-api/ordercloud-seed/main/seeds/Simple-B2C.yml" -e=sandbox -o=MyOrganizationID -u=xxxxxxxx -p=xxxxxxxxxxx`
+`npx @ordercloud/seeding upload -f="https://raw.githubusercontent.com/ordercloud-api/ordercloud-seed/main/seeds/Simple-B2C.yml" -o=MyOrganizationID -u=xxxxxxxx -p=xxxxxxxxxxx`
 
 ## Development
 
