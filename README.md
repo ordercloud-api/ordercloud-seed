@@ -25,7 +25,6 @@ These are seeding files maintained as part of this repo that represent templates
 | --- | --- |                                
 | `seed Simple-B2C` | https://raw.githubusercontent.com/ordercloud-api/ordercloud-seed/main/seeds/Simple-B2C.yml |
 
-
 ## Development
 
 - Run `npm install`
