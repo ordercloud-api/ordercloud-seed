@@ -2,65 +2,26 @@
 'use strict';
 
 var yargs = require('yargs');
-var axios = require('axios');
-var qs = require('qs');
 var ordercloudJavascriptSdk = require('ordercloud-javascript-sdk');
 var fs = require('fs');
 var yaml = require('js-yaml');
 var chalk = require('chalk');
 var emoji = require('node-emoji');
+var axios = require('axios');
 var _ = require('lodash');
 var jwt_decode = require('jwt-decode');
+var portalJavascriptSdk = require('@ordercloud/portal-javascript-sdk');
 
 function _interopDefaultLegacy (e) { return e && typeof e === 'object' && 'default' in e ? e : { 'default': e }; }
 
 var yargs__default = /*#__PURE__*/_interopDefaultLegacy(yargs);
-var axios__default = /*#__PURE__*/_interopDefaultLegacy(axios);
-var qs__default = /*#__PURE__*/_interopDefaultLegacy(qs);
 var fs__default = /*#__PURE__*/_interopDefaultLegacy(fs);
 var yaml__default = /*#__PURE__*/_interopDefaultLegacy(yaml);
 var chalk__default = /*#__PURE__*/_interopDefaultLegacy(chalk);
 var emoji__default = /*#__PURE__*/_interopDefaultLegacy(emoji);
+var axios__default = /*#__PURE__*/_interopDefaultLegacy(axios);
 var ___default = /*#__PURE__*/_interopDefaultLegacy(_);
 var jwt_decode__default = /*#__PURE__*/_interopDefaultLegacy(jwt_decode);
-
-class Portal {
-    static async login(username, password) {
-        var response = await axios__default['default'].post(`${this.baseUrl}/oauth/token`, qs__default['default'].stringify({
-            grant_type: "password",
-            username: username,
-            password: password
-        }), {
-            headers: {
-                'content-type': 'application/x-www-form-urlencoded;charset=utf-8'
-            }
-        });
-        return response.data.access_token;
-    }
-    static async getOrganizationToken(orgID, portalToken) {
-        var response = await axios__default['default'].get(`${this.baseUrl}/organizations/${orgID}/token`, {
-            headers: {
-                'Authorization': `Bearer ${portalToken}`
-            }
-        });
-        return response.data.access_token;
-    }
-    static async GetOrganization(orgID, portalToken) {
-        await axios__default['default'].get(`${this.baseUrl}/organizations/${orgID}`, {
-            headers: {
-                'Authorization': `Bearer ${portalToken}`
-            }
-        });
-    }
-    static async PutOrganization(org, portalToken) {
-        await axios__default['default'].put(`${this.baseUrl}/organizations/${org.Id}`, org, {
-            headers: {
-                'Authorization': `Bearer ${portalToken}`
-            }
-        });
-    }
-}
-Portal.baseUrl = "https://portal.ordercloud.io/api/v1";
 
 function log(message, messageType = MessageType.Progress) {
     if (messageType == MessageType.Success) {
@@ -968,6 +929,34 @@ const ORDERCLOUD_URLS = {
     prod: "https://api.ordercloud.io",
 };
 
+class PortalAPI {
+    constructor() {
+        portalJavascriptSdk.Configuration.Set({
+            baseApiUrl: "https://portal.ordercloud.io/api/v1"
+        });
+    }
+    async login(username, password) {
+        var resp = await portalJavascriptSdk.Auth.Login(username, password);
+        this.portalUserToken = resp.access_token;
+        return resp;
+    }
+    async getOrganizationToken(orgID) {
+        return (await portalJavascriptSdk.ApiClients.GetToken(orgID, null, { accessToken: this.portalUserToken })).access_token;
+    }
+    async GetOrganization(orgID) {
+        return await portalJavascriptSdk.Organizations.Get(orgID, { accessToken: this.portalUserToken });
+    }
+    async CreateOrganization(id, name) {
+        var org = {
+            Id: id,
+            Name: name,
+            Environment: "Sandbox",
+            Region: { Id: "uswest" }
+        };
+        return await portalJavascriptSdk.Organizations.Save(id, org, { accessToken: this.portalUserToken });
+    }
+}
+
 async function download(username, password, environment, orgID, path) {
     var missingInputs = [];
     var validEnvironments = ['staging', 'sandbox', 'prod'];
@@ -989,16 +978,16 @@ async function download(username, password, environment, orgID, path) {
     // Set up configuration
     ordercloudJavascriptSdk.Configuration.Set({ baseApiUrl: url });
     // Authenticate
-    var portal_token;
+    var portal = new PortalAPI();
     var org_token;
     try {
-        portal_token = await Portal.login(username, password);
+        await portal.login(username, password);
     }
     catch (_a) {
         return log(`Username \"${username}\" and Password \"${password}\" were not valid`, MessageType.Error);
     }
     try {
-        org_token = await Portal.getOrganizationToken(orgID, portal_token);
+        org_token = await portal.getOrganizationToken(orgID);
     }
     catch (_b) {
         return log(`Organization with ID \"${orgID}\" not found`, MessageType.Error);
@@ -1341,9 +1330,9 @@ async function upload(username, password, orgID, path) {
         return log(`Missing required arguments: ${missingInputs.join(", ")}`, MessageType.Error);
     }
     // Authenticate To Portal
-    var portal_token;
+    var portal = new PortalAPI();
     try {
-        portal_token = await Portal.login(username, password);
+        await portal.login(username, password);
     }
     catch (_a) {
         return log(`Username \"${username}\" and Password \"${password}\" were not valid`, MessageType.Error);
@@ -1351,16 +1340,16 @@ async function upload(username, password, orgID, path) {
     // Confirm orgID doesn't already exist
     orgID = orgID || Random.generateOrgID();
     try {
-        await Portal.GetOrganization(orgID, portal_token);
+        await portal.GetOrganization(orgID);
         return log(`An organization with ID \"${orgID}\" already exists.`, MessageType.Error);
     }
     catch (_b) { }
     // Create Organization
     var Name = path.split("/").pop().split(".")[0];
-    await Portal.PutOrganization({ Id: orgID, Name, Environment: "Sandbox" }, portal_token);
+    await portal.CreateOrganization(orgID, Name);
     log(`Created new Organization with Name \"${Name}\" and ID \"${orgID}\".`, MessageType.Success);
     // Authenticate to Core API
-    var org_token = await Portal.getOrganizationToken(orgID, portal_token);
+    var org_token = await portal.getOrganizationToken(orgID);
     ordercloudJavascriptSdk.Configuration.Set({ baseApiUrl: ORDERCLOUD_URLS.sandbox }); // always sandbox for upload
     ordercloudJavascriptSdk.Tokens.SetAccessToken(org_token);
     // Upload to Ordercloud

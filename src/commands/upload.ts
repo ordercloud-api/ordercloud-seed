@@ -11,6 +11,7 @@ import Random from '../services/random';
 import { REDACTED_MESSAGE, ORDERCLOUD_URLS } from '../constants';
 import RunThrottled from '../services/throttler';
 import { SeedingAliasMap } from '../models/seeding-alias-map';
+import PortalAPI from '../services/portal';
 
 export async function upload(username: string, password: string, orgID: string, path: string) {
     // Check for short-cut aliases
@@ -32,9 +33,9 @@ export async function upload(username: string, password: string, orgID: string, 
     }
 
     // Authenticate To Portal
-    var portal_token: string;
+    var portal = new PortalAPI();
     try {
-        portal_token = await Portal.login(username, password);
+         await portal.login(username, password);
     } catch {
         return log(`Username \"${username}\" and Password \"${password}\" were not valid`, MessageType.Error)
     }
@@ -42,17 +43,17 @@ export async function upload(username: string, password: string, orgID: string, 
     // Confirm orgID doesn't already exist
     orgID = orgID || Random.generateOrgID();
     try {
-        await Portal.GetOrganization(orgID, portal_token);
+        await portal.GetOrganization(orgID);
         return log(`An organization with ID \"${orgID}\" already exists.`, MessageType.Error)
     } catch {}
 
     // Create Organization
     var Name = path.split("/").pop().split(".")[0];
-    await Portal.PutOrganization({ Id: orgID, Name, Environment: "Sandbox" }, portal_token);
+    await portal.CreateOrganization(orgID, Name);
     log(`Created new Organization with Name \"${Name}\" and ID \"${orgID}\".`, MessageType.Success); 
 
     // Authenticate to Core API
-    var org_token = await Portal.getOrganizationToken(orgID, portal_token);
+    var org_token = await portal.getOrganizationToken(orgID);
     Configuration.Set({ baseApiUrl: ORDERCLOUD_URLS.sandbox }); // always sandbox for upload
     Tokens.SetAccessToken(org_token);
     

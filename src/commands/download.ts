@@ -8,6 +8,7 @@ import jwt_decode from "jwt-decode";
 import { OCResource } from '../models/oc-resources';
 import _ from 'lodash';
 import { ORDERCLOUD_URLS, REDACTED_MESSAGE } from '../constants';
+import PortalAPI from '../services/portal';
 
 export async function download(username: string, password: string, environment: string, orgID: string, path: string): Promise<void> {
     var missingInputs: string[] = [];
@@ -32,15 +33,15 @@ export async function download(username: string, password: string, environment: 
     Configuration.Set({ baseApiUrl: url });
 
     // Authenticate
-    var portal_token: string;
+    var portal = new PortalAPI(); 
     var org_token: string;
     try {
-        portal_token = await Portal.login(username, password);
+        await portal.login(username, password);
     } catch {
         return log(`Username \"${username}\" and Password \"${password}\" were not valid`, MessageType.Error)
     }
     try {
-        org_token = await Portal.getOrganizationToken(orgID, portal_token);
+        org_token = await portal.getOrganizationToken(orgID);
     } catch {
         return log(`Organization with ID \"${orgID}\" not found`, MessageType.Error)
     }

@@ -1,64 +1,35 @@
-import axios from "axios";
-import qs from 'qs';
+import { Organizations, Auth, Organization, ApiClients, Configuration } from '@ordercloud/portal-javascript-sdk'
+import { PortalAuthentication } from "@ordercloud/portal-javascript-sdk/dist/models/PortalAuthentication";
 
-export default class Portal {
-    private static readonly baseUrl = "https://portal.ordercloud.io/api/v1";
-
-    static async login(username: string, password: string): Promise<string> {
-        var response = await axios.post(`${this.baseUrl}/oauth/token`, 
-            qs.stringify({
-                grant_type: "password",
-                username: username,
-                password: password
-            }),
-            {
-                headers: {
-                    'content-type': 'application/x-www-form-urlencoded;charset=utf-8'
-                }
-            }
-        )  
-        return response.data.access_token;
+export default class PortalAPI {
+    private portalUserToken: string;
+    constructor() {
+        Configuration.Set({
+            baseApiUrl: "https://portal.ordercloud.io/api/v1"
+        })
     }
 
-    static async getOrganizationToken(orgID: string, portalToken: string): Promise<string> {
-        var response = await axios.get(`${this.baseUrl}/organizations/${orgID}/token`, 
-        {
-            headers: {
-                'Authorization': `Bearer ${portalToken}`
-            }
-        });
-        return response.data.access_token;
+    async login(username: string, password: string): Promise<PortalAuthentication> {
+        var resp = await Auth.Login(username, password);
+        this.portalUserToken = resp.access_token;
+        return resp;
     }
 
-    static async GetOrganization(orgID: string, portalToken: string): Promise<void> {
-        await axios.get(`${this.baseUrl}/organizations/${orgID}`,
-        {
-            headers: {
-                'Authorization': `Bearer ${portalToken}`
-            }
-        });
+    async getOrganizationToken(orgID: string): Promise<string> {
+        return (await ApiClients.GetToken(orgID, null, { accessToken: this.portalUserToken })).access_token;
     }
 
-    static async PutOrganization(org: PortalOrganization, portalToken: string): Promise<void> {
-        await axios.put(`${this.baseUrl}/organizations/${org.Id}`, org,
-        {
-            headers: {
-                'Authorization': `Bearer ${portalToken}`
-            }
-        });
+    async GetOrganization(orgID: string): Promise<Organization> {
+        return await Organizations.Get(orgID, { accessToken: this.portalUserToken });
     }
-}
 
-export interface PortalOrganization {
-    Id: string,
-    Name?: string,
-    Owner?: PortalUser
-    Environment?: string
-}
-
-export interface PortalUser {
-    Email?: string,
-    Username?: string,
-    Name?: string,
-    CanCreateProductionOrgs?: boolean
+    async CreateOrganization(id: string, name: string): Promise<Organization> {
+        var org: Organization = {
+            Id: id,
+            Name: name,
+            Environment: "Sandbox",
+            Region: { Id: "uswest"} 
+        }
+        return await Organizations.Save(id, org, { accessToken: this.portalUserToken });
+    }
 }
