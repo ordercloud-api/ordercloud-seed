@@ -28,7 +28,7 @@ export default class PortalAPI {
             Id: id,
             Name: name,
             Environment: "Sandbox",
-            Region: { Id: "uswest"} 
+            Region: { Id: "usw"}  // US West Azure region
         }
         return await Organizations.Save(id, org, { accessToken: this.portalUserToken });
     }
