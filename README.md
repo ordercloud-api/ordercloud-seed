@@ -5,13 +5,13 @@ Download and upload serialized representations of full ordercloud organizations
 
 ## CLI Usage 
 
-Create a simple B2C organization - `npx @ordercloud/seeding seed Simple-B2C -u-{username} -p={password}`
+Create a simple B2C organization - `npx @ordercloud/seeding seed Simple-B2C -u={username} -p={password}`
 
-Create an organization based on a local file - `npx @ordercloud/seeding seed ./folder/seed-data.yml -u-{username} -p={password}`
+Create an organization based on a local file - `npx @ordercloud/seeding seed ./folder/seed-data.yml -u={username} -p={password}`
 
-Create an organization based on a public url - `npx @ordercloud/seeding seed https://raw.githubusercontent.com/ordercloud-api/ordercloud-seed/main/seeds/Simple-B2C.yml -u-{username} -p={password}`
+Create an organization based on a public url - `npx @ordercloud/seeding seed https://raw.githubusercontent.com/ordercloud-api/ordercloud-seed/main/seeds/Simple-B2C.yml -u={username} -p={password}`
 
-Create a local seed file - `npx @ordercloud/seeding download ./folder/seed-data.yml -e=sandbox -o={existing-org-id} -u-{username} -p={password}`
+Create a local seed file - `npx @ordercloud/seeding download ./folder/seed-data.yml -e=sandbox -o={existing-org-id} -u={username} -p={password}`
 
 Validate a local seed file - `npx @ordercloud/seeding validate ./folder/seed-data.yml` 
 
