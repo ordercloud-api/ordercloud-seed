@@ -18,6 +18,7 @@ export interface OCResource {
     path: string;
     requiredCreateFields?: string[];
     redactFields?: string[];
+    hasOwnerIDField?: boolean;
     downloadTransformFunc?: (x: any) => any,
     customValidationFunc?: RecordValidationFunc
 }

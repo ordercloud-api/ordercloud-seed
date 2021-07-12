@@ -8,7 +8,7 @@ import { BuildResourceDirectory } from '../models/oc-resource-directory';
 import { OCResourceEnum } from '../models/oc-resource-enum';
 import { OCResource } from '../models/oc-resources';
 import Random from '../services/random';
-import { REDACTED_MESSAGE, ORDERCLOUD_URLS } from '../constants';
+import { REDACTED_MESSAGE, ORDERCLOUD_URLS, MARKETPLACE_ID } from '../constants';
 import RunThrottled from '../services/throttler';
 import { SeedingAliasMap } from '../models/seeding-alias-map';
 import PortalAPI from '../services/portal';
@@ -65,6 +65,7 @@ export async function upload(username: string, password: string, orgID: string, 
     var directory = await BuildResourceDirectory(false);
     for (let resource of directory.sort((a, b) => a.createPriority - b.createPriority)) {
         var records = file.GetRecords(resource);
+        SetOwnerID(resource, records);
         if (resource.name === OCResourceEnum.ApiClients) {
             await UploadApiClients(resource);
         } else if (resource.name === OCResourceEnum.ImpersonationConfigs) {
@@ -91,6 +92,16 @@ export async function upload(username: string, password: string, orgID: string, 
         log(`Uploaded ${records.length} ${resource.name}.`, MessageType.Progress); 
     }
     log(`Done Seeding!`, MessageType.Success); 
+
+    function SetOwnerID(resource: OCResource, records: any[]) {
+        if (resource.hasOwnerIDField) {
+            for (var record of records) {
+                if (record.OwnerID === MARKETPLACE_ID) {
+                    record.OwnerID = orgID;
+                }
+            }
+        }
+    }
 
     // Need to remove and cache Spec.DefaultOptionID in order to PATCH it after the options are created.
     async function UploadSpecs(resource: OCResource): Promise<void> {

@@ -483,6 +483,7 @@ const Directory = [
         sdkObject: ordercloudJavascriptSdk.Catalogs,
         createPriority: 2,
         path: "/catalogs",
+        hasOwnerIDField: true,
         children: [OCResourceEnum.Categories, OCResourceEnum.CategoryAssignments, OCResourceEnum.CategoryProductAssignments]
     },
     {
@@ -541,6 +542,7 @@ const Directory = [
         sdkObject: ordercloudJavascriptSdk.Products,
         createPriority: 4,
         path: "/products",
+        hasOwnerIDField: true,
         foreignKeys: {
             DefaultPriceScheduleID: { foreignResource: OCResourceEnum.PriceSchedules },
             ShipFromAddressID: { foreignResource: OCResourceEnum.AdminAddresses },
@@ -552,7 +554,8 @@ const Directory = [
         modelName: "PriceSchedule",
         sdkObject: ordercloudJavascriptSdk.PriceSchedules,
         path: "/priceschedules",
-        createPriority: 2
+        createPriority: 2,
+        hasOwnerIDField: true,
     },
     {
         name: OCResourceEnum.Specs,
@@ -560,6 +563,7 @@ const Directory = [
         sdkObject: ordercloudJavascriptSdk.Specs,
         createPriority: 2,
         path: "/specs",
+        hasOwnerIDField: true,
         foreignKeys: {
             DefaultOptionID: { foreignResource: OCResourceEnum.SpecOptions, foreignParentRefField: "ID" },
         },
@@ -588,7 +592,8 @@ const Directory = [
         modelName: "Promotion",
         sdkObject: ordercloudJavascriptSdk.Promotions,
         path: "/promotions",
-        createPriority: 2
+        createPriority: 2,
+        hasOwnerIDField: true
     },
     {
         name: OCResourceEnum.SecurityProfileAssignments,
@@ -890,7 +895,7 @@ const Directory = [
     },
 ];
 function ApplyDefaults(resource) {
-    var _a, _b;
+    var _a, _b, _c;
     resource.isAssignment = resource.isAssignment || false;
     resource.listMethodName = resource.listMethodName || (resource.isAssignment ? "ListAssignments" : "List");
     resource.createMethodName = resource.createMethodName || (resource.isAssignment ? "SaveAssignment" : "Create");
@@ -899,6 +904,7 @@ function ApplyDefaults(resource) {
     resource.isChild = resource.isChild || false;
     resource.requiredCreateFields = (_a = resource.requiredCreateFields) !== null && _a !== void 0 ? _a : [];
     resource.redactFields = (_b = resource.redactFields) !== null && _b !== void 0 ? _b : [];
+    resource.hasOwnerIDField = (_c = resource.hasOwnerIDField) !== null && _c !== void 0 ? _c : false;
     return resource;
 }
 async function BuildResourceDirectory(includeOpenAPI = false) {
@@ -923,6 +929,7 @@ async function BuildResourceDirectory(includeOpenAPI = false) {
 }
 
 const REDACTED_MESSAGE = "<Redacted. Leave unchanged.>";
+const MARKETPLACE_ID = "<MarketplaceID placeholder>";
 const ORDERCLOUD_URLS = {
     staging: "https://stagingapi.ordercloud.io",
     sandbox: "https://sandboxapi.ordercloud.io",
@@ -951,7 +958,7 @@ class PortalAPI {
             Id: id,
             Name: name,
             Environment: "Sandbox",
-            Region: { Id: "uswest" }
+            Region: { Id: "usw" } // US West Azure region
         };
         return await portalJavascriptSdk.Organizations.Save(id, org, { accessToken: this.portalUserToken });
     }
@@ -1007,6 +1014,7 @@ async function download(username, password, environment, orgID, path) {
         }
         var records = await OrderCloudBulk.ListAll(resource);
         RedactSensitiveFields(resource, records);
+        PlaceHoldMarketplaceID(resource, records);
         if (resource.downloadTransformFunc !== undefined) {
             records = records.map(resource.downloadTransformFunc);
         }
@@ -1037,6 +1045,18 @@ async function download(username, password, environment, orgID, path) {
             for (var field of resource.redactFields) {
                 if (!___default['default'].isNil(record[field])) {
                     record[field] = REDACTED_MESSAGE;
+                }
+            }
+        }
+    }
+    function PlaceHoldMarketplaceID(resource, records) {
+        if (resource.hasOwnerIDField) {
+            console.log("here", resource.name);
+            console.log("orgID", orgID);
+            for (var record of records) {
+                console.log("record.OwnerID", record.OwnerID);
+                if (record.OwnerID === orgID) {
+                    record.OwnerID = MARKETPLACE_ID;
                 }
             }
         }
@@ -1360,6 +1380,7 @@ async function upload(username, password, orgID, path) {
     var directory = await BuildResourceDirectory(false);
     for (let resource of directory.sort((a, b) => a.createPriority - b.createPriority)) {
         var records = file.GetRecords(resource);
+        SetOwnerID(resource, records);
         if (resource.name === OCResourceEnum.ApiClients) {
             await UploadApiClients(resource);
         }
@@ -1396,6 +1417,15 @@ async function upload(username, password, orgID, path) {
         log(`Uploaded ${records.length} ${resource.name}.`, MessageType.Progress);
     }
     log(`Done Seeding!`, MessageType.Success);
+    function SetOwnerID(resource, records) {
+        if (resource.hasOwnerIDField) {
+            for (var record of records) {
+                if (record.OwnerID === MARKETPLACE_ID) {
+                    record.OwnerID = orgID;
+                }
+            }
+        }
+    }
     // Need to remove and cache Spec.DefaultOptionID in order to PATCH it after the options are created.
     async function UploadSpecs(resource) {
         records.forEach(r => {

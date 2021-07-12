@@ -6,8 +6,8 @@ import { log, MessageType } from '../services/log';
 import { BuildResourceDirectory } from '../models/oc-resource-directory';
 import jwt_decode from "jwt-decode";
 import { OCResource } from '../models/oc-resources';
-import _ from 'lodash';
-import { ORDERCLOUD_URLS, REDACTED_MESSAGE } from '../constants';
+import _, { constant } from 'lodash';
+import { MARKETPLACE_ID, ORDERCLOUD_URLS, REDACTED_MESSAGE } from '../constants';
 import PortalAPI from '../services/portal';
 
 export async function download(username: string, password: string, environment: string, orgID: string, path: string): Promise<void> {
@@ -64,6 +64,7 @@ export async function download(username: string, password: string, environment: 
         }
         var records = await OrderCloudBulk.ListAll(resource);
         RedactSensitiveFields(resource, records);
+        PlaceHoldMarketplaceID(resource, records);
         if (resource.downloadTransformFunc !== undefined) {
             records = records.map(resource.downloadTransformFunc)
         }
@@ -96,6 +97,19 @@ export async function download(username: string, password: string, environment: 
             for (var field of resource.redactFields) {
                 if (!_.isNil(record[field])) {
                     record[field] = REDACTED_MESSAGE;
+                }
+            }
+        }
+    }
+
+    function PlaceHoldMarketplaceID(resource: OCResource, records: any[]): void {
+        if (resource.hasOwnerIDField) {
+            console.log("here", resource.name)
+            console.log("orgID", orgID)
+            for (var record of records) {  
+                console.log("record.OwnerID", record.OwnerID)    
+                if (record.OwnerID === orgID) {
+                    record.OwnerID = MARKETPLACE_ID;
                 }
             }
         }

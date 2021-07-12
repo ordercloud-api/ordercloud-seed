@@ -38,13 +38,13 @@ Objects:
       xp: null
       AvailableRoles:
         - FullAccess
-      DateCreated: '2021-05-26T16:10:04.46+00:00'
+      DateCreated: '2021-07-12T18:53:01.347+00:00'
       PasswordLastSetDate: null
   AdminUserGroups: []
   AdminAddresses: []
   MessageSenders: []
   ApiClients:
-    - ID: 3d82e90b-b5db-4af4-9c1b-9c34fbb904c0
+    - ID: 5852a047-fdaf-4b8c-9948-b2f1c697e026
       ClientSecret: null
       AccessTokenDuration: 600
       Active: true
@@ -64,7 +64,7 @@ Objects:
       MinimumRequiredCustomRoles: []
       MaximumGrantedRoles: []
       MaximumGrantedCustomRoles: []
-    - ID: 8864508e-cb97-47bc-bedf-7862c16888cc
+    - ID: a9f6e0ba-cc41-4e1c-817a-a1dd07836bce
       ClientSecret: null
       AccessTokenDuration: 600
       Active: true
@@ -84,7 +84,7 @@ Objects:
       MinimumRequiredCustomRoles: []
       MaximumGrantedRoles: []
       MaximumGrantedCustomRoles: []
-    - ID: bf98a69d-f2dd-41f1-9bd1-ddd2c37132fa
+    - ID: ccf5f1e4-572c-494e-a6a3-37cce804919c
       ClientSecret: <Redacted. Leave unchanged.>
       AccessTokenDuration: 600
       Active: true
@@ -121,7 +121,7 @@ Objects:
       Name: Solitary Storefront
       DefaultCatalogID: solitary-storefront
       Active: true
-      DateCreated: '2021-05-26T15:53:19.65+00:00'
+      DateCreated: '2021-07-12T18:53:03.36+00:00'
       xp: null
   Users:
     - ID: default-anonymous-shopper
@@ -142,7 +142,7 @@ Objects:
         - MeXpAdmin
         - PasswordReset
         - Shopper
-      DateCreated: '2021-05-26T16:22:57.533+00:00'
+      DateCreated: '2021-07-12T18:53:05.72+00:00'
       PasswordLastSetDate: null
       BuyerID: solitary-storefront
   UserGroups: []
@@ -153,7 +153,7 @@ Objects:
   ApprovalRules: []
   Catalogs:
     - ID: solitary-storefront
-      OwnerID: simple-B2C-starter
+      OwnerID: <MarketplaceID placeholder>
       Name: 'Solitary Storefront '
       Description: 'Default catalog for Solitary Storefront '
       Active: true
@@ -297,7 +297,7 @@ Objects:
       CatalogID: solitary-storefront
   Suppliers: []
   Products:
-    - OwnerID: simple-B2C-starter
+    - OwnerID: <MarketplaceID placeholder>
       DefaultPriceScheduleID: mulberry-silk-facemask
       AutoForward: false
       ID: mulberry-silk-facemask
@@ -320,7 +320,7 @@ Objects:
         VariantLevelTracking: false
         OrderCanExceed: false
         QuantityAvailable: 30
-        LastUpdated: '2021-06-16T15:51:38.613+00:00'
+        LastUpdated: '2021-07-12T18:53:06+00:00'
       DefaultSupplierID: null
       xp:
         Facets:
@@ -328,7 +328,7 @@ Objects:
             - yellow
             - red
             - blue
-    - OwnerID: simple-B2C-starter
+    - OwnerID: <MarketplaceID placeholder>
       DefaultPriceScheduleID: boys-turkish-leather-caliage
       AutoForward: false
       ID: boys-turkish-leather-caliage
@@ -351,14 +351,14 @@ Objects:
         VariantLevelTracking: false
         OrderCanExceed: false
         QuantityAvailable: 30
-        LastUpdated: '2021-06-16T15:51:10.27+00:00'
+        LastUpdated: '2021-07-12T18:53:06.013+00:00'
       DefaultSupplierID: null
       xp:
         Facets:
           Color:
             - orange
             - black
-    - OwnerID: simple-B2C-starter
+    - OwnerID: <MarketplaceID placeholder>
       DefaultPriceScheduleID: girls-turkish-leather-caliage
       AutoForward: false
       ID: girls-turkish-leather-caliage
@@ -382,14 +382,14 @@ Objects:
         VariantLevelTracking: false
         OrderCanExceed: false
         QuantityAvailable: 30
-        LastUpdated: '2021-06-16T15:51:14.53+00:00'
+        LastUpdated: '2021-07-12T18:53:06.013+00:00'
       DefaultSupplierID: null
       xp:
         Facets:
           Color:
             - orange
             - black
-    - OwnerID: simple-B2C-starter
+    - OwnerID: <MarketplaceID placeholder>
       DefaultPriceScheduleID: mens-hellion-onyx-jacket
       AutoForward: false
       ID: mens-hellion-onyx-jacket
@@ -412,14 +412,14 @@ Objects:
         VariantLevelTracking: false
         OrderCanExceed: false
         QuantityAvailable: 30
-        LastUpdated: '2021-06-16T15:52:24.187+00:00'
+        LastUpdated: '2021-07-12T18:53:06+00:00'
       DefaultSupplierID: null
       xp:
         Facets:
           Color:
             - yellow
             - black
-    - OwnerID: simple-B2C-starter
+    - OwnerID: <MarketplaceID placeholder>
       DefaultPriceScheduleID: mens-intrigue-active-shorts
       AutoForward: false
       ID: mens-intrigue-active-shorts
@@ -440,7 +440,7 @@ Objects:
         VariantLevelTracking: false
         OrderCanExceed: false
         QuantityAvailable: 30
-        LastUpdated: '2021-06-16T16:00:44.017+00:00'
+        LastUpdated: '2021-07-12T18:53:05.983+00:00'
       DefaultSupplierID: null
       xp:
         Facets:
@@ -448,7 +448,7 @@ Objects:
             - purple
             - orange
             - green
-    - OwnerID: simple-B2C-starter
+    - OwnerID: <MarketplaceID placeholder>
       DefaultPriceScheduleID: penquin-feather-onesie
       AutoForward: false
       ID: penquin-feather-onesie
@@ -471,14 +471,14 @@ Objects:
         VariantLevelTracking: false
         OrderCanExceed: false
         QuantityAvailable: 30
-        LastUpdated: '2021-06-16T16:01:27.723+00:00'
+        LastUpdated: '2021-07-12T18:53:05.997+00:00'
       DefaultSupplierID: null
       xp:
         Facets:
           Color:
             - white
             - black
-    - OwnerID: simple-B2C-starter
+    - OwnerID: <MarketplaceID placeholder>
       DefaultPriceScheduleID: womens-hellion-onyx-jacket
       AutoForward: false
       ID: womens-hellion-onyx-jacket
@@ -501,14 +501,14 @@ Objects:
         VariantLevelTracking: false
         OrderCanExceed: false
         QuantityAvailable: 30
-        LastUpdated: '2021-06-16T15:52:54.773+00:00'
+        LastUpdated: '2021-07-12T18:53:05.997+00:00'
       DefaultSupplierID: null
       xp:
         Facets:
           Color:
             - yellow
             - black
-    - OwnerID: simple-B2C-starter
+    - OwnerID: <MarketplaceID placeholder>
       DefaultPriceScheduleID: womens-intrigue-active-shorts
       AutoForward: false
       ID: womens-intrigue-active-shorts
@@ -529,7 +529,7 @@ Objects:
         VariantLevelTracking: false
         OrderCanExceed: false
         QuantityAvailable: 30
-        LastUpdated: '2021-06-16T16:00:52.94+00:00'
+        LastUpdated: '2021-07-12T18:53:06.013+00:00'
       DefaultSupplierID: null
       xp:
         Facets:
@@ -537,7 +537,7 @@ Objects:
             - purple
             - orange
             - green
-    - OwnerID: simple-B2C-starter
+    - OwnerID: <MarketplaceID placeholder>
       DefaultPriceScheduleID: womens-spiked-wool-socks
       AutoForward: false
       ID: womens-spiked-wool-socks
@@ -561,7 +561,7 @@ Objects:
         VariantLevelTracking: false
         OrderCanExceed: false
         QuantityAvailable: 30
-        LastUpdated: '2021-06-16T15:06:25.357+00:00'
+        LastUpdated: '2021-07-12T18:53:06.42+00:00'
       DefaultSupplierID: null
       xp: null
   PriceSchedules:
@@ -937,7 +937,7 @@ Assignments:
       UserGroupID: null
   AdminUserGroupAssignments: []
   ApiClientAssignments:
-    - ApiClientID: 3d82e90b-b5db-4af4-9c1b-9c34fbb904c0
+    - ApiClientID: 5852a047-fdaf-4b8c-9948-b2f1c697e026
       BuyerID: solitary-storefront
       SupplierID: null
   ProductAssignments: []
