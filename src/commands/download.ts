@@ -104,10 +104,7 @@ export async function download(username: string, password: string, environment: 
 
     function PlaceHoldMarketplaceID(resource: OCResource, records: any[]): void {
         if (resource.hasOwnerIDField) {
-            console.log("here", resource.name)
-            console.log("orgID", orgID)
             for (var record of records) {  
-                console.log("record.OwnerID", record.OwnerID)    
                 if (record.OwnerID === orgID) {
                     record.OwnerID = MARKETPLACE_ID;
                 }

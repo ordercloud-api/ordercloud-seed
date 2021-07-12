@@ -17,6 +17,14 @@ Validate a local seed file - `npx @ordercloud/seeding validate ./folder/seed-dat
 
 See options - `npx @ordercloud/seeding --help`
 
+## Programic Node Usage
+
+```typescript
+import { download, upload, validate } from "@ordercloud/seeding";
+
+await download("<username>", "<password>", "sandbox", "<organization_id>", "ordercloud-data.yml"); 
+ ```
+
 ## Supported Organization Templates
 
 These are seeding files maintained as part of this repo that represent templates for common ordercloud use cases. 
@@ -36,8 +44,7 @@ These are seeding files maintained as part of this repo that represent templates
 
 In rough order of priority
 1. Publish OS executables 
-2. Expose functionality in a way that can be consumed by another node project.
-3. Nice to have features
+2. Nice to have features
 
 ## Nice to Have features
 - Reference other yaml files
@@ -48,5 +55,3 @@ In rough order of priority
 
 ## OrderCloud corner cases to beware
 - Generate product variants
-- Anything with an OwnerID (products)
-

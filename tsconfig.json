@@ -1,12 +1,16 @@
 {
-    "compilerOptions": {
-      "module": "ESNext",
-      "esModuleInterop": true,
-      "target": "ES2017",
-      "moduleResolution": "node",
-      "sourceMap": true,
-      "outDir": "dist"
-    },
-    "include": ["src/**/*", "cli-entry.ts"],
-    "lib": ["es2015"]
+  "compilerOptions": {
+    "declaration": true,
+    "lib": ["ES2015", "DOM"],
+    "declarationDir": "./dist",
+    "module": "esnext",
+    "moduleResolution": "node",
+    "noImplicitAny": false,
+    "outDir": "./dist",
+    "target": "es5",
+    "esModuleInterop": true
+  },
+  "include": [
+    "src/**/*"
+  ]
 }

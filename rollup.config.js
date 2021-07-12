@@ -1,21 +1,12 @@
-import typescript from 'rollup-plugin-typescript2'
+import typescript from 'rollup-plugin-typescript2';
+import { terser } from 'rollup-plugin-terser';
+import pkg from './package.json'
 
 export default [
   {
-    input: 'src/commands/validate.ts',
-    output: [
-      { file: "dist/validate.js", format: "cjs" }
-    ],
-    plugins: [
-      typescript({
-        typescript: require('typescript'),
-      }),
-    ],
-  },
-  {
     input: 'src/cli.ts',
     output: [
-      { file: "cli.js", format: "cjs", banner: "#!/usr/bin/env node" }
+      { file: pkg.bin, format: "cjs", banner: "#!/usr/bin/env node" }
     ],
     plugins: [
       typescript({
@@ -24,14 +15,41 @@ export default [
     ],
   },
   {
-    input: 'src/commands/download.ts',
+    input: 'src/index.ts',
     output: [
-      { file: "dist/download.js", format: "cjs" }
+      {
+        file: pkg.module,
+        format: 'esm',
+      },
+      {
+        file: pkg.main,
+        format: 'cjs',
+      },
     ],
+    external: ['axios'],
     plugins: [
       typescript({
         typescript: require('typescript'),
       }),
     ],
   },
+  // {
+  //   input: 'src/index.ts',
+  //   output: {
+  //     file: pkg['umd:main'],
+  //     format: 'umd',
+  //     name: 'OrderCloud',
+  //     globals: {
+  //       axios: 'axios',
+  //     },
+  //     esModule: false,
+  //   },
+  //   plugins: [
+  //     typescript({
+  //       typescript: require('typescript'),
+  //     }),
+  //     terser(),
+  //   ],
+  //   external: ['axios'],
+  // }
 ]

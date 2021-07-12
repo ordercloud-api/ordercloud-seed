@@ -1,14 +1,16 @@
 {
   "name": "@ordercloud/seeding",
-  "version": "1.0.10",
+  "version": "1.0.12",
   "description": "Download and upload seeding files from the OrderCloud platform.",
-  "bin": {
-    "ordercloud-seed": "cli.js"
-  },
+  "bin": "dist/cli.js",
   "scripts": {
     "test": "jest",
     "rollup": "rollup --config"
   },
+  "main": "dist/index.js",
+  "module": "dist/index.esm.js",
+  "types": "dist/index.d.ts",
+  "unpkg": "dist/index.umd.js",
   "author": "Oliver Heywood",
   "repository": "https://github.com/ordercloud-api/ordercloud-seed",
   "license": "ISC",
@@ -32,6 +34,7 @@
     "node-emoji": "^1.10.0",
     "ordercloud-javascript-sdk": "^4.2.0",
     "qs": "^6.9.6",
+    "rollup-plugin-terser": "^7.0.2",
     "typescript": "^4.2.3",
     "yargs": "^15.4.1"
   },
