@@ -298,7 +298,6 @@ Objects:
   Suppliers: []
   Products:
     - OwnerID: <MarketplaceID placeholder>
-      DefaultPriceScheduleID: mulberry-silk-facemask
       AutoForward: false
       ID: mulberry-silk-facemask
       Name: ' Mulberry Silk Facemask'
@@ -323,13 +322,16 @@ Objects:
         LastUpdated: '2021-07-12T18:53:06+00:00'
       DefaultSupplierID: null
       xp:
+        Price: 35
+        PriceCurrency: USD
+        Images: 
+          - url: https://images.bloomingdalesassets.com/is/image/BLM/products/5/optimized/10992375_fpx.tif?op_sharpen=1&wid=700&fit=fit,1&$filtersm$
         Facets:
           Color:
             - yellow
             - red
             - blue
     - OwnerID: <MarketplaceID placeholder>
-      DefaultPriceScheduleID: boys-turkish-leather-caliage
       AutoForward: false
       ID: boys-turkish-leather-caliage
       Name: Boy's Turkish Leather Caliage
@@ -354,12 +356,15 @@ Objects:
         LastUpdated: '2021-07-12T18:53:06.013+00:00'
       DefaultSupplierID: null
       xp:
+        Price: 75
+        PriceCurrency: USD
+        Images: 
+          - url: https://pbs.twimg.com/media/DVCVYw9VwAE4IuZ.jpg
         Facets:
           Color:
             - orange
             - black
     - OwnerID: <MarketplaceID placeholder>
-      DefaultPriceScheduleID: girls-turkish-leather-caliage
       AutoForward: false
       ID: girls-turkish-leather-caliage
       Name: Girl's Turkish Leather Caliage
@@ -385,12 +390,15 @@ Objects:
         LastUpdated: '2021-07-12T18:53:06.013+00:00'
       DefaultSupplierID: null
       xp:
+        Price: 75
+        PriceCurrency: USD
+        Images: 
+          - url: https://pbs.twimg.com/media/DVCVYw9VwAE4IuZ.jpg
         Facets:
           Color:
             - orange
             - black
     - OwnerID: <MarketplaceID placeholder>
-      DefaultPriceScheduleID: mens-hellion-onyx-jacket
       AutoForward: false
       ID: mens-hellion-onyx-jacket
       Name: Men's Helion Onyx Jacket
@@ -415,12 +423,15 @@ Objects:
         LastUpdated: '2021-07-12T18:53:06+00:00'
       DefaultSupplierID: null
       xp:
+        Price: 120
+        PriceCurrency: USD
+        Images: 
+          - url: https://cdn.shopify.com/s/files/1/0025/9637/2591/products/product-image-954480489_1024x1024@2x.jpg?v=1588289643
         Facets:
           Color:
             - yellow
             - black
     - OwnerID: <MarketplaceID placeholder>
-      DefaultPriceScheduleID: mens-intrigue-active-shorts
       AutoForward: false
       ID: mens-intrigue-active-shorts
       Name: Men's Intrigue(TM) Active Shorts
@@ -443,13 +454,16 @@ Objects:
         LastUpdated: '2021-07-12T18:53:05.983+00:00'
       DefaultSupplierID: null
       xp:
+        Price: 50
+        PriceCurrency: USD
+        Images: 
+          - url: https://di2ponv0v5otw.cloudfront.net/posts/2020/06/26/5ef684bf89a0eafd4332ec2a/m_5ef684c39c3378f2569bccf1.jpeg
         Facets:
           Color:
             - purple
             - orange
             - green
     - OwnerID: <MarketplaceID placeholder>
-      DefaultPriceScheduleID: penquin-feather-onesie
       AutoForward: false
       ID: penquin-feather-onesie
       Name: Penguin Feather Onesie
@@ -474,12 +488,15 @@ Objects:
         LastUpdated: '2021-07-12T18:53:05.997+00:00'
       DefaultSupplierID: null
       xp:
+        Price: 80
+        PriceCurrency: USD
+        Images: 
+          - url: https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQ24j_4mWcNX4X9A-gKS3Isha9i5EnV27AkWQ&usqp=CAU
         Facets:
           Color:
             - white
             - black
     - OwnerID: <MarketplaceID placeholder>
-      DefaultPriceScheduleID: womens-hellion-onyx-jacket
       AutoForward: false
       ID: womens-hellion-onyx-jacket
       Name: Women's Helion Onyx Jacket
@@ -504,12 +521,15 @@ Objects:
         LastUpdated: '2021-07-12T18:53:05.997+00:00'
       DefaultSupplierID: null
       xp:
+        Price: 120
+        PriceCurrency: USD
+        Images: 
+          - url: https://cdn.shopify.com/s/files/1/0025/9637/2591/products/product-image-954480489_1024x1024@2x.jpg?v=1588289643
         Facets:
           Color:
             - yellow
             - black
     - OwnerID: <MarketplaceID placeholder>
-      DefaultPriceScheduleID: womens-intrigue-active-shorts
       AutoForward: false
       ID: womens-intrigue-active-shorts
       Name: Women's Intrigue(TM) Active Shorts
@@ -532,13 +552,16 @@ Objects:
         LastUpdated: '2021-07-12T18:53:06.013+00:00'
       DefaultSupplierID: null
       xp:
+        Price: 50
+        PriceCurrency: USD
+        Images: 
+          - url: https://di2ponv0v5otw.cloudfront.net/posts/2020/06/26/5ef684bf89a0eafd4332ec2a/m_5ef684c39c3378f2569bccf1.jpeg
         Facets:
           Color:
             - purple
             - orange
             - green
     - OwnerID: <MarketplaceID placeholder>
-      DefaultPriceScheduleID: womens-spiked-wool-socks
       AutoForward: false
       ID: womens-spiked-wool-socks
       Name: Women's Spiked Wool Socks
@@ -563,116 +586,11 @@ Objects:
         QuantityAvailable: 30
         LastUpdated: '2021-07-12T18:53:06.42+00:00'
       DefaultSupplierID: null
-      xp: null
-  PriceSchedules:
-    - ID: boys-turkish-leather-caliage
-      Name: boys-turkish-leather-caliage
-      ApplyTax: true
-      ApplyShipping: true
-      MinQuantity: 1
-      MaxQuantity: null
-      UseCumulativeQuantity: false
-      RestrictedQuantity: false
-      PriceBreaks:
-        - Quantity: 1
-          Price: 140
-      xp: null
-    - ID: girls-turkish-leather-caliage
-      Name: girls-turkish-leather-caliage
-      ApplyTax: true
-      ApplyShipping: true
-      MinQuantity: 1
-      MaxQuantity: null
-      UseCumulativeQuantity: false
-      RestrictedQuantity: false
-      PriceBreaks:
-        - Quantity: 1
-          Price: 140
-      xp: null
-    - ID: mens-hellion-onyx-jacket
-      Name: mens-hellion-onyx-jacket
-      ApplyTax: true
-      ApplyShipping: true
-      MinQuantity: 1
-      MaxQuantity: null
-      UseCumulativeQuantity: false
-      RestrictedQuantity: false
-      PriceBreaks:
-        - Quantity: 1
-          Price: 140
-      xp: null
-    - ID: mens-intrigue-active-shorts
-      Name: mens-intrigue-active-shorts
-      ApplyTax: true
-      ApplyShipping: true
-      MinQuantity: 1
-      MaxQuantity: null
-      UseCumulativeQuantity: false
-      RestrictedQuantity: false
-      PriceBreaks:
-        - Quantity: 1
-          Price: 85
-      xp: null
-    - ID: mulberry-silk-facemask
-      Name: mulberry-silk-facemask
-      ApplyTax: true
-      ApplyShipping: true
-      MinQuantity: 1
-      MaxQuantity: null
-      UseCumulativeQuantity: false
-      RestrictedQuantity: false
-      PriceBreaks:
-        - Quantity: 1
-          Price: 35
-      xp: null
-    - ID: penquin-feather-onesie
-      Name: penquin-feather-onesie
-      ApplyTax: true
-      ApplyShipping: true
-      MinQuantity: 1
-      MaxQuantity: null
-      UseCumulativeQuantity: false
-      RestrictedQuantity: false
-      PriceBreaks:
-        - Quantity: 1
-          Price: 70
-      xp: null
-    - ID: womens-hellion-onyx-jacket
-      Name: womens-hellion-onyx-jacket
-      ApplyTax: true
-      ApplyShipping: true
-      MinQuantity: 1
-      MaxQuantity: null
-      UseCumulativeQuantity: false
-      RestrictedQuantity: false
-      PriceBreaks:
-        - Quantity: 1
-          Price: 130
-      xp: null
-    - ID: womens-intrigue-active-shorts
-      Name: womens-intrigue-active-shorts
-      ApplyTax: true
-      ApplyShipping: true
-      MinQuantity: 1
-      MaxQuantity: null
-      UseCumulativeQuantity: false
-      RestrictedQuantity: false
-      PriceBreaks:
-        - Quantity: 1
-          Price: 75
-      xp: null
-    - ID: womens-spiked-wool-socks
-      Name: womens-spiked-wool-socks
-      ApplyTax: true
-      ApplyShipping: true
-      MinQuantity: 1
-      MaxQuantity: null
-      UseCumulativeQuantity: false
-      RestrictedQuantity: false
-      PriceBreaks:
-        - Quantity: 1
-          Price: 40
-      xp: null
+      xp: 
+        Price: 25
+        PriceCurrency: USD
+        Images: 
+          - url: https://images.asos-media.com/products/asos-slipper-socks-with-dinosaur-spikes/7269831-1-green?$n_640w$&wid=513&fit=constrain
   Specs:
     - ID: intrigue-active-shorts-color
       ListOrder: 0
