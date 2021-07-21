@@ -1,25 +1,41 @@
 import { BuildResourceDirectory } from "../models/oc-resource-directory";
 import { OCResourceEnum } from "../models/oc-resource-enum";
 import { ForeignKey, OCResource } from "../models/oc-resources";
-import SeedFile from "../models/seed-file";
+import { SerializedMarketplace } from "../models/serialized-marketplace";
 import { OpenAPIProperty, OpenAPIType } from "../models/open-api";
 import _ from 'lodash';
 import { IDCache } from "../models/id-cache";
-import { log, MessageType } from "../services/log";
-import { ValidateResponse } from "../models/validate-response";
+import { defaultLogger, LogCallBackFunc, MessageType } from "../services/logger";
+import { LoadDataFromFilePath } from "../services/load-data-from-file-path";
 
-export async function validate(filePath: string): Promise<ValidateResponse> {
-    var file = new SeedFile(); 
+export interface ValidateResponse {
+    errors: string[];
+    isValid: boolean;
+    rawData: SerializedMarketplace
+}
+
+export interface ValidateArgs {
+    rawData?: SerializedMarketplace;
+    filePath?: string;
+    logger?: LogCallBackFunc
+}
+
+export async function validate(args: ValidateArgs): Promise<ValidateResponse> {
+    var { 
+        rawData,
+        filePath,
+        logger = defaultLogger
+    } = args;
     var validator = new Validator();
-    // validates file is found and is valid yaml
-    var success = file.ReadFromYaml(filePath, validator.errors); 
-    if (!success) {
-        for (const error of validator.errors) {
-            log(error, MessageType.Error)
+    if (_.isNil(rawData)) {
+        // validates file is found and is valid yaml
+        rawData = await LoadDataFromFilePath(filePath, logger); 
+        if (!rawData) {
+            return { errors: validator.errors, isValid: false, rawData: null };
         }
-        return { errors: validator.errors, data: null };
-    }
+    } 
 
+    var marketplace = new SerializedMarketplace(rawData);
     var directory = await BuildResourceDirectory(true);
     // validate duplicate IDs 
     for (let resource of directory) {
@@ -27,7 +43,7 @@ export async function validate(filePath: string): Promise<ValidateResponse> {
         var hasUsername = "Username" in validator.currentResource.openAPIProperties;
         var hasID = hasIDProperty(validator.currentResource)
         if (hasID || hasUsername) {         
-            for (let record of file.GetRecords(validator.currentResource)) {
+            for (let record of marketplace.GetRecords(validator.currentResource)) {
                 validator.currentRecord = record;   
                 // this step builds validator.idCache, which will be needed for forign key validation later.             
                 if (hasID) validator.validateDuplicateIDs(); 
@@ -39,7 +55,7 @@ export async function validate(filePath: string): Promise<ValidateResponse> {
     // now that idSets are built, another loop for the rest of validation
     for (let resource of directory) {
         validator.currentResource = resource
-        for (let record of file.GetRecords(validator.currentResource)) {
+        for (let record of marketplace.GetRecords(validator.currentResource)) {
             validator.currentRecord = record;
             for (const [propName, spec] of Object.entries(validator.currentResource.openAPIProperties)) {
                 validator.currentPropertyName = propName;
@@ -67,13 +83,14 @@ export async function validate(filePath: string): Promise<ValidateResponse> {
         }
     }
     for (const error of validator.errors) {
-        log(error, MessageType.Error)
+        logger(error, MessageType.Error)
     }
-    if (validator.errors.length === 0) {
-        log("Data source ready for seeding!", MessageType.Success);
+    var isValid = validator.errors.length === 0
+    if (isValid) {
+        logger("Data source ready for seeding!", MessageType.Success);
     }
 
-    return { errors: validator.errors, data: file };
+    return { errors: validator.errors, isValid, rawData: marketplace };
 }
 
 function hasIDProperty(resource: OCResource) {

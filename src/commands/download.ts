@@ -1,30 +1,41 @@
 import Portal from '../services/portal'; // why do I have to add the .js here?
 import { Configuration, Tokens } from 'ordercloud-javascript-sdk';
-import SeedFile from '../models/seed-file';
+import { SerializedMarketplace } from '../models/serialized-marketplace';
 import OrderCloudBulk from '../services/ordercloud-bulk';
-import { log, MessageType } from '../services/log';
+import { defaultLogger, LogCallBackFunc, MessageType } from '../services/logger';
 import { BuildResourceDirectory } from '../models/oc-resource-directory';
 import jwt_decode from "jwt-decode";
 import { OCResource } from '../models/oc-resources';
-import _, { constant } from 'lodash';
+import _  from 'lodash';
 import { MARKETPLACE_ID, ORDERCLOUD_URLS, REDACTED_MESSAGE } from '../constants';
 import PortalAPI from '../services/portal';
 
-export async function download(username: string, password: string, environment: string, orgID: string, path: string): Promise<void> {
-    var missingInputs: string[] = [];
+export interface DownloadArgs {
+    username?: string; 
+    password?: string; 
+    environment?: string;
+    marketplaceID: string; 
+    portalToken?: string;
+    logger?: LogCallBackFunc
+}
+
+export async function download(args: DownloadArgs): Promise<SerializedMarketplace | void> {
+    var { 
+        username, 
+        password, 
+        environment,
+        marketplaceID, 
+        portalToken,
+        logger = defaultLogger
+    } = args;
     var validEnvironments = ['staging', 'sandbox', 'prod'];
    
-    if (!environment) missingInputs.push("environment");
-    if (!orgID) missingInputs.push("orgID");
-    if (!username) missingInputs.push("username");
-    if (!password) missingInputs.push("password");
-
-    if (missingInputs.length >0) {
-        return log(`Missing required arguments: ${missingInputs.join(", ")}`, MessageType.Error)
+    if (!marketplaceID) {
+        return logger(`Missing required argument: marketplaceID`, MessageType.Error);
     }
 
     if (!validEnvironments.includes(environment)) {
-        return log(`environment must be one of ${validEnvironments.join(", ")}`, MessageType.Error)
+        return logger(`environment must be one of ${validEnvironments.join(", ")}`, MessageType.Error)
     }
 
     var url = ORDERCLOUD_URLS[environment];
@@ -35,28 +46,34 @@ export async function download(username: string, password: string, environment: 
     // Authenticate
     var portal = new PortalAPI(); 
     var org_token: string;
-    try {
-        await portal.login(username, password);
-    } catch {
-        return log(`Username \"${username}\" and Password \"${password}\" were not valid`, MessageType.Error)
+    if (_.isNil(portalToken)) {
+        if (_.isNil(username) || _.isNil(password)) {
+            return logger(`Missing required arguments: username and password`, MessageType.Error)
+        }
+        try {
+            portalToken = (await portal.login(username, password)).access_token;
+        } catch {
+            return logger(`Username \"${username}\" and Password \"${password}\" were not valid`, MessageType.Error)
+        }
     }
     try {
-        org_token = await portal.getOrganizationToken(orgID);
-    } catch {
-        return log(`Organization with ID \"${orgID}\" not found`, MessageType.Error)
+        org_token = await portal.getOrganizationToken(marketplaceID, portalToken);
+    } catch (e) {
+        console.log(JSON.stringify(e));
+        return logger(`Marketplace with ID \"${marketplaceID}\" not found`, MessageType.Error)
     }
     var decoded = jwt_decode(org_token) as any;
 
     if (decoded.aud !== url) {
-        return log(`Organization \"${orgID}\" found, but is not in specified environment \"${environment}\"`, MessageType.Error)
+        return logger(`Marketplace \"${marketplaceID}\" found, but is not in environment \"${environment}\"`, MessageType.Error)
     }
 
     Tokens.SetAccessToken(org_token);
 
-    log(`Found your organization \"${orgID}\" . Beginning download.`, MessageType.Success);
+    logger(`Found your Marketplace \"${marketplaceID}\" . Beginning download.`, MessageType.Success);
 
     // Pull Data from Ordercloud
-    var file = new SeedFile();  
+    var marketplace = new SerializedMarketplace();
     var directory = await BuildResourceDirectory(false); 
     for (let resource of directory) {
         if (resource.isChild) {
@@ -68,7 +85,7 @@ export async function download(username: string, password: string, environment: 
         if (resource.downloadTransformFunc !== undefined) {
             records = records.map(resource.downloadTransformFunc)
         }
-        file.AddRecords(resource, records);
+        marketplace.AddRecords(resource, records);
         for (let childResourceName of resource.children)
         {
             let childResource = directory.find(x => x.name === childResourceName);
@@ -80,15 +97,15 @@ export async function download(username: string, password: string, environment: 
                 if (childResource.downloadTransformFunc !== undefined) {
                     childRecords = childRecords.map(resource.downloadTransformFunc)
                 }
-                file.AddRecords(childResource, childRecords);
+                marketplace.AddRecords(childResource, childRecords);
             }
-            log("Downloaded " + childRecords.length + " " + childResourceName);
+            logger("Downloaded " + childRecords.length + " " + childResourceName);
         }
-        log("Downloaded " + records.length + " " + resource.name);
+        logger("Downloaded " + records.length + " " + resource.name);
     }
     // Write to file
-    file.WriteToYaml(path);
-    log(`Done! Wrote to file \"${path}\"`, MessageType.Success);
+    logger(`Done downloading data from org \"${marketplaceID}\".`, MessageType.Success);
+    return marketplace;
 
     function RedactSensitiveFields(resource: OCResource, records: any[]): void {
         if (resource.redactFields.length === 0) return;
@@ -105,7 +122,7 @@ export async function download(username: string, password: string, environment: 
     function PlaceHoldMarketplaceID(resource: OCResource, records: any[]): void {
         if (resource.hasOwnerIDField) {
             for (var record of records) {  
-                if (record.OwnerID === orgID) {
+                if (record.OwnerID === marketplaceID) {
                     record.OwnerID = MARKETPLACE_ID;
                 }
             }

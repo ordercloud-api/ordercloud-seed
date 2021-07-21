@@ -1,7 +1,7 @@
 import chalk from "chalk";
 import emoji from 'node-emoji';
 
-export function log(message: string, messageType: MessageType = MessageType.Progress) {
+export function defaultLogger(message: string, messageType: MessageType = MessageType.Progress) {
     if (messageType == MessageType.Success) {
         console.log(emoji.get('heavy_check_mark'), chalk.green(' SUCCESS -', message));
     } 
@@ -12,6 +12,7 @@ export function log(message: string, messageType: MessageType = MessageType.Prog
         console.log(emoji.get('clock1'), 'PROGRESS -', message);
     }
 }
+export type LogCallBackFunc = (message: string, type: MessageType) => void;
 
 export enum MessageType {
     Error,

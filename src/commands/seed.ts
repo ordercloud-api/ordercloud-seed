@@ -2,7 +2,7 @@ import Portal from '../services/portal';
 import { Configuration, Specs, Tokens } from 'ordercloud-javascript-sdk';
 import OrderCloudBulk from '../services/ordercloud-bulk';
 import _ from 'lodash';
-import { log, MessageType } from '../services/log';
+import { defaultLogger, LogCallBackFunc, MessageType } from '../services/logger';
 import { validate } from './validate';
 import { BuildResourceDirectory } from '../models/oc-resource-directory';
 import { OCResourceEnum } from '../models/oc-resource-enum';
@@ -12,59 +12,77 @@ import { REDACTED_MESSAGE, ORDERCLOUD_URLS, MARKETPLACE_ID } from '../constants'
 import RunThrottled from '../services/throttler';
 import { SeedingAliasMap } from '../models/seeding-alias-map';
 import PortalAPI from '../services/portal';
+import { SerializedMarketplace } from '../models/serialized-marketplace';
 
-export async function upload(username: string, password: string, orgID: string, path: string) {
+export interface SeedArgs {
+    username?: string;
+    password?: string; 
+    marketplaceID?: string;
+    marketplaceName?: string;
+    portalToken?: string,
+    filePath?: string;
+    rawData?: SerializedMarketplace;
+    logger?: LogCallBackFunc
+}
+
+export async function seed(args: SeedArgs): Promise<void> {
+    var { 
+        username, 
+        password, 
+        marketplaceID, 
+        marketplaceName,
+        portalToken,
+        rawData,
+        filePath,
+        logger = defaultLogger
+    } = args;
+    
     // Check for short-cut aliases
-    if (!_.isNil(SeedingAliasMap[path])) {
-        path = SeedingAliasMap[path];
+    if (!_.isNil(SeedingAliasMap[filePath])) {
+        filePath = SeedingAliasMap[filePath];
     }
     // Run file validation
-    var validateResponse = await validate(path);
+    var validateResponse = await validate({ rawData, filePath});
     if (validateResponse.errors.length !== 0) return;
 
-    // Run command input validation
-    var missingInputs: string[] = [];
-
-    if (!username) missingInputs.push("username");
-    if (!password) missingInputs.push("password");
-
-    if (missingInputs.length >0) {
-        return log(`Missing required arguments: ${missingInputs.join(", ")}`, MessageType.Error)
-    }
-
     // Authenticate To Portal
-    var portal = new PortalAPI();
-    try {
-         await portal.login(username, password);
-    } catch {
-        return log(`Username \"${username}\" and Password \"${password}\" were not valid`, MessageType.Error)
+    if (_.isNil(portalToken)) {
+        if (_.isNil(username) || _.isNil(password)) {
+            return logger(`Missing required arguments: username and password`, MessageType.Error)
+        }
+        var portal = new PortalAPI();
+        try {
+            portalToken = (await portal.login(username, password)).access_token;
+        } catch {
+            return logger(`Username \"${username}\" and Password \"${password}\" were not valid`, MessageType.Error)
+        }
     }
 
     // Confirm orgID doesn't already exist
-    orgID = orgID || Random.generateOrgID();
+    marketplaceID = marketplaceID || Random.generateOrgID();
     try {
-        await portal.GetOrganization(orgID);
-        return log(`An organization with ID \"${orgID}\" already exists.`, MessageType.Error)
+        await portal.GetOrganization(marketplaceID, portalToken);
+        return logger(`A marketplace with ID \"${marketplaceID}\" already exists.`, MessageType.Error)
     } catch {}
 
-    // Create Organization
-    var Name = path.split("/").pop().split(".")[0];
-    await portal.CreateOrganization(orgID, Name);
-    log(`Created new Organization with Name \"${Name}\" and ID \"${orgID}\".`, MessageType.Success); 
+    // Create Marketplace
+    marketplaceName = marketplaceName || filePath.split("/").pop().split(".")[0];
+    await portal.CreateOrganization(marketplaceID, marketplaceName, portalToken);
+    logger(`Created new marketplace with Name \"${marketplaceName}\" and ID \"${marketplaceID}\".`, MessageType.Success); 
 
     // Authenticate to Core API
-    var org_token = await portal.getOrganizationToken(orgID);
+    var org_token = await portal.getOrganizationToken(marketplaceID, portalToken);
     Configuration.Set({ baseApiUrl: ORDERCLOUD_URLS.sandbox }); // always sandbox for upload
     Tokens.SetAccessToken(org_token);
     
     // Upload to Ordercloud
-    var file = validateResponse.data;
+    var marketplace = new SerializedMarketplace(validateResponse.rawData);
     var apiClientIDMap = {};
     var specDefaultOptionIDList = [];
     var webhookSecret = Random.generateWebhookSecret(); // use one webhook secret for all webhooks, integration events and message senders
     var directory = await BuildResourceDirectory(false);
     for (let resource of directory.sort((a, b) => a.createPriority - b.createPriority)) {
-        var records = file.GetRecords(resource);
+        var records = marketplace.GetRecords(resource);
         SetOwnerID(resource, records);
         if (resource.name === OCResourceEnum.ApiClients) {
             await UploadApiClients(resource);
@@ -89,15 +107,15 @@ export async function upload(username: string, password: string, orgID: string, 
         } else {
             await OrderCloudBulk.CreateAll(resource, records);
         }
-        log(`Uploaded ${records.length} ${resource.name}.`, MessageType.Progress); 
+        logger(`Uploaded ${records.length} ${resource.name}.`, MessageType.Progress); 
     }
-    log(`Done Seeding!`, MessageType.Success); 
+    logger(`Done Seeding!`, MessageType.Success); 
 
     function SetOwnerID(resource: OCResource, records: any[]) {
         if (resource.hasOwnerIDField) {
             for (var record of records) {
                 if (record.OwnerID === MARKETPLACE_ID) {
-                    record.OwnerID = orgID;
+                    record.OwnerID = marketplaceID;
                 }
             }
         }

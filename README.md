@@ -1,15 +1,15 @@
 # @ordercloud/seeding
-Download and upload serialized representations of full ordercloud organizations
+Download and upload serialized representations of full ordercloud marketplaces. 
 
 [npm package](https://www.npmjs.com/package/@ordercloud/seeding)
 
 ## CLI Usage 
 
-Create a simple B2C organization - `npx @ordercloud/seeding seed Simple-B2C -u={username} -p={password}`
+Create a simple B2C marketplace - `npx @ordercloud/seeding seed Simple-B2C -u={username} -p={password}`
 
-Create an organization based on a local file - `npx @ordercloud/seeding seed ./folder/seed-data.yml -u={username} -p={password}`
+Create a marketplace based on a local file - `npx @ordercloud/seeding seed ./folder/seed-data.yml -u={username} -p={password}`
 
-Create an organization based on a public url - `npx @ordercloud/seeding seed https://raw.githubusercontent.com/ordercloud-api/ordercloud-seed/main/seeds/Simple-B2C.yml -u={username} -p={password}`
+Create a marketplace based on a public url - `npx @ordercloud/seeding seed https://raw.githubusercontent.com/ordercloud-api/ordercloud-seed/main/seeds/Simple-B2C.yml -u={username} -p={password}`
 
 Create a local seed file - `npx @ordercloud/seeding download ./folder/seed-data.yml -e=sandbox -o={existing-org-id} -u={username} -p={password}`
 
@@ -22,10 +22,10 @@ See options - `npx @ordercloud/seeding --help`
 ```typescript
 import { download, upload, validate } from "@ordercloud/seeding";
 
-await download("<username>", "<password>", "sandbox", "<organization_id>", "ordercloud-data.yml"); 
+await download("<username>", "<password>", "sandbox", "<marketplace_id>", "ordercloud-data.yml"); 
  ```
 
-## Supported Organization Templates
+## Supported Marketplace Templates
 
 These are seeding files maintained as part of this repo that represent templates for common ordercloud use cases. 
 
