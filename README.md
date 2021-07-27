@@ -11,7 +11,7 @@ Create a marketplace based on a local file - `npx @ordercloud/seeding seed ./fol
 
 Create a marketplace based on a public url - `npx @ordercloud/seeding seed https://raw.githubusercontent.com/ordercloud-api/ordercloud-seed/main/seeds/Simple-B2C.yml -u={username} -p={password}`
 
-Create a local seed file - `npx @ordercloud/seeding download ./folder/seed-data.yml -e=sandbox -o={existing-org-id} -u={username} -p={password}`
+Create a local seed file from an existing Marketplace - `npx @ordercloud/seeding download ./folder/seed-data.yml -e=sandbox -i={existing-marketplace-id} -u={username} -p={password}`
 
 Validate a local seed file - `npx @ordercloud/seeding validate ./folder/seed-data.yml` 
 
@@ -20,9 +20,16 @@ See options - `npx @ordercloud/seeding --help`
 ## Programic Node Usage
 
 ```typescript
-import { download, upload, validate } from "@ordercloud/seeding";
+import { download, seed, validate } from "@ordercloud/seeding";
 
-await download("<username>", "<password>", "sandbox", "<marketplace_id>", "ordercloud-data.yml"); 
+await seed({
+    username: "xxxxxx", 
+    password: "xxxxxx", 
+    filePath: "./folder/ordercloud-data.yml",
+    logger: (message:string, type: MessageType) => {
+         console.log(message)
+    }
+}); 
  ```
 
 ## Supported Marketplace Templates

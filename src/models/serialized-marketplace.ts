@@ -5,8 +5,8 @@ export class SerializedMarketplace {
     Assignments = {};
 
     constructor(data = null) {
-        this.Objects = data?.Objects;
-        this.Assignments = data?.Assignments
+        this.Objects = data?.Objects || {};
+        this.Assignments = data?.Assignments || {}
     }    
 
     AddRecords<T = any>(resource: OCResource, records: T[]) {
