@@ -17,7 +17,7 @@ Validate a local seed file - `npx @ordercloud/seeding validate ./folder/seed-dat
 
 See options - `npx @ordercloud/seeding --help`
 
-## Programic Node Usage
+## Programmatic Usage
 
 ```typescript
 import { download, seed, validate } from "@ordercloud/seeding";
