@@ -1,0 +1,11 @@
+{
+    "templates": [
+        {
+            "name": "Simple-B2C",
+            "dataUrl": "https://raw.githubusercontent.com/ordercloud-api/ordercloud-seed/main/seeds/Simple-B2C.yml",
+            "portalActive": true,
+            "shortDescription": "something something",
+            "longDescription": "something something something something"
+        }
+    ]
+}
