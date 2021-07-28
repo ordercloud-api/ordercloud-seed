@@ -9,6 +9,7 @@ import { OCResource } from '../models/oc-resources';
 import _  from 'lodash';
 import { MARKETPLACE_ID, ORDERCLOUD_URLS, REDACTED_MESSAGE } from '../constants';
 import PortalAPI from '../services/portal';
+import Bottleneck from 'bottleneck';
 
 export interface DownloadArgs {
     username?: string; 
@@ -73,13 +74,17 @@ export async function download(args: DownloadArgs): Promise<SerializedMarketplac
     logger(`Found your Marketplace \"${marketplaceID}\" . Beginning download.`, MessageType.Success);
 
     // Pull Data from Ordercloud
+    var ordercloudBulk = new OrderCloudBulk(new Bottleneck({
+        minTime: 100,
+        maxConcurrent: 8
+    }));
     var marketplace = new SerializedMarketplace();
     var directory = await BuildResourceDirectory(false); 
     for (let resource of directory) {
         if (resource.isChild) {
             continue; // resource will be handled as part of its parent
         }
-        var records = await OrderCloudBulk.ListAll(resource);
+        var records = await ordercloudBulk.ListAll(resource);
         RedactSensitiveFields(resource, records);
         PlaceHoldMarketplaceID(resource, records);
         if (resource.downloadTransformFunc !== undefined) {
@@ -90,7 +95,7 @@ export async function download(args: DownloadArgs): Promise<SerializedMarketplac
         {
             let childResource = directory.find(x => x.name === childResourceName);
             for (let parentRecord of records) {
-                var childRecords = await OrderCloudBulk.ListAll(childResource, parentRecord.ID); // assume ID exists. Which is does for all parent types.
+                var childRecords = await ordercloudBulk.ListAll(childResource, parentRecord.ID); // assume ID exists. Which is does for all parent types.
                 for (let childRecord of childRecords) {
                     childRecord[childResource.parentRefField] = parentRecord.ID;
                 }
@@ -99,9 +104,13 @@ export async function download(args: DownloadArgs): Promise<SerializedMarketplac
                 }
                 marketplace.AddRecords(childResource, childRecords);
             }
-            logger("Downloaded " + childRecords.length + " " + childResourceName);
+            if (childRecords.length !== 0) {
+                logger("Found " + childRecords.length + " " + childResourceName);
+            }
         }
-        logger("Downloaded " + records.length + " " + resource.name);
+        if (records.length !== 0) {
+            logger("Found " + records.length + " " + resource.name);
+        }
     }
     // Write to file
     logger(`Done downloading data from org \"${marketplaceID}\".`, MessageType.Success);
@@ -129,7 +138,3 @@ export async function download(args: DownloadArgs): Promise<SerializedMarketplac
         }
     }
 } 
-
-//dotenv.config({ path: '.env' });
-
-//download(process.env.PORTAL_USERNAME, process.env.PORTAL_PASSWORD, process.env.OC_ENV, process.env.ORG_ID, 'ordercloud-seed.yml');

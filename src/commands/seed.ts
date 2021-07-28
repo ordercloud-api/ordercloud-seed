@@ -9,11 +9,11 @@ import { OCResourceEnum } from '../models/oc-resource-enum';
 import { OCResource } from '../models/oc-resources';
 import Random from '../services/random';
 import { REDACTED_MESSAGE, ORDERCLOUD_URLS, MARKETPLACE_ID } from '../constants';
-import RunThrottled from '../services/throttler';
 import PortalAPI from '../services/portal';
 import { SerializedMarketplace } from '../models/serialized-marketplace';
 import { ApiClient, Organization } from '@ordercloud/portal-javascript-sdk';
 import * as SeedingTemplates from '../../seeds/meta.json';
+import Bottleneck from 'bottleneck';
 
 export interface SeedArgs {
     username?: string;
@@ -76,7 +76,7 @@ export async function seed(args: SeedArgs): Promise<SeedResponse | void> {
 
     // Create Marketplace
     marketplaceName = marketplaceName || filePath.split("/").pop().split(".")[0];
-    var marketplace = await portal.CreateOrganization(marketplaceID, marketplaceName, portalToken);
+    await portal.CreateOrganization(marketplaceID, marketplaceName, portalToken);
     logger(`Created new marketplace with Name \"${marketplaceName}\" and ID \"${marketplaceID}\".`, MessageType.Success); 
 
     // Authenticate to Core API
@@ -86,6 +86,10 @@ export async function seed(args: SeedArgs): Promise<SeedResponse | void> {
     
     // Upload to Ordercloud
     var marketplaceData = new SerializedMarketplace(validateResponse.rawData);
+    var ordercloudBulk = new OrderCloudBulk(new Bottleneck({
+        minTime: 100,
+        maxConcurrent: 6
+    }));
     var apiClientIDMap = {};
     var specDefaultOptionIDList = [];
     var webhookSecret = Random.generateWebhookSecret(); // use one webhook secret for all webhooks, integration events and message senders
@@ -114,9 +118,11 @@ export async function seed(args: SeedArgs): Promise<SeedResponse | void> {
         } else if (resource.name === OCResourceEnum.Categories) {
             await UploadCategories(resource);
         } else {
-            await OrderCloudBulk.CreateAll(resource, records);
+            await ordercloudBulk.CreateAll(resource, records);
         }
-        logger(`Uploaded ${records.length} ${resource.name}.`, MessageType.Progress); 
+        if (records.length != 0) {
+            logger(`Created ${records.length} ${resource.name}.`, MessageType.Progress);
+        }   
     }
     logger(`Done! Seeded a new marketplace with ID \"${marketplaceID}\" and Name \"${marketplaceName}\".`, MessageType.Success); 
 
@@ -147,13 +153,13 @@ export async function seed(args: SeedArgs): Promise<SeedResponse | void> {
                 r.DefaultOptionID = null; // set null so create spec succeeds 
             }
         });
-        await OrderCloudBulk.CreateAll(resource, records);
+        await ordercloudBulk.CreateAll(resource, records);
     }
 
     // Patch Spec.DefaultOptionID after the options are created.
     async function UploadSpecOptions(resource: OCResource): Promise<void> {
-        await OrderCloudBulk.CreateAll(resource, records); 
-        await RunThrottled(specDefaultOptionIDList, 8, x => Specs.Patch(x.ID, { DefaultOptionID: x.DefaultOptionID }));
+        await ordercloudBulk.CreateAll(resource, records); 
+        await ordercloudBulk.Run(specDefaultOptionIDList, x => Specs.Patch(x.ID, { DefaultOptionID: x.DefaultOptionID }));
     }
 
     async function UploadApiClients(resource: OCResource): Promise<void> {
@@ -162,7 +168,7 @@ export async function seed(args: SeedArgs): Promise<SeedResponse | void> {
                 r.ClientSecret = Random.generateClientSecret();
             }
         });
-        var results = await OrderCloudBulk.CreateAll(resource, records);
+        var results = await ordercloudBulk.CreateAll(resource, records);
         // Now that we have created the APIClients, we actually know what their IDs are.  
         for (var i = 0; i < records.length; i++) {
             apiClientIDMap[records[i].ID] = results[i].ID;
@@ -171,19 +177,19 @@ export async function seed(args: SeedArgs): Promise<SeedResponse | void> {
 
     async function UploadImpersonationConfigs(resource: OCResource): Promise<void> {
         records.forEach(r => r.ClientID = apiClientIDMap[r.ClientID]);
-        await OrderCloudBulk.CreateAll(resource, records);
+        await ordercloudBulk.CreateAll(resource, records);
     }
 
     async function UploadOpenIdConnects(resource: OCResource): Promise<void> {
         records.forEach(r => r.OrderCloudApiClientID = apiClientIDMap[r.OrderCloudApiClientID]);
-        await OrderCloudBulk.CreateAll(resource, records);
+        await ordercloudBulk.CreateAll(resource, records);
     }
 
     async function UploadCategories(resource: OCResource): Promise<void> {
         let depthCohort = records.filter(r => r.ParentID === null); // start with top-level
         while (depthCohort.length > 0) {
             // create in groups based on depth in the tree
-            var results = await OrderCloudBulk.CreateAll(resource, depthCohort);
+            var results = await ordercloudBulk.CreateAll(resource, depthCohort);
             // get children of those just created
             depthCohort = records.filter(r => results.some(result => r.ParentID === result.ID));
         }
@@ -195,7 +201,7 @@ export async function seed(args: SeedArgs): Promise<SeedResponse | void> {
                 r.SharedKey = webhookSecret;
             }
         });
-        await OrderCloudBulk.CreateAll(resource, records);
+        await ordercloudBulk.CreateAll(resource, records);
     }
 
     async function UploadIntegrationEvents(resource: OCResource): Promise<void> {
@@ -204,7 +210,7 @@ export async function seed(args: SeedArgs): Promise<SeedResponse | void> {
                 r.HashKey = webhookSecret;
             }
         });
-        await OrderCloudBulk.CreateAll(resource, records);
+        await ordercloudBulk.CreateAll(resource, records);
     }
 
     async function UploadWebhooks(resource: OCResource): Promise<void> {
@@ -214,11 +220,11 @@ export async function seed(args: SeedArgs): Promise<SeedResponse | void> {
                 r.HashKey = webhookSecret;
             }
         });
-        await OrderCloudBulk.CreateAll(resource, records);
+        await ordercloudBulk.CreateAll(resource, records);
     }
 
     async function UploadApiClientAssignments(resource: OCResource): Promise<void> {
         records.forEach(r => r.ApiClientID = apiClientIDMap[r.ApiClientID]);
-        await OrderCloudBulk.CreateAll(resource, records);
+        await ordercloudBulk.CreateAll(resource, records);
     }
 } 
