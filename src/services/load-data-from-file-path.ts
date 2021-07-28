@@ -12,6 +12,7 @@ export const LoadDataFromFilePath = async (filePath: string, logCallback: (messa
             logCallback(`Found \"${filePath}\".`, MessageType.Success);
         } catch {
             logCallback(`Error response from \"${filePath}\".`, MessageType.Error);
+            return null;
         }
     } else {
         try {
@@ -19,6 +20,7 @@ export const LoadDataFromFilePath = async (filePath: string, logCallback: (messa
             logCallback(`Found file \"${filePath}\"`, MessageType.Success);
         } catch (err) {
             logCallback(`No such file or directory \"${filePath}\" found`, MessageType.Error);
+            return null;
         }
     }
     try {
@@ -28,6 +30,7 @@ export const LoadDataFromFilePath = async (filePath: string, logCallback: (messa
     } catch (e) {
         var ex = e as YAMLException;
         logCallback(`YAML Exception in \"${filePath}\": ${ex.message}`, MessageType.Error)
+        return null;
     }
     return null;
 }

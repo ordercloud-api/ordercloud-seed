@@ -8,7 +8,8 @@
     "noImplicitAny": false,
     "outDir": "./dist",
     "target": "es5",
-    "esModuleInterop": true
+    "esModuleInterop": true,
+    "resolveJsonModule": true
   },
   "include": [
     "src/**/*"

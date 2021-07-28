@@ -6,7 +6,9 @@ import { OpenAPIProperty, OpenAPIType } from "../models/open-api";
 import _ from 'lodash';
 import { IDCache } from "../models/id-cache";
 import { defaultLogger, LogCallBackFunc, MessageType } from "../services/logger";
-import { LoadDataFromFilePath } from "../services/load-data-from-file-path";
+import axios from "axios";
+import fs from 'fs';
+import yaml, { YAMLException } from 'js-yaml';
 
 export interface ValidateResponse {
     errors: string[];
@@ -29,9 +31,31 @@ export async function validate(args: ValidateArgs): Promise<ValidateResponse> {
     var validator = new Validator();
     if (_.isNil(rawData)) {
         // validates file is found and is valid yaml
-        rawData = await LoadDataFromFilePath(filePath, logger); 
-        if (!rawData) {
-            return { errors: validator.errors, isValid: false, rawData: null };
+        var stringData: string;
+        if (filePath.startsWith('http')) {
+            try {
+                stringData = (await axios.get(filePath)).data;
+                logger(`Found \"${filePath}\".`, MessageType.Success);
+            } catch {
+                logger(`Error response from \"${filePath}\".`, MessageType.Error);
+                return null;
+            }
+        } else {
+            try {
+                stringData = fs.readFileSync(filePath, 'utf8') // consider switching to streams
+                logger(`Found file \"${filePath}\"`, MessageType.Success);
+            } catch (err) {
+                logger(`No such file or directory \"${filePath}\" found`, MessageType.Error);
+                return null;
+            }
+        }
+        try {
+            rawData = yaml.load(stringData) as SerializedMarketplace;
+            logger(`Valid yaml in \"${filePath}\"`, MessageType.Success);
+        } catch (e) {
+            var ex = e as YAMLException;
+            logger(`YAML Exception in \"${filePath}\": ${ex.message}`, MessageType.Error)
+            return null;
         }
     } 
 

@@ -10,9 +10,10 @@ import { OCResource } from '../models/oc-resources';
 import Random from '../services/random';
 import { REDACTED_MESSAGE, ORDERCLOUD_URLS, MARKETPLACE_ID } from '../constants';
 import RunThrottled from '../services/throttler';
-import { SeedingAliasMap } from '../models/seeding-alias-map';
 import PortalAPI from '../services/portal';
 import { SerializedMarketplace } from '../models/serialized-marketplace';
+import { ApiClient, Organization } from '@ordercloud/portal-javascript-sdk';
+import * as SeedingTemplates from '../../seeds/meta.json';
 
 export interface SeedArgs {
     username?: string;
@@ -25,7 +26,14 @@ export interface SeedArgs {
     logger?: LogCallBackFunc
 }
 
-export async function seed(args: SeedArgs): Promise<void> {
+export interface SeedResponse {
+    marketplaceID: string;
+    marketplaceName: string;
+    accessToken: string;
+    apiClients: ApiClient[];
+}
+
+export async function seed(args: SeedArgs): Promise<SeedResponse | void> {
     var { 
         username, 
         password, 
@@ -38,12 +46,13 @@ export async function seed(args: SeedArgs): Promise<void> {
     } = args;
     
     // Check for short-cut aliases
-    if (!_.isNil(SeedingAliasMap[filePath])) {
-        filePath = SeedingAliasMap[filePath];
+    var template = SeedingTemplates.templates.find(x => x.name === filePath);
+    if (!_.isNil(template)) {
+        filePath = template.dataUrl;
     }
     // Run file validation
     var validateResponse = await validate({ rawData, filePath});
-    if (validateResponse.errors.length !== 0) return;
+    if (validateResponse?.errors?.length !== 0) return;
 
     // Authenticate To Portal
     if (_.isNil(portalToken)) {
@@ -67,7 +76,7 @@ export async function seed(args: SeedArgs): Promise<void> {
 
     // Create Marketplace
     marketplaceName = marketplaceName || filePath.split("/").pop().split(".")[0];
-    await portal.CreateOrganization(marketplaceID, marketplaceName, portalToken);
+    var marketplace = await portal.CreateOrganization(marketplaceID, marketplaceName, portalToken);
     logger(`Created new marketplace with Name \"${marketplaceName}\" and ID \"${marketplaceID}\".`, MessageType.Success); 
 
     // Authenticate to Core API
@@ -76,13 +85,13 @@ export async function seed(args: SeedArgs): Promise<void> {
     Tokens.SetAccessToken(org_token);
     
     // Upload to Ordercloud
-    var marketplace = new SerializedMarketplace(validateResponse.rawData);
+    var marketplaceData = new SerializedMarketplace(validateResponse.rawData);
     var apiClientIDMap = {};
     var specDefaultOptionIDList = [];
     var webhookSecret = Random.generateWebhookSecret(); // use one webhook secret for all webhooks, integration events and message senders
     var directory = await BuildResourceDirectory(false);
     for (let resource of directory.sort((a, b) => a.createPriority - b.createPriority)) {
-        var records = marketplace.GetRecords(resource);
+        var records = marketplaceData.GetRecords(resource);
         SetOwnerID(resource, records);
         if (resource.name === OCResourceEnum.ApiClients) {
             await UploadApiClients(resource);
@@ -109,7 +118,16 @@ export async function seed(args: SeedArgs): Promise<void> {
         }
         logger(`Uploaded ${records.length} ${resource.name}.`, MessageType.Progress); 
     }
-    logger(`Done Seeding!`, MessageType.Success); 
+    logger(`Done! Seeded a new marketplace with ID \"${marketplaceID}\" and Name \"${marketplaceName}\".`, MessageType.Success); 
+
+    var toReturn = {
+        marketplaceName,
+        marketplaceID,
+        accessToken: org_token,
+        apiClients: marketplaceData.Objects[OCResourceEnum.ApiClients]
+    }
+
+    return toReturn;
 
     function SetOwnerID(resource: OCResource, records: any[]) {
         if (resource.hasOwnerIDField) {
