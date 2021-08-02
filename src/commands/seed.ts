@@ -12,7 +12,6 @@ import { REDACTED_MESSAGE, ORDERCLOUD_URLS, MARKETPLACE_ID } from '../constants'
 import PortalAPI from '../services/portal';
 import { SerializedMarketplace } from '../models/serialized-marketplace';
 import { ApiClient, Organization } from '@ordercloud/portal-javascript-sdk';
-import * as SeedingTemplates from '../../seeds/meta.json';
 import Bottleneck from 'bottleneck';
 
 export interface SeedArgs {
@@ -21,7 +20,7 @@ export interface SeedArgs {
     marketplaceID?: string;
     marketplaceName?: string;
     portalToken?: string,
-    filePath?: string;
+    dataUrl?: string;
     rawData?: SerializedMarketplace;
     logger?: LogCallBackFunc
 }
@@ -41,17 +40,12 @@ export async function seed(args: SeedArgs): Promise<SeedResponse | void> {
         marketplaceName,
         portalToken,
         rawData,
-        filePath,
+        dataUrl,
         logger = defaultLogger
     } = args;
     
-    // Check for short-cut aliases
-    var template = SeedingTemplates.templates.find(x => x.name === filePath);
-    if (!_.isNil(template)) {
-        filePath = template.dataUrl;
-    }
     // Run file validation
-    var validateResponse = await validate({ rawData, filePath});
+    var validateResponse = await validate({ rawData, dataUrl});
     if (validateResponse?.errors?.length !== 0) return;
 
     // Authenticate To Portal
@@ -75,7 +69,7 @@ export async function seed(args: SeedArgs): Promise<SeedResponse | void> {
     } catch {}
 
     // Create Marketplace
-    marketplaceName = marketplaceName || filePath.split("/").pop().split(".")[0];
+    marketplaceName = marketplaceName || dataUrl?.split("/")?.pop()?.split(".")[0] || marketplaceID;
     await portal.CreateOrganization(marketplaceID, marketplaceName, portalToken);
     logger(`Created new marketplace with Name \"${marketplaceName}\" and ID \"${marketplaceID}\".`, MessageType.Success); 
 

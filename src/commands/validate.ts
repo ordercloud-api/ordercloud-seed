@@ -7,7 +7,6 @@ import _ from 'lodash';
 import { IDCache } from "../models/id-cache";
 import { defaultLogger, LogCallBackFunc, MessageType } from "../services/logger";
 import axios from "axios";
-import fs from 'fs';
 import yaml, { YAMLException } from 'js-yaml';
 
 export interface ValidateResponse {
@@ -18,43 +17,33 @@ export interface ValidateResponse {
 
 export interface ValidateArgs {
     rawData?: SerializedMarketplace;
-    filePath?: string;
+    dataUrl?: string;
     logger?: LogCallBackFunc
 }
 
 export async function validate(args: ValidateArgs): Promise<ValidateResponse> {
     var { 
         rawData,
-        filePath,
+        dataUrl,
         logger = defaultLogger
     } = args;
     var validator = new Validator();
     if (_.isNil(rawData)) {
         // validates file is found and is valid yaml
-        var stringData: string;
-        if (filePath.startsWith('http')) {
-            try {
-                stringData = (await axios.get(filePath)).data;
-                logger(`Found \"${filePath}\".`, MessageType.Success);
-            } catch {
-                logger(`Error response from \"${filePath}\".`, MessageType.Error);
-                return null;
-            }
-        } else {
-            try {
-                stringData = fs.readFileSync(filePath, 'utf8') // consider switching to streams
-                logger(`Found file \"${filePath}\"`, MessageType.Success);
-            } catch (err) {
-                logger(`No such file or directory \"${filePath}\" found`, MessageType.Error);
-                return null;
-            }
+        var stringData: string;   
+        try {
+            stringData = (await axios.get(dataUrl)).data;
+            logger(`Found \"${dataUrl}\".`, MessageType.Success);
+        } catch {
+            logger(`Error response from \"${dataUrl}\".`, MessageType.Error);
+            return null;
         }
         try {
             rawData = yaml.load(stringData) as SerializedMarketplace;
-            logger(`Valid yaml in \"${filePath}\"`, MessageType.Success);
+            logger(`Valid yaml in \"${dataUrl}\"`, MessageType.Success);
         } catch (e) {
             var ex = e as YAMLException;
-            logger(`YAML Exception in \"${filePath}\": ${ex.message}`, MessageType.Error)
+            logger(`YAML Exception in \"${dataUrl}\": ${ex.message}`, MessageType.Error)
             return null;
         }
     } 

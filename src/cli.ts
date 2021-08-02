@@ -3,8 +3,11 @@ import { download } from './commands/download';
 import { validate } from './commands/validate';
 import { seed } from './commands/seed';
 import fs from 'fs';
-import yaml from 'js-yaml';
-import { defaultLogger } from './services/logger';
+import yaml, { YAMLException } from 'js-yaml';
+import { defaultLogger, MessageType } from './services/logger';
+import { SerializedMarketplace } from './models/serialized-marketplace';
+import * as SeedingTemplates from '../seeds/meta.json';
+import _ from 'lodash';
 
 yargs.scriptName("@ordercloud/seeding")
   .usage('$0 <cmd> [args] -')
@@ -36,12 +39,41 @@ yargs.scriptName("@ordercloud/seeding")
       describe: 'Marketplace Name'
     })
   }, function (argv) {
+    var dataUrl = argv.d as string;
+    // Check for short-cut aliases
+    var template = SeedingTemplates.templates.find(x => x.name === dataUrl);
+    if (!_.isNil(template)) {
+        dataUrl = template.dataUrl;
+    }
+
+    var stringData;
+    if (!dataUrl.startsWith('http')) {
+      try {
+        stringData = fs.readFileSync(dataUrl, 'utf8') // consider switching to streams
+        defaultLogger(`Found file \"${dataUrl}\"`, MessageType.Success);
+      } catch (err) {
+          return defaultLogger(`No such file or directory \"${dataUrl}\" found`, MessageType.Error);
+      }
+      try {
+        var data = yaml.load(stringData) as SerializedMarketplace;
+        return seed({
+          username: argv.u as string,
+          password: argv.p as string,
+          marketplaceID: argv.i as string,
+          marketplaceName: argv.n as string,
+          rawData: data
+        });
+      } catch (e) {
+        var ex = e as YAMLException;
+        return defaultLogger(`YAML Exception in \"${dataUrl}\": ${ex.message}`, MessageType.Error)
+      }
+    }
     seed({
       username: argv.u as string,
       password: argv.p as string,
       marketplaceID: argv.i as string,
       marketplaceName: argv.n as string,
-      filePath: argv.d as string
+      dataUrl: dataUrl as string
     });
   })
   .command('download [filePath]', 'Create a local seed file from an existing marketplace.', (yargs) => {
@@ -92,9 +124,24 @@ yargs.scriptName("@ordercloud/seeding")
       describe: 'Local file path or HTTP(S) link'
     })
   }, function (argv) {
-    validate({ 
-      filePath: argv.d as string 
-    })
+    var filePath = argv.d as string;
+    var stringData;
+    if (!filePath.startsWith('http')) {
+      try {
+        stringData = fs.readFileSync(filePath, 'utf8') // consider switching to streams
+        defaultLogger(`Found file \"${filePath}\"`, MessageType.Success);
+      } catch (err) {
+          return defaultLogger(`No such file or directory \"${filePath}\" found`, MessageType.Error);
+      }
+      try {
+        var data = yaml.load(stringData) as SerializedMarketplace;
+        return validate({ rawData: data })
+      } catch (e) {
+        var ex = e as YAMLException;
+        return defaultLogger(`YAML Exception in \"${filePath}\": ${ex.message}`, MessageType.Error)
+      }
+    }
+    validate({ dataUrl: argv.d as string })
   })
   .help()
   .argv
