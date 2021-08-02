@@ -55,11 +55,11 @@ export async function seed(args: SeedArgs): Promise<SeedResponse | void> {
     if (validateResponse?.errors?.length !== 0) return;
 
     // Authenticate To Portal
+    var portal = new PortalAPI();
     if (_.isNil(portalToken)) {
         if (_.isNil(username) || _.isNil(password)) {
             return logger(`Missing required arguments: username and password`, MessageType.Error)
         }
-        var portal = new PortalAPI();
         try {
             portalToken = (await portal.login(username, password)).access_token;
         } catch {
