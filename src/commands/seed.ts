@@ -1,4 +1,4 @@
-import Portal from '../services/portal';
+import * as SeedingTemplates from '../../seeds/meta.json';
 import { Configuration, Specs, Tokens } from 'ordercloud-javascript-sdk';
 import OrderCloudBulk from '../services/ordercloud-bulk';
 import _ from 'lodash';
@@ -43,6 +43,11 @@ export async function seed(args: SeedArgs): Promise<SeedResponse | void> {
         dataUrl,
         logger = defaultLogger
     } = args;
+
+    var template = SeedingTemplates.templates.find(x => x.name === dataUrl);
+    if (!_.isNil(template)) {
+        dataUrl = template.dataUrl;
+    }
     
     // Run file validation
     var validateResponse = await validate({ rawData, dataUrl});

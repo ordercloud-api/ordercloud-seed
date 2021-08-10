@@ -33,9 +33,9 @@ export async function validate(args: ValidateArgs): Promise<ValidateResponse> {
         var stringData: string;   
         try {
             stringData = (await axios.get(dataUrl)).data;
-            logger(`Found \"${dataUrl}\".`, MessageType.Success);
+            logger(`Found marketplace data at url \"${dataUrl}\".`, MessageType.Success);
         } catch {
-            logger(`Error response from \"${dataUrl}\".`, MessageType.Error);
+            logger(`Error repsonse from url \"${dataUrl}\" when trying to find marketplace data.`, MessageType.Error);
             return null;
         }
         try {
