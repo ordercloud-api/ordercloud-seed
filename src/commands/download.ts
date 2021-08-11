@@ -1,5 +1,5 @@
 import Portal from '../services/portal'; // why do I have to add the .js here?
-import { Configuration, Tokens } from 'ordercloud-javascript-sdk';
+import { Configuration, Product, Products, Tokens } from 'ordercloud-javascript-sdk';
 import { SerializedMarketplace } from '../models/serialized-marketplace';
 import OrderCloudBulk from '../services/ordercloud-bulk';
 import { defaultLogger, LogCallBackFunc, MessageType } from '../services/logger';
@@ -7,9 +7,10 @@ import { BuildResourceDirectory } from '../models/oc-resource-directory';
 import jwt_decode from "jwt-decode";
 import { OCResource } from '../models/oc-resources';
 import _  from 'lodash';
-import { MARKETPLACE_ID, ORDERCLOUD_URLS, REDACTED_MESSAGE } from '../constants';
+import { MARKETPLACE_ID, ORDERCLOUD_URLS, REDACTED_MESSAGE, VARIANTS_PROPERTY } from '../constants';
 import PortalAPI from '../services/portal';
 import Bottleneck from 'bottleneck';
+import { OCResourceEnum } from '../models/oc-resource-enum';
 
 export interface DownloadArgs {
     username?: string; 
@@ -89,6 +90,14 @@ export async function download(args: DownloadArgs): Promise<SerializedMarketplac
         PlaceHoldMarketplaceID(resource, records);
         if (resource.downloadTransformFunc !== undefined) {
             records = records.map(resource.downloadTransformFunc)
+        }
+        if (resource.name === OCResourceEnum.Products) {
+            for (var product of records) {
+                if (product.VariantCount > 0) {
+                    var variants = await ordercloudBulk.ListAllWithFunction(Products.ListVariants, product.ID);
+                    product[VARIANTS_PROPERTY] = variants;
+                }
+            }
         }
         marketplace.AddRecords(resource, records);
         for (let childResourceName of resource.children)

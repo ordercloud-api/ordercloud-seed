@@ -22,6 +22,10 @@ export default class OrderCloudBulk {
     async ListAll(resource: OCResource, ...routeParams: string[]): Promise<any[]> {
         const listFunc = resource.sdkObject[resource.listMethodName] as Function; 
 
+        return await this.ListAllWithFunction(listFunc, ...routeParams);
+    }
+
+    async ListAllWithFunction(listFunc: Function, ...routeParams: string[]): Promise<any[]> {
         const queryParams = { page: 1, pageSize: 100, depth: 'all'}; // depth only applies to categories
         const page1 = await listFunc(...routeParams, queryParams);
 

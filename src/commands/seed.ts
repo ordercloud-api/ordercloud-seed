@@ -1,5 +1,5 @@
 import * as SeedingTemplates from '../../seeds/meta.json';
-import { Configuration, Specs, Tokens } from 'ordercloud-javascript-sdk';
+import { Configuration, Product, Products, Specs, Tokens, Variant } from 'ordercloud-javascript-sdk';
 import OrderCloudBulk from '../services/ordercloud-bulk';
 import _ from 'lodash';
 import { defaultLogger, LogCallBackFunc, MessageType } from '../services/logger';
@@ -123,16 +123,17 @@ export async function seed(args: SeedArgs): Promise<SeedResponse | void> {
             logger(`Created ${records.length} ${resource.name}.`, MessageType.Progress);
         }   
     }
+
+    await GenerateAndPatchVariants();
+
     logger(`Done! Seeded a new marketplace with ID \"${marketplaceID}\" and Name \"${marketplaceName}\".`, MessageType.Success); 
 
-    var toReturn = {
+    return {
         marketplaceName,
         marketplaceID,
         accessToken: org_token,
         apiClients: marketplaceData.Objects[OCResourceEnum.ApiClients]
     }
-
-    return toReturn;
 
     function SetOwnerID(resource: OCResource, records: any[]) {
         if (resource.hasOwnerIDField) {
@@ -142,6 +143,18 @@ export async function seed(args: SeedArgs): Promise<SeedResponse | void> {
                 }
             }
         }
+    }
+
+    async function GenerateAndPatchVariants() : Promise<void> {
+        var productsWithVariants = marketplaceData.Objects[OCResourceEnum.Products].filter((p: Product) => p.VariantCount > 0);
+        ordercloudBulk.Run(productsWithVariants, (p: Product) => Products.GenerateVariants(p.ID));
+        for (var product of productsWithVariants) {
+            await ordercloudBulk.Run(product.Variants, (v: Variant) => {
+                var variantID = v.Specs.reduce((acc, spec) => `${acc}-${spec.OptionID}`, product.ID);
+                return Products.SaveVariant(product.ID, variantID, v);
+            });
+        }
+        logger(`Generated variants for ${productsWithVariants.length} products.`, MessageType.Progress);
     }
 
     // Need to remove and cache Spec.DefaultOptionID in order to PATCH it after the options are created.

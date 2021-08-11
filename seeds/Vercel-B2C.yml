@@ -38,33 +38,33 @@ Objects:
       xp: null
       AvailableRoles:
         - FullAccess
-      DateCreated: '2021-07-12T18:53:01.347+00:00'
+      DateCreated: '2021-08-11T14:49:45.5+00:00'
       PasswordLastSetDate: null
   AdminUserGroups: []
   AdminAddresses: []
   MessageSenders: []
   ApiClients:
-    - ID: 5852a047-fdaf-4b8c-9948-b2f1c697e026
-      ClientSecret: null
+    - ID: 35d0b898-c509-4b04-b08f-e4316a417a17
+      ClientSecret: <Redacted. Leave unchanged.>
       AccessTokenDuration: 600
       Active: true
-      AppName: Storefront App
+      AppName: Middleware Integrations
       RefreshTokenDuration: 5760
-      DefaultContextUserName: anonymous-shopper
+      DefaultContextUserName: default-context-user
       xp: null
       AllowAnyBuyer: false
       AllowAnySupplier: false
-      AllowSeller: false
-      IsAnonBuyer: true
-      AssignedBuyerCount: 1
+      AllowSeller: true
+      IsAnonBuyer: false
+      AssignedBuyerCount: 0
       AssignedSupplierCount: 0
-      OrderCheckoutIntegrationEventID: checkout-commerce-integrations
-      OrderCheckoutIntegrationEventName: Checkout Commerce Integrations
+      OrderCheckoutIntegrationEventID: null
+      OrderCheckoutIntegrationEventName: null
       MinimumRequiredRoles: []
       MinimumRequiredCustomRoles: []
       MaximumGrantedRoles: []
       MaximumGrantedCustomRoles: []
-    - ID: a9f6e0ba-cc41-4e1c-817a-a1dd07836bce
+    - ID: 9dfe083f-a675-4a3a-a39a-521511dac934
       ClientSecret: null
       AccessTokenDuration: 600
       Active: true
@@ -84,22 +84,22 @@ Objects:
       MinimumRequiredCustomRoles: []
       MaximumGrantedRoles: []
       MaximumGrantedCustomRoles: []
-    - ID: ccf5f1e4-572c-494e-a6a3-37cce804919c
-      ClientSecret: <Redacted. Leave unchanged.>
+    - ID: e5a05785-caff-4f7d-9cc3-758f13865fc3
+      ClientSecret: null
       AccessTokenDuration: 600
       Active: true
-      AppName: Middleware Integrations
+      AppName: Storefront App
       RefreshTokenDuration: 5760
-      DefaultContextUserName: default-context-user
+      DefaultContextUserName: anonymous-shopper
       xp: null
       AllowAnyBuyer: false
       AllowAnySupplier: false
-      AllowSeller: true
-      IsAnonBuyer: false
-      AssignedBuyerCount: 0
+      AllowSeller: false
+      IsAnonBuyer: true
+      AssignedBuyerCount: 1
       AssignedSupplierCount: 0
-      OrderCheckoutIntegrationEventID: null
-      OrderCheckoutIntegrationEventName: null
+      OrderCheckoutIntegrationEventID: checkout-commerce-integrations
+      OrderCheckoutIntegrationEventName: Checkout Commerce Integrations
       MinimumRequiredRoles: []
       MinimumRequiredCustomRoles: []
       MaximumGrantedRoles: []
@@ -121,7 +121,7 @@ Objects:
       Name: Solitary Storefront
       DefaultCatalogID: solitary-storefront
       Active: true
-      DateCreated: '2021-07-12T18:53:03.36+00:00'
+      DateCreated: '2021-08-11T14:49:47.153+00:00'
       xp: null
   Users:
     - ID: default-anonymous-shopper
@@ -142,7 +142,7 @@ Objects:
         - MeXpAdmin
         - PasswordReset
         - Shopper
-      DateCreated: '2021-07-12T18:53:05.72+00:00'
+      DateCreated: '2021-08-11T14:49:51.217+00:00'
       PasswordLastSetDate: null
       BuyerID: solitary-storefront
   UserGroups: []
@@ -298,6 +298,7 @@ Objects:
   Suppliers: []
   Products:
     - OwnerID: <MarketplaceID placeholder>
+      DefaultPriceScheduleID: null
       AutoForward: false
       ID: mulberry-silk-facemask
       Name: ' Mulberry Silk Facemask'
@@ -319,19 +320,22 @@ Objects:
         VariantLevelTracking: false
         OrderCanExceed: false
         QuantityAvailable: 30
-        LastUpdated: '2021-07-12T18:53:06+00:00'
+        LastUpdated: '2021-08-11T14:49:51.513+00:00'
       DefaultSupplierID: null
+      AllSuppliersCanSell: false
       xp:
         Price: 35
         PriceCurrency: USD
-        Images: 
-          - url: https://ocdevops.blob.core.windows.net/vercel-integration-assets/face_mask.jpg
+        Images:
+          - url: >-
+              https://ocdevops.blob.core.windows.net/vercel-integration-assets/face_mask.jpg
         Facets:
           Color:
             - yellow
             - red
             - blue
     - OwnerID: <MarketplaceID placeholder>
+      DefaultPriceScheduleID: null
       AutoForward: false
       ID: boys-turkish-leather-caliage
       Name: Boy's Turkish Leather Caliage
@@ -353,18 +357,21 @@ Objects:
         VariantLevelTracking: false
         OrderCanExceed: false
         QuantityAvailable: 30
-        LastUpdated: '2021-07-12T18:53:06.013+00:00'
+        LastUpdated: '2021-08-11T14:49:51.607+00:00'
       DefaultSupplierID: null
+      AllSuppliersCanSell: false
       xp:
         Price: 75
         PriceCurrency: USD
-        Images: 
-          - url: https://ocdevops.blob.core.windows.net/vercel-integration-assets/sandels.jpg
+        Images:
+          - url: >-
+              https://ocdevops.blob.core.windows.net/vercel-integration-assets/sandels.jpg
         Facets:
           Color:
             - orange
             - black
     - OwnerID: <MarketplaceID placeholder>
+      DefaultPriceScheduleID: null
       AutoForward: false
       ID: girls-turkish-leather-caliage
       Name: Girl's Turkish Leather Caliage
@@ -387,18 +394,21 @@ Objects:
         VariantLevelTracking: false
         OrderCanExceed: false
         QuantityAvailable: 30
-        LastUpdated: '2021-07-12T18:53:06.013+00:00'
+        LastUpdated: '2021-08-11T14:49:51.7+00:00'
       DefaultSupplierID: null
+      AllSuppliersCanSell: false
       xp:
         Price: 75
         PriceCurrency: USD
-        Images: 
-          - url: https://ocdevops.blob.core.windows.net/vercel-integration-assets/sandels.jpg
+        Images:
+          - url: >-
+              https://ocdevops.blob.core.windows.net/vercel-integration-assets/sandels.jpg
         Facets:
           Color:
             - orange
             - black
     - OwnerID: <MarketplaceID placeholder>
+      DefaultPriceScheduleID: null
       AutoForward: false
       ID: mens-hellion-onyx-jacket
       Name: Men's Helion Onyx Jacket
@@ -420,18 +430,21 @@ Objects:
         VariantLevelTracking: false
         OrderCanExceed: false
         QuantityAvailable: 30
-        LastUpdated: '2021-07-12T18:53:06+00:00'
+        LastUpdated: '2021-08-11T14:49:51.793+00:00'
       DefaultSupplierID: null
+      AllSuppliersCanSell: false
       xp:
         Price: 120
         PriceCurrency: USD
-        Images: 
-          - url: https://ocdevops.blob.core.windows.net/vercel-integration-assets/jacket.jpg
+        Images:
+          - url: >-
+              https://ocdevops.blob.core.windows.net/vercel-integration-assets/jacket.jpg
         Facets:
           Color:
             - yellow
             - black
     - OwnerID: <MarketplaceID placeholder>
+      DefaultPriceScheduleID: null
       AutoForward: false
       ID: mens-intrigue-active-shorts
       Name: Men's Intrigue(TM) Active Shorts
@@ -443,7 +456,7 @@ Objects:
       ShipLength: null
       Active: true
       SpecCount: 2
-      VariantCount: 0
+      VariantCount: 12
       ShipFromAddressID: null
       Inventory:
         Enabled: true
@@ -451,19 +464,22 @@ Objects:
         VariantLevelTracking: false
         OrderCanExceed: false
         QuantityAvailable: 30
-        LastUpdated: '2021-07-12T18:53:05.983+00:00'
+        LastUpdated: '2021-08-11T14:49:51.903+00:00'
       DefaultSupplierID: null
+      AllSuppliersCanSell: false
       xp:
         Price: 50
         PriceCurrency: USD
-        Images: 
-          - url: https://ocdevops.blob.core.windows.net/vercel-integration-assets/purple_shorts.jpg
+        Images:
+          - url: >-
+              https://ocdevops.blob.core.windows.net/vercel-integration-assets/purple_shorts.jpg
         Facets:
           Color:
             - purple
             - orange
             - green
     - OwnerID: <MarketplaceID placeholder>
+      DefaultPriceScheduleID: null
       AutoForward: false
       ID: penquin-feather-onesie
       Name: Penguin Feather Onesie
@@ -485,18 +501,21 @@ Objects:
         VariantLevelTracking: false
         OrderCanExceed: false
         QuantityAvailable: 30
-        LastUpdated: '2021-07-12T18:53:05.997+00:00'
+        LastUpdated: '2021-08-11T14:49:52.013+00:00'
       DefaultSupplierID: null
+      AllSuppliersCanSell: false
       xp:
         Price: 80
         PriceCurrency: USD
-        Images: 
-          - url: https://ocdevops.blob.core.windows.net/vercel-integration-assets/penquin.jpg
+        Images:
+          - url: >-
+              https://ocdevops.blob.core.windows.net/vercel-integration-assets/penquin.jpg
         Facets:
           Color:
             - white
             - black
     - OwnerID: <MarketplaceID placeholder>
+      DefaultPriceScheduleID: null
       AutoForward: false
       ID: womens-hellion-onyx-jacket
       Name: Women's Helion Onyx Jacket
@@ -518,18 +537,21 @@ Objects:
         VariantLevelTracking: false
         OrderCanExceed: false
         QuantityAvailable: 30
-        LastUpdated: '2021-07-12T18:53:05.997+00:00'
+        LastUpdated: '2021-08-11T14:49:52.107+00:00'
       DefaultSupplierID: null
+      AllSuppliersCanSell: false
       xp:
         Price: 120
         PriceCurrency: USD
-        Images: 
-          - url: https://ocdevops.blob.core.windows.net/vercel-integration-assets/jacket.jpg
+        Images:
+          - url: >-
+              https://ocdevops.blob.core.windows.net/vercel-integration-assets/jacket.jpg
         Facets:
           Color:
             - yellow
             - black
     - OwnerID: <MarketplaceID placeholder>
+      DefaultPriceScheduleID: null
       AutoForward: false
       ID: womens-intrigue-active-shorts
       Name: Women's Intrigue(TM) Active Shorts
@@ -541,7 +563,7 @@ Objects:
       ShipLength: null
       Active: true
       SpecCount: 2
-      VariantCount: 0
+      VariantCount: 12
       ShipFromAddressID: null
       Inventory:
         Enabled: true
@@ -549,19 +571,22 @@ Objects:
         VariantLevelTracking: false
         OrderCanExceed: false
         QuantityAvailable: 30
-        LastUpdated: '2021-07-12T18:53:06.013+00:00'
+        LastUpdated: '2021-08-11T14:49:52.183+00:00'
       DefaultSupplierID: null
+      AllSuppliersCanSell: false
       xp:
         Price: 50
         PriceCurrency: USD
-        Images: 
-          - url: https://ocdevops.blob.core.windows.net/vercel-integration-assets/purple_shorts.jpg
+        Images:
+          - url: >-
+              https://ocdevops.blob.core.windows.net/vercel-integration-assets/purple_shorts.jpg
         Facets:
           Color:
             - purple
             - orange
             - green
     - OwnerID: <MarketplaceID placeholder>
+      DefaultPriceScheduleID: null
       AutoForward: false
       ID: womens-spiked-wool-socks
       Name: Women's Spiked Wool Socks
@@ -584,22 +609,26 @@ Objects:
         VariantLevelTracking: false
         OrderCanExceed: false
         QuantityAvailable: 30
-        LastUpdated: '2021-07-12T18:53:06.42+00:00'
+        LastUpdated: '2021-08-11T14:49:52.293+00:00'
       DefaultSupplierID: null
-      xp: 
+      AllSuppliersCanSell: false
+      xp:
         Price: 25
         PriceCurrency: USD
-        Images: 
-          - url: https://ocdevops.blob.core.windows.net/vercel-integration-assets/socks.webp
+        Images:
+          - url: >-
+              https://ocdevops.blob.core.windows.net/vercel-integration-assets/socks.webp
+  PriceSchedules: []
   Specs:
-    - ID: intrigue-active-shorts-color
+    - OwnerID: <MarketplaceID placeholder>
+      ID: intrigue-active-shorts-color
       ListOrder: 0
       Name: Color
       DefaultValue: null
       Required: true
       AllowOpenText: false
       DefaultOptionID: obsession-umber
-      DefinesVariant: false
+      DefinesVariant: true
       xp: null
       OptionCount: 3
       Options:
@@ -609,22 +638,26 @@ Objects:
           IsOpenText: false
           PriceMarkupType: NoMarkup
           PriceMarkup: null
-          xp: null
+          xp:
+            hexColor: '#b6e3c2'
         - ID: obsession-umber
           Value: Obsession Umber
           ListOrder: 0
           IsOpenText: false
           PriceMarkupType: NoMarkup
           PriceMarkup: null
-          xp: null
+          xp:
+            hexColor: '#db8b3b'
         - ID: paranoid-purple
           Value: Paranoid Purple
           ListOrder: 0
           IsOpenText: false
           PriceMarkupType: NoMarkup
           PriceMarkup: null
-          xp: null
-    - ID: mulberry-silk-facemask-color
+          xp:
+            hexColor: '#752175'
+    - OwnerID: <MarketplaceID placeholder>
+      ID: mulberry-silk-facemask-color
       ListOrder: 0
       Name: Color
       DefaultValue: null
@@ -641,29 +674,33 @@ Objects:
           IsOpenText: false
           PriceMarkupType: NoMarkup
           PriceMarkup: null
-          xp: null
+          xp:
+            hexColor: '#2e53c9'
         - ID: red
           Value: Red
           ListOrder: 0
           IsOpenText: false
           PriceMarkupType: NoMarkup
           PriceMarkup: null
-          xp: null
+          xp:
+            hexColor: '#c9382e'
         - ID: yellow
           Value: Yellow
           ListOrder: 0
           IsOpenText: false
           PriceMarkupType: NoMarkup
           PriceMarkup: null
-          xp: null
-    - ID: cross-product-size
+          xp:
+            hexColor: '#c9c42e'
+    - OwnerID: <MarketplaceID placeholder>
+      ID: cross-product-size
       ListOrder: 0
       Name: Size
       DefaultValue: null
       Required: true
       AllowOpenText: false
       DefaultOptionID: null
-      DefinesVariant: false
+      DefinesVariant: true
       xp: null
       OptionCount: 4
       Options:
@@ -702,7 +739,7 @@ Objects:
       IsOpenText: false
       PriceMarkupType: NoMarkup
       PriceMarkup: null
-      xp: 
+      xp:
         hexColor: '#b6e3c2'
       SpecID: intrigue-active-shorts-color
     - ID: obsession-umber
@@ -729,7 +766,7 @@ Objects:
       IsOpenText: false
       PriceMarkupType: NoMarkup
       PriceMarkup: null
-      xp: 
+      xp:
         hexColor: '#2e53c9'
       SpecID: mulberry-silk-facemask-color
     - ID: red
@@ -738,7 +775,7 @@ Objects:
       IsOpenText: false
       PriceMarkupType: NoMarkup
       PriceMarkup: null
-      xp: 
+      xp:
         hexColor: '#c9382e'
       SpecID: mulberry-silk-facemask-color
     - ID: yellow
@@ -861,7 +898,7 @@ Assignments:
       UserGroupID: null
   AdminUserGroupAssignments: []
   ApiClientAssignments:
-    - ApiClientID: 5852a047-fdaf-4b8c-9948-b2f1c697e026
+    - ApiClientID: e5a05785-caff-4f7d-9cc3-758f13865fc3
       BuyerID: solitary-storefront
       SupplierID: null
   ProductAssignments: []
