@@ -325,7 +325,7 @@ Objects:
         Price: 35
         PriceCurrency: USD
         Images: 
-          - url: https://images.bloomingdalesassets.com/is/image/BLM/products/5/optimized/10992375_fpx.tif?op_sharpen=1&wid=700&fit=fit,1&$filtersm$
+          - url: https://ocdevops.blob.core.windows.net/vercel-integration-assets/face_mask.jpg
         Facets:
           Color:
             - yellow
@@ -359,7 +359,7 @@ Objects:
         Price: 75
         PriceCurrency: USD
         Images: 
-          - url: https://pbs.twimg.com/media/DVCVYw9VwAE4IuZ.jpg
+          - url: https://ocdevops.blob.core.windows.net/vercel-integration-assets/sandels.jpg
         Facets:
           Color:
             - orange
@@ -393,7 +393,7 @@ Objects:
         Price: 75
         PriceCurrency: USD
         Images: 
-          - url: https://pbs.twimg.com/media/DVCVYw9VwAE4IuZ.jpg
+          - url: https://ocdevops.blob.core.windows.net/vercel-integration-assets/sandels.jpg
         Facets:
           Color:
             - orange
@@ -426,7 +426,7 @@ Objects:
         Price: 120
         PriceCurrency: USD
         Images: 
-          - url: https://cdn.shopify.com/s/files/1/0025/9637/2591/products/product-image-954480489_1024x1024@2x.jpg?v=1588289643
+          - url: https://ocdevops.blob.core.windows.net/vercel-integration-assets/jacket.jpg
         Facets:
           Color:
             - yellow
@@ -457,7 +457,7 @@ Objects:
         Price: 50
         PriceCurrency: USD
         Images: 
-          - url: https://di2ponv0v5otw.cloudfront.net/posts/2020/06/26/5ef684bf89a0eafd4332ec2a/m_5ef684c39c3378f2569bccf1.jpeg
+          - url: https://ocdevops.blob.core.windows.net/vercel-integration-assets/purple_shorts.jpg
         Facets:
           Color:
             - purple
@@ -491,7 +491,7 @@ Objects:
         Price: 80
         PriceCurrency: USD
         Images: 
-          - url: https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQ24j_4mWcNX4X9A-gKS3Isha9i5EnV27AkWQ&usqp=CAU
+          - url: https://ocdevops.blob.core.windows.net/vercel-integration-assets/penquin.jpg
         Facets:
           Color:
             - white
@@ -524,7 +524,7 @@ Objects:
         Price: 120
         PriceCurrency: USD
         Images: 
-          - url: https://cdn.shopify.com/s/files/1/0025/9637/2591/products/product-image-954480489_1024x1024@2x.jpg?v=1588289643
+          - url: https://ocdevops.blob.core.windows.net/vercel-integration-assets/jacket.jpg
         Facets:
           Color:
             - yellow
@@ -555,7 +555,7 @@ Objects:
         Price: 50
         PriceCurrency: USD
         Images: 
-          - url: https://di2ponv0v5otw.cloudfront.net/posts/2020/06/26/5ef684bf89a0eafd4332ec2a/m_5ef684c39c3378f2569bccf1.jpeg
+          - url: https://ocdevops.blob.core.windows.net/vercel-integration-assets/purple_shorts.jpg
         Facets:
           Color:
             - purple
@@ -590,7 +590,7 @@ Objects:
         Price: 25
         PriceCurrency: USD
         Images: 
-          - url: https://images.asos-media.com/products/asos-slipper-socks-with-dinosaur-spikes/7269831-1-green?$n_640w$&wid=513&fit=constrain
+          - url: https://ocdevops.blob.core.windows.net/vercel-integration-assets/socks.webp
   Specs:
     - ID: intrigue-active-shorts-color
       ListOrder: 0
