@@ -94,7 +94,7 @@ export async function download(args: DownloadArgs): Promise<SerializedMarketplac
         if (resource.name === OCResourceEnum.Products) {
             for (var product of records) {
                 if (product.VariantCount > 0) {
-                    var variants = await ordercloudBulk.ListAllWithFunction(Products.ListVariants, product.ID);
+                    var variants = await ordercloudBulk.ListAllWithFunction("Variants" as any, Products.ListVariants, product.ID);
                     product[VARIANTS_PROPERTY] = variants;
                 }
             }

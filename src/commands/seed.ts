@@ -147,9 +147,9 @@ export async function seed(args: SeedArgs): Promise<SeedResponse | void> {
 
     async function GenerateAndPatchVariants() : Promise<void> {
         var productsWithVariants = marketplaceData.Objects[OCResourceEnum.Products].filter((p: Product) => p.VariantCount > 0);
-        ordercloudBulk.Run(productsWithVariants, (p: Product) => Products.GenerateVariants(p.ID));
+        ordercloudBulk.Run("Variants" as any, productsWithVariants, (p: Product) => Products.GenerateVariants(p.ID));
         for (var product of productsWithVariants) {
-            await ordercloudBulk.Run(product.Variants, (v: Variant) => {
+            await ordercloudBulk.Run("Variants" as any, product.Variants, (v: Variant) => {
                 var variantID = v.Specs.reduce((acc, spec) => `${acc}-${spec.OptionID}`, product.ID);
                 return Products.SaveVariant(product.ID, variantID, v);
             });
@@ -171,7 +171,7 @@ export async function seed(args: SeedArgs): Promise<SeedResponse | void> {
     // Patch Spec.DefaultOptionID after the options are created.
     async function UploadSpecOptions(resource: OCResource): Promise<void> {
         await ordercloudBulk.CreateAll(resource, records); 
-        await ordercloudBulk.Run(specDefaultOptionIDList, x => Specs.Patch(x.ID, { DefaultOptionID: x.DefaultOptionID }));
+        await ordercloudBulk.Run("SpecOption" as any, specDefaultOptionIDList, x => Specs.Patch(x.ID, { DefaultOptionID: x.DefaultOptionID }));
     }
 
     async function UploadApiClients(resource: OCResource): Promise<void> {
