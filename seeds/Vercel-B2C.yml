@@ -298,7 +298,7 @@ Objects:
   Suppliers: []
   Products:
     - OwnerID: <MarketplaceID placeholder>
-      DefaultPriceScheduleID: null
+      DefaultPriceScheduleID: mulberry-silk-facemask
       AutoForward: false
       ID: mulberry-silk-facemask
       Name: ' Mulberry Silk Facemask'
@@ -335,7 +335,7 @@ Objects:
             - red
             - blue
     - OwnerID: <MarketplaceID placeholder>
-      DefaultPriceScheduleID: null
+      DefaultPriceScheduleID: boys-turkish-leather-caliage
       AutoForward: false
       ID: boys-turkish-leather-caliage
       Name: Boy's Turkish Leather Caliage
@@ -371,7 +371,7 @@ Objects:
             - orange
             - black
     - OwnerID: <MarketplaceID placeholder>
-      DefaultPriceScheduleID: null
+      DefaultPriceScheduleID: girls-turkish-leather-caliage
       AutoForward: false
       ID: girls-turkish-leather-caliage
       Name: Girl's Turkish Leather Caliage
@@ -408,7 +408,7 @@ Objects:
             - orange
             - black
     - OwnerID: <MarketplaceID placeholder>
-      DefaultPriceScheduleID: null
+      DefaultPriceScheduleID: mens-hellion-onyx-jacket
       AutoForward: false
       ID: mens-hellion-onyx-jacket
       Name: Men's Helion Onyx Jacket
@@ -444,7 +444,7 @@ Objects:
             - yellow
             - black
     - OwnerID: <MarketplaceID placeholder>
-      DefaultPriceScheduleID: null
+      DefaultPriceScheduleID: mens-intrigue-active-shorts
       AutoForward: false
       ID: mens-intrigue-active-shorts
       Name: Men's Intrigue(TM) Active Shorts
@@ -479,7 +479,7 @@ Objects:
             - orange
             - green
     - OwnerID: <MarketplaceID placeholder>
-      DefaultPriceScheduleID: null
+      DefaultPriceScheduleID: penquin-feather-onesie
       AutoForward: false
       ID: penquin-feather-onesie
       Name: Penguin Feather Onesie
@@ -515,7 +515,7 @@ Objects:
             - white
             - black
     - OwnerID: <MarketplaceID placeholder>
-      DefaultPriceScheduleID: null
+      DefaultPriceScheduleID: womens-hellion-onyx-jacket
       AutoForward: false
       ID: womens-hellion-onyx-jacket
       Name: Women's Helion Onyx Jacket
@@ -551,7 +551,7 @@ Objects:
             - yellow
             - black
     - OwnerID: <MarketplaceID placeholder>
-      DefaultPriceScheduleID: null
+      DefaultPriceScheduleID: womens-intrigue-active-shorts
       AutoForward: false
       ID: womens-intrigue-active-shorts
       Name: Women's Intrigue(TM) Active Shorts
@@ -618,7 +618,115 @@ Objects:
         Images:
           - url: >-
               https://ocdevops.blob.core.windows.net/vercel-integration-assets/socks.webp
-  PriceSchedules: []
+  PriceSchedules:
+    - ID: boys-turkish-leather-caliage
+      Name: boys-turkish-leather-caliage
+      ApplyTax: true
+      ApplyShipping: true
+      MinQuantity: 1
+      MaxQuantity: null
+      UseCumulativeQuantity: false
+      RestrictedQuantity: false
+      PriceBreaks:
+        - Quantity: 1
+          Price: 75
+      xp: null
+    - ID: girls-turkish-leather-caliage
+      Name: girls-turkish-leather-caliage
+      ApplyTax: true
+      ApplyShipping: true
+      MinQuantity: 1
+      MaxQuantity: null
+      UseCumulativeQuantity: false
+      RestrictedQuantity: false
+      PriceBreaks:
+        - Quantity: 1
+          Price: 75
+      xp: null
+    - ID: mens-hellion-onyx-jacket
+      Name: mens-hellion-onyx-jacket
+      ApplyTax: true
+      ApplyShipping: true
+      MinQuantity: 1
+      MaxQuantity: null
+      UseCumulativeQuantity: false
+      RestrictedQuantity: false
+      PriceBreaks:
+        - Quantity: 1
+          Price: 120
+      xp: null
+    - ID: mens-intrigue-active-shorts
+      Name: mens-intrigue-active-shorts
+      ApplyTax: true
+      ApplyShipping: true
+      MinQuantity: 1
+      MaxQuantity: null
+      UseCumulativeQuantity: false
+      RestrictedQuantity: false
+      PriceBreaks:
+        - Quantity: 1
+          Price: 50
+      xp: null
+    - ID: mulberry-silk-facemask
+      Name: mulberry-silk-facemask
+      ApplyTax: true
+      ApplyShipping: true
+      MinQuantity: 1
+      MaxQuantity: null
+      UseCumulativeQuantity: false
+      RestrictedQuantity: false
+      PriceBreaks:
+        - Quantity: 1
+          Price: 35
+      xp: null
+    - ID: penquin-feather-onesie
+      Name: penquin-feather-onesie
+      ApplyTax: true
+      ApplyShipping: true
+      MinQuantity: 1
+      MaxQuantity: null
+      UseCumulativeQuantity: false
+      RestrictedQuantity: false
+      PriceBreaks:
+        - Quantity: 1
+          Price: 80
+      xp: null
+    - ID: womens-hellion-onyx-jacket
+      Name: womens-hellion-onyx-jacket
+      ApplyTax: true
+      ApplyShipping: true
+      MinQuantity: 1
+      MaxQuantity: null
+      UseCumulativeQuantity: false
+      RestrictedQuantity: false
+      PriceBreaks:
+        - Quantity: 1
+          Price: 120
+      xp: null
+    - ID: womens-intrigue-active-shorts
+      Name: womens-intrigue-active-shorts
+      ApplyTax: true
+      ApplyShipping: true
+      MinQuantity: 1
+      MaxQuantity: null
+      UseCumulativeQuantity: false
+      RestrictedQuantity: false
+      PriceBreaks:
+        - Quantity: 1
+          Price: 50
+      xp: null
+    - ID: womens-spiked-wool-socks
+      Name: womens-spiked-wool-socks
+      ApplyTax: true
+      ApplyShipping: true
+      MinQuantity: 1
+      MaxQuantity: null
+      UseCumulativeQuantity: false
+      RestrictedQuantity: false
+      PriceBreaks:
+        - Quantity: 1
+          Price: 25
+      xp: null
   Specs:
     - OwnerID: <MarketplaceID placeholder>
       ID: intrigue-active-shorts-color
