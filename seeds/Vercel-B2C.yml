@@ -312,7 +312,7 @@ Objects:
       ShipLength: null
       Active: true
       SpecCount: 1
-      VariantCount: 0
+      VariantCount: 3
       ShipFromAddressID: null
       Inventory:
         Enabled: true
