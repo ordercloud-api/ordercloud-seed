@@ -772,7 +772,7 @@ Objects:
       Required: true
       AllowOpenText: false
       DefaultOptionID: blue
-      DefinesVariant: false
+      DefinesVariant: true
       xp: null
       OptionCount: 3
       Options:
