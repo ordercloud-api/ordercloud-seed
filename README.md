@@ -21,19 +21,29 @@ Download and upload serialized representations of full ordercloud marketplaces.
 ## CLI Usage 
 
 Create a marketplace from a "SimpleB2C" template.
-```seed Simple-B2C -u={username} -p={password}```
+```
+seed Simple-B2C -u={username} -p={password}
+```
 
 Create a marketplace based on a local file. 
-```seed ./folder/seed-data.yml -u={username} -p={password}```
+```
+seed ./folder/seed-data.yml -u={username} -p={password}
+```
 
 Create a marketplace based on a public url.
-```seed https://raw.githubusercontent.com/ordercloud-api/ordercloud-seed/main/seeds/Simple-B2C.yml -u={username} -p={password}```
+```
+seed https://raw.githubusercontent.com/ordercloud-api/ordercloud-seed/main/seeds/Simple-B2C.yml -u={username} -p={password}
+```
 
 Download the data from an existing marketplace to a seed file.
-```download ./folder/new-file-to-create.yml -e=sandbox -i={existing-marketplace-id} -u={username} -p={password}```
+```
+download ./folder/new-file-to-create.yml -e=sandbox -i={existing-marketplace-id} -u={username} -p={password}
+```
 
 Validate that a local file would seed successfully. 
-```validate ./folder/my-file.yml``` 
+```
+validate ./folder/my-file.yml
+``` 
 
 ## Javascript API Usage
 
