@@ -5,11 +5,11 @@ Download and upload serialized representations of full ordercloud marketplaces.
 
 ## Ways to get started
 
-For node users, install with `npm i @ordercloud/seeding -g` and then run `@ordercloud/seeding --help`.
+- For node users, install with `npm i @ordercloud/seeding -g` and then run `@ordercloud/seeding --help`.
 
-Alternatively, node user who do not wish to install can run `npx @ordercloud/seeding --help`.
+- Alternatively, node user who do not wish to install can run `npx @ordercloud/seeding --help`.
 
-Download an executable. Run like `seeding-win.exe --help`.
+- Download an executable. Run like `seeding-win.exe --help`.
 
 | Operating System | Executable |
 | --- | --- |                                
