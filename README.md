@@ -60,7 +60,7 @@ await seed({
 }); 
  ```
 
-## Supported Marketplace Templates
+## Marketplace Templates
 
 These are seeding files maintained as part of this repo that represent templates for common ordercloud use cases. 
 
