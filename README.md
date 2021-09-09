@@ -3,21 +3,39 @@ Download and upload serialized representations of full ordercloud marketplaces.
 
 [npm package](https://www.npmjs.com/package/@ordercloud/seeding)
 
+## Ways to get started
+
+For node users, install with `npm i @ordercloud/seeding -g` and then run `@ordercloud/seeding --help`.
+
+Alternatively, node user who do not wish to install can run `npx @ordercloud/seeding --help`.
+
+Download an executable. Run like `seeding-win.exe --help`.
+
+| Operating System | Executable |
+| --- | --- |                                
+| Windows | [seeding-win.exe](https://raw.githubusercontent.com/ordercloud-api/ordercloud-seed/main/exe/seeding-win.exe) |
+| Mac | [seeding-macos](https://raw.githubusercontent.com/ordercloud-api/ordercloud-seed/main/exe/seeding-macos)  |
+| Linux | [seeding-linux](https://raw.githubusercontent.com/ordercloud-api/ordercloud-seed/main/exe/seeding-linux) |
+
+
 ## CLI Usage 
 
-Create a simple B2C marketplace - `npx @ordercloud/seeding seed Simple-B2C -u={username} -p={password}`
+Create a marketplace from a "SimpleB2C" template.
+```seed Simple-B2C -u={username} -p={password}```
 
-Create a marketplace based on a local file - `npx @ordercloud/seeding seed ./folder/seed-data.yml -u={username} -p={password}`
+Create a marketplace based on a local file. 
+```seed ./folder/seed-data.yml -u={username} -p={password}```
 
-Create a marketplace based on a public url - `npx @ordercloud/seeding seed https://raw.githubusercontent.com/ordercloud-api/ordercloud-seed/main/seeds/Simple-B2C.yml -u={username} -p={password}`
+Create a marketplace based on a public url.
+```seed https://raw.githubusercontent.com/ordercloud-api/ordercloud-seed/main/seeds/Simple-B2C.yml -u={username} -p={password}```
 
-Create a local seed file from an existing Marketplace - `npx @ordercloud/seeding download ./folder/seed-data.yml -e=sandbox -i={existing-marketplace-id} -u={username} -p={password}`
+Download the data from an existing marketplace to a seed file.
+```download ./folder/new-file-to-create.yml -e=sandbox -i={existing-marketplace-id} -u={username} -p={password}```
 
-Validate a local seed file - `npx @ordercloud/seeding validate ./folder/seed-data.yml` 
+Validate that a local file would seed successfully. 
+```validate ./folder/my-file.yml``` 
 
-See options - `npx @ordercloud/seeding --help`
-
-## Programmatic Usage
+## Javascript API Usage
 
 ```typescript
 import { download, seed, validate } from "@ordercloud/seeding";
@@ -47,18 +65,10 @@ These are seeding files maintained as part of this repo that represent templates
 - Run `node ./cli.js [command]` to debug a command.
 - Run `npm run test` to run unit tests.
 
-## To be done
-
-In rough order of priority
-1. Publish OS executables 
-2. Nice to have features
 
 ## Nice to Have features
-- Reference other yaml files
-- Let OC define an ID and then use it as a variable in the yaml
-- Template variables in YAML for imports
 - Progress bar for import and export commands
 - JSON as an option
+- Reference other files
+- Template variables in YAML for imports. Including allowing OC to define an ID and then applying it later.
 
-## OrderCloud corner cases to beware
-- Generate product variants
