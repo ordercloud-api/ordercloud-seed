@@ -1,26 +1,15 @@
 Objects:
   SecurityProfiles:
-    - ID: anon-shopper
-      Name: Anonymous Shopper
-      Roles:
-        - Shopper
-      CustomRoles: []
-      PasswordConfig: null
     - ID: back-office-admin
       Name: Back Office Admin
       Roles:
         - FullAccess
       CustomRoles: []
       PasswordConfig: null
-    - ID: shopper
-      Name: Shopper
+    - ID: buyer-middleware
+      Name: Buyer Middleware
       Roles:
-        - MeAddressAdmin
-        - MeAdmin
-        - MeCreditCardAdmin
-        - MeXpAdmin
-        - PasswordReset
-        - Shopper
+        - FullAccess
       CustomRoles: []
       PasswordConfig: null
   ImpersonationConfigs: []
@@ -38,25 +27,25 @@ Objects:
       xp: null
       AvailableRoles:
         - FullAccess
-      DateCreated: '2021-08-11T14:49:45.5+00:00'
+      DateCreated: '2021-08-10T21:46:38.26+00:00'
       PasswordLastSetDate: null
   AdminUserGroups: []
   AdminAddresses: []
   MessageSenders: []
   ApiClients:
-    - ID: 35d0b898-c509-4b04-b08f-e4316a417a17
-      ClientSecret: <Redacted. Leave unchanged.>
+    - ID: 6f9b8736-75cf-4d3e-acde-1071766a26b3
+      ClientSecret: null
       AccessTokenDuration: 600
       Active: true
-      AppName: Middleware Integrations
+      AppName: Buyer Middleware
       RefreshTokenDuration: 5760
-      DefaultContextUserName: default-context-user
+      DefaultContextUserName: anonymous-shopper
       xp: null
       AllowAnyBuyer: false
       AllowAnySupplier: false
-      AllowSeller: true
-      IsAnonBuyer: false
-      AssignedBuyerCount: 0
+      AllowSeller: false
+      IsAnonBuyer: true
+      AssignedBuyerCount: 1
       AssignedSupplierCount: 0
       OrderCheckoutIntegrationEventID: null
       OrderCheckoutIntegrationEventName: null
@@ -64,7 +53,7 @@ Objects:
       MinimumRequiredCustomRoles: []
       MaximumGrantedRoles: []
       MaximumGrantedCustomRoles: []
-    - ID: 9dfe083f-a675-4a3a-a39a-521511dac934
+    - ID: 9eb9e89d-b798-4a05-92c2-612ce19af411
       ClientSecret: null
       AccessTokenDuration: 600
       Active: true
@@ -84,37 +73,8 @@ Objects:
       MinimumRequiredCustomRoles: []
       MaximumGrantedRoles: []
       MaximumGrantedCustomRoles: []
-    - ID: e5a05785-caff-4f7d-9cc3-758f13865fc3
-      ClientSecret: null
-      AccessTokenDuration: 600
-      Active: true
-      AppName: Storefront App
-      RefreshTokenDuration: 5760
-      DefaultContextUserName: anonymous-shopper
-      xp: null
-      AllowAnyBuyer: false
-      AllowAnySupplier: false
-      AllowSeller: false
-      IsAnonBuyer: true
-      AssignedBuyerCount: 1
-      AssignedSupplierCount: 0
-      OrderCheckoutIntegrationEventID: checkout-commerce-integrations
-      OrderCheckoutIntegrationEventName: Checkout Commerce Integrations
-      MinimumRequiredRoles: []
-      MinimumRequiredCustomRoles: []
-      MaximumGrantedRoles: []
-      MaximumGrantedCustomRoles: []
   Incrementors: []
   Webhooks: []
-  IntegrationEvents:
-    - ElevatedRoles:
-        - FullAccess
-      ID: checkout-commerce-integrations
-      ConfigData: null
-      EventType: OrderCheckout
-      CustomImplementationUrl: https://www.replace.this.com/api/checkout
-      Name: Checkout Commerce Integrations
-      HashKey: <Redacted. Leave unchanged.>
   XpIndices: []
   Buyers:
     - ID: solitary-storefront
@@ -989,24 +949,19 @@ Assignments:
       ListOrder: null
       CatalogID: solitary-storefront
   SecurityProfileAssignments:
-    - SecurityProfileID: anon-shopper
-      BuyerID: solitary-storefront
-      SupplierID: null
-      UserID: null
-      UserGroupID: null
     - SecurityProfileID: back-office-admin
       BuyerID: null
       SupplierID: null
       UserID: null
       UserGroupID: null
-    - SecurityProfileID: shopper
+    - SecurityProfileID: buyer-middleware
       BuyerID: solitary-storefront
       SupplierID: null
       UserID: null
       UserGroupID: null
   AdminUserGroupAssignments: []
   ApiClientAssignments:
-    - ApiClientID: e5a05785-caff-4f7d-9cc3-758f13865fc3
+    - ApiClientID: 6f9b8736-75cf-4d3e-acde-1071766a26b3
       BuyerID: solitary-storefront
       SupplierID: null
   ProductAssignments: []
