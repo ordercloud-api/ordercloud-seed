@@ -34,7 +34,7 @@ Objects:
   MessageSenders: []
   ApiClients:
     - ID: 6f9b8736-75cf-4d3e-acde-1071766a26b3
-      ClientSecret: null
+      ClientSecret: <Redacted. Leave unchanged.>
       AccessTokenDuration: 600
       Active: true
       AppName: Buyer Middleware
