@@ -37,7 +37,7 @@ Objects:
       ClientSecret: <Redacted. Leave unchanged.>
       AccessTokenDuration: 600
       Active: true
-      AppName: Buyer Middleware
+      AppName: Vercel-Integration-Connector
       RefreshTokenDuration: 5760
       DefaultContextUserName: anonymous-shopper
       xp: null
