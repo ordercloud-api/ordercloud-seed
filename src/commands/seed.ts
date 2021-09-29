@@ -8,7 +8,7 @@ import { BuildResourceDirectory } from '../models/oc-resource-directory';
 import { OCResourceEnum } from '../models/oc-resource-enum';
 import { OCResource } from '../models/oc-resources';
 import Random from '../services/random';
-import { REDACTED_MESSAGE, ORDERCLOUD_URLS, MARKETPLACE_ID } from '../constants';
+import { REDACTED_MESSAGE, ORDERCLOUD_URLS, MARKETPLACE_ID, VARIANTS_PROPERTY } from '../constants';
 import PortalAPI from '../services/portal';
 import { SerializedMarketplace } from '../models/serialized-marketplace';
 import { ApiClient, Organization } from '@ordercloud/portal-javascript-sdk';
@@ -156,7 +156,7 @@ export async function seed(args: SeedArgs): Promise<SeedResponse | void> {
         var productsWithVariants = marketplaceData.Objects[OCResourceEnum.Products].filter((p: Product) => p.VariantCount > 0);
         ordercloudBulk.Run("Variants" as any, productsWithVariants, (p: Product) => Products.GenerateVariants(p.ID));
         for (var product of productsWithVariants) {
-            await ordercloudBulk.Run("Variants" as any, product.Variants, (v: Variant) => {
+            await ordercloudBulk.Run("Variants" as any, product[VARIANTS_PROPERTY], (v: Variant) => {
                 var variantID = v.Specs.reduce((acc, spec) => `${acc}-${spec.OptionID}`, product.ID);
                 return Products.SaveVariant(product.ID, variantID, v);
             });

@@ -14,7 +14,7 @@ export default class Random {
         return this.generate(16);
     }
 
-    private static generate(length: number): string {
+    public static generate(length: number): string {
         let retVal = "";
         for (var i = 0, n = this.charset.length; i < length; ++i) {
             retVal += this.charset.charAt(Math.floor(Math.random() * n));

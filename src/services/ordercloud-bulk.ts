@@ -4,6 +4,7 @@ import Bottleneck from 'bottleneck';
 import chalk from 'chalk';
 import _ from 'lodash';
 import { OCResourceEnum } from '../models/oc-resource-enum';
+import Random from './random';
 const { flatten } = pkg;
 
 export default class OrderCloudBulk {
@@ -70,7 +71,7 @@ export default class OrderCloudBulk {
 
         for (let i = 0; i < records.length; i++) {
             const record = records[i]; 
-            var task = this.limiter.schedule({ id: `${resourceName}-${i}`}, () => func(record));
+            var task = this.limiter.schedule({ id: `${resourceName}-${i}-${Random.generate(6)}`}, () => func(record));
             tasks.push(task);
         }
         return await Promise.all(tasks);
