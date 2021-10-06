@@ -207,7 +207,7 @@ Objects:
       ShipWidth: null
       ShipLength: null
       Active: true
-      SpecCount: 1
+      SpecCount: 0
       VariantCount: 0
       ShipFromAddressID: null
       Inventory:
@@ -258,7 +258,7 @@ Objects:
       ShipLength: null
       Active: true
       SpecCount: 2
-      VariantCount: 0
+      VariantCount: 8
       ShipFromAddressID: null
       Inventory:
         Enabled: false
@@ -277,6 +277,191 @@ Objects:
               https://ocdevops.blob.core.windows.net/vercel-integration-assets/bomber_jacket_1.png
           - url: >-
               https://ocdevops.blob.core.windows.net/vercel-integration-assets/bomber_jacket_2.png
+      Variants:
+        - ID: bomber-jacket-L-black
+          Name: null
+          Description: null
+          Active: true
+          ShipWeight: null
+          ShipHeight: null
+          ShipWidth: null
+          ShipLength: null
+          Inventory: null
+          Specs:
+            - SpecID: cross-product-size
+              Name: Size
+              OptionID: L
+              Value: Large
+              PriceMarkupType: NoMarkup
+              PriceMarkup: null
+            - SpecID: bomber-jacket-color
+              Name: Color
+              OptionID: black
+              Value: Black
+              PriceMarkupType: NoMarkup
+              PriceMarkup: null
+          xp: null
+        - ID: bomber-jacket-L-olive
+          Name: null
+          Description: null
+          Active: true
+          ShipWeight: null
+          ShipHeight: null
+          ShipWidth: null
+          ShipLength: null
+          Inventory: null
+          Specs:
+            - SpecID: cross-product-size
+              Name: Size
+              OptionID: L
+              Value: Large
+              PriceMarkupType: NoMarkup
+              PriceMarkup: null
+            - SpecID: bomber-jacket-color
+              Name: Color
+              OptionID: olive
+              Value: Olive
+              PriceMarkupType: Percentage
+              PriceMarkup: 10
+          xp: null
+        - ID: bomber-jacket-M-black
+          Name: null
+          Description: null
+          Active: true
+          ShipWeight: null
+          ShipHeight: null
+          ShipWidth: null
+          ShipLength: null
+          Inventory: null
+          Specs:
+            - SpecID: cross-product-size
+              Name: Size
+              OptionID: M
+              Value: Medium
+              PriceMarkupType: NoMarkup
+              PriceMarkup: null
+            - SpecID: bomber-jacket-color
+              Name: Color
+              OptionID: black
+              Value: Black
+              PriceMarkupType: NoMarkup
+              PriceMarkup: null
+          xp: null
+        - ID: bomber-jacket-M-olive
+          Name: null
+          Description: null
+          Active: true
+          ShipWeight: null
+          ShipHeight: null
+          ShipWidth: null
+          ShipLength: null
+          Inventory: null
+          Specs:
+            - SpecID: cross-product-size
+              Name: Size
+              OptionID: M
+              Value: Medium
+              PriceMarkupType: NoMarkup
+              PriceMarkup: null
+            - SpecID: bomber-jacket-color
+              Name: Color
+              OptionID: olive
+              Value: Olive
+              PriceMarkupType: Percentage
+              PriceMarkup: 10
+          xp: null
+        - ID: bomber-jacket-S-black
+          Name: null
+          Description: null
+          Active: true
+          ShipWeight: null
+          ShipHeight: null
+          ShipWidth: null
+          ShipLength: null
+          Inventory: null
+          Specs:
+            - SpecID: cross-product-size
+              Name: Size
+              OptionID: S
+              Value: Small
+              PriceMarkupType: NoMarkup
+              PriceMarkup: null
+            - SpecID: bomber-jacket-color
+              Name: Color
+              OptionID: black
+              Value: Black
+              PriceMarkupType: NoMarkup
+              PriceMarkup: null
+          xp: null
+        - ID: bomber-jacket-S-olive
+          Name: null
+          Description: null
+          Active: true
+          ShipWeight: null
+          ShipHeight: null
+          ShipWidth: null
+          ShipLength: null
+          Inventory: null
+          Specs:
+            - SpecID: cross-product-size
+              Name: Size
+              OptionID: S
+              Value: Small
+              PriceMarkupType: NoMarkup
+              PriceMarkup: null
+            - SpecID: bomber-jacket-color
+              Name: Color
+              OptionID: olive
+              Value: Olive
+              PriceMarkupType: Percentage
+              PriceMarkup: 10
+          xp: null
+        - ID: bomber-jacket-XL-black
+          Name: null
+          Description: null
+          Active: true
+          ShipWeight: null
+          ShipHeight: null
+          ShipWidth: null
+          ShipLength: null
+          Inventory: null
+          Specs:
+            - SpecID: cross-product-size
+              Name: Size
+              OptionID: XL
+              Value: Extra Large
+              PriceMarkupType: NoMarkup
+              PriceMarkup: null
+            - SpecID: bomber-jacket-color
+              Name: Color
+              OptionID: black
+              Value: Black
+              PriceMarkupType: NoMarkup
+              PriceMarkup: null
+          xp: null
+        - ID: bomber-jacket-XL-olive
+          Name: null
+          Description: null
+          Active: true
+          ShipWeight: null
+          ShipHeight: null
+          ShipWidth: null
+          ShipLength: null
+          Inventory: null
+          Specs:
+            - SpecID: cross-product-size
+              Name: Size
+              OptionID: XL
+              Value: Extra Large
+              PriceMarkupType: NoMarkup
+              PriceMarkup: null
+            - SpecID: bomber-jacket-color
+              Name: Color
+              OptionID: olive
+              Value: Olive
+              PriceMarkupType: Percentage
+              PriceMarkup: 10
+          xp: null
     - OwnerID: <MarketplaceID placeholder>
       DefaultPriceScheduleID: champion-jacket
       AutoForward: false
@@ -299,7 +484,7 @@ Objects:
       ShipLength: null
       Active: true
       SpecCount: 1
-      VariantCount: 0
+      VariantCount: 4
       ShipFromAddressID: null
       Inventory:
         Enabled: false
@@ -320,6 +505,75 @@ Objects:
               https://ocdevops.blob.core.windows.net/vercel-integration-assets/champion_jacket_2.png
           - url: >-
               https://ocdevops.blob.core.windows.net/vercel-integration-assets/champion_jacket_3.png
+      Variants:
+        - ID: champion-jacket-L
+          Name: null
+          Description: null
+          Active: true
+          ShipWeight: null
+          ShipHeight: null
+          ShipWidth: null
+          ShipLength: null
+          Inventory: null
+          Specs:
+            - SpecID: cross-product-size
+              Name: Size
+              OptionID: L
+              Value: Large
+              PriceMarkupType: NoMarkup
+              PriceMarkup: null
+          xp: null
+        - ID: champion-jacket-M
+          Name: null
+          Description: null
+          Active: true
+          ShipWeight: null
+          ShipHeight: null
+          ShipWidth: null
+          ShipLength: null
+          Inventory: null
+          Specs:
+            - SpecID: cross-product-size
+              Name: Size
+              OptionID: M
+              Value: Medium
+              PriceMarkupType: NoMarkup
+              PriceMarkup: null
+          xp: null
+        - ID: champion-jacket-S
+          Name: null
+          Description: null
+          Active: true
+          ShipWeight: null
+          ShipHeight: null
+          ShipWidth: null
+          ShipLength: null
+          Inventory: null
+          Specs:
+            - SpecID: cross-product-size
+              Name: Size
+              OptionID: S
+              Value: Small
+              PriceMarkupType: NoMarkup
+              PriceMarkup: null
+          xp: null
+        - ID: champion-jacket-XL
+          Name: null
+          Description: null
+          Active: true
+          ShipWeight: null
+          ShipHeight: null
+          ShipWidth: null
+          ShipLength: null
+          Inventory: null
+          Specs:
+            - SpecID: cross-product-size
+              Name: Size
+              OptionID: XL
+              Value: Extra Large
+              PriceMarkupType: NoMarkup
+              PriceMarkup: null
+          xp: null
     - OwnerID: <MarketplaceID placeholder>
       DefaultPriceScheduleID: joggers
       AutoForward: false
@@ -353,7 +607,7 @@ Objects:
       ShipLength: null
       Active: true
       SpecCount: 1
-      VariantCount: 0
+      VariantCount: 4
       ShipFromAddressID: null
       Inventory:
         Enabled: false
@@ -374,6 +628,75 @@ Objects:
               https://ocdevops.blob.core.windows.net/vercel-integration-assets/joggers_2.png
           - url: >-
               https://ocdevops.blob.core.windows.net/vercel-integration-assets/joggers_3.png
+      Variants:
+        - ID: joggers-L
+          Name: null
+          Description: null
+          Active: true
+          ShipWeight: null
+          ShipHeight: null
+          ShipWidth: null
+          ShipLength: null
+          Inventory: null
+          Specs:
+            - SpecID: cross-product-size
+              Name: Size
+              OptionID: L
+              Value: Large
+              PriceMarkupType: NoMarkup
+              PriceMarkup: null
+          xp: null
+        - ID: joggers-M
+          Name: null
+          Description: null
+          Active: true
+          ShipWeight: null
+          ShipHeight: null
+          ShipWidth: null
+          ShipLength: null
+          Inventory: null
+          Specs:
+            - SpecID: cross-product-size
+              Name: Size
+              OptionID: M
+              Value: Medium
+              PriceMarkupType: NoMarkup
+              PriceMarkup: null
+          xp: null
+        - ID: joggers-S
+          Name: null
+          Description: null
+          Active: true
+          ShipWeight: null
+          ShipHeight: null
+          ShipWidth: null
+          ShipLength: null
+          Inventory: null
+          Specs:
+            - SpecID: cross-product-size
+              Name: Size
+              OptionID: S
+              Value: Small
+              PriceMarkupType: NoMarkup
+              PriceMarkup: null
+          xp: null
+        - ID: joggers-XL
+          Name: null
+          Description: null
+          Active: true
+          ShipWeight: null
+          ShipHeight: null
+          ShipWidth: null
+          ShipLength: null
+          Inventory: null
+          Specs:
+            - SpecID: cross-product-size
+              Name: Size
+              OptionID: XL
+              Value: Extra Large
+              PriceMarkupType: NoMarkup
+              PriceMarkup: null
+          xp: null
     - OwnerID: <MarketplaceID placeholder>
       DefaultPriceScheduleID: letterman-jacket
       AutoForward: false
@@ -396,7 +719,7 @@ Objects:
       ShipLength: null
       Active: true
       SpecCount: 1
-      VariantCount: 0
+      VariantCount: 4
       ShipFromAddressID: null
       Inventory:
         Enabled: false
@@ -415,6 +738,75 @@ Objects:
               https://ocdevops.blob.core.windows.net/vercel-integration-assets/letterman_1.png
           - url: >-
               https://ocdevops.blob.core.windows.net/vercel-integration-assets/letterman_2.png
+      Variants:
+        - ID: letterman-jacket-L
+          Name: null
+          Description: null
+          Active: true
+          ShipWeight: null
+          ShipHeight: null
+          ShipWidth: null
+          ShipLength: null
+          Inventory: null
+          Specs:
+            - SpecID: cross-product-size
+              Name: Size
+              OptionID: L
+              Value: Large
+              PriceMarkupType: NoMarkup
+              PriceMarkup: null
+          xp: null
+        - ID: letterman-jacket-M
+          Name: null
+          Description: null
+          Active: true
+          ShipWeight: null
+          ShipHeight: null
+          ShipWidth: null
+          ShipLength: null
+          Inventory: null
+          Specs:
+            - SpecID: cross-product-size
+              Name: Size
+              OptionID: M
+              Value: Medium
+              PriceMarkupType: NoMarkup
+              PriceMarkup: null
+          xp: null
+        - ID: letterman-jacket-S
+          Name: null
+          Description: null
+          Active: true
+          ShipWeight: null
+          ShipHeight: null
+          ShipWidth: null
+          ShipLength: null
+          Inventory: null
+          Specs:
+            - SpecID: cross-product-size
+              Name: Size
+              OptionID: S
+              Value: Small
+              PriceMarkupType: NoMarkup
+              PriceMarkup: null
+          xp: null
+        - ID: letterman-jacket-XL
+          Name: null
+          Description: null
+          Active: true
+          ShipWeight: null
+          ShipHeight: null
+          ShipWidth: null
+          ShipLength: null
+          Inventory: null
+          Specs:
+            - SpecID: cross-product-size
+              Name: Size
+              OptionID: XL
+              Value: Extra Large
+              PriceMarkupType: NoMarkup
+              PriceMarkup: null
+          xp: null
     - OwnerID: <MarketplaceID placeholder>
       DefaultPriceScheduleID: lightweight-jacket
       AutoForward: false
@@ -449,7 +841,7 @@ Objects:
       ShipLength: null
       Active: true
       SpecCount: 2
-      VariantCount: 0
+      VariantCount: 8
       ShipFromAddressID: null
       Inventory:
         Enabled: false
@@ -476,6 +868,191 @@ Objects:
               https://ocdevops.blob.core.windows.net/vercel-integration-assets/light_jacket_5.png
           - url: >-
               https://ocdevops.blob.core.windows.net/vercel-integration-assets/light_jacket_6.png
+      Variants:
+        - ID: lightweight-jacket-L-Black
+          Name: null
+          Description: null
+          Active: true
+          ShipWeight: null
+          ShipHeight: null
+          ShipWidth: null
+          ShipLength: null
+          Inventory: null
+          Specs:
+            - SpecID: cross-product-size
+              Name: Size
+              OptionID: L
+              Value: Large
+              PriceMarkupType: NoMarkup
+              PriceMarkup: null
+            - SpecID: black-and-white
+              Name: Color
+              OptionID: Black
+              Value: black
+              PriceMarkupType: NoMarkup
+              PriceMarkup: null
+          xp: null
+        - ID: lightweight-jacket-L-white
+          Name: null
+          Description: null
+          Active: true
+          ShipWeight: null
+          ShipHeight: null
+          ShipWidth: null
+          ShipLength: null
+          Inventory: null
+          Specs:
+            - SpecID: cross-product-size
+              Name: Size
+              OptionID: L
+              Value: Large
+              PriceMarkupType: NoMarkup
+              PriceMarkup: null
+            - SpecID: black-and-white
+              Name: Color
+              OptionID: white
+              Value: White
+              PriceMarkupType: NoMarkup
+              PriceMarkup: null
+          xp: null
+        - ID: lightweight-jacket-M-Black
+          Name: null
+          Description: null
+          Active: true
+          ShipWeight: null
+          ShipHeight: null
+          ShipWidth: null
+          ShipLength: null
+          Inventory: null
+          Specs:
+            - SpecID: cross-product-size
+              Name: Size
+              OptionID: M
+              Value: Medium
+              PriceMarkupType: NoMarkup
+              PriceMarkup: null
+            - SpecID: black-and-white
+              Name: Color
+              OptionID: Black
+              Value: black
+              PriceMarkupType: NoMarkup
+              PriceMarkup: null
+          xp: null
+        - ID: lightweight-jacket-M-white
+          Name: null
+          Description: null
+          Active: true
+          ShipWeight: null
+          ShipHeight: null
+          ShipWidth: null
+          ShipLength: null
+          Inventory: null
+          Specs:
+            - SpecID: cross-product-size
+              Name: Size
+              OptionID: M
+              Value: Medium
+              PriceMarkupType: NoMarkup
+              PriceMarkup: null
+            - SpecID: black-and-white
+              Name: Color
+              OptionID: white
+              Value: White
+              PriceMarkupType: NoMarkup
+              PriceMarkup: null
+          xp: null
+        - ID: lightweight-jacket-S-Black
+          Name: null
+          Description: null
+          Active: true
+          ShipWeight: null
+          ShipHeight: null
+          ShipWidth: null
+          ShipLength: null
+          Inventory: null
+          Specs:
+            - SpecID: cross-product-size
+              Name: Size
+              OptionID: S
+              Value: Small
+              PriceMarkupType: NoMarkup
+              PriceMarkup: null
+            - SpecID: black-and-white
+              Name: Color
+              OptionID: Black
+              Value: black
+              PriceMarkupType: NoMarkup
+              PriceMarkup: null
+          xp: null
+        - ID: lightweight-jacket-S-white
+          Name: null
+          Description: null
+          Active: true
+          ShipWeight: null
+          ShipHeight: null
+          ShipWidth: null
+          ShipLength: null
+          Inventory: null
+          Specs:
+            - SpecID: cross-product-size
+              Name: Size
+              OptionID: S
+              Value: Small
+              PriceMarkupType: NoMarkup
+              PriceMarkup: null
+            - SpecID: black-and-white
+              Name: Color
+              OptionID: white
+              Value: White
+              PriceMarkupType: NoMarkup
+              PriceMarkup: null
+          xp: null
+        - ID: lightweight-jacket-XL-Black
+          Name: null
+          Description: null
+          Active: true
+          ShipWeight: null
+          ShipHeight: null
+          ShipWidth: null
+          ShipLength: null
+          Inventory: null
+          Specs:
+            - SpecID: cross-product-size
+              Name: Size
+              OptionID: XL
+              Value: Extra Large
+              PriceMarkupType: NoMarkup
+              PriceMarkup: null
+            - SpecID: black-and-white
+              Name: Color
+              OptionID: Black
+              Value: black
+              PriceMarkupType: NoMarkup
+              PriceMarkup: null
+          xp: null
+        - ID: lightweight-jacket-XL-white
+          Name: null
+          Description: null
+          Active: true
+          ShipWeight: null
+          ShipHeight: null
+          ShipWidth: null
+          ShipLength: null
+          Inventory: null
+          Specs:
+            - SpecID: cross-product-size
+              Name: Size
+              OptionID: XL
+              Value: Extra Large
+              PriceMarkupType: NoMarkup
+              PriceMarkup: null
+            - SpecID: black-and-white
+              Name: Color
+              OptionID: white
+              Value: White
+              PriceMarkupType: NoMarkup
+              PriceMarkup: null
+          xp: null
     - OwnerID: <MarketplaceID placeholder>
       DefaultPriceScheduleID: mask
       AutoForward: false
@@ -492,7 +1069,7 @@ Objects:
       ShipLength: null
       Active: true
       SpecCount: 1
-      VariantCount: 0
+      VariantCount: 2
       ShipFromAddressID: null
       Inventory:
         Enabled: false
@@ -515,6 +1092,41 @@ Objects:
               https://ocdevops.blob.core.windows.net/vercel-integration-assets/mask_3.png
           - url: >-
               https://ocdevops.blob.core.windows.net/vercel-integration-assets/mask_4.png
+      Variants:
+        - ID: mask-Black
+          Name: null
+          Description: null
+          Active: true
+          ShipWeight: null
+          ShipHeight: null
+          ShipWidth: null
+          ShipLength: null
+          Inventory: null
+          Specs:
+            - SpecID: black-and-white
+              Name: Color
+              OptionID: Black
+              Value: black
+              PriceMarkupType: NoMarkup
+              PriceMarkup: null
+          xp: null
+        - ID: mask-white
+          Name: null
+          Description: null
+          Active: true
+          ShipWeight: null
+          ShipHeight: null
+          ShipWidth: null
+          ShipLength: null
+          Inventory: null
+          Specs:
+            - SpecID: black-and-white
+              Name: Color
+              OptionID: white
+              Value: White
+              PriceMarkupType: NoMarkup
+              PriceMarkup: null
+          xp: null
     - OwnerID: <MarketplaceID placeholder>
       DefaultPriceScheduleID: short-sleeve-t-shirt
       AutoForward: false
@@ -541,7 +1153,7 @@ Objects:
       ShipLength: null
       Active: true
       SpecCount: 2
-      VariantCount: 0
+      VariantCount: 16
       ShipFromAddressID: null
       Inventory:
         Enabled: false
@@ -564,6 +1176,375 @@ Objects:
               https://ocdevops.blob.core.windows.net/vercel-integration-assets/short-t_3.png
           - url: >-
               https://ocdevops.blob.core.windows.net/vercel-integration-assets/short-t_4.png
+      Variants:
+        - ID: short-sleeve-t-shirt-L-Aqua
+          Name: null
+          Description: null
+          Active: true
+          ShipWeight: null
+          ShipHeight: null
+          ShipWidth: null
+          ShipLength: null
+          Inventory: null
+          Specs:
+            - SpecID: cross-product-size
+              Name: Size
+              OptionID: L
+              Value: Large
+              PriceMarkupType: NoMarkup
+              PriceMarkup: null
+            - SpecID: short-sleeve-t-shirt-color
+              Name: Color
+              OptionID: Aqua
+              Value: aqua
+              PriceMarkupType: NoMarkup
+              PriceMarkup: null
+          xp: null
+        - ID: short-sleeve-t-shirt-L-light-brown
+          Name: null
+          Description: null
+          Active: true
+          ShipWeight: null
+          ShipHeight: null
+          ShipWidth: null
+          ShipLength: null
+          Inventory: null
+          Specs:
+            - SpecID: cross-product-size
+              Name: Size
+              OptionID: L
+              Value: Large
+              PriceMarkupType: NoMarkup
+              PriceMarkup: null
+            - SpecID: short-sleeve-t-shirt-color
+              Name: Color
+              OptionID: light-brown
+              Value: Light Brown
+              PriceMarkupType: NoMarkup
+              PriceMarkup: null
+          xp: null
+        - ID: short-sleeve-t-shirt-L-orange
+          Name: null
+          Description: null
+          Active: true
+          ShipWeight: null
+          ShipHeight: null
+          ShipWidth: null
+          ShipLength: null
+          Inventory: null
+          Specs:
+            - SpecID: cross-product-size
+              Name: Size
+              OptionID: L
+              Value: Large
+              PriceMarkupType: NoMarkup
+              PriceMarkup: null
+            - SpecID: short-sleeve-t-shirt-color
+              Name: Color
+              OptionID: orange
+              Value: Orange
+              PriceMarkupType: NoMarkup
+              PriceMarkup: null
+          xp: null
+        - ID: short-sleeve-t-shirt-L-Peach
+          Name: null
+          Description: null
+          Active: true
+          ShipWeight: null
+          ShipHeight: null
+          ShipWidth: null
+          ShipLength: null
+          Inventory: null
+          Specs:
+            - SpecID: cross-product-size
+              Name: Size
+              OptionID: L
+              Value: Large
+              PriceMarkupType: NoMarkup
+              PriceMarkup: null
+            - SpecID: short-sleeve-t-shirt-color
+              Name: Color
+              OptionID: Peach
+              Value: peach
+              PriceMarkupType: NoMarkup
+              PriceMarkup: null
+          xp: null
+        - ID: short-sleeve-t-shirt-M-Aqua
+          Name: null
+          Description: null
+          Active: true
+          ShipWeight: null
+          ShipHeight: null
+          ShipWidth: null
+          ShipLength: null
+          Inventory: null
+          Specs:
+            - SpecID: cross-product-size
+              Name: Size
+              OptionID: M
+              Value: Medium
+              PriceMarkupType: NoMarkup
+              PriceMarkup: null
+            - SpecID: short-sleeve-t-shirt-color
+              Name: Color
+              OptionID: Aqua
+              Value: aqua
+              PriceMarkupType: NoMarkup
+              PriceMarkup: null
+          xp: null
+        - ID: short-sleeve-t-shirt-M-light-brown
+          Name: null
+          Description: null
+          Active: true
+          ShipWeight: null
+          ShipHeight: null
+          ShipWidth: null
+          ShipLength: null
+          Inventory: null
+          Specs:
+            - SpecID: cross-product-size
+              Name: Size
+              OptionID: M
+              Value: Medium
+              PriceMarkupType: NoMarkup
+              PriceMarkup: null
+            - SpecID: short-sleeve-t-shirt-color
+              Name: Color
+              OptionID: light-brown
+              Value: Light Brown
+              PriceMarkupType: NoMarkup
+              PriceMarkup: null
+          xp: null
+        - ID: short-sleeve-t-shirt-M-orange
+          Name: null
+          Description: null
+          Active: true
+          ShipWeight: null
+          ShipHeight: null
+          ShipWidth: null
+          ShipLength: null
+          Inventory: null
+          Specs:
+            - SpecID: cross-product-size
+              Name: Size
+              OptionID: M
+              Value: Medium
+              PriceMarkupType: NoMarkup
+              PriceMarkup: null
+            - SpecID: short-sleeve-t-shirt-color
+              Name: Color
+              OptionID: orange
+              Value: Orange
+              PriceMarkupType: NoMarkup
+              PriceMarkup: null
+          xp: null
+        - ID: short-sleeve-t-shirt-M-Peach
+          Name: null
+          Description: null
+          Active: true
+          ShipWeight: null
+          ShipHeight: null
+          ShipWidth: null
+          ShipLength: null
+          Inventory: null
+          Specs:
+            - SpecID: cross-product-size
+              Name: Size
+              OptionID: M
+              Value: Medium
+              PriceMarkupType: NoMarkup
+              PriceMarkup: null
+            - SpecID: short-sleeve-t-shirt-color
+              Name: Color
+              OptionID: Peach
+              Value: peach
+              PriceMarkupType: NoMarkup
+              PriceMarkup: null
+          xp: null
+        - ID: short-sleeve-t-shirt-S-Aqua
+          Name: null
+          Description: null
+          Active: true
+          ShipWeight: null
+          ShipHeight: null
+          ShipWidth: null
+          ShipLength: null
+          Inventory: null
+          Specs:
+            - SpecID: cross-product-size
+              Name: Size
+              OptionID: S
+              Value: Small
+              PriceMarkupType: NoMarkup
+              PriceMarkup: null
+            - SpecID: short-sleeve-t-shirt-color
+              Name: Color
+              OptionID: Aqua
+              Value: aqua
+              PriceMarkupType: NoMarkup
+              PriceMarkup: null
+          xp: null
+        - ID: short-sleeve-t-shirt-S-light-brown
+          Name: null
+          Description: null
+          Active: true
+          ShipWeight: null
+          ShipHeight: null
+          ShipWidth: null
+          ShipLength: null
+          Inventory: null
+          Specs:
+            - SpecID: cross-product-size
+              Name: Size
+              OptionID: S
+              Value: Small
+              PriceMarkupType: NoMarkup
+              PriceMarkup: null
+            - SpecID: short-sleeve-t-shirt-color
+              Name: Color
+              OptionID: light-brown
+              Value: Light Brown
+              PriceMarkupType: NoMarkup
+              PriceMarkup: null
+          xp: null
+        - ID: short-sleeve-t-shirt-S-orange
+          Name: null
+          Description: null
+          Active: true
+          ShipWeight: null
+          ShipHeight: null
+          ShipWidth: null
+          ShipLength: null
+          Inventory: null
+          Specs:
+            - SpecID: cross-product-size
+              Name: Size
+              OptionID: S
+              Value: Small
+              PriceMarkupType: NoMarkup
+              PriceMarkup: null
+            - SpecID: short-sleeve-t-shirt-color
+              Name: Color
+              OptionID: orange
+              Value: Orange
+              PriceMarkupType: NoMarkup
+              PriceMarkup: null
+          xp: null
+        - ID: short-sleeve-t-shirt-S-Peach
+          Name: null
+          Description: null
+          Active: true
+          ShipWeight: null
+          ShipHeight: null
+          ShipWidth: null
+          ShipLength: null
+          Inventory: null
+          Specs:
+            - SpecID: cross-product-size
+              Name: Size
+              OptionID: S
+              Value: Small
+              PriceMarkupType: NoMarkup
+              PriceMarkup: null
+            - SpecID: short-sleeve-t-shirt-color
+              Name: Color
+              OptionID: Peach
+              Value: peach
+              PriceMarkupType: NoMarkup
+              PriceMarkup: null
+          xp: null
+        - ID: short-sleeve-t-shirt-XL-Aqua
+          Name: null
+          Description: null
+          Active: true
+          ShipWeight: null
+          ShipHeight: null
+          ShipWidth: null
+          ShipLength: null
+          Inventory: null
+          Specs:
+            - SpecID: cross-product-size
+              Name: Size
+              OptionID: XL
+              Value: Extra Large
+              PriceMarkupType: NoMarkup
+              PriceMarkup: null
+            - SpecID: short-sleeve-t-shirt-color
+              Name: Color
+              OptionID: Aqua
+              Value: aqua
+              PriceMarkupType: NoMarkup
+              PriceMarkup: null
+          xp: null
+        - ID: short-sleeve-t-shirt-XL-light-brown
+          Name: null
+          Description: null
+          Active: true
+          ShipWeight: null
+          ShipHeight: null
+          ShipWidth: null
+          ShipLength: null
+          Inventory: null
+          Specs:
+            - SpecID: cross-product-size
+              Name: Size
+              OptionID: XL
+              Value: Extra Large
+              PriceMarkupType: NoMarkup
+              PriceMarkup: null
+            - SpecID: short-sleeve-t-shirt-color
+              Name: Color
+              OptionID: light-brown
+              Value: Light Brown
+              PriceMarkupType: NoMarkup
+              PriceMarkup: null
+          xp: null
+        - ID: short-sleeve-t-shirt-XL-orange
+          Name: null
+          Description: null
+          Active: true
+          ShipWeight: null
+          ShipHeight: null
+          ShipWidth: null
+          ShipLength: null
+          Inventory: null
+          Specs:
+            - SpecID: cross-product-size
+              Name: Size
+              OptionID: XL
+              Value: Extra Large
+              PriceMarkupType: NoMarkup
+              PriceMarkup: null
+            - SpecID: short-sleeve-t-shirt-color
+              Name: Color
+              OptionID: orange
+              Value: Orange
+              PriceMarkupType: NoMarkup
+              PriceMarkup: null
+          xp: null
+        - ID: short-sleeve-t-shirt-XL-Peach
+          Name: null
+          Description: null
+          Active: true
+          ShipWeight: null
+          ShipHeight: null
+          ShipWidth: null
+          ShipLength: null
+          Inventory: null
+          Specs:
+            - SpecID: cross-product-size
+              Name: Size
+              OptionID: XL
+              Value: Extra Large
+              PriceMarkupType: NoMarkup
+              PriceMarkup: null
+            - SpecID: short-sleeve-t-shirt-color
+              Name: Color
+              OptionID: Peach
+              Value: peach
+              PriceMarkupType: NoMarkup
+              PriceMarkup: null
+          xp: null
     - OwnerID: <MarketplaceID placeholder>
       DefaultPriceScheduleID: skinny-joggers
       AutoForward: false
@@ -585,7 +1566,7 @@ Objects:
       ShipLength: null
       Active: true
       SpecCount: 1
-      VariantCount: 0
+      VariantCount: 4
       ShipFromAddressID: null
       Inventory:
         Enabled: false
@@ -608,6 +1589,75 @@ Objects:
               https://ocdevops.blob.core.windows.net/vercel-integration-assets/skinny_joggers_3.png
           - url: >-
               https://ocdevops.blob.core.windows.net/vercel-integration-assets/skinny_joggers_4.png
+      Variants:
+        - ID: skinny-joggers-L
+          Name: null
+          Description: null
+          Active: true
+          ShipWeight: null
+          ShipHeight: null
+          ShipWidth: null
+          ShipLength: null
+          Inventory: null
+          Specs:
+            - SpecID: cross-product-size
+              Name: Size
+              OptionID: L
+              Value: Large
+              PriceMarkupType: NoMarkup
+              PriceMarkup: null
+          xp: null
+        - ID: skinny-joggers-M
+          Name: null
+          Description: null
+          Active: true
+          ShipWeight: null
+          ShipHeight: null
+          ShipWidth: null
+          ShipLength: null
+          Inventory: null
+          Specs:
+            - SpecID: cross-product-size
+              Name: Size
+              OptionID: M
+              Value: Medium
+              PriceMarkupType: NoMarkup
+              PriceMarkup: null
+          xp: null
+        - ID: skinny-joggers-S
+          Name: null
+          Description: null
+          Active: true
+          ShipWeight: null
+          ShipHeight: null
+          ShipWidth: null
+          ShipLength: null
+          Inventory: null
+          Specs:
+            - SpecID: cross-product-size
+              Name: Size
+              OptionID: S
+              Value: Small
+              PriceMarkupType: NoMarkup
+              PriceMarkup: null
+          xp: null
+        - ID: skinny-joggers-XL
+          Name: null
+          Description: null
+          Active: true
+          ShipWeight: null
+          ShipHeight: null
+          ShipWidth: null
+          ShipLength: null
+          Inventory: null
+          Specs:
+            - SpecID: cross-product-size
+              Name: Size
+              OptionID: XL
+              Value: Extra Large
+              PriceMarkupType: NoMarkup
+              PriceMarkup: null
+          xp: null
     - OwnerID: <MarketplaceID placeholder>
       DefaultPriceScheduleID: t-shirt
       AutoForward: false
@@ -641,7 +1691,7 @@ Objects:
       ShipLength: null
       Active: true
       SpecCount: 2
-      VariantCount: 0
+      VariantCount: 8
       ShipFromAddressID: null
       Inventory:
         Enabled: false
@@ -668,6 +1718,191 @@ Objects:
               https://ocdevops.blob.core.windows.net/vercel-integration-assets/t-shirt_5.png
           - url: >-
               https://ocdevops.blob.core.windows.net/vercel-integration-assets/t-shirt_6.png
+      Variants:
+        - ID: t-shirt-L-Black
+          Name: null
+          Description: null
+          Active: true
+          ShipWeight: null
+          ShipHeight: null
+          ShipWidth: null
+          ShipLength: null
+          Inventory: null
+          Specs:
+            - SpecID: cross-product-size
+              Name: Size
+              OptionID: L
+              Value: Large
+              PriceMarkupType: NoMarkup
+              PriceMarkup: null
+            - SpecID: black-and-white
+              Name: Color
+              OptionID: Black
+              Value: black
+              PriceMarkupType: NoMarkup
+              PriceMarkup: null
+          xp: null
+        - ID: t-shirt-L-white
+          Name: null
+          Description: null
+          Active: true
+          ShipWeight: null
+          ShipHeight: null
+          ShipWidth: null
+          ShipLength: null
+          Inventory: null
+          Specs:
+            - SpecID: cross-product-size
+              Name: Size
+              OptionID: L
+              Value: Large
+              PriceMarkupType: NoMarkup
+              PriceMarkup: null
+            - SpecID: black-and-white
+              Name: Color
+              OptionID: white
+              Value: White
+              PriceMarkupType: NoMarkup
+              PriceMarkup: null
+          xp: null
+        - ID: t-shirt-M-Black
+          Name: null
+          Description: null
+          Active: true
+          ShipWeight: null
+          ShipHeight: null
+          ShipWidth: null
+          ShipLength: null
+          Inventory: null
+          Specs:
+            - SpecID: cross-product-size
+              Name: Size
+              OptionID: M
+              Value: Medium
+              PriceMarkupType: NoMarkup
+              PriceMarkup: null
+            - SpecID: black-and-white
+              Name: Color
+              OptionID: Black
+              Value: black
+              PriceMarkupType: NoMarkup
+              PriceMarkup: null
+          xp: null
+        - ID: t-shirt-M-white
+          Name: null
+          Description: null
+          Active: true
+          ShipWeight: null
+          ShipHeight: null
+          ShipWidth: null
+          ShipLength: null
+          Inventory: null
+          Specs:
+            - SpecID: cross-product-size
+              Name: Size
+              OptionID: M
+              Value: Medium
+              PriceMarkupType: NoMarkup
+              PriceMarkup: null
+            - SpecID: black-and-white
+              Name: Color
+              OptionID: white
+              Value: White
+              PriceMarkupType: NoMarkup
+              PriceMarkup: null
+          xp: null
+        - ID: t-shirt-S-Black
+          Name: null
+          Description: null
+          Active: true
+          ShipWeight: null
+          ShipHeight: null
+          ShipWidth: null
+          ShipLength: null
+          Inventory: null
+          Specs:
+            - SpecID: cross-product-size
+              Name: Size
+              OptionID: S
+              Value: Small
+              PriceMarkupType: NoMarkup
+              PriceMarkup: null
+            - SpecID: black-and-white
+              Name: Color
+              OptionID: Black
+              Value: black
+              PriceMarkupType: NoMarkup
+              PriceMarkup: null
+          xp: null
+        - ID: t-shirt-S-white
+          Name: null
+          Description: null
+          Active: true
+          ShipWeight: null
+          ShipHeight: null
+          ShipWidth: null
+          ShipLength: null
+          Inventory: null
+          Specs:
+            - SpecID: cross-product-size
+              Name: Size
+              OptionID: S
+              Value: Small
+              PriceMarkupType: NoMarkup
+              PriceMarkup: null
+            - SpecID: black-and-white
+              Name: Color
+              OptionID: white
+              Value: White
+              PriceMarkupType: NoMarkup
+              PriceMarkup: null
+          xp: null
+        - ID: t-shirt-XL-Black
+          Name: null
+          Description: null
+          Active: true
+          ShipWeight: null
+          ShipHeight: null
+          ShipWidth: null
+          ShipLength: null
+          Inventory: null
+          Specs:
+            - SpecID: cross-product-size
+              Name: Size
+              OptionID: XL
+              Value: Extra Large
+              PriceMarkupType: NoMarkup
+              PriceMarkup: null
+            - SpecID: black-and-white
+              Name: Color
+              OptionID: Black
+              Value: black
+              PriceMarkupType: NoMarkup
+              PriceMarkup: null
+          xp: null
+        - ID: t-shirt-XL-white
+          Name: null
+          Description: null
+          Active: true
+          ShipWeight: null
+          ShipHeight: null
+          ShipWidth: null
+          ShipLength: null
+          Inventory: null
+          Specs:
+            - SpecID: cross-product-size
+              Name: Size
+              OptionID: XL
+              Value: Extra Large
+              PriceMarkupType: NoMarkup
+              PriceMarkup: null
+            - SpecID: black-and-white
+              Name: Color
+              OptionID: white
+              Value: White
+              PriceMarkupType: NoMarkup
+              PriceMarkup: null
+          xp: null
   PriceSchedules:
     - OwnerID: <MarketplaceID placeholder>
       ID: black-hat
@@ -803,7 +2038,7 @@ Objects:
     - OwnerID: <MarketplaceID placeholder>
       ID: black-and-white
       ListOrder: 0
-      Name: Black and White
+      Name: Color
       DefaultValue: null
       Required: true
       AllowOpenText: false
@@ -831,7 +2066,7 @@ Objects:
     - OwnerID: <MarketplaceID placeholder>
       ID: bomber-jacket-color
       ListOrder: 0
-      Name: Bomber Jacket Color
+      Name: Color
       DefaultValue: null
       Required: true
       AllowOpenText: false
@@ -847,7 +2082,7 @@ Objects:
           PriceMarkupType: NoMarkup
           PriceMarkup: null
           xp:
-            hexColor: '#5c6d16'
+            hexColor: '#000000'
         - ID: olive
           Value: Olive
           ListOrder: 0
@@ -859,7 +2094,7 @@ Objects:
     - OwnerID: <MarketplaceID placeholder>
       ID: short-sleeve-t-shirt-color
       ListOrder: 0
-      Name: Short Sleeve T Shirt Color
+      Name: Color
       DefaultValue: null
       Required: true
       AllowOpenText: false
@@ -966,7 +2201,7 @@ Objects:
       PriceMarkupType: NoMarkup
       PriceMarkup: null
       xp:
-        hexColor: '#5c6d16'
+        hexColor: '#000000'
       SpecID: bomber-jacket-color
     - ID: olive
       Value: Olive
@@ -1139,10 +2374,6 @@ Assignments:
     - CatalogID: solitary-storefront
       ProductID: t-shirt
   SpecProductAssignments:
-    - SpecID: black-and-white
-      ProductID: black-hat
-      DefaultValue: null
-      DefaultOptionID: null
     - SpecID: black-and-white
       ProductID: lightweight-jacket
       DefaultValue: null
