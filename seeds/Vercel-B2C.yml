@@ -735,9 +735,9 @@ Objects:
         PriceCurrency: USD
         Images:
           - url: >-
-              https://ocdevops.blob.core.windows.net/vercel-integration-assets/letterman_1.png
+              https://ocdevops.blob.core.windows.net/vercel-integration-assets/letterman_1.jpg
           - url: >-
-              https://ocdevops.blob.core.windows.net/vercel-integration-assets/letterman_2.png
+              https://ocdevops.blob.core.windows.net/vercel-integration-assets/letterman_2.jpg
       Variants:
         - ID: letterman-jacket-L
           Name: null
