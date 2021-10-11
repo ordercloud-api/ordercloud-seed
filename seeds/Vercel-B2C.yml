@@ -173,8 +173,8 @@ Objects:
       ChildCount: 0
       xp: null
       CatalogID: solitary-storefront
-    - ID: Bottoms
-      Name: bottoms
+    - ID: bottoms
+      Name: Bottoms
       Description: null
       ListOrder: 4
       Active: true
