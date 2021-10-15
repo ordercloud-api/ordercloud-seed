@@ -2290,11 +2290,11 @@ Assignments:
   CreditCardAssignments: []
   CategoryAssignments: []
   CategoryProductAssignments:
-    - CategoryID: Bottoms
+    - CategoryID: bottoms
       ProductID: joggers
       ListOrder: null
       CatalogID: solitary-storefront
-    - CategoryID: Bottoms
+    - CategoryID: bottoms
       ProductID: skinny-joggers
       ListOrder: null
       CatalogID: solitary-storefront
