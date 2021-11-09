@@ -440,21 +440,21 @@ Objects:
       BuyerID: axVUG0NjV0ml-0OW1IkWBg
   Catalogs:
     - ID: cloud_coffee
-      OwnerID: SShyjwitRe4ibpum
+      OwnerID: <MarketplaceID placeholder>
       Name: Cloud Coffee
       Description: Default catalog for Cloud Coffee
       Active: true
       CategoryCount: 0
       xp: null
     - ID: axVUG0NjV0ml-0OW1IkWBg
-      OwnerID: SShyjwitRe4ibpum
+      OwnerID: <MarketplaceID placeholder>
       Name: metrocoffeebuyer
       Description: Default catalog for metrocoffeebuyer
       Active: true
       CategoryCount: 0
       xp: null
     - ID: nlc_catalog
-      OwnerID: SShyjwitRe4ibpum
+      OwnerID: <MarketplaceID placeholder>
       Name: Northern Lights Coffee Product Catalog
       Description: Products all supplied by Northern Lights Coffee Roastery
       Active: true
@@ -490,7 +490,7 @@ Objects:
       CatalogID: nlc_catalog
   Suppliers: []
   Products:
-    - OwnerID: SShyjwitRe4ibpum
+    - OwnerID: <MarketplaceID placeholder>
       DefaultPriceScheduleID: bar_towels
       AutoForward: false
       ID: bar_towels
@@ -517,7 +517,7 @@ Objects:
         Brand: Uline
         Size: 10x10in
         contentfulEntryID: JwWbIpqeHI5OgdSXLmrfJ
-    - OwnerID: SShyjwitRe4ibpum
+    - OwnerID: <MarketplaceID placeholder>
       DefaultPriceScheduleID: barista_apron
       AutoForward: false
       ID: barista_apron
@@ -544,7 +544,7 @@ Objects:
         Brand: Uline
         Size: One-Size
         contentfulEntryID: 3NmZoao4rVDUciRoL2alte
-    - OwnerID: SShyjwitRe4ibpum
+    - OwnerID: <MarketplaceID placeholder>
       DefaultPriceScheduleID: coffee_cups
       AutoForward: false
       ID: coffee_cups
@@ -571,7 +571,7 @@ Objects:
         Brand: Uline
         Size: 12oz
         contentfulEntryID: 2UHNqgjAUGD1IcmGwnF0Nr
-    - OwnerID: SShyjwitRe4ibpum
+    - OwnerID: <MarketplaceID placeholder>
       DefaultPriceScheduleID: croissants
       AutoForward: false
       ID: croissants
@@ -596,7 +596,7 @@ Objects:
       DefaultSupplierID: null
       xp:
         Brand: Northern Lights Coffee
-    - OwnerID: SShyjwitRe4ibpum
+    - OwnerID: <MarketplaceID placeholder>
       DefaultPriceScheduleID: null
       AutoForward: false
       ID: espresso_tamper
@@ -621,7 +621,7 @@ Objects:
       DefaultSupplierID: null
       xp:
         Brand: Benicci
-    - OwnerID: SShyjwitRe4ibpum
+    - OwnerID: <MarketplaceID placeholder>
       DefaultPriceScheduleID: ground_coffee_beans
       AutoForward: false
       ID: ground_coffee_beans
@@ -649,7 +649,7 @@ Objects:
       xp:
         Brand: Northern Lights Coffee
         Size: 1lb
-    - OwnerID: SShyjwitRe4ibpum
+    - OwnerID: <MarketplaceID placeholder>
       DefaultPriceScheduleID: null
       AutoForward: false
       ID: 0CYlo_tur06V42DaXd7wwg
@@ -667,7 +667,7 @@ Objects:
       Inventory: null
       DefaultSupplierID: null
       xp: null
-    - OwnerID: SShyjwitRe4ibpum
+    - OwnerID: <MarketplaceID placeholder>
       DefaultPriceScheduleID: vanilla_flavoring_syrup
       AutoForward: false
       ID: vanilla_flavoring_syrup
@@ -693,7 +693,7 @@ Objects:
       xp:
         Brand: Torani
         Size: 750mL
-    - OwnerID: SShyjwitRe4ibpum
+    - OwnerID: <MarketplaceID placeholder>
       DefaultPriceScheduleID: white_chocolate_flavoring
       AutoForward: false
       ID: white_chocolate_flavoring
@@ -719,7 +719,7 @@ Objects:
       xp:
         Brand: Torani
         Size: 750mL
-    - OwnerID: SShyjwitRe4ibpum
+    - OwnerID: <MarketplaceID placeholder>
       DefaultPriceScheduleID: whole_coffee_beans
       AutoForward: false
       ID: whole_coffee_beans

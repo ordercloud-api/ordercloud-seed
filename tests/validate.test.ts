@@ -127,6 +127,7 @@ test('security profile assignment', async () => {
 
 test('owner ID should be marketplace ID or supplierID', async () => {
     var resp = await validateFile("./tests/data/invalid-owner-id.yml");
-    expect(resp.errors.length).toBe(1);
-    expect(resp.errors[0]).toBe("Invalid reference Catalog.OwnerID: could not find Supplier with ID \"wrong\"");
+    expect(resp.errors.length).toBe(2);
+    expect(resp.errors[0]).toBe("Invalid reference Catalogs.OwnerID: no Suppliers found with ID \"wrong\".");
+    expect(resp.errors[1]).toBe("Invalid reference PriceSchedules.OwnerID: no Suppliers found with ID \"so wrong\".");
 });

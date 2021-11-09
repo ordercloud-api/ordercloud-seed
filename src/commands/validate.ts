@@ -8,6 +8,7 @@ import { IDCache } from "../models/id-cache";
 import { defaultLogger, LogCallBackFunc, MessageType } from "../services/logger";
 import axios from "axios";
 import yaml, { YAMLException } from 'js-yaml';
+import { MARKETPLACE_ID } from "../constants";
 
 export interface ValidateResponse {
     errors: string[];
@@ -80,7 +81,10 @@ export async function validate(args: ValidateArgs): Promise<ValidateResponse> {
                 if (_.isNil(value)) {
                     validator.validateIsRequired(propName);
                 } else {
-                    var typeMatches = validator.validateFieldTypeMatches(record[propName], spec);
+                    var typeMatches = validator.validateFieldTypeMatches(value, spec);
+                    if (typeMatches && resource.hasOwnerIDField && propName === 'OwnerID') {
+                        validator.validateOwnerIDIsValid(value)
+                    }
                     if (typeMatches &&!_.isNil(foreignKey)) {    
                         validator.validateForeignKeyExists(foreignKey);
                     }
@@ -129,6 +133,17 @@ export class Validator {
 
     addError(message:string) {
         this.errors.push(message);
+    }
+
+    validateOwnerIDIsValid(fieldValue: string): boolean {
+        if (fieldValue === MARKETPLACE_ID) {
+            return true;
+        }
+        var supplierExists = this.idCache.has(OCResourceEnum.Suppliers, fieldValue);
+        if (!supplierExists) {
+            this.addError(`Invalid reference ${this.currentResource.name}.${this.currentPropertyName}: no ${OCResourceEnum.Suppliers} found with ID \"${fieldValue}\".`);
+        }
+        return supplierExists;
     }
 
     validateIsRequired(fieldName: string): boolean {
