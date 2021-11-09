@@ -1,7 +1,7 @@
 Objects:
   Catalogs:
     - ID: solitary-storefront
-      OwnerID: fake
+      OwnerID: wrong
       Name: 'Solitary Storefront '
       Description: 'Default catalog for Solitary Storefront '
       Active: true
