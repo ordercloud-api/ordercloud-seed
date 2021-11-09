@@ -1,0 +1,8 @@
+Objects:
+  Catalogs:
+    - ID: solitary-storefront
+      OwnerID: fake
+      Name: 'Solitary Storefront '
+      Description: 'Default catalog for Solitary Storefront '
+      Active: true
+      xp: null
