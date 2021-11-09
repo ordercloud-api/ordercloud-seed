@@ -239,7 +239,7 @@ const Directory: OCResource[] = [
         sdkObject: Suppliers,
         createPriority: 2,
         path: "/suppliers",
-        children: [OCResourceEnum.SupplierUsers, OCResourceEnum.SupplierUserGroups, OCResourceEnum.SupplierAddresses, OCResourceEnum.SupplierUserGroupsAssignments]
+        children: [OCResourceEnum.SupplierUsers, OCResourceEnum.SupplierUserGroups, OCResourceEnum.SupplierAddresses, OCResourceEnum.SupplierUserGroupsAssignments, OCResourceEnum.SupplierBuyerAssignment]
     },
     {
         name: OCResourceEnum.SupplierUsers, 
@@ -279,7 +279,8 @@ const Directory: OCResource[] = [
             DefaultPriceScheduleID: { foreignResource: OCResourceEnum.PriceSchedules },
             ShipFromAddressID: { foreignResource: OCResourceEnum.AdminAddresses },
             DefaultSupplierID: { foreignResource: OCResourceEnum.Suppliers }
-        }
+        },
+        children: [OCResourceEnum.ProductSupplierAssignment]
     },
     {
         name: OCResourceEnum.PriceSchedules, 
@@ -625,6 +626,47 @@ const Directory: OCResource[] = [
             },
         },
     },
+    {
+        name: OCResourceEnum.ProductSupplierAssignment, 
+        modelName: "ProductSupplier",
+        sdkObject: Products,
+        createPriority: 5,
+        path: "/products/{productID}/suppliers/{supplierID}",
+        parentRefField: "ProductID",
+        secondRouteParam: "SupplierID",
+        isAssignment: true,
+        isChild: true,
+        listMethodName: 'ListSuppliers',
+        createMethodName: 'SaveSupplier',
+        foreignKeys: {
+            ProductID: { foreignResource: OCResourceEnum.Products },
+            SupplierID: { foreignResource: OCResourceEnum.Suppliers },
+            DefaultPriceScheduleID: { foreignResource: OCResourceEnum.PriceSchedules } 
+        },
+        downloadTransformFunc: (x) => { 
+            return { SupplierID: x.ID, DefaultPriceScheduleID: x.DefaultPriceScheduleID };
+        }
+    },
+    {
+        name: OCResourceEnum.SupplierBuyerAssignment, 
+        modelName: "SupplierBuyer",
+        sdkObject: Suppliers,
+        createPriority: 5,
+        path: "/suppliers/{supplierID}/buyers/{buyerID}",
+        parentRefField: "SupplierID",
+        secondRouteParam: "BuyerID",
+        isChild: true,
+        isAssignment: true,
+        listMethodName: 'ListBuyers',
+        createMethodName: 'SaveBuyer',
+        foreignKeys: {
+            BuyerID: { foreignResource: OCResourceEnum.Buyers },
+            SupplierID: { foreignResource: OCResourceEnum.Suppliers },
+        },
+        downloadTransformFunc: (x) => { 
+            return { BuyerID: x.ID };
+        }
+    },
 ];
 
 function ApplyDefaults(resource: OCResource): OCResource {
@@ -650,7 +692,7 @@ export async function BuildResourceDirectory(includeOpenAPI: boolean = false): P
         if (includeOpenAPI) {
             var path = openAPISpec.data.paths[resource.path];
             var operation = path.post ?? path.put;
-            modified.requiredCreateFields = operation.requestBody.content?.["application/json"]?.schema?.required ?? [];
+            modified.requiredCreateFields = operation?.requestBody?.content?.["application/json"]?.schema?.required ?? [];
             modified.openAPIProperties = openAPISpec.data.components.schemas[resource.modelName].properties;
             if (modified.isChild) {
                 modified.parentResource = Directory.find(x => x.children.includes(modified.name));

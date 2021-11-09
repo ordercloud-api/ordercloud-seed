@@ -8,6 +8,7 @@ export interface OCResource {
     isChild?: boolean;
     parentResource?: OCResource;
     parentRefField?: string; // will be populated if and only if isChild is true
+    secondRouteParam?: string
     sdkObject: any;
     isAssignment?: boolean,
     createPriority: number; // higher numbers need to be created first

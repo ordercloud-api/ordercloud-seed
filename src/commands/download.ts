@@ -105,11 +105,11 @@ export async function download(args: DownloadArgs): Promise<SerializedMarketplac
             let childResource = directory.find(x => x.name === childResourceName);
             for (let parentRecord of records) {
                 var childRecords = await ordercloudBulk.ListAll(childResource, parentRecord.ID); // assume ID exists. Which is does for all parent types.
+                if (childResource.downloadTransformFunc !== undefined) {
+                    childRecords = childRecords.map(childResource.downloadTransformFunc)
+                }
                 for (let childRecord of childRecords) {
                     childRecord[childResource.parentRefField] = parentRecord.ID;
-                }
-                if (childResource.downloadTransformFunc !== undefined) {
-                    childRecords = childRecords.map(resource.downloadTransformFunc)
                 }
                 marketplace.AddRecords(childResource, childRecords);
             }

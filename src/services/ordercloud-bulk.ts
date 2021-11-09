@@ -55,7 +55,9 @@ export default class OrderCloudBulk {
     async CreateAll(resource: OCResource, records: any[]): Promise<any[]> {
         const createFunc = resource.sdkObject[resource.createMethodName] as Function;   
         return await this.Run(resource.name, records, (record) => {
-            if (resource.parentRefField) {          
+            if (resource.secondRouteParam) {
+                return createFunc(record[resource.parentRefField], record[resource.secondRouteParam], record);  
+            } else if (resource.parentRefField) {          
                 return createFunc(record[resource.parentRefField], record);  
             } else {
                 return createFunc(record); 
