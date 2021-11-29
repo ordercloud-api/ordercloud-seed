@@ -1,0 +1,26 @@
+Objects:
+  Buyers:
+    - ID: buyer yum
+      Name: Bakery
+      OwnerID: Actually Ok b/c this field doesn't exist and can be ignored
+  Catalogs:
+    - ID: solitary-storefront
+      OwnerID: wrong
+      Name: 'Solitary Storefront '
+      Description: 'Default catalog for Solitary Storefront '
+      Active: true
+      xp: null
+  PriceSchedules: 
+    - ID: croissants
+      Name: Croissants - Pack of 8
+      OwnerID: so wrong
+      ApplyTax: true
+      ApplyShipping: true
+      MinQuantity: 1
+      MaxQuantity: null
+      UseCumulativeQuantity: false
+      RestrictedQuantity: false
+      PriceBreaks:
+        - Quantity: 1
+          Price: 25.98
+      xp: {}

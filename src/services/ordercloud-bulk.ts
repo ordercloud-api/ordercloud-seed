@@ -30,7 +30,7 @@ export default class OrderCloudBulk {
         console.log("Request method:", chalk.green(error.response.config.method.toUpperCase()));
         console.log("Request url:", chalk.green(error.response.config.url));
         console.log("Request data:", chalk.green(error.response.config.data));
-        console.log("\nResponse status:", error.status);
+        console.log("Response status:", error.status);
         console.log("Response data:", error.errors.Errors[0]);
     }
 
@@ -55,7 +55,9 @@ export default class OrderCloudBulk {
     async CreateAll(resource: OCResource, records: any[]): Promise<any[]> {
         const createFunc = resource.sdkObject[resource.createMethodName] as Function;   
         return await this.Run(resource.name, records, (record) => {
-            if (resource.parentRefField) {          
+            if (resource.secondRouteParam) {
+                return createFunc(record[resource.parentRefField], record[resource.secondRouteParam], record);  
+            } else if (resource.parentRefField) {          
                 return createFunc(record[resource.parentRefField], record);  
             } else {
                 return createFunc(record); 

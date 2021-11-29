@@ -10,6 +10,7 @@ export enum OCResourceEnum {
     ApiClients = "ApiClients",
     Incrementors = "Incrementors",
     IntegrationEvents = "IntegrationEvents",
+    Locales = "Locales",
     Webhooks = "Webhooks",
     XpIndices = "XpIndices", 
     Buyers = "Buyers",
@@ -35,6 +36,7 @@ export enum OCResourceEnum {
     SecurityProfileAssignments = "SecurityProfileAssignments",
     AdminUserGroupAssignments = "AdminUserGroupAssignments",
     ApiClientAssignments = "ApiClientAssignments",
+    LocaleAssignments = "LocaleAssignments",
     UserGroupAssignments = "UserGroupAssignments",
     AddressAssignments = "AddressAssignments",
     CostCenterAssignments = "CostCenterAssignments",
@@ -48,4 +50,6 @@ export enum OCResourceEnum {
     CategoryProductAssignments = "CategoryProductAssignments",
     SpecProductAssignments = "SpecProductAssignments",
     PromotionAssignment = "PromotionAssignment",
+    ProductSupplierAssignment = "ProductSupplierAssignment",
+    SupplierBuyerAssignment = "SupplierBuyerAssignment"
 }

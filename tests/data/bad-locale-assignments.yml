@@ -1,0 +1,36 @@
+Objects:
+  Locales:
+    - ID: locale1
+      Currency: USD
+    - ID: missing-currency
+  Buyers:
+    - ID: buyer1
+      Name: buyer1
+    - ID: buyer2
+      Name: buyer2
+  Users:
+    - BuyerID: buyer1
+      ID: user1
+      Username: sdfdsfds
+      FirstName: Jim
+      LastName: Beam
+      Email: fake@email.com 
+      Active: true
+    - BuyerID: buyer2
+      ID: user2
+      Username: sdfsfsddd
+      FirstName: Jim
+      LastName: Beam
+      Email: fake@email.com 
+      Active: true
+Assignments:
+  LocaleAssignments:
+    - LocaleID: locale1
+    - LocaleID: locale1
+      BuyerID: fake
+    - LocaleID: locale1
+      BuyerID: buyer1
+      UserID: user2
+    - LocaleID: locale1
+      BuyerID: buyer1
+      UserID: user1

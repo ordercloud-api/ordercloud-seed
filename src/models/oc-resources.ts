@@ -8,6 +8,7 @@ export interface OCResource {
     isChild?: boolean;
     parentResource?: OCResource;
     parentRefField?: string; // will be populated if and only if isChild is true
+    secondRouteParam?: string
     sdkObject: any;
     isAssignment?: boolean,
     createPriority: number; // higher numbers need to be created first
@@ -18,7 +19,7 @@ export interface OCResource {
     path: string;
     requiredCreateFields?: string[];
     redactFields?: string[];
-    hasOwnerIDField?: boolean;
+    hasOwnerIDField?: string;
     downloadTransformFunc?: (x: any) => any,
     customValidationFunc?: RecordValidationFunc
 }

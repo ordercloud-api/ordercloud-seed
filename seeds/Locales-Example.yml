@@ -1,0 +1,72 @@
+Objects:
+  Locales:
+    - ID: US
+      Currency: USD
+      Language: ENG
+    - ID: CA
+      Currency: CAD
+      Language: ENG
+  Products: 
+    - ID: productA
+      Name: productA
+  PriceSchedules: 
+    - ID: productA-US
+      Name: productA-US
+      Currency: USD
+      PriceBreaks:
+        - Price: 2
+          Quantity: 1
+    - ID: productA-CA
+      Name: productA-CA
+      Currency: CAD
+      PriceBreaks:
+        - Price: 3
+          Quantity: 1
+  Catalogs: 
+    - ID: US-catalog
+      Name: United States
+    - ID: CA-catalog
+      Name: Canada
+  Buyers:
+    - ID: US
+      Name: United States
+    - ID: CA
+      Name: Canada
+  Users:
+    - BuyerID: US
+      ID: user1
+      Username: user1
+      FirstName: Jim
+      LastName: Beam
+      Email: fake@email.com 
+      Active: true
+    - BuyerID: CA
+      ID: user2
+      Username: user2
+      FirstName: Jim
+      LastName: Beam
+      Email: fake@email.com 
+      Active: true
+Assignments:
+  CatalogAssignments:
+    - BuyerID: US
+      CatalogID: US-catalog
+    - BuyerID: CA
+      CatalogID: CA-catalog
+  ProductCatalogAssignment:
+    - ProductID: productA
+      CatalogID: US-catalog
+    - ProductID: productA
+      CatalogID: CA-catalog
+  LocaleAssignments:
+    - LocaleID: US
+      BuyerID: US
+    - LocaleID: CA
+      BuyerID: CA
+  ProductAssignments:
+    - ProductID: productA
+      BuyerID: US
+      PriceScheduleID: productA-US
+    - ProductID: productA
+      BuyerID: CA
+      PriceScheduleID: productA-CA
