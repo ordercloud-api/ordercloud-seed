@@ -3,7 +3,7 @@
     "info": {
         "title": "OrderCloud",
         "description": "OrderCloud is an awesome C# platform API for making eCommerce applications. It is NOT a complete solution. It's designed to be used as the backend component with various other integrations and services.",
-        "version": "1.0.203",
+        "version": "1.0.221.22657",
         "contact": {
             "name": "OrderCloud",
             "url": "http://ordercloud.io",
@@ -34,7 +34,7 @@
         },
         {
             "name": "Impersonation Configs",
-            "description": "",
+            "description": "ImpersonationConfigs allow users to make API calls on behalf of a buyer user, which we refer to as impersonation.\nIf you're a marketplace owner user with the BuyerImpersonation role you can impersonate any buyer user under your organization as long as an applicable Impersonation Config has been created.\nIf you're a buyer user with the BuyerImpersonation role you can impersonate any other buyer user within the same buyer company as long as an applicable Impersonation Config has been created.",
             "x-section-id": "AuthenticationAndAuthorization"
         },
         {
@@ -69,7 +69,7 @@
         },
         {
             "name": "Message Senders",
-            "description": "",
+            "description": "MessageSenders enable the delivery of event driven notifications to users. Each MessageSender handles a group of predefined MessageTypes, which can be assigned to the parties that should receive those emails.",
             "x-section-id": "Seller"
         },
         {
@@ -85,6 +85,11 @@
         {
             "name": "Integration Events",
             "description": "",
+            "x-section-id": "Seller"
+        },
+        {
+            "name": "Locales",
+            "description": "Locales are used to facilitate multi-currency product pricing and ordering in a marketplace. They can be assigned to Buyers or Buyer UserGroups.Duplicate Currency/Language combinations not permitted.",
             "x-section-id": "Seller"
         },
         {
@@ -149,7 +154,7 @@
         },
         {
             "name": "Suppliers",
-            "description": "Suppliers are the organizations that supply products distributed by Seller oganizations.",
+            "description": "Suppliers can own, supply, and/or distribute products within the marketplace.",
             "x-section-id": "Suppliers"
         },
         {
@@ -184,7 +189,7 @@
         },
         {
             "name": "Products",
-            "description": "A Product represents a physical, digital, or abstract good that is offered for sale by a seller organization and is purchase-able by Buyer Users via an Order. \nProducts can be a static SKU or a version of a static SKU, known as a Variant.  For example, a variant is often a size or color choice that drives a different product SKU.\nProducts may also have inventory associated with them and various inventory attributes like quantity available and re-order notifications.",
+            "description": "A Product represents a physical, digital, or abstract good that is offered for sale by a Marketplace Owner or Supplier and is purchase-able by Buyer Users via an Order.\nProducts can be a static SKU or a version of a static SKU, known as a Variant.  For example, a variant is often a size or color choice that drives a different product SKU.\nProducts may also have inventory associated with them and various inventory attributes like quantity available and re-order notifications.",
             "x-section-id": "ProductCatalogs"
         },
         {
@@ -229,7 +234,7 @@
         },
         {
             "name": "Shipments",
-            "description": "A Shipment is a grouping of one or more Line Items from one or more Orders that is physically packaged and delivered to the Buyer as a single unit. It is typically created by the Seller after the Order is submitted as part of the fulfillment process.",
+            "description": "A Shipment is a grouping of one or more Line Items from one or more Orders that is physically packaged and delivered to the Buyer as a single unit. It is typically created by the Marketplace Owner after the Order is submitted as part of the fulfillment process.",
             "x-section-id": "OrdersAndFulfillment"
         },
         {
@@ -283,6 +288,8 @@
                             "IntegrationEventAdmin": "",
                             "IntegrationEventReader": "",
                             "InventoryAdmin": "",
+                            "LocaleAdmin": "",
+                            "LocaleReader": "",
                             "MeAddressAdmin": "",
                             "MeAdmin": "",
                             "MeCreditCardAdmin": "",
@@ -364,6 +371,8 @@
                             "IntegrationEventAdmin": "",
                             "IntegrationEventReader": "",
                             "InventoryAdmin": "",
+                            "LocaleAdmin": "",
+                            "LocaleReader": "",
                             "MeAddressAdmin": "",
                             "MeAdmin": "",
                             "MeCreditCardAdmin": "",
@@ -626,7 +635,7 @@
                     },
                     "AllowSeller": {
                         "type": "boolean",
-                        "description": "Allow all seller users in your organization access to authenticate using this ApiClient."
+                        "description": "Allow all marketplace owner users in your organization access to authenticate using this ApiClient."
                     },
                     "IsAnonBuyer": {
                         "type": "boolean",
@@ -727,6 +736,8 @@
                     "IncrementorAdmin",
                     "IncrementorReader",
                     "InventoryAdmin",
+                    "LocaleReader",
+                    "LocaleAdmin",
                     "MeAddressAdmin",
                     "MeAdmin",
                     "MeCreditCardAdmin",
@@ -1002,6 +1013,7 @@
                 "type": "object",
                 "example": {
                     "PriceSchedule": {
+                        "OwnerID": "",
                         "ID": "",
                         "Name": "",
                         "ApplyTax": false,
@@ -1016,6 +1028,7 @@
                                 "Price": 0
                             }
                         ],
+                        "Currency": "",
                         "xp": {}
                     },
                     "ID": "",
@@ -1039,6 +1052,7 @@
                         "LastUpdated": "2018-01-01T00:00:00-06:00"
                     },
                     "DefaultSupplierID": "",
+                    "AllSuppliersCanSell": false,
                     "xp": {}
                 },
                 "properties": {
@@ -1102,7 +1116,7 @@
                     },
                     "ShipFromAddressID": {
                         "type": "string",
-                        "description": "Seller or Supplier AddressID where the product will be shipped from. Can be used to calculate shipping costs."
+                        "description": "Marketplace Owner or Supplier AddressID where the product will be shipped from. Can be used to calculate shipping costs."
                     },
                     "Inventory": {
                         "allOf": [
@@ -1115,8 +1129,28 @@
                         "type": "string",
                         "description": "If this property has a value and a SupplierID isn't explicitly passed when creating a LineItem, this SupplierID will be used."
                     },
+                    "AllSuppliersCanSell": {
+                        "type": "boolean",
+                        "description": "If true, all suppliers are eligible to opt into selling this product."
+                    },
                     "xp": {
                         "type": "object"
+                    }
+                }
+            },
+            "BuyerSupplier": {
+                "type": "object",
+                "example": {
+                    "ID": "",
+                    "Name": ""
+                },
+                "properties": {
+                    "ID": {
+                        "type": "string"
+                    },
+                    "Name": {
+                        "type": "string",
+                        "maxLength": 100
                     }
                 }
             },
@@ -1137,8 +1171,7 @@
                     },
                     "OwnerID": {
                         "type": "string",
-                        "readOnly": true,
-                        "description": "ID of the Seller or Supplier org that created, and therefore owns, the Catalog."
+                        "description": "ID of the organization that owns the Catalog. Only the Marketplace Owner can override the OwnerID on create."
                     },
                     "Name": {
                         "type": "string",
@@ -1741,7 +1774,7 @@
                     },
                     "ShipFromAddressID": {
                         "type": "string",
-                        "description": "Seller or Supplier AddressID where the product will be shipped from. Can be used to calculate shipping costs."
+                        "description": "Marketplace Owner or Supplier AddressID where the product will be shipped from. Can be used to calculate shipping costs."
                     },
                     "Product": {
                         "allOf": [
@@ -1972,6 +2005,53 @@
                     "Count": {
                         "type": "integer",
                         "format": "int32"
+                    }
+                }
+            },
+            "Locale": {
+                "type": "object",
+                "example": {
+                    "ID": "",
+                    "OwnerID": "",
+                    "Currency": "",
+                    "Language": ""
+                },
+                "properties": {
+                    "ID": {
+                        "type": "string"
+                    },
+                    "OwnerID": {
+                        "type": "string",
+                        "description": "ID of the organization that owns the Locale. Only the Marketplace Owner can override the OwnerID on create."
+                    },
+                    "Currency": {
+                        "type": "string",
+                        "description": "We recommend using ISO-4217 Currency Codes for compatibility with tax and payment processors.",
+                        "maxLength": 100
+                    },
+                    "Language": {
+                        "type": "string",
+                        "description": "We recommend using ISO-639 Language code - ISO-3166 Country code (e.g. en-US).",
+                        "maxLength": 100
+                    }
+                }
+            },
+            "LocaleAssignment": {
+                "type": "object",
+                "example": {
+                    "LocaleID": "",
+                    "BuyerID": "",
+                    "UserGroupID": ""
+                },
+                "properties": {
+                    "LocaleID": {
+                        "type": "string"
+                    },
+                    "BuyerID": {
+                        "type": "string"
+                    },
+                    "UserGroupID": {
+                        "type": "string"
                     }
                 }
             },
@@ -2257,6 +2337,12 @@
                     "AvailableRoles": [
                         ""
                     ],
+                    "Locale": {
+                        "ID": "",
+                        "OwnerID": "",
+                        "Currency": "",
+                        "Language": ""
+                    },
                     "DateCreated": "2018-01-01T00:00:00-06:00",
                     "PasswordLastSetDate": "2018-01-01T00:00:00-06:00"
                 },
@@ -2331,6 +2417,15 @@
                         },
                         "readOnly": true,
                         "description": "List of Roles currently available to the user via all SecurityProfile Assignments."
+                    },
+                    "Locale": {
+                        "allOf": [
+                            {
+                                "$ref": "#/components/schemas/Locale"
+                            }
+                        ],
+                        "readOnly": true,
+                        "description": "Most specific Locale assigned to the user, if any."
                     },
                     "DateCreated": {
                         "type": "string",
@@ -2435,6 +2530,12 @@
                         "AvailableRoles": [
                             ""
                         ],
+                        "Locale": {
+                            "ID": "",
+                            "OwnerID": "",
+                            "Currency": "",
+                            "Language": ""
+                        },
                         "DateCreated": "2018-01-01T00:00:00-06:00",
                         "PasswordLastSetDate": "2018-01-01T00:00:00-06:00"
                     },
@@ -2473,6 +2574,7 @@
                     "ShippingCost": 0,
                     "TaxCost": 0,
                     "PromotionDiscount": 0,
+                    "Currency": "",
                     "Total": 0,
                     "IsSubmitted": false,
                     "xp": {}
@@ -2492,15 +2594,15 @@
                     },
                     "FromCompanyID": {
                         "type": "string",
-                        "description": "ID of the Buyer or Seller placing the order. Mainly useful to the Seller or Supplier receiving it."
+                        "description": "ID of the Buyer or Marketplace Owner placing the order. Mainly useful to the Marketplace Owner or Supplier receiving it."
                     },
                     "ToCompanyID": {
                         "type": "string",
-                        "description": "ID of the Seller or Supplier receiving the order. Mainly useful to the Buyer or Seller placing it."
+                        "description": "ID of the Marketplace Owner or Supplier receiving the order, only writable on create. Mainly useful to the Buyer or Marketplace Owner placing it."
                     },
                     "FromUserID": {
                         "type": "string",
-                        "description": "This property is only writable when creating an order from the seller perspective on behalf of a buyer user."
+                        "description": "This property is only writable when creating an order from the marketplace owner perspective on behalf of a buyer user."
                     },
                     "BillingAddressID": {
                         "type": "string"
@@ -2539,7 +2641,7 @@
                         "type": "string",
                         "format": "date-time",
                         "readOnly": true,
-                        "description": "NULL until the order passes from the buyer to the seller, including when Status is PendingApproval."
+                        "description": "NULL until the order passes from the buyer to the Marketplace Owner, including when Status is PendingApproval."
                     },
                     "DateApproved": {
                         "type": "string",
@@ -2589,6 +2691,11 @@
                         "readOnly": true,
                         "description": "Sum of all Promotion.Amounts applied to the order."
                     },
+                    "Currency": {
+                        "type": "string",
+                        "readOnly": true,
+                        "description": "Inherited from the user placing the order."
+                    },
                     "Total": {
                         "type": "number",
                         "format": "float",
@@ -2598,7 +2705,7 @@
                     "IsSubmitted": {
                         "type": "boolean",
                         "readOnly": true,
-                        "description": "True if this Order has been passed from the Buyer to the Seller."
+                        "description": "True if this Order has been passed from the Buyer to the Marketplace Owner."
                     },
                     "xp": {
                         "type": "object"
@@ -2628,6 +2735,12 @@
                         "AvailableRoles": [
                             ""
                         ],
+                        "Locale": {
+                            "ID": "",
+                            "OwnerID": "",
+                            "Currency": "",
+                            "Language": ""
+                        },
                         "DateCreated": "2018-01-01T00:00:00-06:00",
                         "PasswordLastSetDate": "2018-01-01T00:00:00-06:00"
                     },
@@ -2763,9 +2876,10 @@
                 "type": "string",
                 "enum": [
                     "Incoming",
-                    "Outgoing"
+                    "Outgoing",
+                    "All"
                 ],
-                "description": "Direction of the order, from the current user's perspective. Possible values: incoming, outgoing."
+                "description": "Direction of the order, from the current user's perspective. Possible values: incoming, outgoing, all."
             },
             "OrderPromotion": {
                 "type": "object",
@@ -2787,6 +2901,7 @@
                     "ValueExpression": "",
                     "CanCombine": false,
                     "AllowAllBuyers": false,
+                    "OwnerID": "",
                     "xp": {}
                 },
                 "properties": {
@@ -2866,6 +2981,10 @@
                         "type": "boolean",
                         "description": "Allow promo to be used by all buyers in your Marketplace without creating explicit assignments."
                     },
+                    "OwnerID": {
+                        "type": "string",
+                        "description": "ID of the organization that owns the Promotion. Only the Marketplace Owner can override the OwnerID on create."
+                    },
                     "xp": {
                         "type": "object"
                     }
@@ -2910,6 +3029,12 @@
                                 "AvailableRoles": [
                                     ""
                                 ],
+                                "Locale": {
+                                    "ID": "",
+                                    "OwnerID": "",
+                                    "Currency": "",
+                                    "Language": ""
+                                },
                                 "DateCreated": "2018-01-01T00:00:00-06:00",
                                 "PasswordLastSetDate": "2018-01-01T00:00:00-06:00"
                             },
@@ -2948,6 +3073,7 @@
                             "ShippingCost": 0,
                             "TaxCost": 0,
                             "PromotionDiscount": 0,
+                            "Currency": "",
                             "Total": 0,
                             "IsSubmitted": false,
                             "xp": {}
@@ -3045,6 +3171,12 @@
                             "AvailableRoles": [
                                 ""
                             ],
+                            "Locale": {
+                                "ID": "",
+                                "OwnerID": "",
+                                "Currency": "",
+                                "Language": ""
+                            },
                             "DateCreated": "2018-01-01T00:00:00-06:00",
                             "PasswordLastSetDate": "2018-01-01T00:00:00-06:00"
                         },
@@ -3083,6 +3215,7 @@
                         "ShippingCost": 0,
                         "TaxCost": 0,
                         "PromotionDiscount": 0,
+                        "Currency": "",
                         "Total": 0,
                         "IsSubmitted": false,
                         "xp": {}
@@ -3426,6 +3559,7 @@
                     "CreditCardID": "",
                     "SpendingAccountID": "",
                     "Description": "",
+                    "Currency": "",
                     "Amount": 0,
                     "Accepted": false,
                     "xp": {},
@@ -3434,6 +3568,7 @@
                             "ID": "",
                             "Type": "",
                             "DateExecuted": "2018-01-01T00:00:00-06:00",
+                            "Currency": "",
                             "Amount": 0,
                             "Succeeded": false,
                             "ResultCode": "",
@@ -3466,6 +3601,11 @@
                         "type": "string",
                         "maxLength": 2000
                     },
+                    "Currency": {
+                        "type": "string",
+                        "readOnly": true,
+                        "description": "Inherited from Order."
+                    },
                     "Amount": {
                         "type": "number",
                         "format": "float",
@@ -3494,6 +3634,7 @@
                     "ID": "",
                     "Type": "",
                     "DateExecuted": "2018-01-01T00:00:00-06:00",
+                    "Currency": "",
                     "Amount": 0,
                     "Succeeded": false,
                     "ResultCode": "",
@@ -3510,6 +3651,11 @@
                     "DateExecuted": {
                         "type": "string",
                         "format": "date-time"
+                    },
+                    "Currency": {
+                        "type": "string",
+                        "description": "Usually the same as Payment Currency, but can be different. A marketplace may capture funds from the buyer user in one currency and process a payout to the seller in another.",
+                        "maxLength": 100
                     },
                     "Amount": {
                         "type": "number",
@@ -3572,6 +3718,7 @@
             "PriceSchedule": {
                 "type": "object",
                 "example": {
+                    "OwnerID": "",
                     "ID": "",
                     "Name": "",
                     "ApplyTax": false,
@@ -3586,9 +3733,14 @@
                             "Price": 0
                         }
                     ],
+                    "Currency": "",
                     "xp": {}
                 },
                 "properties": {
+                    "OwnerID": {
+                        "type": "string",
+                        "description": "ID of the organization that owns the PriceSchedule. Only the Marketplace Owner can override the OwnerID on create."
+                    },
                     "ID": {
                         "type": "string"
                     },
@@ -3630,6 +3782,11 @@
                             "$ref": "#/components/schemas/PriceBreak"
                         }
                     },
+                    "Currency": {
+                        "type": "string",
+                        "description": "We recommend using ISO-4217 Currency Codes for compatibility with tax and payment processors.",
+                        "maxLength": 100
+                    },
                     "xp": {
                         "type": "object"
                     }
@@ -3662,13 +3819,13 @@
                         "LastUpdated": "2018-01-01T00:00:00-06:00"
                     },
                     "DefaultSupplierID": "",
+                    "AllSuppliersCanSell": false,
                     "xp": {}
                 },
                 "properties": {
                     "OwnerID": {
                         "type": "string",
-                        "readOnly": true,
-                        "description": "ID of the Seller or Supplier org that created, and therefore owns, the Product."
+                        "description": "ID of the organization that owns the Product. Only the Marketplace Owner can override the OwnerID on create."
                     },
                     "DefaultPriceScheduleID": {
                         "type": "string",
@@ -3676,7 +3833,7 @@
                     },
                     "AutoForward": {
                         "type": "boolean",
-                        "description": "If true, when this product is ordered by a Buyer, it will automatically be added to a new Order from the Seller to the Default Supplier and submitted. Requires a valid DefaultSupplierID."
+                        "description": "If true, when this product is ordered by a Buyer, it will automatically be added to a new Order from the Marketplace Owner to the Default Supplier and submitted. Requires a valid DefaultSupplierID."
                     },
                     "ID": {
                         "type": "string"
@@ -3730,7 +3887,7 @@
                     },
                     "ShipFromAddressID": {
                         "type": "string",
-                        "description": "Seller or Supplier AddressID where the product will be shipped from. Can be used to calculate shipping costs."
+                        "description": "Marketplace Owner or Supplier AddressID where the product will be shipped from. Can be used to calculate shipping costs."
                     },
                     "Inventory": {
                         "allOf": [
@@ -3743,6 +3900,10 @@
                         "type": "string",
                         "description": "If this property has a value and a SupplierID isn't explicitly passed when creating a LineItem, this SupplierID will be used."
                     },
+                    "AllSuppliersCanSell": {
+                        "type": "boolean",
+                        "description": "If true, all suppliers are eligible to opt into selling this product."
+                    },
                     "xp": {
                         "type": "object"
                     }
@@ -3751,12 +3912,16 @@
             "ProductAssignment": {
                 "type": "object",
                 "example": {
+                    "SellerID": "",
                     "ProductID": "",
                     "BuyerID": "",
                     "UserGroupID": "",
                     "PriceScheduleID": ""
                 },
                 "properties": {
+                    "SellerID": {
+                        "type": "string"
+                    },
                     "ProductID": {
                         "type": "string"
                     },
@@ -3824,6 +3989,46 @@
                     }
                 }
             },
+            "ProductSupplier": {
+                "type": "object",
+                "example": {
+                    "DefaultPriceScheduleID": "",
+                    "ID": "",
+                    "Name": "",
+                    "Active": false,
+                    "DateCreated": "2018-01-01T00:00:00-06:00",
+                    "AllBuyersCanOrder": false,
+                    "xp": {}
+                },
+                "properties": {
+                    "DefaultPriceScheduleID": {
+                        "type": "string"
+                    },
+                    "ID": {
+                        "type": "string"
+                    },
+                    "Name": {
+                        "type": "string",
+                        "maxLength": 100
+                    },
+                    "Active": {
+                        "type": "boolean",
+                        "description": "If false, all authentication is prohibited."
+                    },
+                    "DateCreated": {
+                        "type": "string",
+                        "format": "date-time",
+                        "readOnly": true
+                    },
+                    "AllBuyersCanOrder": {
+                        "type": "boolean",
+                        "description": "If false, buyers will only be able to set ToCompanyID on an order to the Marketplace Owner, or suppliers they have an explicit relationship to."
+                    },
+                    "xp": {
+                        "type": "object"
+                    }
+                }
+            },
             "Promotion": {
                 "type": "object",
                 "example": {
@@ -3842,6 +4047,7 @@
                     "ValueExpression": "",
                     "CanCombine": false,
                     "AllowAllBuyers": false,
+                    "OwnerID": "",
                     "xp": {}
                 },
                 "properties": {
@@ -3911,6 +4117,10 @@
                     "AllowAllBuyers": {
                         "type": "boolean",
                         "description": "Allow promo to be used by all buyers in your Marketplace without creating explicit assignments."
+                    },
+                    "OwnerID": {
+                        "type": "string",
+                        "description": "ID of the organization that owns the Promotion. Only the Marketplace Owner can override the OwnerID on create."
                     },
                     "xp": {
                         "type": "object"
@@ -4197,6 +4407,7 @@
                     "DateDelivered": "2018-01-01T00:00:00-06:00",
                     "TrackingNumber": "",
                     "Cost": 0,
+                    "OwnerID": "",
                     "xp": {},
                     "Account": "",
                     "FromAddressID": "",
@@ -4263,6 +4474,10 @@
                         "format": "float",
                         "description": "For reference only, does not influence any OrderCloud behavior."
                     },
+                    "OwnerID": {
+                        "type": "string",
+                        "description": "ID of the organization that owns the Shipment. Only the Marketplace Owner can override the OwnerID on create."
+                    },
                     "xp": {
                         "type": "object"
                     },
@@ -4271,7 +4486,7 @@
                     },
                     "FromAddressID": {
                         "type": "string",
-                        "description": "Seller or Supplier AddressID where the product will be shipped from."
+                        "description": "Marketplace Owner or Supplier AddressID where the product will be shipped from."
                     },
                     "ToAddressID": {
                         "type": "string"
@@ -4438,6 +4653,7 @@
             "Spec": {
                 "type": "object",
                 "example": {
+                    "OwnerID": "",
                     "ID": "",
                     "ListOrder": 1,
                     "Name": "",
@@ -4461,6 +4677,10 @@
                     ]
                 },
                 "properties": {
+                    "OwnerID": {
+                        "type": "string",
+                        "description": "ID of the organization that owns the Spec. Only the Marketplace Owner can override the OwnerID on create."
+                    },
                     "ID": {
                         "type": "string"
                     },
@@ -4649,6 +4869,7 @@
                     "Name": "",
                     "Active": false,
                     "DateCreated": "2018-01-01T00:00:00-06:00",
+                    "AllBuyersCanOrder": false,
                     "xp": {}
                 },
                 "properties": {
@@ -4668,8 +4889,28 @@
                         "format": "date-time",
                         "readOnly": true
                     },
+                    "AllBuyersCanOrder": {
+                        "type": "boolean",
+                        "description": "If false, buyers will only be able to set ToCompanyID on an order to the Marketplace Owner, or suppliers they have an explicit relationship to."
+                    },
                     "xp": {
                         "type": "object"
+                    }
+                }
+            },
+            "SupplierBuyer": {
+                "type": "object",
+                "example": {
+                    "ID": "",
+                    "Name": ""
+                },
+                "properties": {
+                    "ID": {
+                        "type": "string"
+                    },
+                    "Name": {
+                        "type": "string",
+                        "maxLength": 100
                     }
                 }
             },
@@ -4701,6 +4942,12 @@
                     "AvailableRoles": [
                         ""
                     ],
+                    "Locale": {
+                        "ID": "",
+                        "OwnerID": "",
+                        "Currency": "",
+                        "Language": ""
+                    },
                     "DateCreated": "2018-01-01T00:00:00-06:00",
                     "PasswordLastSetDate": "2018-01-01T00:00:00-06:00"
                 },
@@ -4751,6 +4998,15 @@
                         },
                         "readOnly": true,
                         "description": "List of Roles currently available to the user via all SecurityProfile Assignments."
+                    },
+                    "Locale": {
+                        "allOf": [
+                            {
+                                "$ref": "#/components/schemas/Locale"
+                            }
+                        ],
+                        "readOnly": true,
+                        "description": "Most specific Locale assigned to the user, if any."
                     },
                     "DateCreated": {
                         "type": "string",
@@ -5087,7 +5343,7 @@
             "get": {
                 "responses": {
                     "200": {
-                        "description": "",
+                        "description": "Returns a JSON Web Key (JWK). Can be used for validating the token was signed by OrderCloud.",
                         "content": {
                             "application/json": {
                                 "schema": {
@@ -5113,7 +5369,7 @@
                     }
                 ],
                 "summary": "Get a single cert public key.",
-                "description": "",
+                "description": "Returns a JSON Web Key (JWK). Can be used for validating the token was signed by OrderCloud.",
                 "security": [
                     {
                         "OAuth2": []
@@ -5227,7 +5483,7 @@
                     {
                         "name": "page",
                         "in": "query",
-                        "description": "Page of results to return. Default: 1",
+                        "description": "Page of results to return. Default: 1. When paginating through many items (> page 30), we recommend the \"Last ID\" method, as outlined in the Advanced Querying documentation.",
                         "required": false,
                         "schema": {
                             "type": "integer"
@@ -5593,7 +5849,7 @@
                     {
                         "name": "page",
                         "in": "query",
-                        "description": "Page of results to return. Default: 1",
+                        "description": "Page of results to return. Default: 1. When paginating through many items (> page 30), we recommend the \"Last ID\" method, as outlined in the Advanced Querying documentation.",
                         "required": false,
                         "schema": {
                             "type": "integer"
@@ -5949,7 +6205,7 @@
                     {
                         "name": "page",
                         "in": "query",
-                        "description": "Page of results to return. Default: 1",
+                        "description": "Page of results to return. Default: 1. When paginating through many items (> page 30), we recommend the \"Last ID\" method, as outlined in the Advanced Querying documentation.",
                         "required": false,
                         "schema": {
                             "type": "integer"
@@ -6280,7 +6536,7 @@
                     {
                         "name": "page",
                         "in": "query",
-                        "description": "Page of results to return. Default: 1",
+                        "description": "Page of results to return. Default: 1. When paginating through many items (> page 30), we recommend the \"Last ID\" method, as outlined in the Advanced Querying documentation.",
                         "required": false,
                         "schema": {
                             "type": "integer"
@@ -6423,7 +6679,7 @@
                     {
                         "name": "page",
                         "in": "query",
-                        "description": "Page of results to return. Default: 1",
+                        "description": "Page of results to return. Default: 1. When paginating through many items (> page 30), we recommend the \"Last ID\" method, as outlined in the Advanced Querying documentation.",
                         "required": false,
                         "schema": {
                             "type": "integer"
@@ -6807,7 +7063,7 @@
                     {
                         "name": "page",
                         "in": "query",
-                        "description": "Page of results to return. Default: 1",
+                        "description": "Page of results to return. Default: 1. When paginating through many items (> page 30), we recommend the \"Last ID\" method, as outlined in the Advanced Querying documentation.",
                         "required": false,
                         "schema": {
                             "type": "integer"
@@ -7288,7 +7544,7 @@
                     {
                         "name": "page",
                         "in": "query",
-                        "description": "Page of results to return. Default: 1",
+                        "description": "Page of results to return. Default: 1. When paginating through many items (> page 30), we recommend the \"Last ID\" method, as outlined in the Advanced Querying documentation.",
                         "required": false,
                         "schema": {
                             "type": "integer"
@@ -7501,7 +7757,7 @@
                     {
                         "name": "page",
                         "in": "query",
-                        "description": "Page of results to return. Default: 1",
+                        "description": "Page of results to return. Default: 1. When paginating through many items (> page 30), we recommend the \"Last ID\" method, as outlined in the Advanced Querying documentation.",
                         "required": false,
                         "schema": {
                             "type": "integer"
@@ -7905,7 +8161,7 @@
                     {
                         "name": "page",
                         "in": "query",
-                        "description": "Page of results to return. Default: 1",
+                        "description": "Page of results to return. Default: 1. When paginating through many items (> page 30), we recommend the \"Last ID\" method, as outlined in the Advanced Querying documentation.",
                         "required": false,
                         "schema": {
                             "type": "integer"
@@ -8360,7 +8616,7 @@
                     {
                         "name": "page",
                         "in": "query",
-                        "description": "Page of results to return. Default: 1",
+                        "description": "Page of results to return. Default: 1. When paginating through many items (> page 30), we recommend the \"Last ID\" method, as outlined in the Advanced Querying documentation.",
                         "required": false,
                         "schema": {
                             "type": "integer"
@@ -8532,7 +8788,7 @@
                     {
                         "name": "page",
                         "in": "query",
-                        "description": "Page of results to return. Default: 1",
+                        "description": "Page of results to return. Default: 1. When paginating through many items (> page 30), we recommend the \"Last ID\" method, as outlined in the Advanced Querying documentation.",
                         "required": false,
                         "schema": {
                             "type": "integer"
@@ -8981,7 +9237,7 @@
                     {
                         "name": "page",
                         "in": "query",
-                        "description": "Page of results to return. Default: 1",
+                        "description": "Page of results to return. Default: 1. When paginating through many items (> page 30), we recommend the \"Last ID\" method, as outlined in the Advanced Querying documentation.",
                         "required": false,
                         "schema": {
                             "type": "integer"
@@ -9146,7 +9402,7 @@
                     {
                         "name": "page",
                         "in": "query",
-                        "description": "Page of results to return. Default: 1",
+                        "description": "Page of results to return. Default: 1. When paginating through many items (> page 30), we recommend the \"Last ID\" method, as outlined in the Advanced Querying documentation.",
                         "required": false,
                         "schema": {
                             "type": "integer"
@@ -9603,7 +9859,7 @@
                     {
                         "name": "page",
                         "in": "query",
-                        "description": "Page of results to return. Default: 1",
+                        "description": "Page of results to return. Default: 1. When paginating through many items (> page 30), we recommend the \"Last ID\" method, as outlined in the Advanced Querying documentation.",
                         "required": false,
                         "schema": {
                             "type": "integer"
@@ -9768,7 +10024,7 @@
                     {
                         "name": "page",
                         "in": "query",
-                        "description": "Page of results to return. Default: 1",
+                        "description": "Page of results to return. Default: 1. When paginating through many items (> page 30), we recommend the \"Last ID\" method, as outlined in the Advanced Querying documentation.",
                         "required": false,
                         "schema": {
                             "type": "integer"
@@ -10196,7 +10452,7 @@
                     {
                         "name": "page",
                         "in": "query",
-                        "description": "Page of results to return. Default: 1",
+                        "description": "Page of results to return. Default: 1. When paginating through many items (> page 30), we recommend the \"Last ID\" method, as outlined in the Advanced Querying documentation.",
                         "required": false,
                         "schema": {
                             "type": "integer"
@@ -10379,7 +10635,7 @@
                     {
                         "name": "page",
                         "in": "query",
-                        "description": "Page of results to return. Default: 1",
+                        "description": "Page of results to return. Default: 1. When paginating through many items (> page 30), we recommend the \"Last ID\" method, as outlined in the Advanced Querying documentation.",
                         "required": false,
                         "schema": {
                             "type": "integer"
@@ -10919,7 +11175,7 @@
                     {
                         "name": "page",
                         "in": "query",
-                        "description": "Page of results to return. Default: 1",
+                        "description": "Page of results to return. Default: 1. When paginating through many items (> page 30), we recommend the \"Last ID\" method, as outlined in the Advanced Querying documentation.",
                         "required": false,
                         "schema": {
                             "type": "integer"
@@ -11326,7 +11582,7 @@
                     {
                         "name": "page",
                         "in": "query",
-                        "description": "Page of results to return. Default: 1",
+                        "description": "Page of results to return. Default: 1. When paginating through many items (> page 30), we recommend the \"Last ID\" method, as outlined in the Advanced Querying documentation.",
                         "required": false,
                         "schema": {
                             "type": "integer"
@@ -11851,7 +12107,7 @@
                     {
                         "name": "page",
                         "in": "query",
-                        "description": "Page of results to return. Default: 1",
+                        "description": "Page of results to return. Default: 1. When paginating through many items (> page 30), we recommend the \"Last ID\" method, as outlined in the Advanced Querying documentation.",
                         "required": false,
                         "schema": {
                             "type": "integer"
@@ -11991,7 +12247,7 @@
                     {
                         "name": "page",
                         "in": "query",
-                        "description": "Page of results to return. Default: 1",
+                        "description": "Page of results to return. Default: 1. When paginating through many items (> page 30), we recommend the \"Last ID\" method, as outlined in the Advanced Querying documentation.",
                         "required": false,
                         "schema": {
                             "type": "integer"
@@ -12165,7 +12421,7 @@
                     {
                         "name": "page",
                         "in": "query",
-                        "description": "Page of results to return. Default: 1",
+                        "description": "Page of results to return. Default: 1. When paginating through many items (> page 30), we recommend the \"Last ID\" method, as outlined in the Advanced Querying documentation.",
                         "required": false,
                         "schema": {
                             "type": "integer"
@@ -12285,7 +12541,7 @@
                     {
                         "name": "page",
                         "in": "query",
-                        "description": "Page of results to return. Default: 1",
+                        "description": "Page of results to return. Default: 1. When paginating through many items (> page 30), we recommend the \"Last ID\" method, as outlined in the Advanced Querying documentation.",
                         "required": false,
                         "schema": {
                             "type": "integer"
@@ -12451,7 +12707,7 @@
                     {
                         "name": "page",
                         "in": "query",
-                        "description": "Page of results to return. Default: 1",
+                        "description": "Page of results to return. Default: 1. When paginating through many items (> page 30), we recommend the \"Last ID\" method, as outlined in the Advanced Querying documentation.",
                         "required": false,
                         "schema": {
                             "type": "integer"
@@ -12798,7 +13054,7 @@
                     {
                         "name": "page",
                         "in": "query",
-                        "description": "Page of results to return. Default: 1",
+                        "description": "Page of results to return. Default: 1. When paginating through many items (> page 30), we recommend the \"Last ID\" method, as outlined in the Advanced Querying documentation.",
                         "required": false,
                         "schema": {
                             "type": "integer"
@@ -13148,7 +13404,7 @@
                     {
                         "name": "page",
                         "in": "query",
-                        "description": "Page of results to return. Default: 1",
+                        "description": "Page of results to return. Default: 1. When paginating through many items (> page 30), we recommend the \"Last ID\" method, as outlined in the Advanced Querying documentation.",
                         "required": false,
                         "schema": {
                             "type": "integer"
@@ -13421,6 +13677,558 @@
                 ]
             }
         },
+        "/locales": {
+            "get": {
+                "responses": {
+                    "200": {
+                        "description": "",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "properties": {
+                                        "Items": {
+                                            "type": "array",
+                                            "items": {
+                                                "$ref": "#/components/schemas/Locale"
+                                            }
+                                        },
+                                        "Meta": {
+                                            "$ref": "#/components/schemas/Meta"
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                },
+                "operationId": "Locales.List",
+                "tags": [
+                    "Locales"
+                ],
+                "parameters": [
+                    {
+                        "name": "search",
+                        "in": "query",
+                        "description": "Word or phrase to search for.",
+                        "required": false,
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "name": "searchOn",
+                        "in": "query",
+                        "description": "Comma-delimited list of fields to search on.",
+                        "required": false,
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "type": "string",
+                                "enum": [
+                                    "ID",
+                                    "Currency"
+                                ]
+                            }
+                        }
+                    },
+                    {
+                        "name": "sortBy",
+                        "in": "query",
+                        "description": "Comma-delimited list of fields to sort by.",
+                        "required": false,
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "type": "string",
+                                "enum": [
+                                    "ID",
+                                    "!ID"
+                                ]
+                            }
+                        }
+                    },
+                    {
+                        "name": "page",
+                        "in": "query",
+                        "description": "Page of results to return. Default: 1. When paginating through many items (> page 30), we recommend the \"Last ID\" method, as outlined in the Advanced Querying documentation.",
+                        "required": false,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    },
+                    {
+                        "name": "pageSize",
+                        "in": "query",
+                        "description": "Number of results to return per page. Default: 20, max: 100.",
+                        "required": false,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    },
+                    {
+                        "name": "filters",
+                        "in": "query",
+                        "description": "Any additional key/value pairs passed in the query string are interpretted as filters. Valid keys are top-level properties of the returned model or 'xp.???'",
+                        "required": false,
+                        "schema": {
+                            "type": "object"
+                        }
+                    }
+                ],
+                "summary": "Get a list of locales.",
+                "description": "",
+                "security": [
+                    {
+                        "OAuth2": [
+                            "FullAccess",
+                            "LocaleAdmin",
+                            "LocaleReader"
+                        ]
+                    }
+                ]
+            },
+            "post": {
+                "responses": {
+                    "201": {
+                        "description": "If ID is provided and an object with that ID already exists, a 409 (conflict) error is returned.",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/Locale"
+                                }
+                            }
+                        }
+                    }
+                },
+                "operationId": "Locales.Create",
+                "tags": [
+                    "Locales"
+                ],
+                "requestBody": {
+                    "required": true,
+                    "description": "",
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "allOf": [
+                                    {
+                                        "$ref": "#/components/schemas/Locale"
+                                    }
+                                ],
+                                "required": [
+                                    "Currency"
+                                ]
+                            }
+                        }
+                    }
+                },
+                "summary": "Create a new locale.",
+                "description": "If ID is provided and an object with that ID already exists, a 409 (conflict) error is returned.",
+                "security": [
+                    {
+                        "OAuth2": [
+                            "FullAccess",
+                            "LocaleAdmin"
+                        ]
+                    }
+                ]
+            }
+        },
+        "/locales/{localeID}": {
+            "get": {
+                "responses": {
+                    "200": {
+                        "description": "",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/Locale"
+                                }
+                            }
+                        }
+                    }
+                },
+                "operationId": "Locales.Get",
+                "tags": [
+                    "Locales"
+                ],
+                "parameters": [
+                    {
+                        "name": "localeID",
+                        "in": "path",
+                        "description": "ID of the locale.",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "summary": "Get a single locale.",
+                "description": "",
+                "security": [
+                    {
+                        "OAuth2": [
+                            "FullAccess",
+                            "LocaleAdmin",
+                            "LocaleReader"
+                        ]
+                    }
+                ]
+            },
+            "put": {
+                "responses": {
+                    "200": {
+                        "description": "If an object with the same ID already exists, it will be overwritten.",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/Locale"
+                                }
+                            }
+                        }
+                    }
+                },
+                "operationId": "Locales.Save",
+                "tags": [
+                    "Locales"
+                ],
+                "requestBody": {
+                    "required": true,
+                    "description": "",
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "allOf": [
+                                    {
+                                        "$ref": "#/components/schemas/Locale"
+                                    }
+                                ],
+                                "required": [
+                                    "Currency"
+                                ]
+                            }
+                        }
+                    }
+                },
+                "parameters": [
+                    {
+                        "name": "localeID",
+                        "in": "path",
+                        "description": "ID of the locale.",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "summary": "Create or update a locale.",
+                "description": "If an object with the same ID already exists, it will be overwritten.",
+                "security": [
+                    {
+                        "OAuth2": [
+                            "FullAccess",
+                            "LocaleAdmin"
+                        ]
+                    }
+                ]
+            },
+            "delete": {
+                "responses": {
+                    "204": {
+                        "description": ""
+                    }
+                },
+                "operationId": "Locales.Delete",
+                "tags": [
+                    "Locales"
+                ],
+                "parameters": [
+                    {
+                        "name": "localeID",
+                        "in": "path",
+                        "description": "ID of the locale.",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "summary": "Delete a locale.",
+                "description": "",
+                "security": [
+                    {
+                        "OAuth2": [
+                            "FullAccess",
+                            "LocaleAdmin"
+                        ]
+                    }
+                ]
+            },
+            "patch": {
+                "responses": {
+                    "200": {
+                        "description": "",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/Locale"
+                                }
+                            }
+                        }
+                    }
+                },
+                "operationId": "Locales.Patch",
+                "tags": [
+                    "Locales"
+                ],
+                "requestBody": {
+                    "required": true,
+                    "description": "",
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "allOf": [
+                                    {
+                                        "$ref": "#/components/schemas/Locale"
+                                    }
+                                ]
+                            }
+                        }
+                    }
+                },
+                "parameters": [
+                    {
+                        "name": "localeID",
+                        "in": "path",
+                        "description": "ID of the locale.",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "summary": "Partially update a locale.",
+                "description": "",
+                "security": [
+                    {
+                        "OAuth2": [
+                            "FullAccess",
+                            "LocaleAdmin"
+                        ]
+                    }
+                ]
+            }
+        },
+        "/locales/{localeID}/assignments": {
+            "delete": {
+                "responses": {
+                    "204": {
+                        "description": ""
+                    }
+                },
+                "operationId": "Locales.DeleteAssignment",
+                "tags": [
+                    "Locales"
+                ],
+                "parameters": [
+                    {
+                        "name": "localeID",
+                        "in": "path",
+                        "description": "ID of the locale.",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "name": "buyerID",
+                        "in": "query",
+                        "description": "ID of the buyer.",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "name": "userID",
+                        "in": "query",
+                        "description": "ID of the user.",
+                        "required": false,
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "name": "userGroupID",
+                        "in": "query",
+                        "description": "ID of the user group.",
+                        "required": false,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "summary": "Delete a locale assignment.",
+                "description": "",
+                "security": [
+                    {
+                        "OAuth2": [
+                            "FullAccess",
+                            "LocaleAdmin",
+                            "PromotionAdmin"
+                        ]
+                    }
+                ]
+            }
+        },
+        "/locales/assignments": {
+            "get": {
+                "responses": {
+                    "200": {
+                        "description": "",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "properties": {
+                                        "Items": {
+                                            "type": "array",
+                                            "items": {
+                                                "$ref": "#/components/schemas/LocaleAssignment"
+                                            }
+                                        },
+                                        "Meta": {
+                                            "$ref": "#/components/schemas/Meta"
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                },
+                "operationId": "Locales.ListAssignments",
+                "tags": [
+                    "Locales"
+                ],
+                "parameters": [
+                    {
+                        "name": "buyerID",
+                        "in": "query",
+                        "description": "ID of the buyer.",
+                        "required": false,
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "name": "localeID",
+                        "in": "query",
+                        "description": "ID of the locale.",
+                        "required": false,
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "name": "userID",
+                        "in": "query",
+                        "description": "ID of the user.",
+                        "required": false,
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "name": "userGroupID",
+                        "in": "query",
+                        "description": "ID of the user group.",
+                        "required": false,
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "name": "level",
+                        "in": "query",
+                        "description": "Level of the locale assignment. Possible values: User, Group, Company.",
+                        "required": false,
+                        "schema": {
+                            "$ref": "#/components/schemas/PartyType"
+                        }
+                    },
+                    {
+                        "name": "page",
+                        "in": "query",
+                        "description": "Page of results to return. Default: 1. When paginating through many items (> page 30), we recommend the \"Last ID\" method, as outlined in the Advanced Querying documentation.",
+                        "required": false,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    },
+                    {
+                        "name": "pageSize",
+                        "in": "query",
+                        "description": "Number of results to return per page. Default: 20, max: 100.",
+                        "required": false,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "summary": "Get a list of locale assignments.",
+                "description": "",
+                "security": [
+                    {
+                        "OAuth2": [
+                            "FullAccess",
+                            "LocaleAdmin",
+                            "LocaleReader"
+                        ]
+                    }
+                ]
+            },
+            "post": {
+                "responses": {
+                    "204": {
+                        "description": "Do not assign a user multiple groups with different assigned locales. That is considered a misconfiguration, and will yield unexpected results."
+                    }
+                },
+                "operationId": "Locales.SaveAssignment",
+                "tags": [
+                    "Locales"
+                ],
+                "requestBody": {
+                    "required": true,
+                    "description": "",
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "allOf": [
+                                    {
+                                        "$ref": "#/components/schemas/LocaleAssignment"
+                                    }
+                                ],
+                                "required": [
+                                    "LocaleID",
+                                    "BuyerID"
+                                ]
+                            }
+                        }
+                    }
+                },
+                "summary": "Create or update a locale assignment.",
+                "description": "Do not assign a user multiple groups with different assigned locales. That is considered a misconfiguration, and will yield unexpected results.",
+                "security": [
+                    {
+                        "OAuth2": [
+                            "FullAccess",
+                            "LocaleAdmin"
+                        ]
+                    }
+                ]
+            }
+        },
         "/me": {
             "get": {
                 "responses": {
@@ -13647,7 +14455,7 @@
                     {
                         "name": "page",
                         "in": "query",
-                        "description": "Page of results to return. Default: 1",
+                        "description": "Page of results to return. Default: 1. When paginating through many items (> page 30), we recommend the \"Last ID\" method, as outlined in the Advanced Querying documentation.",
                         "required": false,
                         "schema": {
                             "type": "integer"
@@ -13996,7 +14804,7 @@
                     {
                         "name": "page",
                         "in": "query",
-                        "description": "Page of results to return. Default: 1",
+                        "description": "Page of results to return. Default: 1. When paginating through many items (> page 30), we recommend the \"Last ID\" method, as outlined in the Advanced Querying documentation.",
                         "required": false,
                         "schema": {
                             "type": "integer"
@@ -14018,6 +14826,15 @@
                         "required": false,
                         "schema": {
                             "type": "object"
+                        }
+                    },
+                    {
+                        "name": "sellerID",
+                        "in": "query",
+                        "description": "ID of the seller.",
+                        "required": false,
+                        "schema": {
+                            "type": "string"
                         }
                     }
                 ],
@@ -14116,7 +14933,7 @@
                     {
                         "name": "catalogID",
                         "in": "query",
-                        "description": "ID of the catalog.",
+                        "description": "The user’s default CatalogID will be used to return categories if you do not pass another CatalogID explicitly. Listing categories across multiple catalogs is not supported.",
                         "required": false,
                         "schema": {
                             "type": "string"
@@ -14178,7 +14995,7 @@
                     {
                         "name": "page",
                         "in": "query",
-                        "description": "Page of results to return. Default: 1",
+                        "description": "Page of results to return. Default: 1. When paginating through many items (> page 30), we recommend the \"Last ID\" method, as outlined in the Advanced Querying documentation.",
                         "required": false,
                         "schema": {
                             "type": "integer"
@@ -14342,7 +15159,7 @@
                     {
                         "name": "page",
                         "in": "query",
-                        "description": "Page of results to return. Default: 1",
+                        "description": "Page of results to return. Default: 1. When paginating through many items (> page 30), we recommend the \"Last ID\" method, as outlined in the Advanced Querying documentation.",
                         "required": false,
                         "schema": {
                             "type": "integer"
@@ -14463,7 +15280,7 @@
                     {
                         "name": "page",
                         "in": "query",
-                        "description": "Page of results to return. Default: 1",
+                        "description": "Page of results to return. Default: 1. When paginating through many items (> page 30), we recommend the \"Last ID\" method, as outlined in the Advanced Querying documentation.",
                         "required": false,
                         "schema": {
                             "type": "integer"
@@ -14847,7 +15664,7 @@
                     {
                         "name": "page",
                         "in": "query",
-                        "description": "Page of results to return. Default: 1",
+                        "description": "Page of results to return. Default: 1. When paginating through many items (> page 30), we recommend the \"Last ID\" method, as outlined in the Advanced Querying documentation.",
                         "required": false,
                         "schema": {
                             "type": "integer"
@@ -15044,7 +15861,7 @@
                     {
                         "name": "page",
                         "in": "query",
-                        "description": "Page of results to return. Default: 1",
+                        "description": "Page of results to return. Default: 1. When paginating through many items (> page 30), we recommend the \"Last ID\" method, as outlined in the Advanced Querying documentation.",
                         "required": false,
                         "schema": {
                             "type": "integer"
@@ -15237,7 +16054,7 @@
                     {
                         "name": "page",
                         "in": "query",
-                        "description": "Page of results to return. Default: 1",
+                        "description": "Page of results to return. Default: 1. When paginating through many items (> page 30), we recommend the \"Last ID\" method, as outlined in the Advanced Querying documentation.",
                         "required": false,
                         "schema": {
                             "type": "integer"
@@ -15259,6 +16076,15 @@
                         "required": false,
                         "schema": {
                             "type": "object"
+                        }
+                    },
+                    {
+                        "name": "sellerID",
+                        "in": "query",
+                        "description": "ID of the seller.",
+                        "required": false,
+                        "schema": {
+                            "type": "string"
                         }
                     }
                 ],
@@ -15298,6 +16124,15 @@
                         "in": "path",
                         "description": "ID of the product.",
                         "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "name": "sellerID",
+                        "in": "query",
+                        "description": "ID of the seller.",
+                        "required": false,
                         "schema": {
                             "type": "string"
                         }
@@ -15412,7 +16247,7 @@
                     {
                         "name": "page",
                         "in": "query",
-                        "description": "Page of results to return. Default: 1",
+                        "description": "Page of results to return. Default: 1. When paginating through many items (> page 30), we recommend the \"Last ID\" method, as outlined in the Advanced Querying documentation.",
                         "required": false,
                         "schema": {
                             "type": "integer"
@@ -15596,7 +16431,7 @@
                     {
                         "name": "page",
                         "in": "query",
-                        "description": "Page of results to return. Default: 1",
+                        "description": "Page of results to return. Default: 1. When paginating through many items (> page 30), we recommend the \"Last ID\" method, as outlined in the Advanced Querying documentation.",
                         "required": false,
                         "schema": {
                             "type": "integer"
@@ -15776,7 +16611,7 @@
                     {
                         "name": "page",
                         "in": "query",
-                        "description": "Page of results to return. Default: 1",
+                        "description": "Page of results to return. Default: 1. When paginating through many items (> page 30), we recommend the \"Last ID\" method, as outlined in the Advanced Querying documentation.",
                         "required": false,
                         "schema": {
                             "type": "integer"
@@ -15917,6 +16752,119 @@
                 ]
             }
         },
+        "/me/sellers": {
+            "get": {
+                "responses": {
+                    "200": {
+                        "description": "Organizations you can place orders directly to.",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "properties": {
+                                        "Items": {
+                                            "type": "array",
+                                            "items": {
+                                                "$ref": "#/components/schemas/BuyerSupplier"
+                                            }
+                                        },
+                                        "Meta": {
+                                            "$ref": "#/components/schemas/Meta"
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                },
+                "operationId": "Me.ListBuyerSellers",
+                "tags": [
+                    "Me"
+                ],
+                "parameters": [
+                    {
+                        "name": "search",
+                        "in": "query",
+                        "description": "Word or phrase to search for.",
+                        "required": false,
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "name": "searchOn",
+                        "in": "query",
+                        "description": "Comma-delimited list of fields to search on.",
+                        "required": false,
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "type": "string",
+                                "enum": [
+                                    "ID",
+                                    "Name"
+                                ]
+                            }
+                        }
+                    },
+                    {
+                        "name": "sortBy",
+                        "in": "query",
+                        "description": "Comma-delimited list of fields to sort by.",
+                        "required": false,
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "type": "string",
+                                "enum": [
+                                    "Name",
+                                    "ID",
+                                    "!Name",
+                                    "!ID"
+                                ]
+                            }
+                        }
+                    },
+                    {
+                        "name": "page",
+                        "in": "query",
+                        "description": "Page of results to return. Default: 1. When paginating through many items (> page 30), we recommend the \"Last ID\" method, as outlined in the Advanced Querying documentation.",
+                        "required": false,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    },
+                    {
+                        "name": "pageSize",
+                        "in": "query",
+                        "description": "Number of results to return per page. Default: 20, max: 100.",
+                        "required": false,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    },
+                    {
+                        "name": "filters",
+                        "in": "query",
+                        "description": "Any additional key/value pairs passed in the query string are interpretted as filters. Valid keys are top-level properties of the returned model or 'xp.???'",
+                        "required": false,
+                        "schema": {
+                            "type": "object"
+                        }
+                    }
+                ],
+                "summary": "Get a list of buyer sellers visible to this user.",
+                "description": "Organizations you can place orders directly to.",
+                "security": [
+                    {
+                        "OAuth2": [
+                            "FullAccess",
+                            "Shopper"
+                        ]
+                    }
+                ]
+            }
+        },
         "/me/shipments": {
             "get": {
                 "responses": {
@@ -15996,12 +16944,14 @@
                                 "type": "string",
                                 "enum": [
                                     "DateShipped",
+                                    "OwnerID",
                                     "ID",
                                     "BuyerID",
                                     "Shipper",
                                     "DateDelivered",
                                     "Cost",
                                     "!DateShipped",
+                                    "!OwnerID",
                                     "!ID",
                                     "!BuyerID",
                                     "!Shipper",
@@ -16014,7 +16964,7 @@
                     {
                         "name": "page",
                         "in": "query",
-                        "description": "Page of results to return. Default: 1",
+                        "description": "Page of results to return. Default: 1. When paginating through many items (> page 30), we recommend the \"Last ID\" method, as outlined in the Advanced Querying documentation.",
                         "required": false,
                         "schema": {
                             "type": "integer"
@@ -16180,12 +17130,14 @@
                                 "type": "string",
                                 "enum": [
                                     "DateShipped",
+                                    "OwnerID",
                                     "ID",
                                     "BuyerID",
                                     "Shipper",
                                     "DateDelivered",
                                     "Cost",
                                     "!DateShipped",
+                                    "!OwnerID",
                                     "!ID",
                                     "!BuyerID",
                                     "!Shipper",
@@ -16198,7 +17150,7 @@
                     {
                         "name": "page",
                         "in": "query",
-                        "description": "Page of results to return. Default: 1",
+                        "description": "Page of results to return. Default: 1. When paginating through many items (> page 30), we recommend the \"Last ID\" method, as outlined in the Advanced Querying documentation.",
                         "required": false,
                         "schema": {
                             "type": "integer"
@@ -16312,7 +17264,7 @@
                     {
                         "name": "page",
                         "in": "query",
-                        "description": "Page of results to return. Default: 1",
+                        "description": "Page of results to return. Default: 1. When paginating through many items (> page 30), we recommend the \"Last ID\" method, as outlined in the Advanced Querying documentation.",
                         "required": false,
                         "schema": {
                             "type": "integer"
@@ -16467,7 +17419,7 @@
                     {
                         "name": "page",
                         "in": "query",
-                        "description": "Page of results to return. Default: 1",
+                        "description": "Page of results to return. Default: 1. When paginating through many items (> page 30), we recommend the \"Last ID\" method, as outlined in the Advanced Querying documentation.",
                         "required": false,
                         "schema": {
                             "type": "integer"
@@ -16580,7 +17532,7 @@
                     {
                         "name": "page",
                         "in": "query",
-                        "description": "Page of results to return. Default: 1",
+                        "description": "Page of results to return. Default: 1. When paginating through many items (> page 30), we recommend the \"Last ID\" method, as outlined in the Advanced Querying documentation.",
                         "required": false,
                         "schema": {
                             "type": "integer"
@@ -17004,7 +17956,7 @@
                     {
                         "name": "page",
                         "in": "query",
-                        "description": "Page of results to return. Default: 1",
+                        "description": "Page of results to return. Default: 1. When paginating through many items (> page 30), we recommend the \"Last ID\" method, as outlined in the Advanced Querying documentation.",
                         "required": false,
                         "schema": {
                             "type": "integer"
@@ -17131,9 +18083,11 @@
                             "items": {
                                 "type": "string",
                                 "enum": [
-                                    "ID",
-                                    "Name",
-                                    "URL"
+                                    "BuyerID",
+                                    "UserGroupID",
+                                    "UserID",
+                                    "MessageConfigName",
+                                    "SupplierID"
                                 ]
                             }
                         }
@@ -17148,12 +18102,16 @@
                             "items": {
                                 "type": "string",
                                 "enum": [
-                                    "ID",
-                                    "Name",
-                                    "URL",
-                                    "!ID",
-                                    "!Name",
-                                    "!URL"
+                                    "BuyerID",
+                                    "UserGroupID",
+                                    "UserID",
+                                    "MessageConfigName",
+                                    "SupplierID",
+                                    "!BuyerID",
+                                    "!UserGroupID",
+                                    "!UserID",
+                                    "!MessageConfigName",
+                                    "!SupplierID"
                                 ]
                             }
                         }
@@ -17161,7 +18119,7 @@
                     {
                         "name": "page",
                         "in": "query",
-                        "description": "Page of results to return. Default: 1",
+                        "description": "Page of results to return. Default: 1. When paginating through many items (> page 30), we recommend the \"Last ID\" method, as outlined in the Advanced Querying documentation.",
                         "required": false,
                         "schema": {
                             "type": "integer"
@@ -17309,7 +18267,7 @@
                     {
                         "name": "page",
                         "in": "query",
-                        "description": "Page of results to return. Default: 1",
+                        "description": "Page of results to return. Default: 1. When paginating through many items (> page 30), we recommend the \"Last ID\" method, as outlined in the Advanced Querying documentation.",
                         "required": false,
                         "schema": {
                             "type": "integer"
@@ -17623,7 +18581,7 @@
                     {
                         "name": "direction",
                         "in": "path",
-                        "description": "Direction of the order, from the current user's perspective. Possible values: incoming, outgoing.",
+                        "description": "Direction of the order, from the current user's perspective. Possible values: incoming, outgoing, all.",
                         "required": true,
                         "schema": {
                             "$ref": "#/components/schemas/OrderDirection"
@@ -17745,7 +18703,7 @@
                     {
                         "name": "page",
                         "in": "query",
-                        "description": "Page of results to return. Default: 1",
+                        "description": "Page of results to return. Default: 1. When paginating through many items (> page 30), we recommend the \"Last ID\" method, as outlined in the Advanced Querying documentation.",
                         "required": false,
                         "schema": {
                             "type": "integer"
@@ -17818,7 +18776,7 @@
                     {
                         "name": "direction",
                         "in": "path",
-                        "description": "Direction of the order, from the current user's perspective. Possible values: incoming, outgoing.",
+                        "description": "Direction of the order, from the current user's perspective. Possible values: incoming, outgoing, all.",
                         "required": true,
                         "schema": {
                             "$ref": "#/components/schemas/OrderDirection"
@@ -17860,7 +18818,7 @@
                     {
                         "name": "direction",
                         "in": "path",
-                        "description": "Direction of the order, from the current user's perspective. Possible values: incoming, outgoing.",
+                        "description": "Direction of the order, from the current user's perspective. Possible values: incoming, outgoing, all.",
                         "required": true,
                         "schema": {
                             "$ref": "#/components/schemas/OrderDirection"
@@ -17925,7 +18883,7 @@
                     {
                         "name": "direction",
                         "in": "path",
-                        "description": "Direction of the order, from the current user's perspective. Possible values: incoming, outgoing.",
+                        "description": "Direction of the order, from the current user's perspective. Possible values: incoming, outgoing, all.",
                         "required": true,
                         "schema": {
                             "$ref": "#/components/schemas/OrderDirection"
@@ -17967,7 +18925,7 @@
                     {
                         "name": "direction",
                         "in": "path",
-                        "description": "Direction of the order, from the current user's perspective. Possible values: incoming, outgoing.",
+                        "description": "Direction of the order, from the current user's perspective. Possible values: incoming, outgoing, all.",
                         "required": true,
                         "schema": {
                             "$ref": "#/components/schemas/OrderDirection"
@@ -18031,7 +18989,7 @@
                     {
                         "name": "direction",
                         "in": "path",
-                        "description": "Direction of the order, from the current user's perspective. Possible values: incoming, outgoing.",
+                        "description": "Direction of the order, from the current user's perspective. Possible values: incoming, outgoing, all.",
                         "required": true,
                         "schema": {
                             "$ref": "#/components/schemas/OrderDirection"
@@ -18093,7 +19051,7 @@
                     {
                         "name": "direction",
                         "in": "path",
-                        "description": "Direction of the order, from the current user's perspective. Possible values: incoming, outgoing.",
+                        "description": "Direction of the order, from the current user's perspective. Possible values: incoming, outgoing, all.",
                         "required": true,
                         "schema": {
                             "$ref": "#/components/schemas/OrderDirection"
@@ -18127,9 +19085,9 @@
                             "items": {
                                 "type": "string",
                                 "enum": [
-                                    "ID",
-                                    "FromCompanyID",
-                                    "ToCompanyID",
+                                    "ApprovalRuleID",
+                                    "ApprovingGroupID",
+                                    "Approver",
                                     "Comments"
                                 ]
                             }
@@ -18145,42 +19103,20 @@
                             "items": {
                                 "type": "string",
                                 "enum": [
-                                    "DateSubmitted",
                                     "DateCreated",
-                                    "ID",
-                                    "FromCompanyID",
-                                    "ToCompanyID",
-                                    "FromUserID",
+                                    "ApprovalRuleID",
+                                    "ApprovingGroupID",
                                     "Status",
-                                    "DateApproved",
-                                    "DateDeclined",
-                                    "DateCanceled",
+                                    "AllowResubmit",
                                     "DateCompleted",
-                                    "LastUpdated",
-                                    "Subtotal",
-                                    "ShippingCost",
-                                    "TaxCost",
-                                    "PromotionDiscount",
-                                    "Total",
-                                    "IsSubmitted",
-                                    "!DateSubmitted",
+                                    "Approver",
                                     "!DateCreated",
-                                    "!ID",
-                                    "!FromCompanyID",
-                                    "!ToCompanyID",
-                                    "!FromUserID",
+                                    "!ApprovalRuleID",
+                                    "!ApprovingGroupID",
                                     "!Status",
-                                    "!DateApproved",
-                                    "!DateDeclined",
-                                    "!DateCanceled",
+                                    "!AllowResubmit",
                                     "!DateCompleted",
-                                    "!LastUpdated",
-                                    "!Subtotal",
-                                    "!ShippingCost",
-                                    "!TaxCost",
-                                    "!PromotionDiscount",
-                                    "!Total",
-                                    "!IsSubmitted"
+                                    "!Approver"
                                 ]
                             }
                         }
@@ -18188,7 +19124,7 @@
                     {
                         "name": "page",
                         "in": "query",
-                        "description": "Page of results to return. Default: 1",
+                        "description": "Page of results to return. Default: 1. When paginating through many items (> page 30), we recommend the \"Last ID\" method, as outlined in the Advanced Querying documentation.",
                         "required": false,
                         "schema": {
                             "type": "integer"
@@ -18264,7 +19200,7 @@
                     {
                         "name": "direction",
                         "in": "path",
-                        "description": "Direction of the order, from the current user's perspective. Possible values: incoming, outgoing.",
+                        "description": "Direction of the order, from the current user's perspective. Possible values: incoming, outgoing, all.",
                         "required": true,
                         "schema": {
                             "$ref": "#/components/schemas/OrderDirection"
@@ -18337,7 +19273,7 @@
                     {
                         "name": "direction",
                         "in": "path",
-                        "description": "Direction of the order, from the current user's perspective. Possible values: incoming, outgoing.",
+                        "description": "Direction of the order, from the current user's perspective. Possible values: incoming, outgoing, all.",
                         "required": true,
                         "schema": {
                             "$ref": "#/components/schemas/OrderDirection"
@@ -18401,7 +19337,7 @@
                     {
                         "name": "direction",
                         "in": "path",
-                        "description": "Direction of the order, from the current user's perspective. Possible values: incoming, outgoing.",
+                        "description": "Direction of the order, from the current user's perspective. Possible values: incoming, outgoing, all.",
                         "required": true,
                         "schema": {
                             "$ref": "#/components/schemas/OrderDirection"
@@ -18452,7 +19388,7 @@
                     {
                         "name": "direction",
                         "in": "path",
-                        "description": "Direction of the order, from the current user's perspective. Possible values: incoming, outgoing.",
+                        "description": "Direction of the order, from the current user's perspective. Possible values: incoming, outgoing, all.",
                         "required": true,
                         "schema": {
                             "$ref": "#/components/schemas/OrderDirection"
@@ -18504,7 +19440,7 @@
                     {
                         "name": "direction",
                         "in": "path",
-                        "description": "Direction of the order, from the current user's perspective. Possible values: incoming, outgoing.",
+                        "description": "Direction of the order, from the current user's perspective. Possible values: incoming, outgoing, all.",
                         "required": true,
                         "schema": {
                             "$ref": "#/components/schemas/OrderDirection"
@@ -18555,7 +19491,7 @@
                     {
                         "name": "direction",
                         "in": "path",
-                        "description": "Direction of the order, from the current user's perspective. Possible values: incoming, outgoing.",
+                        "description": "Direction of the order, from the current user's perspective. Possible values: incoming, outgoing, all.",
                         "required": true,
                         "schema": {
                             "$ref": "#/components/schemas/OrderDirection"
@@ -18620,7 +19556,7 @@
                     {
                         "name": "direction",
                         "in": "path",
-                        "description": "Direction of the order, from the current user's perspective. Possible values: incoming, outgoing.",
+                        "description": "Direction of the order, from the current user's perspective. Possible values: incoming, outgoing, all.",
                         "required": true,
                         "schema": {
                             "$ref": "#/components/schemas/OrderDirection"
@@ -18682,7 +19618,7 @@
                     {
                         "name": "direction",
                         "in": "path",
-                        "description": "Direction of the order, from the current user's perspective. Possible values: incoming, outgoing.",
+                        "description": "Direction of the order, from the current user's perspective. Possible values: incoming, outgoing, all.",
                         "required": true,
                         "schema": {
                             "$ref": "#/components/schemas/OrderDirection"
@@ -18717,9 +19653,10 @@
                                 "type": "string",
                                 "enum": [
                                     "ID",
-                                    "FromCompanyID",
-                                    "ToCompanyID",
-                                    "Comments"
+                                    "Username",
+                                    "LastName",
+                                    "FirstName",
+                                    "Email"
                                 ]
                             }
                         }
@@ -18734,42 +19671,20 @@
                             "items": {
                                 "type": "string",
                                 "enum": [
-                                    "DateSubmitted",
-                                    "DateCreated",
+                                    "LastName",
+                                    "FirstName",
+                                    "Username",
                                     "ID",
-                                    "FromCompanyID",
-                                    "ToCompanyID",
-                                    "FromUserID",
-                                    "Status",
-                                    "DateApproved",
-                                    "DateDeclined",
-                                    "DateCanceled",
-                                    "DateCompleted",
-                                    "LastUpdated",
-                                    "Subtotal",
-                                    "ShippingCost",
-                                    "TaxCost",
-                                    "PromotionDiscount",
-                                    "Total",
-                                    "IsSubmitted",
-                                    "!DateSubmitted",
-                                    "!DateCreated",
+                                    "Email",
+                                    "DateCreated",
+                                    "PasswordLastSetDate",
+                                    "!LastName",
+                                    "!FirstName",
+                                    "!Username",
                                     "!ID",
-                                    "!FromCompanyID",
-                                    "!ToCompanyID",
-                                    "!FromUserID",
-                                    "!Status",
-                                    "!DateApproved",
-                                    "!DateDeclined",
-                                    "!DateCanceled",
-                                    "!DateCompleted",
-                                    "!LastUpdated",
-                                    "!Subtotal",
-                                    "!ShippingCost",
-                                    "!TaxCost",
-                                    "!PromotionDiscount",
-                                    "!Total",
-                                    "!IsSubmitted"
+                                    "!Email",
+                                    "!DateCreated",
+                                    "!PasswordLastSetDate"
                                 ]
                             }
                         }
@@ -18777,7 +19692,7 @@
                     {
                         "name": "page",
                         "in": "query",
-                        "description": "Page of results to return. Default: 1",
+                        "description": "Page of results to return. Default: 1. When paginating through many items (> page 30), we recommend the \"Last ID\" method, as outlined in the Advanced Querying documentation.",
                         "required": false,
                         "schema": {
                             "type": "integer"
@@ -18838,7 +19753,7 @@
                     {
                         "name": "direction",
                         "in": "path",
-                        "description": "Direction of the order, from the current user's perspective. Possible values: incoming, outgoing.",
+                        "description": "Direction of the order, from the current user's perspective. Possible values: incoming, outgoing, all.",
                         "required": true,
                         "schema": {
                             "$ref": "#/components/schemas/OrderDirection"
@@ -18890,7 +19805,7 @@
                     {
                         "name": "direction",
                         "in": "path",
-                        "description": "Direction of the order, from the current user's perspective. Possible values: incoming, outgoing.",
+                        "description": "Direction of the order, from the current user's perspective. Possible values: incoming, outgoing, all.",
                         "required": true,
                         "schema": {
                             "$ref": "#/components/schemas/OrderDirection"
@@ -18955,7 +19870,7 @@
                     {
                         "name": "direction",
                         "in": "path",
-                        "description": "Direction of the order, from the current user's perspective. Possible values: incoming, outgoing.",
+                        "description": "Direction of the order, from the current user's perspective. Possible values: incoming, outgoing, all.",
                         "required": true,
                         "schema": {
                             "$ref": "#/components/schemas/OrderDirection"
@@ -19017,7 +19932,7 @@
                     {
                         "name": "direction",
                         "in": "path",
-                        "description": "Direction of the order, from the current user's perspective. Possible values: incoming, outgoing.",
+                        "description": "Direction of the order, from the current user's perspective. Possible values: incoming, outgoing, all.",
                         "required": true,
                         "schema": {
                             "$ref": "#/components/schemas/OrderDirection"
@@ -19080,7 +19995,7 @@
                     {
                         "name": "page",
                         "in": "query",
-                        "description": "Page of results to return. Default: 1",
+                        "description": "Page of results to return. Default: 1. When paginating through many items (> page 30), we recommend the \"Last ID\" method, as outlined in the Advanced Querying documentation.",
                         "required": false,
                         "schema": {
                             "type": "integer"
@@ -19158,7 +20073,7 @@
                     {
                         "name": "direction",
                         "in": "path",
-                        "description": "Direction of the order, from the current user's perspective. Possible values: incoming, outgoing.",
+                        "description": "Direction of the order, from the current user's perspective. Possible values: incoming, outgoing, all.",
                         "required": true,
                         "schema": {
                             "$ref": "#/components/schemas/OrderDirection"
@@ -19209,7 +20124,7 @@
                     {
                         "name": "direction",
                         "in": "path",
-                        "description": "Direction of the order, from the current user's perspective. Possible values: incoming, outgoing.",
+                        "description": "Direction of the order, from the current user's perspective. Possible values: incoming, outgoing, all.",
                         "required": true,
                         "schema": {
                             "$ref": "#/components/schemas/OrderDirection"
@@ -19287,7 +20202,7 @@
                     {
                         "name": "direction",
                         "in": "path",
-                        "description": "Direction of the order, from the current user's perspective. Possible values: incoming, outgoing.",
+                        "description": "Direction of the order, from the current user's perspective. Possible values: incoming, outgoing, all.",
                         "required": true,
                         "schema": {
                             "$ref": "#/components/schemas/OrderDirection"
@@ -19338,7 +20253,7 @@
                     {
                         "name": "direction",
                         "in": "path",
-                        "description": "Direction of the order, from the current user's perspective. Possible values: incoming, outgoing.",
+                        "description": "Direction of the order, from the current user's perspective. Possible values: incoming, outgoing, all.",
                         "required": true,
                         "schema": {
                             "$ref": "#/components/schemas/OrderDirection"
@@ -19411,7 +20326,7 @@
                     {
                         "name": "direction",
                         "in": "path",
-                        "description": "Direction of the order, from the current user's perspective. Possible values: incoming, outgoing.",
+                        "description": "Direction of the order, from the current user's perspective. Possible values: incoming, outgoing, all.",
                         "required": true,
                         "schema": {
                             "$ref": "#/components/schemas/OrderDirection"
@@ -19493,7 +20408,7 @@
                     {
                         "name": "direction",
                         "in": "path",
-                        "description": "Direction of the order, from the current user's perspective. Possible values: incoming, outgoing.",
+                        "description": "Direction of the order, from the current user's perspective. Possible values: incoming, outgoing, all.",
                         "required": true,
                         "schema": {
                             "$ref": "#/components/schemas/OrderDirection"
@@ -19566,7 +20481,7 @@
                     {
                         "name": "direction",
                         "in": "path",
-                        "description": "Direction of the order, from the current user's perspective. Possible values: incoming, outgoing.",
+                        "description": "Direction of the order, from the current user's perspective. Possible values: incoming, outgoing, all.",
                         "required": true,
                         "schema": {
                             "$ref": "#/components/schemas/OrderDirection"
@@ -19637,7 +20552,7 @@
                     {
                         "name": "direction",
                         "in": "path",
-                        "description": "Direction of the order, from the current user's perspective. Possible values: incoming, outgoing.",
+                        "description": "Direction of the order, from the current user's perspective. Possible values: incoming, outgoing, all.",
                         "required": true,
                         "schema": {
                             "$ref": "#/components/schemas/OrderDirection"
@@ -19704,7 +20619,7 @@
                     {
                         "name": "page",
                         "in": "query",
-                        "description": "Page of results to return. Default: 1",
+                        "description": "Page of results to return. Default: 1. When paginating through many items (> page 30), we recommend the \"Last ID\" method, as outlined in the Advanced Querying documentation.",
                         "required": false,
                         "schema": {
                             "type": "integer"
@@ -19778,7 +20693,7 @@
                     {
                         "name": "direction",
                         "in": "path",
-                        "description": "Direction of the order, from the current user's perspective. Possible values: incoming, outgoing.",
+                        "description": "Direction of the order, from the current user's perspective. Possible values: incoming, outgoing, all.",
                         "required": true,
                         "schema": {
                             "$ref": "#/components/schemas/OrderDirection"
@@ -19829,7 +20744,7 @@
                     {
                         "name": "direction",
                         "in": "path",
-                        "description": "Direction of the order, from the current user's perspective. Possible values: incoming, outgoing.",
+                        "description": "Direction of the order, from the current user's perspective. Possible values: incoming, outgoing, all.",
                         "required": true,
                         "schema": {
                             "$ref": "#/components/schemas/OrderDirection"
@@ -19881,7 +20796,7 @@
                     {
                         "name": "direction",
                         "in": "path",
-                        "description": "Direction of the order, from the current user's perspective. Possible values: incoming, outgoing.",
+                        "description": "Direction of the order, from the current user's perspective. Possible values: incoming, outgoing, all.",
                         "required": true,
                         "schema": {
                             "$ref": "#/components/schemas/OrderDirection"
@@ -19954,7 +20869,7 @@
                     {
                         "name": "direction",
                         "in": "path",
-                        "description": "Direction of the order, from the current user's perspective. Possible values: incoming, outgoing.",
+                        "description": "Direction of the order, from the current user's perspective. Possible values: incoming, outgoing, all.",
                         "required": true,
                         "schema": {
                             "$ref": "#/components/schemas/OrderDirection"
@@ -20033,7 +20948,7 @@
                     {
                         "name": "direction",
                         "in": "path",
-                        "description": "Direction of the order, from the current user's perspective. Possible values: incoming, outgoing.",
+                        "description": "Direction of the order, from the current user's perspective. Possible values: incoming, outgoing, all.",
                         "required": true,
                         "schema": {
                             "$ref": "#/components/schemas/OrderDirection"
@@ -20085,7 +21000,7 @@
                     {
                         "name": "direction",
                         "in": "path",
-                        "description": "Direction of the order, from the current user's perspective. Possible values: incoming, outgoing.",
+                        "description": "Direction of the order, from the current user's perspective. Possible values: incoming, outgoing, all.",
                         "required": true,
                         "schema": {
                             "$ref": "#/components/schemas/OrderDirection"
@@ -20164,7 +21079,7 @@
                     {
                         "name": "direction",
                         "in": "path",
-                        "description": "Direction of the order, from the current user's perspective. Possible values: incoming, outgoing.",
+                        "description": "Direction of the order, from the current user's perspective. Possible values: incoming, outgoing, all.",
                         "required": true,
                         "schema": {
                             "$ref": "#/components/schemas/OrderDirection"
@@ -20199,9 +21114,12 @@
                                 "type": "string",
                                 "enum": [
                                     "ID",
-                                    "FromCompanyID",
-                                    "ToCompanyID",
-                                    "Comments"
+                                    "Name",
+                                    "Code",
+                                    "Description",
+                                    "FinePrint",
+                                    "EligibleExpression",
+                                    "ValueExpression"
                                 ]
                             }
                         }
@@ -20216,42 +21134,22 @@
                             "items": {
                                 "type": "string",
                                 "enum": [
-                                    "DateSubmitted",
-                                    "DateCreated",
+                                    "Name",
                                     "ID",
-                                    "FromCompanyID",
-                                    "ToCompanyID",
-                                    "FromUserID",
-                                    "Status",
-                                    "DateApproved",
-                                    "DateDeclined",
-                                    "DateCanceled",
-                                    "DateCompleted",
-                                    "LastUpdated",
-                                    "Subtotal",
-                                    "ShippingCost",
-                                    "TaxCost",
-                                    "PromotionDiscount",
-                                    "Total",
-                                    "IsSubmitted",
-                                    "!DateSubmitted",
-                                    "!DateCreated",
+                                    "Code",
+                                    "StartDate",
+                                    "ExpirationDate",
+                                    "EligibleExpression",
+                                    "ValueExpression",
+                                    "CanCombine",
+                                    "!Name",
                                     "!ID",
-                                    "!FromCompanyID",
-                                    "!ToCompanyID",
-                                    "!FromUserID",
-                                    "!Status",
-                                    "!DateApproved",
-                                    "!DateDeclined",
-                                    "!DateCanceled",
-                                    "!DateCompleted",
-                                    "!LastUpdated",
-                                    "!Subtotal",
-                                    "!ShippingCost",
-                                    "!TaxCost",
-                                    "!PromotionDiscount",
-                                    "!Total",
-                                    "!IsSubmitted"
+                                    "!Code",
+                                    "!StartDate",
+                                    "!ExpirationDate",
+                                    "!EligibleExpression",
+                                    "!ValueExpression",
+                                    "!CanCombine"
                                 ]
                             }
                         }
@@ -20259,7 +21157,7 @@
                     {
                         "name": "page",
                         "in": "query",
-                        "description": "Page of results to return. Default: 1",
+                        "description": "Page of results to return. Default: 1. When paginating through many items (> page 30), we recommend the \"Last ID\" method, as outlined in the Advanced Querying documentation.",
                         "required": false,
                         "schema": {
                             "type": "integer"
@@ -20320,7 +21218,7 @@
                     {
                         "name": "direction",
                         "in": "path",
-                        "description": "Direction of the order, from the current user's perspective. Possible values: incoming, outgoing.",
+                        "description": "Direction of the order, from the current user's perspective. Possible values: incoming, outgoing, all.",
                         "required": true,
                         "schema": {
                             "$ref": "#/components/schemas/OrderDirection"
@@ -20378,7 +21276,7 @@
                     {
                         "name": "direction",
                         "in": "path",
-                        "description": "Direction of the order, from the current user's perspective. Possible values: incoming, outgoing.",
+                        "description": "Direction of the order, from the current user's perspective. Possible values: incoming, outgoing, all.",
                         "required": true,
                         "schema": {
                             "$ref": "#/components/schemas/OrderDirection"
@@ -20453,7 +21351,7 @@
                     {
                         "name": "direction",
                         "in": "path",
-                        "description": "Direction of the order, from the current user's perspective. Possible values: incoming, outgoing.",
+                        "description": "Direction of the order, from the current user's perspective. Possible values: incoming, outgoing, all.",
                         "required": true,
                         "schema": {
                             "$ref": "#/components/schemas/OrderDirection"
@@ -20515,7 +21413,7 @@
                     {
                         "name": "direction",
                         "in": "path",
-                        "description": "Direction of the order, from the current user's perspective. Possible values: incoming, outgoing.",
+                        "description": "Direction of the order, from the current user's perspective. Possible values: incoming, outgoing, all.",
                         "required": true,
                         "schema": {
                             "$ref": "#/components/schemas/OrderDirection"
@@ -20550,9 +21448,11 @@
                                 "type": "string",
                                 "enum": [
                                     "ID",
-                                    "FromCompanyID",
-                                    "ToCompanyID",
-                                    "Comments"
+                                    "BuyerID",
+                                    "Shipper",
+                                    "DateShipped",
+                                    "DateDelivered",
+                                    "TrackingNumber"
                                 ]
                             }
                         }
@@ -20567,42 +21467,20 @@
                             "items": {
                                 "type": "string",
                                 "enum": [
-                                    "DateSubmitted",
-                                    "DateCreated",
+                                    "DateShipped",
+                                    "OwnerID",
                                     "ID",
-                                    "FromCompanyID",
-                                    "ToCompanyID",
-                                    "FromUserID",
-                                    "Status",
-                                    "DateApproved",
-                                    "DateDeclined",
-                                    "DateCanceled",
-                                    "DateCompleted",
-                                    "LastUpdated",
-                                    "Subtotal",
-                                    "ShippingCost",
-                                    "TaxCost",
-                                    "PromotionDiscount",
-                                    "Total",
-                                    "IsSubmitted",
-                                    "!DateSubmitted",
-                                    "!DateCreated",
+                                    "BuyerID",
+                                    "Shipper",
+                                    "DateDelivered",
+                                    "Cost",
+                                    "!DateShipped",
+                                    "!OwnerID",
                                     "!ID",
-                                    "!FromCompanyID",
-                                    "!ToCompanyID",
-                                    "!FromUserID",
-                                    "!Status",
-                                    "!DateApproved",
-                                    "!DateDeclined",
-                                    "!DateCanceled",
-                                    "!DateCompleted",
-                                    "!LastUpdated",
-                                    "!Subtotal",
-                                    "!ShippingCost",
-                                    "!TaxCost",
-                                    "!PromotionDiscount",
-                                    "!Total",
-                                    "!IsSubmitted"
+                                    "!BuyerID",
+                                    "!Shipper",
+                                    "!DateDelivered",
+                                    "!Cost"
                                 ]
                             }
                         }
@@ -20610,7 +21488,7 @@
                     {
                         "name": "page",
                         "in": "query",
-                        "description": "Page of results to return. Default: 1",
+                        "description": "Page of results to return. Default: 1. When paginating through many items (> page 30), we recommend the \"Last ID\" method, as outlined in the Advanced Querying documentation.",
                         "required": false,
                         "schema": {
                             "type": "integer"
@@ -20685,7 +21563,7 @@
                     {
                         "name": "direction",
                         "in": "path",
-                        "description": "Direction of the order, from the current user's perspective. Possible values: incoming, outgoing.",
+                        "description": "Direction of the order, from the current user's perspective. Possible values: incoming, outgoing, all.",
                         "required": true,
                         "schema": {
                             "$ref": "#/components/schemas/OrderDirection"
@@ -20719,7 +21597,7 @@
             "put": {
                 "responses": {
                     "200": {
-                        "description": "Use only when the address is not to be saved/reused. To use a saved address (i.e. from the Addresses resource), PATCH the order's ShippingAddressID property instead.",
+                        "description": "Use only when the address is not to be saved/reused. To use a saved address (i.e. from the Addresses resource), PATCH the order's ShippingAddressID property instead. The address used will be populated on the ShippingAddress property of each LineItem.",
                         "content": {
                             "application/json": {
                                 "schema": {
@@ -20759,7 +21637,7 @@
                     {
                         "name": "direction",
                         "in": "path",
-                        "description": "Direction of the order, from the current user's perspective. Possible values: incoming, outgoing.",
+                        "description": "Direction of the order, from the current user's perspective. Possible values: incoming, outgoing, all.",
                         "required": true,
                         "schema": {
                             "$ref": "#/components/schemas/OrderDirection"
@@ -20776,7 +21654,7 @@
                     }
                 ],
                 "summary": "Set a shipping address.",
-                "description": "Use only when the address is not to be saved/reused. To use a saved address (i.e. from the Addresses resource), PATCH the order's ShippingAddressID property instead.",
+                "description": "Use only when the address is not to be saved/reused. To use a saved address (i.e. from the Addresses resource), PATCH the order's ShippingAddressID property instead. The address used will be populated on the ShippingAddress property of each LineItem.",
                 "security": [
                     {
                         "OAuth2": [
@@ -20823,7 +21701,7 @@
                     {
                         "name": "direction",
                         "in": "path",
-                        "description": "Direction of the order, from the current user's perspective. Possible values: incoming, outgoing.",
+                        "description": "Direction of the order, from the current user's perspective. Possible values: incoming, outgoing, all.",
                         "required": true,
                         "schema": {
                             "$ref": "#/components/schemas/OrderDirection"
@@ -20874,7 +21752,7 @@
                     {
                         "name": "direction",
                         "in": "path",
-                        "description": "Direction of the order, from the current user's perspective. Possible values: incoming, outgoing.",
+                        "description": "Direction of the order, from the current user's perspective. Possible values: incoming, outgoing, all.",
                         "required": true,
                         "schema": {
                             "$ref": "#/components/schemas/OrderDirection"
@@ -20924,7 +21802,7 @@
                     {
                         "name": "direction",
                         "in": "path",
-                        "description": "Direction of the order, from the current user's perspective. Possible values: incoming, outgoing.",
+                        "description": "Direction of the order, from the current user's perspective. Possible values: incoming, outgoing, all.",
                         "required": true,
                         "schema": {
                             "$ref": "#/components/schemas/OrderDirection"
@@ -20968,7 +21846,7 @@
                     {
                         "name": "direction",
                         "in": "path",
-                        "description": "Direction of the order, from the current user's perspective. Possible values: incoming, outgoing.",
+                        "description": "Direction of the order, from the current user's perspective. Possible values: incoming, outgoing, all.",
                         "required": true,
                         "schema": {
                             "$ref": "#/components/schemas/OrderDirection"
@@ -21020,7 +21898,7 @@
                     {
                         "name": "direction",
                         "in": "path",
-                        "description": "Direction of the order, from the current user's perspective. Possible values: incoming, outgoing.",
+                        "description": "Direction of the order, from the current user's perspective. Possible values: incoming, outgoing, all.",
                         "required": true,
                         "schema": {
                             "$ref": "#/components/schemas/OrderDirection"
@@ -21189,7 +22067,8 @@
                                 "enum": [
                                     "ID",
                                     "Name",
-                                    "ApplyTax"
+                                    "ApplyTax",
+                                    "Currency"
                                 ]
                             }
                         }
@@ -21206,8 +22085,10 @@
                                 "enum": [
                                     "Name",
                                     "ID",
+                                    "OwnerID",
                                     "!Name",
-                                    "!ID"
+                                    "!ID",
+                                    "!OwnerID"
                                 ]
                             }
                         }
@@ -21215,7 +22096,7 @@
                     {
                         "name": "page",
                         "in": "query",
-                        "description": "Page of results to return. Default: 1",
+                        "description": "Page of results to return. Default: 1. When paginating through many items (> page 30), we recommend the \"Last ID\" method, as outlined in the Advanced Querying documentation.",
                         "required": false,
                         "schema": {
                             "type": "integer"
@@ -21666,7 +22547,7 @@
                     {
                         "name": "page",
                         "in": "query",
-                        "description": "Page of results to return. Default: 1",
+                        "description": "Page of results to return. Default: 1. When paginating through many items (> page 30), we recommend the \"Last ID\" method, as outlined in the Advanced Querying documentation.",
                         "required": false,
                         "schema": {
                             "type": "integer"
@@ -22052,7 +22933,7 @@
                     {
                         "name": "page",
                         "in": "query",
-                        "description": "Page of results to return. Default: 1",
+                        "description": "Page of results to return. Default: 1. When paginating through many items (> page 30), we recommend the \"Last ID\" method, as outlined in the Advanced Querying documentation.",
                         "required": false,
                         "schema": {
                             "type": "integer"
@@ -22368,6 +23249,15 @@
                         "schema": {
                             "type": "string"
                         }
+                    },
+                    {
+                        "name": "sellerID",
+                        "in": "query",
+                        "description": "ID of the seller.",
+                        "required": false,
+                        "schema": {
+                            "type": "string"
+                        }
                     }
                 ],
                 "summary": "Delete a product assignment.",
@@ -22441,9 +23331,8 @@
                             "items": {
                                 "type": "string",
                                 "enum": [
-                                    "ID",
                                     "Name",
-                                    "Description"
+                                    "ID"
                                 ]
                             }
                         }
@@ -22458,10 +23347,10 @@
                             "items": {
                                 "type": "string",
                                 "enum": [
-                                    "OwnerID",
+                                    "ListOrder",
                                     "Name",
                                     "ID",
-                                    "!OwnerID",
+                                    "!ListOrder",
                                     "!Name",
                                     "!ID"
                                 ]
@@ -22471,7 +23360,7 @@
                     {
                         "name": "page",
                         "in": "query",
-                        "description": "Page of results to return. Default: 1",
+                        "description": "Page of results to return. Default: 1. When paginating through many items (> page 30), we recommend the \"Last ID\" method, as outlined in the Advanced Querying documentation.",
                         "required": false,
                         "schema": {
                             "type": "integer"
@@ -22522,7 +23411,7 @@
                                         "Items": {
                                             "type": "array",
                                             "items": {
-                                                "$ref": "#/components/schemas/Supplier"
+                                                "$ref": "#/components/schemas/ProductSupplier"
                                             }
                                         },
                                         "Meta": {
@@ -22567,9 +23456,8 @@
                             "items": {
                                 "type": "string",
                                 "enum": [
-                                    "ID",
                                     "Name",
-                                    "Description"
+                                    "ID"
                                 ]
                             }
                         }
@@ -22584,12 +23472,12 @@
                             "items": {
                                 "type": "string",
                                 "enum": [
-                                    "OwnerID",
-                                    "Name",
                                     "ID",
-                                    "!OwnerID",
+                                    "Name",
+                                    "DateCreated",
+                                    "!ID",
                                     "!Name",
-                                    "!ID"
+                                    "!DateCreated"
                                 ]
                             }
                         }
@@ -22597,7 +23485,7 @@
                     {
                         "name": "page",
                         "in": "query",
-                        "description": "Page of results to return. Default: 1",
+                        "description": "Page of results to return. Default: 1. When paginating through many items (> page 30), we recommend the \"Last ID\" method, as outlined in the Advanced Querying documentation.",
                         "required": false,
                         "schema": {
                             "type": "integer"
@@ -22661,6 +23549,15 @@
                         "in": "path",
                         "description": "ID of the supplier.",
                         "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "name": "defaultPriceScheduleID",
+                        "in": "query",
+                        "description": "ID of the default price schedule.",
+                        "required": false,
                         "schema": {
                             "type": "string"
                         }
@@ -22794,12 +23691,10 @@
                             "items": {
                                 "type": "string",
                                 "enum": [
-                                    "OwnerID",
-                                    "Name",
                                     "ID",
-                                    "!OwnerID",
-                                    "!Name",
-                                    "!ID"
+                                    "Name",
+                                    "!ID",
+                                    "!Name"
                                 ]
                             }
                         }
@@ -22807,7 +23702,7 @@
                     {
                         "name": "page",
                         "in": "query",
-                        "description": "Page of results to return. Default: 1",
+                        "description": "Page of results to return. Default: 1. When paginating through many items (> page 30), we recommend the \"Last ID\" method, as outlined in the Advanced Querying documentation.",
                         "required": false,
                         "schema": {
                             "type": "integer"
@@ -23159,7 +24054,7 @@
                     {
                         "name": "page",
                         "in": "query",
-                        "description": "Page of results to return. Default: 1",
+                        "description": "Page of results to return. Default: 1. When paginating through many items (> page 30), we recommend the \"Last ID\" method, as outlined in the Advanced Querying documentation.",
                         "required": false,
                         "schema": {
                             "type": "integer"
@@ -23323,7 +24218,7 @@
                     {
                         "name": "page",
                         "in": "query",
-                        "description": "Page of results to return. Default: 1",
+                        "description": "Page of results to return. Default: 1. When paginating through many items (> page 30), we recommend the \"Last ID\" method, as outlined in the Advanced Querying documentation.",
                         "required": false,
                         "schema": {
                             "type": "integer"
@@ -23735,7 +24630,7 @@
                     {
                         "name": "page",
                         "in": "query",
-                        "description": "Page of results to return. Default: 1",
+                        "description": "Page of results to return. Default: 1. When paginating through many items (> page 30), we recommend the \"Last ID\" method, as outlined in the Advanced Querying documentation.",
                         "required": false,
                         "schema": {
                             "type": "integer"
@@ -23880,7 +24775,7 @@
                     {
                         "name": "page",
                         "in": "query",
-                        "description": "Page of results to return. Default: 1",
+                        "description": "Page of results to return. Default: 1. When paginating through many items (> page 30), we recommend the \"Last ID\" method, as outlined in the Advanced Querying documentation.",
                         "required": false,
                         "schema": {
                             "type": "integer"
@@ -24322,7 +25217,7 @@
                     {
                         "name": "page",
                         "in": "query",
-                        "description": "Page of results to return. Default: 1",
+                        "description": "Page of results to return. Default: 1. When paginating through many items (> page 30), we recommend the \"Last ID\" method, as outlined in the Advanced Querying documentation.",
                         "required": false,
                         "schema": {
                             "type": "integer"
@@ -24470,12 +25365,14 @@
                                 "type": "string",
                                 "enum": [
                                     "DateShipped",
+                                    "OwnerID",
                                     "ID",
                                     "BuyerID",
                                     "Shipper",
                                     "DateDelivered",
                                     "Cost",
                                     "!DateShipped",
+                                    "!OwnerID",
                                     "!ID",
                                     "!BuyerID",
                                     "!Shipper",
@@ -24488,7 +25385,7 @@
                     {
                         "name": "page",
                         "in": "query",
-                        "description": "Page of results to return. Default: 1",
+                        "description": "Page of results to return. Default: 1. When paginating through many items (> page 30), we recommend the \"Last ID\" method, as outlined in the Advanced Querying documentation.",
                         "required": false,
                         "schema": {
                             "type": "integer"
@@ -24808,14 +25705,7 @@
                             "type": "array",
                             "items": {
                                 "type": "string",
-                                "enum": [
-                                    "ID",
-                                    "BuyerID",
-                                    "Shipper",
-                                    "DateShipped",
-                                    "DateDelivered",
-                                    "TrackingNumber"
-                                ]
+                                "enum": []
                             }
                         }
                     },
@@ -24828,27 +25718,14 @@
                             "type": "array",
                             "items": {
                                 "type": "string",
-                                "enum": [
-                                    "DateShipped",
-                                    "ID",
-                                    "BuyerID",
-                                    "Shipper",
-                                    "DateDelivered",
-                                    "Cost",
-                                    "!DateShipped",
-                                    "!ID",
-                                    "!BuyerID",
-                                    "!Shipper",
-                                    "!DateDelivered",
-                                    "!Cost"
-                                ]
+                                "enum": []
                             }
                         }
                     },
                     {
                         "name": "page",
                         "in": "query",
-                        "description": "Page of results to return. Default: 1",
+                        "description": "Page of results to return. Default: 1. When paginating through many items (> page 30), we recommend the \"Last ID\" method, as outlined in the Advanced Querying documentation.",
                         "required": false,
                         "schema": {
                             "type": "integer"
@@ -25231,10 +26108,7 @@
                                 "type": "string",
                                 "enum": [
                                     "Name",
-                                    "ListOrder",
-                                    "ID",
-                                    "Required",
-                                    "AllowOpenText"
+                                    "ID"
                                 ]
                             }
                         }
@@ -25262,7 +26136,7 @@
                     {
                         "name": "page",
                         "in": "query",
-                        "description": "Page of results to return. Default: 1",
+                        "description": "Page of results to return. Default: 1. When paginating through many items (> page 30), we recommend the \"Last ID\" method, as outlined in the Advanced Querying documentation.",
                         "required": false,
                         "schema": {
                             "type": "integer"
@@ -25589,11 +26463,8 @@
                             "items": {
                                 "type": "string",
                                 "enum": [
-                                    "Name",
-                                    "ListOrder",
-                                    "ID",
-                                    "Required",
-                                    "AllowOpenText"
+                                    "Value",
+                                    "ID"
                                 ]
                             }
                         }
@@ -25609,10 +26480,8 @@
                                 "type": "string",
                                 "enum": [
                                     "ListOrder",
-                                    "Name",
                                     "ID",
                                     "!ListOrder",
-                                    "!Name",
                                     "!ID"
                                 ]
                             }
@@ -25621,7 +26490,7 @@
                     {
                         "name": "page",
                         "in": "query",
-                        "description": "Page of results to return. Default: 1",
+                        "description": "Page of results to return. Default: 1. When paginating through many items (> page 30), we recommend the \"Last ID\" method, as outlined in the Advanced Querying documentation.",
                         "required": false,
                         "schema": {
                             "type": "integer"
@@ -26029,11 +26898,8 @@
                             "items": {
                                 "type": "string",
                                 "enum": [
-                                    "Name",
-                                    "ListOrder",
-                                    "ID",
-                                    "Required",
-                                    "AllowOpenText"
+                                    "SpecID",
+                                    "ProductID"
                                 ]
                             }
                         }
@@ -26048,12 +26914,14 @@
                             "items": {
                                 "type": "string",
                                 "enum": [
-                                    "ListOrder",
-                                    "Name",
-                                    "ID",
-                                    "!ListOrder",
-                                    "!Name",
-                                    "!ID"
+                                    "SpecID",
+                                    "ProductID",
+                                    "DefaultOptionID",
+                                    "DefaultValue",
+                                    "!SpecID",
+                                    "!ProductID",
+                                    "!DefaultOptionID",
+                                    "!DefaultValue"
                                 ]
                             }
                         }
@@ -26061,7 +26929,7 @@
                     {
                         "name": "page",
                         "in": "query",
-                        "description": "Page of results to return. Default: 1",
+                        "description": "Page of results to return. Default: 1. When paginating through many items (> page 30), we recommend the \"Last ID\" method, as outlined in the Advanced Querying documentation.",
                         "required": false,
                         "schema": {
                             "type": "integer"
@@ -26213,7 +27081,7 @@
                     {
                         "name": "page",
                         "in": "query",
-                        "description": "Page of results to return. Default: 1",
+                        "description": "Page of results to return. Default: 1. When paginating through many items (> page 30), we recommend the \"Last ID\" method, as outlined in the Advanced Querying documentation.",
                         "required": false,
                         "schema": {
                             "type": "integer"
@@ -26597,7 +27465,7 @@
                     {
                         "name": "page",
                         "in": "query",
-                        "description": "Page of results to return. Default: 1",
+                        "description": "Page of results to return. Default: 1. When paginating through many items (> page 30), we recommend the \"Last ID\" method, as outlined in the Advanced Querying documentation.",
                         "required": false,
                         "schema": {
                             "type": "integer"
@@ -26964,6 +27832,213 @@
                 ]
             }
         },
+        "/suppliers/{supplierID}/buyers": {
+            "get": {
+                "responses": {
+                    "200": {
+                        "description": "",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "properties": {
+                                        "Items": {
+                                            "type": "array",
+                                            "items": {
+                                                "$ref": "#/components/schemas/SupplierBuyer"
+                                            }
+                                        },
+                                        "Meta": {
+                                            "$ref": "#/components/schemas/Meta"
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                },
+                "operationId": "Suppliers.ListBuyers",
+                "tags": [
+                    "Suppliers"
+                ],
+                "parameters": [
+                    {
+                        "name": "supplierID",
+                        "in": "path",
+                        "description": "ID of the supplier.",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "name": "search",
+                        "in": "query",
+                        "description": "Word or phrase to search for.",
+                        "required": false,
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "name": "searchOn",
+                        "in": "query",
+                        "description": "Comma-delimited list of fields to search on.",
+                        "required": false,
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "type": "string",
+                                "enum": [
+                                    "ID",
+                                    "Name"
+                                ]
+                            }
+                        }
+                    },
+                    {
+                        "name": "sortBy",
+                        "in": "query",
+                        "description": "Comma-delimited list of fields to sort by.",
+                        "required": false,
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "type": "string",
+                                "enum": [
+                                    "Name",
+                                    "ID",
+                                    "!Name",
+                                    "!ID"
+                                ]
+                            }
+                        }
+                    },
+                    {
+                        "name": "page",
+                        "in": "query",
+                        "description": "Page of results to return. Default: 1. When paginating through many items (> page 30), we recommend the \"Last ID\" method, as outlined in the Advanced Querying documentation.",
+                        "required": false,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    },
+                    {
+                        "name": "pageSize",
+                        "in": "query",
+                        "description": "Number of results to return per page. Default: 20, max: 100.",
+                        "required": false,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    },
+                    {
+                        "name": "filters",
+                        "in": "query",
+                        "description": "Any additional key/value pairs passed in the query string are interpretted as filters. Valid keys are top-level properties of the returned model or 'xp.???'",
+                        "required": false,
+                        "schema": {
+                            "type": "object"
+                        }
+                    }
+                ],
+                "summary": "Get a list of supplier buyers.",
+                "description": "",
+                "security": [
+                    {
+                        "OAuth2": [
+                            "FullAccess",
+                            "SupplierAdmin",
+                            "SupplierReader"
+                        ]
+                    }
+                ]
+            }
+        },
+        "/suppliers/{supplierID}/buyers/{buyerID}": {
+            "put": {
+                "responses": {
+                    "204": {
+                        "description": ""
+                    }
+                },
+                "operationId": "Suppliers.SaveBuyer",
+                "tags": [
+                    "Suppliers"
+                ],
+                "parameters": [
+                    {
+                        "name": "supplierID",
+                        "in": "path",
+                        "description": "ID of the supplier.",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "name": "buyerID",
+                        "in": "path",
+                        "description": "ID of the buyer.",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "summary": "Create or update a supplier buyer.",
+                "description": "",
+                "security": [
+                    {
+                        "OAuth2": [
+                            "FullAccess",
+                            "SupplierAdmin"
+                        ]
+                    }
+                ]
+            },
+            "delete": {
+                "responses": {
+                    "204": {
+                        "description": ""
+                    }
+                },
+                "operationId": "Suppliers.DeleteBuyer",
+                "tags": [
+                    "Suppliers"
+                ],
+                "parameters": [
+                    {
+                        "name": "supplierID",
+                        "in": "path",
+                        "description": "ID of the supplier.",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "name": "buyerID",
+                        "in": "path",
+                        "description": "ID of the buyer.",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "summary": "Delete a supplier buyer.",
+                "description": "",
+                "security": [
+                    {
+                        "OAuth2": [
+                            "FullAccess",
+                            "SupplierAdmin"
+                        ]
+                    }
+                ]
+            }
+        },
         "/suppliers/{supplierID}/usergroups": {
             "get": {
                 "responses": {
@@ -27050,7 +28125,7 @@
                     {
                         "name": "page",
                         "in": "query",
-                        "description": "Page of results to return. Default: 1",
+                        "description": "Page of results to return. Default: 1. When paginating through many items (> page 30), we recommend the \"Last ID\" method, as outlined in the Advanced Querying documentation.",
                         "required": false,
                         "schema": {
                             "type": "integer"
@@ -27478,7 +28553,7 @@
                     {
                         "name": "page",
                         "in": "query",
-                        "description": "Page of results to return. Default: 1",
+                        "description": "Page of results to return. Default: 1. When paginating through many items (> page 30), we recommend the \"Last ID\" method, as outlined in the Advanced Querying documentation.",
                         "required": false,
                         "schema": {
                             "type": "integer"
@@ -27661,7 +28736,7 @@
                     {
                         "name": "page",
                         "in": "query",
-                        "description": "Page of results to return. Default: 1",
+                        "description": "Page of results to return. Default: 1. When paginating through many items (> page 30), we recommend the \"Last ID\" method, as outlined in the Advanced Querying documentation.",
                         "required": false,
                         "schema": {
                             "type": "integer"
@@ -28062,7 +29137,7 @@
                     {
                         "name": "page",
                         "in": "query",
-                        "description": "Page of results to return. Default: 1",
+                        "description": "Page of results to return. Default: 1. When paginating through many items (> page 30), we recommend the \"Last ID\" method, as outlined in the Advanced Querying documentation.",
                         "required": false,
                         "schema": {
                             "type": "integer"
@@ -28425,7 +29500,7 @@
                     {
                         "name": "page",
                         "in": "query",
-                        "description": "Page of results to return. Default: 1",
+                        "description": "Page of results to return. Default: 1. When paginating through many items (> page 30), we recommend the \"Last ID\" method, as outlined in the Advanced Querying documentation.",
                         "required": false,
                         "schema": {
                             "type": "integer"
@@ -28568,7 +29643,7 @@
                     {
                         "name": "page",
                         "in": "query",
-                        "description": "Page of results to return. Default: 1",
+                        "description": "Page of results to return. Default: 1. When paginating through many items (> page 30), we recommend the \"Last ID\" method, as outlined in the Advanced Querying documentation.",
                         "required": false,
                         "schema": {
                             "type": "integer"
@@ -28917,7 +29992,7 @@
                     {
                         "name": "page",
                         "in": "query",
-                        "description": "Page of results to return. Default: 1",
+                        "description": "Page of results to return. Default: 1. When paginating through many items (> page 30), we recommend the \"Last ID\" method, as outlined in the Advanced Querying documentation.",
                         "required": false,
                         "schema": {
                             "type": "integer"

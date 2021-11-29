@@ -1,10 +1,10 @@
 import axios from "axios";
 import { isObject } from "lodash";
-import { Addresses, AdminAddresses, AdminUserGroups, AdminUsers, ApiClients, ApprovalRules, Buyers, Catalogs, Categories, CostCenters, CreditCards, ImpersonationConfigs, Incrementors, IntegrationEvents, MessageSenders, OpenIdConnects, PriceSchedules, ProductFacets, Products, Promotions, SecurityProfiles, Specs, SpendingAccounts, SupplierAddresses, Suppliers, SupplierUserGroups, SupplierUsers, UserGroups, Users, Webhooks, XpIndices } from "ordercloud-javascript-sdk";
+import { Addresses, AdminAddresses, AdminUserGroups, AdminUsers, ApiClients, ApprovalRules, Buyers, Catalogs, Categories, CostCenters, CreditCards, ImpersonationConfigs, Incrementors, IntegrationEvents, Locales, MessageSenders, OpenIdConnects, PriceSchedules, ProductFacets, Products, Promotions, SecurityProfiles, Specs, SpendingAccounts, SupplierAddresses, Suppliers, SupplierUserGroups, SupplierUsers, UserGroups, Users, Webhooks, XpIndices } from "ordercloud-javascript-sdk";
 import { OCResourceEnum } from "./oc-resource-enum";
 import { OCResource } from "./oc-resources";
 import _ from 'lodash';
-import { ApiClientValidationFunc, ImpersonationConfigValidationFunc, SecurityProfileAssignmentValidationFunc, WebhookValidationFunc } from "../services/custom-validation-func";
+import { ApiClientValidationFunc, ImpersonationConfigValidationFunc, LocaleAssignmentCustomValidationFunc, ProductAssignmentValidationFunc, SecurityProfileAssignmentValidationFunc, WebhookValidationFunc } from "../services/custom-validation-func";
 
 const Directory: OCResource[] = [
     { 
@@ -94,6 +94,13 @@ const Directory: OCResource[] = [
             return x;
         },
         customValidationFunc: ApiClientValidationFunc, 
+    },
+    {
+        name: OCResourceEnum.Locales,
+        modelName: 'Locale',
+        sdkObject: Locales,
+        path: "/locales",
+        createPriority: 3,
     },
     {
         name: OCResourceEnum.Incrementors,
@@ -374,6 +381,27 @@ const Directory: OCResource[] = [
         },
     },
     {
+        name: OCResourceEnum.LocaleAssignments, 
+        modelName: "LocaleAssignment",
+        sdkObject: Locales,
+        createPriority: 6,
+        isAssignment: true,
+        path: "/locales/assignments",
+        customValidationFunc: LocaleAssignmentCustomValidationFunc,
+        foreignKeys: {
+            LocaleID: { 
+                foreignResource: OCResourceEnum.Locales 
+            },
+            BuyerID: { 
+                foreignResource: OCResourceEnum.Buyers 
+            },
+            UserGroupID: {
+                foreignParentRefField: "BuyerID",
+                foreignResource: OCResourceEnum.Users
+            }
+        },
+    },
+    {
         name: OCResourceEnum.UserGroupAssignments, 
         modelName: "UserGroupAssignment",
         sdkObject: UserGroups,
@@ -516,6 +544,7 @@ const Directory: OCResource[] = [
         createPriority: 6,
         path: "/products/assignments",
         isAssignment: true,
+        customValidationFunc: ProductAssignmentValidationFunc,
         foreignKeys: {
             ProductID: { foreignResource: OCResourceEnum.Products },
             BuyerID: { foreignResource: OCResourceEnum.Buyers },

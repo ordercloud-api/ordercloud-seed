@@ -95,7 +95,7 @@ export async function validate(args: ValidateArgs): Promise<ValidateResponse> {
                 validator.validateParentRef(validator.currentResource.parentResource.name)
             }
             if (validator.currentResource.customValidationFunc !== undefined) {
-                validator.currentResource.customValidationFunc(record, validator); 
+                validator.currentResource.customValidationFunc(record, validator, marketplace); 
             }
         }
     }

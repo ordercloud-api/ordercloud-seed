@@ -131,3 +131,25 @@ test('owner ID should be marketplace ID or supplierID', async () => {
     expect(resp.errors[0]).toBe("Invalid reference Catalogs.OwnerID: no Suppliers found with ID \"wrong\".");
     expect(resp.errors[1]).toBe("Invalid reference PriceSchedules.OwnerID: no Suppliers found with ID \"so wrong\".");
 });
+
+test('locale assignment validation should work', async () => {
+    var resp = await validateFile("./tests/data/bad-locale-assignments.yml");
+    expect(resp.errors.length).toBe(4);
+    expect(resp.errors[0]).toBe("Required field Locales.Currency: cannot have value undefined.");
+    expect(resp.errors[1]).toBe("Required field LocaleAssignments.BuyerID: cannot have value undefined.");
+    expect(resp.errors[2]).toBe("Invalid reference LocaleAssignments.BuyerID: no Buyers found with ID \"fake\".");
+    expect(resp.errors[3]).toBe("Invalid reference LocaleAssignment.UserID: no User found with ID \"user2\" and BuyerID \"buyer1\".");
+});
+
+test('price schedule must have at least one price break before it can be assigned to a product.', async () => {
+    var resp = await validateFile("./tests/data/product-assignment-missing-price-break.yml");
+    expect(resp.errors.length).toBe(2);
+    expect(resp.errors[0]).toBe("Invalid reference ProductAssignments.PriceScheduleID: no PriceSchedules found with ID \"productA-US\".");
+    expect(resp.errors[1]).toBe("Price Schedule with ID \"productA\": must have at least one price break before it can be assigned to a product.");
+});
+
+test('partys assigned Locale must match  the price schedules currency', async () => {
+    var resp = await validateFile("./tests/data/mismatched-currency-assignment.yml");
+    expect(resp.errors.length).toBe(1);
+    expect(resp.errors[0]).toBe("ProductAssignments: The party's assigned Locale must match the price schedule's currency. Price Schedule ID: \"productA-CA\". Locale ID: \"CA\".");
+});

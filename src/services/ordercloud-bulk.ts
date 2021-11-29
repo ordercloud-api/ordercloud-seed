@@ -30,7 +30,7 @@ export default class OrderCloudBulk {
         console.log("Request method:", chalk.green(error.response.config.method.toUpperCase()));
         console.log("Request url:", chalk.green(error.response.config.url));
         console.log("Request data:", chalk.green(error.response.config.data));
-        console.log("\nResponse status:", error.status);
+        console.log("Response status:", error.status);
         console.log("Response data:", error.errors.Errors[0]);
     }
 
