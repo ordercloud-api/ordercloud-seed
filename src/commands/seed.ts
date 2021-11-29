@@ -128,10 +128,10 @@ export async function seed(args: SeedArgs): Promise<SeedResponse | void> {
 
     logger(`Done! Seeded a new marketplace with ID \"${marketplaceID}\" and Name \"${marketplaceName}\".`, MessageType.Success); 
 
-    var apiClients = marketplaceData.Objects[OCResourceEnum.ApiClients].map(apiClient => {
+    var apiClients = marketplaceData.Objects[OCResourceEnum.ApiClients]?.map(apiClient => {
         apiClient.ID = apiClientIDMap[apiClient.ID];
         return apiClient;
-    })
+    }) || [];
 
     var results =  {
         marketplaceName,
@@ -145,8 +145,8 @@ export async function seed(args: SeedArgs): Promise<SeedResponse | void> {
     function SetOwnerID(resource: OCResource, records: any[]) {
         if (resource.hasOwnerIDField) {
             for (var record of records) {
-                if (record.OwnerID === MARKETPLACE_ID) {
-                    record.OwnerID = marketplaceID;
+                if (record[resource.hasOwnerIDField] === MARKETPLACE_ID) {
+                    record[resource.hasOwnerIDField] = marketplaceID;
                 }
             }
         }

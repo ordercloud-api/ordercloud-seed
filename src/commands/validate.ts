@@ -82,7 +82,7 @@ export async function validate(args: ValidateArgs): Promise<ValidateResponse> {
                     validator.validateIsRequired(propName);
                 } else {
                     var typeMatches = validator.validateFieldTypeMatches(value, spec);
-                    if (typeMatches && resource.hasOwnerIDField && propName === 'OwnerID') {
+                    if (typeMatches && resource.hasOwnerIDField && propName === resource.hasOwnerIDField) {
                         validator.validateOwnerIDIsValid(value)
                     }
                     if (typeMatches &&!_.isNil(foreignKey)) {    

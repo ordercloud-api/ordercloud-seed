@@ -140,8 +140,8 @@ export async function download(args: DownloadArgs): Promise<SerializedMarketplac
     function PlaceHoldMarketplaceID(resource: OCResource, records: any[]): void {
         if (resource.hasOwnerIDField) {
             for (var record of records) {  
-                if (record.OwnerID === marketplaceID) {
-                    record.OwnerID = MARKETPLACE_ID;
+                if (record[resource.hasOwnerIDField] === marketplaceID) {
+                    record[resource.hasOwnerIDField] = MARKETPLACE_ID;
                 }
             }
         }

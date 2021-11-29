@@ -7,36 +7,61 @@ Objects:
   AdminAddresses: []
   MessageSenders: []
   ApiClients: []
+  Locales:
+    - ID: CA
+      OwnerID: <MarketplaceID placeholder>
+      Currency: CAD
+      Language: ENG
+    - ID: US
+      OwnerID: <MarketplaceID placeholder>
+      Currency: USD
+      Language: ENG
   Incrementors: []
   Webhooks: []
   IntegrationEvents: []
   XpIndices: []
   Buyers:
-    - ID: buyer1
-      Name: buyer1
-      DefaultCatalogID: buyer1
-      Active: true
-      DateCreated: '2021-11-09T18:44:21.57+00:00'
+    - ID: CA
+      Name: Canada
+      DefaultCatalogID: CA
+      Active: false
+      DateCreated: '2021-11-29T17:59:54.367+00:00'
       xp: null
-    - ID: buyer2
-      Name: buyer2
-      DefaultCatalogID: buyer2
-      Active: true
-      DateCreated: '2021-11-09T18:44:26.2+00:00'
+    - ID: US
+      Name: United States
+      DefaultCatalogID: US
+      Active: false
+      DateCreated: '2021-11-29T17:59:54.273+00:00'
       xp: null
-    - ID: buyer3
-      Name: buyer3
-      DefaultCatalogID: buyer3
+  Users:
+    - ID: user2
+      Username: user2
+      Password: null
+      FirstName: Jim
+      LastName: Beam
+      Email: fake@email.com
+      Phone: null
+      TermsAccepted: null
       Active: true
-      DateCreated: '2021-11-09T18:44:30.383+00:00'
       xp: null
-    - ID: buyer4
-      Name: buyer4
-      DefaultCatalogID: buyer4
+      AvailableRoles: []
+      DateCreated: '2021-11-29T17:59:55.127+00:00'
+      PasswordLastSetDate: null
+      BuyerID: CA
+    - ID: user1
+      Username: user1
+      Password: null
+      FirstName: Jim
+      LastName: Beam
+      Email: fake@email.com
+      Phone: null
+      TermsAccepted: null
       Active: true
-      DateCreated: '2021-11-09T18:44:34.673+00:00'
       xp: null
-  Users: []
+      AvailableRoles: []
+      DateCreated: '2021-11-29T17:59:55.037+00:00'
+      PasswordLastSetDate: null
+      BuyerID: US
   UserGroups: []
   Addresses: []
   CostCenters: []
@@ -44,177 +69,84 @@ Objects:
   SpendingAccounts: []
   ApprovalRules: []
   Catalogs:
-    - ID: buyer1
+    - ID: CA
       OwnerID: <MarketplaceID placeholder>
-      Name: buyer1
-      Description: Default catalog for buyer1
+      Name: Canada
+      Description: Default catalog for Canada
       Active: true
       CategoryCount: 0
       xp: null
-    - ID: buyer2
+    - ID: CA-catalog
       OwnerID: <MarketplaceID placeholder>
-      Name: buyer2
-      Description: Default catalog for buyer2
+      Name: Canada
+      Description: null
+      Active: false
+      CategoryCount: 0
+      xp: null
+    - ID: US
+      OwnerID: <MarketplaceID placeholder>
+      Name: United States
+      Description: Default catalog for United States
       Active: true
       CategoryCount: 0
       xp: null
-    - ID: buyer3
+    - ID: US-catalog
       OwnerID: <MarketplaceID placeholder>
-      Name: buyer3
-      Description: Default catalog for buyer3
-      Active: true
-      CategoryCount: 0
-      xp: null
-    - ID: buyer4
-      OwnerID: <MarketplaceID placeholder>
-      Name: buyer4
-      Description: Default catalog for buyer4
-      Active: true
+      Name: United States
+      Description: null
+      Active: false
       CategoryCount: 0
       xp: null
   Categories: []
-  Suppliers:
-    - ID: supplier_all_buyers_can_order
-      Name: supplier_all_buyers_can_order
-      Active: true
-      DateCreated: '2021-11-09T18:46:40.04+00:00'
-      AllBuyersCanOrder: true
-      xp: null
-    - ID: supplier1
-      Name: supplier1
-      Active: true
-      DateCreated: '2021-11-09T18:44:51.607+00:00'
-      AllBuyersCanOrder: false
-      xp: null
-    - ID: supplier2
-      Name: supplier2
-      Active: true
-      DateCreated: '2021-11-09T18:45:00.57+00:00'
-      AllBuyersCanOrder: false
-      xp: null
-    - ID: supplier3
-      Name: supplier3
-      Active: true
-      DateCreated: '2021-11-09T18:45:04.887+00:00'
-      AllBuyersCanOrder: false
-      xp: null
-    - ID: supplier4
-      Name: supplier4
-      Active: true
-      DateCreated: '2021-11-09T18:45:11.33+00:00'
-      AllBuyersCanOrder: false
-      xp: null
-  SupplierUsers: []
-  SupplierUserGroups: []
-  SupplierAddresses: []
+  Suppliers: []
   Products:
     - OwnerID: <MarketplaceID placeholder>
       DefaultPriceScheduleID: null
       AutoForward: false
-      ID: product1
-      Name: product1
+      ID: productA
+      Name: productA
       Description: null
       QuantityMultiplier: 1
       ShipWeight: null
       ShipHeight: null
       ShipWidth: null
       ShipLength: null
-      Active: true
+      Active: false
       SpecCount: 0
       VariantCount: 0
       ShipFromAddressID: null
       Inventory: null
       DefaultSupplierID: null
       AllSuppliersCanSell: false
-      xp: null
-    - OwnerID: <MarketplaceID placeholder>
-      DefaultPriceScheduleID: null
-      AutoForward: false
-      ID: product2
-      Name: product2
-      Description: null
-      QuantityMultiplier: 1
-      ShipWeight: null
-      ShipHeight: null
-      ShipWidth: null
-      ShipLength: null
-      Active: true
-      SpecCount: 0
-      VariantCount: 0
-      ShipFromAddressID: null
-      Inventory: null
-      DefaultSupplierID: null
-      AllSuppliersCanSell: false
-      xp: null
-    - OwnerID: <MarketplaceID placeholder>
-      DefaultPriceScheduleID: null
-      AutoForward: false
-      ID: product3
-      Name: product3
-      Description: null
-      QuantityMultiplier: 1
-      ShipWeight: null
-      ShipHeight: null
-      ShipWidth: null
-      ShipLength: null
-      Active: true
-      SpecCount: 0
-      VariantCount: 0
-      ShipFromAddressID: null
-      Inventory: null
-      DefaultSupplierID: null
-      AllSuppliersCanSell: false
-      xp: null
-    - OwnerID: <MarketplaceID placeholder>
-      DefaultPriceScheduleID: null
-      AutoForward: false
-      ID: product4
-      Name: product4
-      Description: null
-      QuantityMultiplier: 1
-      ShipWeight: null
-      ShipHeight: null
-      ShipWidth: null
-      ShipLength: null
-      Active: true
-      SpecCount: 0
-      VariantCount: 0
-      ShipFromAddressID: null
-      Inventory: null
-      DefaultSupplierID: null
-      AllSuppliersCanSell: false
-      xp: null
-    - OwnerID: <MarketplaceID placeholder>
-      DefaultPriceScheduleID: null
-      AutoForward: false
-      ID: product_all_suppliers
-      Name: product_all_suppliers
-      Description: null
-      QuantityMultiplier: 1
-      ShipWeight: null
-      ShipHeight: null
-      ShipWidth: null
-      ShipLength: null
-      Active: true
-      SpecCount: 0
-      VariantCount: 0
-      ShipFromAddressID: null
-      Inventory: null
-      DefaultSupplierID: null
-      AllSuppliersCanSell: true
       xp: null
   PriceSchedules:
     - OwnerID: <MarketplaceID placeholder>
-      ID: priceschedule1
-      Name: priceschedule1
+      ID: productA-CA
+      Name: productA-CA
       ApplyTax: false
       ApplyShipping: false
       MinQuantity: 1
       MaxQuantity: null
       UseCumulativeQuantity: false
       RestrictedQuantity: false
-      PriceBreaks: []
-      Currency: null
+      PriceBreaks:
+        - Quantity: 1
+          Price: 3
+      Currency: CAD
+      xp: null
+    - OwnerID: <MarketplaceID placeholder>
+      ID: productA-US
+      Name: productA-US
+      ApplyTax: false
+      ApplyShipping: false
+      MinQuantity: 1
+      MaxQuantity: null
+      UseCumulativeQuantity: false
+      RestrictedQuantity: false
+      PriceBreaks:
+        - Quantity: 1
+          Price: 2
+      Currency: USD
       xp: null
   Specs: []
   ProductFacets: []
@@ -227,45 +159,53 @@ Assignments:
   CreditCardAssignments: []
   CategoryAssignments: []
   CategoryProductAssignments: []
-  SupplierUserGroupsAssignments: []
-  SupplierBuyerAssignment:
-    - BuyerID: buyer1
-      SupplierID: supplier1
-    - BuyerID: buyer2
-      SupplierID: supplier1
-    - BuyerID: buyer3
-      SupplierID: supplier3
-  ProductSupplierAssignment:
-    - SupplierID: supplier1
-      DefaultPriceScheduleID: priceschedule1
-      ProductID: product1
-    - SupplierID: supplier2
-      DefaultPriceScheduleID: null
-      ProductID: product1
-    - SupplierID: supplier3
-      DefaultPriceScheduleID: null
-      ProductID: product3
+  ProductSupplierAssignment: []
   SecurityProfileAssignments: []
   AdminUserGroupAssignments: []
   ApiClientAssignments: []
-  ProductAssignments: []
+  LocaleAssignments:
+    - LocaleID: CA
+      BuyerID: CA
+      UserID: null
+      UserGroupID: null
+    - LocaleID: US
+      BuyerID: US
+      UserID: null
+      UserGroupID: null
+  ProductAssignments:
+    - SellerID: <MarketplaceID placeholder>
+      ProductID: productA
+      BuyerID: US
+      UserID: null
+      UserGroupID: null
+      PriceScheduleID: productA-US
+    - SellerID: <MarketplaceID placeholder>
+      ProductID: productA
+      BuyerID: CA
+      UserID: null
+      UserGroupID: null
+      PriceScheduleID: productA-CA
   CatalogAssignments:
-    - CatalogID: buyer1
-      BuyerID: buyer1
+    - CatalogID: CA
+      BuyerID: CA
       ViewAllCategories: true
       ViewAllProducts: true
-    - CatalogID: buyer2
-      BuyerID: buyer2
+    - CatalogID: CA-catalog
+      BuyerID: CA
+      ViewAllCategories: false
+      ViewAllProducts: false
+    - CatalogID: US
+      BuyerID: US
       ViewAllCategories: true
       ViewAllProducts: true
-    - CatalogID: buyer3
-      BuyerID: buyer3
-      ViewAllCategories: true
-      ViewAllProducts: true
-    - CatalogID: buyer4
-      BuyerID: buyer4
-      ViewAllCategories: true
-      ViewAllProducts: true
-  ProductCatalogAssignment: []
+    - CatalogID: US-catalog
+      BuyerID: US
+      ViewAllCategories: false
+      ViewAllProducts: false
+  ProductCatalogAssignment:
+    - CatalogID: CA-catalog
+      ProductID: productA
+    - CatalogID: US-catalog
+      ProductID: productA
   SpecProductAssignments: []
   PromotionAssignment: []

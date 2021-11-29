@@ -54,7 +54,11 @@ const Directory: OCResource[] = [
         modelName: 'User',
         sdkObject: AdminUsers,
         path: "/adminusers",
-        createPriority: 2
+        createPriority: 2,
+        downloadTransformFunc: (x) => { 
+            delete x.Locale;
+            return x;
+        }
     },
     {
         name: OCResourceEnum.AdminUserGroups, 
@@ -101,6 +105,7 @@ const Directory: OCResource[] = [
         sdkObject: Locales,
         path: "/locales",
         createPriority: 3,
+        hasOwnerIDField: "OwnerID",
     },
     {
         name: OCResourceEnum.Incrementors,
@@ -155,6 +160,10 @@ const Directory: OCResource[] = [
         parentRefField: "BuyerID",
         path: "/buyers/{buyerID}/users",
         isChild: true,
+        downloadTransformFunc: (x) => { 
+            delete x.Locale;
+            return x;
+        }
     },
     {
         name: OCResourceEnum.UserGroups,
@@ -222,7 +231,7 @@ const Directory: OCResource[] = [
         sdkObject: Catalogs,
         createPriority: 3,
         path: "/catalogs",
-        hasOwnerIDField: true,
+        hasOwnerIDField: "OwnerID",
         children: [OCResourceEnum.Categories, OCResourceEnum.CategoryAssignments, OCResourceEnum.CategoryProductAssignments]
     },
     {
@@ -256,6 +265,10 @@ const Directory: OCResource[] = [
         parentRefField: "SupplierID",
         path: "/suppliers/{supplierID}/users",
         isChild: true,
+        downloadTransformFunc: (x) => { 
+            delete x.Locale;
+            return x;
+        }
     },
     {
         name: OCResourceEnum.SupplierUserGroups, 
@@ -281,7 +294,7 @@ const Directory: OCResource[] = [
         sdkObject: Products,
         createPriority: 4,
         path: "/products",
-        hasOwnerIDField: true,
+        hasOwnerIDField: "OwnerID",
         foreignKeys: {
             DefaultPriceScheduleID: { foreignResource: OCResourceEnum.PriceSchedules },
             ShipFromAddressID: { foreignResource: OCResourceEnum.AdminAddresses },
@@ -295,7 +308,7 @@ const Directory: OCResource[] = [
         sdkObject: PriceSchedules,
         path: "/priceschedules",
         createPriority: 3,
-        hasOwnerIDField: true,
+        hasOwnerIDField: "OwnerID",
     },
     {
         name: OCResourceEnum.Specs, 
@@ -303,7 +316,7 @@ const Directory: OCResource[] = [
         sdkObject: Specs,
         createPriority: 3,
         path: "/specs",
-        hasOwnerIDField: true,
+        hasOwnerIDField: "OwnerID",
         foreignKeys: {
             DefaultOptionID: { foreignResource: OCResourceEnum.SpecOptions, foreignParentRefField: "ID" },
         },
@@ -333,7 +346,7 @@ const Directory: OCResource[] = [
         sdkObject: Promotions,
         path: "/promotions",
         createPriority: 3,
-        hasOwnerIDField: true
+        hasOwnerIDField: "OwnerID"
     },
     {
         name: OCResourceEnum.SecurityProfileAssignments, 
@@ -387,6 +400,7 @@ const Directory: OCResource[] = [
         createPriority: 6,
         isAssignment: true,
         path: "/locales/assignments",
+
         customValidationFunc: LocaleAssignmentCustomValidationFunc,
         foreignKeys: {
             LocaleID: { 
@@ -544,6 +558,7 @@ const Directory: OCResource[] = [
         createPriority: 6,
         path: "/products/assignments",
         isAssignment: true,
+        hasOwnerIDField: "SellerID",
         customValidationFunc: ProductAssignmentValidationFunc,
         foreignKeys: {
             ProductID: { foreignResource: OCResourceEnum.Products },
@@ -707,7 +722,7 @@ function ApplyDefaults(resource: OCResource): OCResource {
     resource.isChild = resource.isChild || false;
     resource.requiredCreateFields = resource.requiredCreateFields ?? [];
     resource.redactFields = resource.redactFields ?? [];
-    resource.hasOwnerIDField = resource.hasOwnerIDField ?? false;
+    resource.hasOwnerIDField = resource.hasOwnerIDField ?? null;
     return resource;
 }
 
