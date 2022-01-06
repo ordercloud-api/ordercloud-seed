@@ -37,7 +37,7 @@ seed https://raw.githubusercontent.com/ordercloud-api/ordercloud-seed/main/seeds
 
 Download the data from an existing marketplace to a seed file.
 ```
-download ./folder/new-file-to-create.yml -e=sandbox -i={existing-marketplace-id} -u={username} -p={password}
+download ./folder/new-file-to-create.yml -i={existing-marketplace-id} -u={username} -p={password}
 ```
 
 Validate that a local file would seed successfully. 
@@ -71,7 +71,7 @@ These are seeding files maintained as part of this repo that represent templates
 ## Development
 
 - Run `npm install`
-- Run `npm run rollup` everytime you change source files.
+- Run `npm build` everytime you change source files.
 - Run `node ./dist/cli.js [command]` to debug a command.
 - Run `npm run test` to run unit tests.
 

@@ -37,6 +37,11 @@ yargs.scriptName("@ordercloud/seeding")
       type: 'string',
       alias: 'n',
       describe: 'Marketplace Name'
+    }),
+    yargs.option('regionId', {
+      type: 'string',
+      alias: 'r',
+      describe: 'Region for the marketplace. See the API docs for more information'
     })
   }, function (argv) {
     var dataUrl = argv.d as string;
@@ -77,11 +82,6 @@ yargs.scriptName("@ordercloud/seeding")
     });
   })
   .command('download [filePath]', 'Create a local seed file from an existing marketplace.', (yargs) => {
-    yargs.option('environment', {
-      type: 'string',
-      alias: 'e',
-      describe: 'Environment',
-    })
     yargs.option('id', {
       type: 'string',
       alias: 'i',
@@ -107,7 +107,6 @@ yargs.scriptName("@ordercloud/seeding")
     var data = await download({
       username: argv.u as string,
       password: argv.p as string,
-      environment: argv.e as string,
       marketplaceID: argv.i as string, 
     });
     if (data) {

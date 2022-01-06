@@ -8,7 +8,7 @@ import { BuildResourceDirectory } from '../models/oc-resource-directory';
 import { OCResourceEnum } from '../models/oc-resource-enum';
 import { OCResource } from '../models/oc-resources';
 import Random from '../services/random';
-import { REDACTED_MESSAGE, ORDERCLOUD_URLS, MARKETPLACE_ID, VARIANTS_PROPERTY } from '../constants';
+import { REDACTED_MESSAGE,MARKETPLACE_ID, VARIANTS_PROPERTY } from '../constants';
 import PortalAPI from '../services/portal';
 import { SerializedMarketplace } from '../models/serialized-marketplace';
 import { ApiClient, Organization } from '@ordercloud/portal-javascript-sdk';
@@ -19,9 +19,10 @@ export interface SeedArgs {
     password?: string; 
     marketplaceID?: string;
     marketplaceName?: string;
-    portalToken?: string,
+    portalToken?: string;
     dataUrl?: string;
     rawData?: SerializedMarketplace;
+    regionId?: string;
     logger?: LogCallBackFunc
 }
 
@@ -41,6 +42,7 @@ export async function seed(args: SeedArgs): Promise<SeedResponse | void> {
         portalToken,
         rawData,
         dataUrl,
+        regionId,
         logger = defaultLogger
     } = args;
 
@@ -75,12 +77,37 @@ export async function seed(args: SeedArgs): Promise<SeedResponse | void> {
 
     // Create Marketplace
     marketplaceName = marketplaceName || dataUrl?.split("/")?.pop()?.split(".")[0] || marketplaceID;
-    await portal.CreateOrganization(marketplaceID, marketplaceName, portalToken);
+    try
+    {
+        await portal.CreateOrganization(marketplaceID, marketplaceName, portalToken, regionId);
+    }
+    catch(exception)
+    {
+        logger(`Couldn't create marketplace with Name \"${marketplaceName}\" and ID \"${marketplaceID}\" in the region \"${regionId}\".`, MessageType.Error);
+        return;
+    }
+    
     logger(`Created new marketplace with Name \"${marketplaceName}\" and ID \"${marketplaceID}\".`, MessageType.Success); 
+
+    var organization = await portal.GetOrganization(marketplaceID, portalToken);
+
+    if(!organization)
+    {
+        logger(`Couldn't get the newly created organization with name \"${marketplaceName}\" and ID \"${marketplaceID}\".`, MessageType.Error);
+        return;
+    }
+
+    if(!organization.CoreApiUrl.includes("sandbox"))
+    {
+        logger(`Seeding is not allowed for production accounts. Marketplace name \"${marketplaceName}\" and ID \"${marketplaceID}\".`, MessageType.Error);
+        return;
+    }
+
+    logger(`Seeding the newly created marketplace using api url \"${organization.CoreApiUrl}\".`, MessageType.Success);
 
     // Authenticate to Core API
     var org_token = await portal.getOrganizationToken(marketplaceID, portalToken);
-    Configuration.Set({ baseApiUrl: ORDERCLOUD_URLS.sandbox }); // always sandbox for upload
+    Configuration.Set({ baseApiUrl: organization.CoreApiUrl }); // always sandbox for upload
     Tokens.SetAccessToken(org_token);
     
     // Upload to Ordercloud
