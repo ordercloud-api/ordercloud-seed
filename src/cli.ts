@@ -66,6 +66,7 @@ yargs.scriptName("@ordercloud/seeding")
           password: argv.p as string,
           marketplaceID: argv.i as string,
           marketplaceName: argv.n as string,
+          regionId: argv.r as string,
           rawData: data
         });
       } catch (e) {

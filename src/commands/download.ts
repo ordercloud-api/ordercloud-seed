@@ -103,7 +103,7 @@ export async function download(args: DownloadArgs): Promise<SerializedMarketplac
                 }
                 marketplace.AddRecords(childResource, childRecords);
             }
-            if (childRecords.length !== 0) {
+            if (childRecords && childRecords.length !== 0) {
                 logger("Found " + childRecords.length + " " + childResourceName);
             }
         }
