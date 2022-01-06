@@ -4,10 +4,9 @@ import { SerializedMarketplace } from '../models/serialized-marketplace';
 import OrderCloudBulk from '../services/ordercloud-bulk';
 import { defaultLogger, LogCallBackFunc, MessageType } from '../services/logger';
 import { BuildResourceDirectory } from '../models/oc-resource-directory';
-import jwt_decode from "jwt-decode";
 import { OCResource } from '../models/oc-resources';
 import _  from 'lodash';
-import { MARKETPLACE_ID, ORDERCLOUD_URLS, REDACTED_MESSAGE, VARIANTS_PROPERTY } from '../constants';
+import { MARKETPLACE_ID, REDACTED_MESSAGE, VARIANTS_PROPERTY } from '../constants';
 import PortalAPI from '../services/portal';
 import Bottleneck from 'bottleneck';
 import { OCResourceEnum } from '../models/oc-resource-enum';
@@ -15,7 +14,6 @@ import { OCResourceEnum } from '../models/oc-resource-enum';
 export interface DownloadArgs {
     username?: string; 
     password?: string; 
-    environment?: string;
     marketplaceID: string; 
     portalToken?: string;
     logger?: LogCallBackFunc
@@ -25,28 +23,17 @@ export async function download(args: DownloadArgs): Promise<SerializedMarketplac
     var { 
         username, 
         password, 
-        environment,
         marketplaceID, 
         portalToken,
         logger = defaultLogger
     } = args;
-    var validEnvironments = ['staging', 'sandbox', 'prod'];
    
     if (!marketplaceID) {
         return logger(`Missing required argument: marketplaceID`, MessageType.Error);
     }
 
-    if (!validEnvironments.includes(environment)) {
-        return logger(`environment must be one of ${validEnvironments.join(", ")}`, MessageType.Error)
-    }
-
-    var url = ORDERCLOUD_URLS[environment];
-
-    // Set up configuration
-    Configuration.Set({ baseApiUrl: url });
-
     // Authenticate
-    var portal = new PortalAPI(); 
+    var portal = new PortalAPI();
     var org_token: string;
     if (_.isNil(portalToken)) {
         if (_.isNil(username) || _.isNil(password)) {
@@ -60,14 +47,17 @@ export async function download(args: DownloadArgs): Promise<SerializedMarketplac
     }
     try {
         org_token = await portal.getOrganizationToken(marketplaceID, portalToken);
-    } catch (e) {
-        console.log(JSON.stringify(e));
-        return logger(`Marketplace with ID \"${marketplaceID}\" not found`, MessageType.Error)
-    }
-    var decoded = jwt_decode(org_token) as any;
+        
+        var organization = await portal.GetOrganization(marketplaceID, portalToken);        
+        if(!organization)
+        {
+            return logger(`Couldn't get the marketplace with ID \"${marketplaceID}\".`, MessageType.Error);            
+        }
 
-    if (decoded.aud !== url) {
-        return logger(`Marketplace \"${marketplaceID}\" found, but is not in environment \"${environment}\"`, MessageType.Error)
+        Configuration.Set({ baseApiUrl: organization.CoreApiUrl });
+    } catch (e) {
+        console.log(e);
+        return logger(`Marketplace with ID \"${marketplaceID}\" not found`, MessageType.Error)
     }
 
     Tokens.SetAccessToken(org_token);

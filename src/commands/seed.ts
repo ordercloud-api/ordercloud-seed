@@ -8,7 +8,7 @@ import { BuildResourceDirectory } from '../models/oc-resource-directory';
 import { OCResourceEnum } from '../models/oc-resource-enum';
 import { OCResource } from '../models/oc-resources';
 import Random from '../services/random';
-import { REDACTED_MESSAGE, ORDERCLOUD_URLS, MARKETPLACE_ID, VARIANTS_PROPERTY } from '../constants';
+import { REDACTED_MESSAGE,MARKETPLACE_ID, VARIANTS_PROPERTY } from '../constants';
 import PortalAPI from '../services/portal';
 import { SerializedMarketplace } from '../models/serialized-marketplace';
 import { ApiClient, Organization } from '@ordercloud/portal-javascript-sdk';
@@ -83,7 +83,7 @@ export async function seed(args: SeedArgs): Promise<SeedResponse | void> {
     }
     catch(exception)
     {
-        logger(`Couldn't create marketplace with Name \"${marketplaceName}\" and ID \"${marketplaceID}\" int the region \"${regionId}\".`, MessageType.Error);
+        logger(`Couldn't create marketplace with Name \"${marketplaceName}\" and ID \"${marketplaceID}\" in the region \"${regionId}\".`, MessageType.Error);
         return;
     }
     
