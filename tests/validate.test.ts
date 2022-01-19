@@ -168,8 +168,25 @@ test('variant validation', async () => {
 
 test('inventory records validation', async () => {
     var resp = await validateFile("./tests/data/inventory-records.yml");
+    expect(resp.errors.length).toBe(3);
+    expect(resp.errors[0]).toBe("Required field InventoryRecords.ProductID: cannot have value undefined.");
+    expect(resp.errors[1]).toBe("Invalid reference InventoryRecord.AddressID: no Admin Address found with ID \"supplier-address-1\".");
+    expect(resp.errors[2]).toBe("Invalid reference InventoryRecord.AddressID: no Address found with ID \"admin-address-2\" under supplier with ID \"supplier1\".");
+});
+
+test('both types of inventory records', async () => {
+    var resp = await validateFile("./tests/data/using-both-types-of-inventory-records.yml");
     expect(resp.errors.length).toBe(2);
+    expect(resp.errors[0]).toBe("Invalid use of InventoryRecords and VariantInventoryRecords on product with ID \"product1\".");
+    expect(resp.errors[1]).toBe("Invalid use of InventoryRecords and VariantInventoryRecords on product with ID \"product1\".");
+});
+
+test('variant inventory records validation', async () => {
+    var resp = await validateFile("./tests/data/variant-inventory-records.yml");
+    expect(resp.errors.length).toBe(4);
     expect(resp.errors[0]).toBe("Invalid reference InventoryRecord.AddressID: no Admin Address found with ID \"supplier-address-1\".");
-    expect(resp.errors[1]).toBe("Invalid reference InventoryRecord.AddressID: no Address found with ID \"admin-address-2\" under supplier with ID \"supplier1\".");
+    expect(resp.errors[1]).toBe("Invalid reference VariantInventoryRecord.VariantID: no Variant found with ID \"does not exist\" under product with ID \"product1\".");
+    expect(resp.errors[2]).toBe("Missing required property VariantInventoryRecord.VariantID.");
+    expect(resp.errors[3]).toBe("Invalid reference InventoryRecord.AddressID: no Address found with ID \"admin-address-2\" under supplier with ID \"supplier1\".");
 });
 

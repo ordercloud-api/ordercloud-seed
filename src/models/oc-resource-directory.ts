@@ -3,7 +3,7 @@ import { Addresses, AdminAddresses, InventoryRecords, AdminUserGroups, AdminUser
 import { OCResourceEnum } from "./oc-resource-enum";
 import { OCResource } from "./oc-resources";
 import _ from 'lodash';
-import { ApiClientValidationFunc, ImpersonationConfigValidationFunc, InventoryRecordValidation, LocaleAssignmentCustomValidationFunc, ProductAssignmentValidationFunc, SecurityProfileAssignmentValidationFunc, VariantValidationFunc, WebhookValidationFunc } from "../services/custom-validation-func";
+import { ApiClientValidationFunc, ImpersonationConfigValidationFunc, InventoryRecordValidation, LocaleAssignmentCustomValidationFunc, ProductAssignmentValidationFunc, SecurityProfileAssignmentValidationFunc, VariantInventoryRecordValidation, VariantValidationFunc, WebhookValidationFunc } from "../services/custom-validation-func";
 
 const Directory: OCResource[] = [
     { 
@@ -369,6 +369,26 @@ const Directory: OCResource[] = [
         isChild: true,
         hasOwnerIDField: "OwnerID",
         customValidationFunc: InventoryRecordValidation,
+    },
+    {
+        name: OCResourceEnum.VariantInventoryRecords, 
+        modelName: "InventoryRecord",
+        sdkObject: InventoryRecords,
+        createPriority: 7,
+        path: "/products/{productID}/variants/{variantID}/inventoryrecords",
+        parentRefField: "ProductID",
+        secondRouteParam: "VariantID",
+        isChild: true,
+        listMethodName: 'ListVariant',
+        createMethodName: 'CreateVariant',
+        foreignKeys: {
+            VariantID: { 
+                foreignParentRefField: "ProductID",
+                foreignResource: OCResourceEnum.Variants 
+            },
+            ProductID: { foreignResource: OCResourceEnum.Products }
+        },
+        customValidationFunc: VariantInventoryRecordValidation,
     },
     {
         name: OCResourceEnum.SecurityProfileAssignments, 
@@ -762,7 +782,7 @@ export async function BuildResourceDirectory(includeOpenAPI: boolean = false): P
             modified.requiredCreateFields = operation?.requestBody?.content?.["application/json"]?.schema?.required ?? [];
             modified.openAPIProperties = openAPISpec.data.components.schemas[resource.modelName].properties;
             if (modified.isChild) {
-                modified.parentResource = Directory.find(x => x.children.includes(modified.name));
+                modified.parentResource = Directory.find(x => x.children?.includes(modified.name));
             }
         }
         return modified;

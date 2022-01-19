@@ -8,7 +8,7 @@ Objects:
   AdminUserGroups: []
   AdminAddresses:
     - ID: admin-address-1
-      DateCreated: '2022-01-19T20:29:57.067+00:00'
+      DateCreated: '2022-01-19T22:21:06.203+00:00'
       CompanyName: null
       FirstName: null
       LastName: null
@@ -22,7 +22,7 @@ Objects:
       AddressName: null
       xp: null
     - ID: admin-address-2
-      DateCreated: '2022-01-19T20:29:57.06+00:00'
+      DateCreated: '2022-01-19T22:21:06.28+00:00'
       CompanyName: null
       FirstName: null
       LastName: null
@@ -46,16 +46,16 @@ Objects:
   Catalogs: []
   Suppliers:
     - ID: supplier1
-      Name: supplier2
+      Name: supplier1
       Active: false
-      DateCreated: '2022-01-19T20:29:57.323+00:00'
+      DateCreated: '2022-01-19T22:21:06.573+00:00'
       AllBuyersCanOrder: false
       xp: null
   SupplierUsers: []
   SupplierUserGroups: []
   SupplierAddresses:
     - ID: supplier-address-1
-      DateCreated: '2022-01-19T20:29:57.733+00:00'
+      DateCreated: '2022-01-19T22:21:06.883+00:00'
       CompanyName: null
       FirstName: null
       LastName: null
@@ -90,15 +90,15 @@ Objects:
       Inventory:
         Enabled: true
         NotificationPoint: null
-        VariantLevelTracking: false
+        VariantLevelTracking: true
         OrderCanExceed: false
-        QuantityAvailable: 100
-        LastUpdated: '2022-01-19T20:29:58.31+00:00'
+        QuantityAvailable: 70
+        LastUpdated: '2022-01-19T22:21:07.48+00:00'
       DefaultSupplierID: null
       AllSuppliersCanSell: false
       xp: null
   Variants:
-    - ID: perfect
+    - ID: ground
       Name: null
       Description: null
       Active: false
@@ -107,13 +107,13 @@ Objects:
       ShipWidth: null
       ShipLength: null
       Inventory:
-        QuantityAvailable: 0
+        QuantityAvailable: 40
         LastUpdated: '0001-01-01T00:00:00+00:00'
       Specs:
         - SpecID: color
           Name: color
-          OptionID: blue
-          Value: blue
+          OptionID: red
+          Value: red
           PriceMarkupType: NoMarkup
           PriceMarkup: null
         - SpecID: size
@@ -150,32 +150,6 @@ Objects:
           PriceMarkup: null
       xp: null
       ProductID: product1
-    - ID: product1-red-M
-      Name: null
-      Description: null
-      Active: true
-      ShipWeight: null
-      ShipHeight: null
-      ShipWidth: null
-      ShipLength: null
-      Inventory:
-        QuantityAvailable: 0
-        LastUpdated: '0001-01-01T00:00:00+00:00'
-      Specs:
-        - SpecID: color
-          Name: color
-          OptionID: red
-          Value: red
-          PriceMarkupType: NoMarkup
-          PriceMarkup: null
-        - SpecID: size
-          Name: size
-          OptionID: M
-          Value: M
-          PriceMarkupType: NoMarkup
-          PriceMarkup: null
-      xp: null
-      ProductID: product1
     - ID: product1-red-S
       Name: null
       Description: null
@@ -202,12 +176,38 @@ Objects:
           PriceMarkup: null
       xp: null
       ProductID: product1
-  InventoryRecords:
-    - ID: 8-Bp8iUQtkqVrfDOs23SEw
+    - ID: sky
+      Name: null
+      Description: null
+      Active: false
+      ShipWeight: null
+      ShipHeight: null
+      ShipWidth: null
+      ShipLength: null
+      Inventory:
+        QuantityAvailable: 30
+        LastUpdated: '0001-01-01T00:00:00+00:00'
+      Specs:
+        - SpecID: color
+          Name: color
+          OptionID: blue
+          Value: blue
+          PriceMarkupType: NoMarkup
+          PriceMarkup: null
+        - SpecID: size
+          Name: size
+          OptionID: M
+          Value: M
+          PriceMarkupType: NoMarkup
+          PriceMarkup: null
+      xp: null
+      ProductID: product1
+  VariantInventoryRecords:
+    - ID: LCGhMUIqMEWjr6xlUxPXRw
       OwnerID: supplier1
       Address:
         ID: supplier-address-1
-        DateCreated: '2022-01-19T20:29:57.733+00:00'
+        DateCreated: '2022-01-19T22:21:06.883+00:00'
         CompanyName: null
         FirstName: null
         LastName: null
@@ -223,37 +223,15 @@ Objects:
       AddressID: supplier-address-1
       OrderCanExceed: false
       QuantityAvailable: 40
-      LastUpdated: '2022-01-19T20:29:59.893+00:00'
+      LastUpdated: '2022-01-19T22:21:10.93+00:00'
       xp: null
       ProductID: product1
-    - ID: G7xda-eGqEWnLTL0rovZMg
-      OwnerID: IjEoZYS3YEO8OJNy
-      Address:
-        ID: admin-address-1
-        DateCreated: '2022-01-19T20:29:57.067+00:00'
-        CompanyName: null
-        FirstName: null
-        LastName: null
-        Street1: 4th
-        Street2: null
-        City: Minneapolis
-        State: MN
-        Zip: '55409'
-        Country: US
-        Phone: null
-        AddressName: null
-        xp: null
-      AddressID: admin-address-1
-      OrderCanExceed: false
-      QuantityAvailable: 10
-      LastUpdated: '2022-01-19T20:29:59.64+00:00'
-      xp: null
-      ProductID: product1
-    - ID: jV8cpe-16E25bfwN49EfPQ
+      VariantID: ground
+    - ID: ilPNYZRnNU22Pk2GJafjzA
       OwnerID: supplier1
       Address:
         ID: supplier-address-1
-        DateCreated: '2022-01-19T20:29:57.733+00:00'
+        DateCreated: '2022-01-19T22:21:06.883+00:00'
         CompanyName: null
         FirstName: null
         LastName: null
@@ -269,32 +247,11 @@ Objects:
       AddressID: supplier-address-1
       OrderCanExceed: false
       QuantityAvailable: 30
-      LastUpdated: '2022-01-19T20:29:59.763+00:00'
+      LastUpdated: '2022-01-19T22:21:10.87+00:00'
       xp: null
       ProductID: product1
-    - ID: q_ZGb_ZFl0-XdLT2C3jw2A
-      OwnerID: IjEoZYS3YEO8OJNy
-      Address:
-        ID: admin-address-2
-        DateCreated: '2022-01-19T20:29:57.06+00:00'
-        CompanyName: null
-        FirstName: null
-        LastName: null
-        Street1: 4th
-        Street2: null
-        City: Minneapolis
-        State: MN
-        Zip: '55409'
-        Country: US
-        Phone: null
-        AddressName: null
-        xp: null
-      AddressID: admin-address-2
-      OrderCanExceed: false
-      QuantityAvailable: 20
-      LastUpdated: '2022-01-19T20:29:59.727+00:00'
-      xp: null
-      ProductID: product1
+      VariantID: sky
+  InventoryRecords: []
   PriceSchedules: []
   Specs:
     - OwnerID: <MarketplaceID placeholder>

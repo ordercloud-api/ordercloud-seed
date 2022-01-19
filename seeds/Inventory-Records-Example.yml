@@ -1,0 +1,92 @@
+Objects:
+  Suppliers:
+    - ID: supplier1
+      Name: supplier1
+  SupplierAddresses:
+    - ID: supplier-address-1
+      SupplierID: supplier1
+      Street1: 4th
+      City: Minneapolis
+      State: MN
+      Zip: '55409'
+      Country: US   
+  AdminAddresses: 
+    - ID: admin-address-1
+      Street1: 4th
+      City: Minneapolis
+      State: MN
+      Zip: '55409'
+      Country: US
+    - ID: admin-address-2
+      Street1: 4th
+      City: Minneapolis
+      State: MN
+      Zip: '55409'
+      Country: US
+  InventoryRecords:
+    - ProductID: product1   
+      OwnerID: <MarketplaceID placeholder>
+      AddressID: admin-address-1
+      QuantityAvailable: 10
+    - ProductID: product1   
+      OwnerID: <MarketplaceID placeholder>
+      AddressID: admin-address-2
+      QuantityAvailable: 20
+    - ProductID: product1   
+      OwnerID: supplier1
+      AddressID: supplier-address-1
+      QuantityAvailable: 30
+    - ProductID: product1   
+      OwnerID: supplier1
+      AddressID: supplier-address-1
+      QuantityAvailable: 40
+  Products:
+    - OwnerID: <MarketplaceID placeholder>
+      ID: product1
+      Name: product1
+      VariantCount: 4
+      Inventory: 
+        Enabled: true
+      Description: >-
+        A luxurious fabric, mulberry silk is named for the mulberry leaves the
+        uniquely bred silkworms feed on. A mask for your face.
+      QuantityMultiplier: 1
+      Active: true
+  Specs:
+    - ID: color
+      Name: color
+      DefinesVariant: true
+      Required: true
+      DefaultOptionID: red
+    - ID: size
+      Name: size
+      DefinesVariant: true
+      DefaultOptionID: S
+      Required: true
+  SpecOptions:
+    - ID: red
+      SpecID: color
+      Value: red
+    - ID: blue
+      SpecID: color
+      Value: blue
+    - ID: S
+      SpecID: size
+      Value: S
+    - ID: M
+      SpecID: size
+      Value: M
+  Variants:
+    - ID: perfect
+      ProductID: product1
+      Specs: 
+        - SpecID: color
+          OptionID: blue
+        - SpecID: size
+          OptionID: M
+Assignments:
+  SpecProductAssignments:
+    - SpecID: color
+      ProductID: product1
+    - SpecID: size
+      ProductID: product1

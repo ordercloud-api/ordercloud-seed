@@ -179,10 +179,60 @@ export const VariantValidationFunc: RecordValidationFunc = (record, validator, a
 }
 
 export const InventoryRecordValidation: RecordValidationFunc = (record, validator, allData) => {
+    var productID: string = record["ProductID"];
     var addressID: string = record["AddressID"];
     var ownerID: string = record["OwnerID"];
     var hasAddressID = !_.isNil(addressID);
     var hasOwnerID = !_.isNil(addressID);
+
+    if (allData.Objects[OCResourceEnum.VariantInventoryRecords]?.some(x => x.ProductID === productID)) {
+       return validator.addError(`Invalid use of InventoryRecords and VariantInventoryRecords on product with ID \"${productID}\".`)
+    }
+
+    var product = allData.Objects[OCResourceEnum.Products]?.find(x => x.ID === productID);
+
+    if (!!product?.Inventory?.VariantLevelTracking) {
+        validator.addError(`Invalid configuration for product with ID \"${productID}\": VariantLevelTracking must be false to create InventoryRecords at the product level.`)
+    }
+
+    if (hasAddressID && hasOwnerID) {
+        if (ownerID === MARKETPLACE_ID) {
+            if (!validator.idCache.has(OCResourceEnum.AdminAddresses, addressID)) {
+                validator.addError(`Invalid reference InventoryRecord.AddressID: no Admin Address found with ID \"${addressID}\".`)
+            }
+        } else {
+            if (!validator.idCache.has(OCResourceEnum.SupplierAddresses, `${ownerID}/${addressID}`)) {
+                validator.addError(`Invalid reference InventoryRecord.AddressID: no Address found with ID \"${addressID}\" under supplier with ID \"${ownerID}\".`)
+            }
+        }
+    }
+}
+
+export const VariantInventoryRecordValidation: RecordValidationFunc = (record, validator, allData) => {
+    var productID: string = record["ProductID"];
+    var addressID: string = record["AddressID"];
+    var ownerID: string = record["OwnerID"];
+    var variantID: string = record["VariantID"]
+    var hasAddressID = !_.isNil(addressID);
+    var hasOwnerID = !_.isNil(addressID);
+
+    if (allData.Objects[OCResourceEnum.InventoryRecords]?.some(x => x.ProductID === productID)) {
+        return validator.addError(`Invalid use of InventoryRecords and VariantInventoryRecords on product with ID \"${productID}\".`)
+    }
+
+    if (_.isNil(variantID)) {
+        validator.addError(`Missing required property VariantInventoryRecord.VariantID.`)
+    } else {
+        if (!validator.idCache.has(OCResourceEnum.Variants, `${productID}/${variantID}`)) { 
+            validator.addError(`Invalid reference VariantInventoryRecord.VariantID: no Variant found with ID \"${variantID}\" under product with ID \"${productID}\".`)
+        }
+    }
+
+    var product = allData.Objects[OCResourceEnum.Products]?.find(x => x.ID === productID);
+
+    if (!product?.Inventory?.VariantLevelTracking) {
+        validator.addError(`Invalid configuration for product with ID \"${productID}\": VariantLevelTracking must be true to create InventoryRecords at the variant level.`)
+    }
 
     if (hasAddressID && hasOwnerID) {
         if (ownerID === MARKETPLACE_ID) {

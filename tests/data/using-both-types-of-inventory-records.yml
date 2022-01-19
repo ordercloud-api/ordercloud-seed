@@ -1,0 +1,54 @@
+Objects:
+  AdminAddresses: 
+    - ID: admin-address-1
+      Street1: 4th
+      City: Minneapolis
+      State: MN
+      Zip: '55409'
+      Country: US
+  InventoryRecords:
+    - ProductID: product1   
+      OwnerID: <MarketplaceID placeholder>
+      AddressID: admin-address-1
+      QuantityAvailable: 10
+  VariantInventoryRecords:
+    - ProductID: product1
+      VariantID: perfect    
+      OwnerID: <MarketplaceID placeholder>
+      AddressID: admin-address-1
+      QuantityAvailable: 10
+  Products:
+    - OwnerID: <MarketplaceID placeholder>
+      ID: product1
+      Name: product1
+      VariantCount: 4
+      Inventory: 
+        Enabled: true
+      Description: >-
+        A luxurious fabric, mulberry silk is named for the mulberry leaves the
+        uniquely bred silkworms feed on. A mask for your face.
+      QuantityMultiplier: 1
+      Active: true
+  Specs:
+    - ID: color
+      Name: color
+      DefinesVariant: true
+      Required: true
+      DefaultOptionID: red
+  SpecOptions:
+    - ID: red
+      SpecID: color
+      Value: red
+    - ID: blue
+      SpecID: color
+      Value: blue
+  Variants:
+    - ID: perfect
+      ProductID: product1
+      Specs: 
+        - SpecID: color
+          OptionID: blue
+Assignments:
+  SpecProductAssignments:
+    - SpecID: color
+      ProductID: product1

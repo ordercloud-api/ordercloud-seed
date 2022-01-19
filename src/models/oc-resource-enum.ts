@@ -35,6 +35,7 @@ export enum OCResourceEnum {
     Promotions = "Promotions",
     Variants = "Variants",
     InventoryRecords = "InventoryRecords",
+    VariantInventoryRecords = "VariantInventoryRecords",
     SecurityProfileAssignments = "SecurityProfileAssignments",
     AdminUserGroupAssignments = "AdminUserGroupAssignments",
     ApiClientAssignments = "ApiClientAssignments",

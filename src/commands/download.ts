@@ -1,5 +1,5 @@
 import Portal from '../services/portal'; // why do I have to add the .js here?
-import { Configuration, Product, Products, Tokens } from 'ordercloud-javascript-sdk';
+import { Configuration, InventoryRecords, Product, Products, Tokens } from 'ordercloud-javascript-sdk';
 import { SerializedMarketplace } from '../models/serialized-marketplace';
 import OrderCloudBulk from '../services/ordercloud-bulk';
 import { defaultLogger, LogCallBackFunc, MessageType } from '../services/logger';
@@ -81,14 +81,6 @@ export async function download(args: DownloadArgs): Promise<SerializedMarketplac
         if (resource.downloadTransformFunc !== undefined) {
             records = records.map(resource.downloadTransformFunc)
         }
-        // if (resource.name === OCResourceEnum.Products) {
-        //     for (var product of records) {
-        //         if (product.VariantCount > 0) {
-        //             var variants = await ordercloudBulk.ListAllWithFunction("Variants" as any, Products.ListVariants, product.ID);
-        //             product[VARIANTS_PROPERTY] = variants;
-        //         }
-        //     }
-        // }
         marketplace.AddRecords(resource, records);
         for (let childResourceName of resource.children)
         {
@@ -103,13 +95,27 @@ export async function download(args: DownloadArgs): Promise<SerializedMarketplac
                         childRecord[childResource.parentRefField] = parentRecord.ID;
                     }
                     marketplace.AddRecords(childResource, childRecords);
+                    if (childResource.name === OCResourceEnum.Variants) {
+                        var grandChildResource = directory.find(x => x.name === OCResourceEnum.VariantInventoryRecords);
+                        for (var variant of childRecords) {
+                            var variantInventoryRecords = await ordercloudBulk.ListAll(grandChildResource, parentRecord.ID, variant.ID);
+                            for (let grandChildRecord of variantInventoryRecords) {
+                                grandChildRecord["ProductID"] = parentRecord.ID;
+                                grandChildRecord["VariantID"] = variant.ID;
+                            }
+                            if (variantInventoryRecords.length !== 0) {
+                                logger("Found " + variantInventoryRecords.length + " " + grandChildResource.name);
+                            }
+                            marketplace.AddRecords(grandChildResource, variantInventoryRecords);
+                        }                      
+                    }   
                 }
             }
             if (childRecords && childRecords.length !== 0) {
                 logger("Found " + childRecords.length + " " + childResourceName);
             }
         }
-        if (records.length !== 0) {
+        if (records && records.length !== 0) {
             logger("Found " + records.length + " " + resource.name);
         }
     }

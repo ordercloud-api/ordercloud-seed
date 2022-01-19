@@ -24,8 +24,7 @@ Objects:
       Zip: '55409'
       Country: US
   InventoryRecords:
-    - ProductID: product1   
-      OwnerID: <MarketplaceID placeholder>
+    - OwnerID: <MarketplaceID placeholder>
       AddressID: supplier-address-1
       QuantityAvailable: 10
     - ProductID: product1   
