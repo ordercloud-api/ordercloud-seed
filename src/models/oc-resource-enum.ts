@@ -33,6 +33,7 @@ export enum OCResourceEnum {
     SpecOptions = "SpecOptions",
     ProductFacets = "ProductFacets",
     Promotions = "Promotions",
+    Variants = "Variants",
     SecurityProfileAssignments = "SecurityProfileAssignments",
     AdminUserGroupAssignments = "AdminUserGroupAssignments",
     ApiClientAssignments = "ApiClientAssignments",

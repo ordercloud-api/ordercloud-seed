@@ -6,7 +6,7 @@ import { defaultLogger, LogCallBackFunc, MessageType } from '../services/logger'
 import { BuildResourceDirectory } from '../models/oc-resource-directory';
 import { OCResource } from '../models/oc-resources';
 import _  from 'lodash';
-import { MARKETPLACE_ID, REDACTED_MESSAGE, VARIANTS_PROPERTY } from '../constants';
+import { MARKETPLACE_ID, REDACTED_MESSAGE } from '../constants';
 import PortalAPI from '../services/portal';
 import Bottleneck from 'bottleneck';
 import { OCResourceEnum } from '../models/oc-resource-enum';
@@ -81,27 +81,29 @@ export async function download(args: DownloadArgs): Promise<SerializedMarketplac
         if (resource.downloadTransformFunc !== undefined) {
             records = records.map(resource.downloadTransformFunc)
         }
-        if (resource.name === OCResourceEnum.Products) {
-            for (var product of records) {
-                if (product.VariantCount > 0) {
-                    var variants = await ordercloudBulk.ListAllWithFunction("Variants" as any, Products.ListVariants, product.ID);
-                    product[VARIANTS_PROPERTY] = variants;
-                }
-            }
-        }
+        // if (resource.name === OCResourceEnum.Products) {
+        //     for (var product of records) {
+        //         if (product.VariantCount > 0) {
+        //             var variants = await ordercloudBulk.ListAllWithFunction("Variants" as any, Products.ListVariants, product.ID);
+        //             product[VARIANTS_PROPERTY] = variants;
+        //         }
+        //     }
+        // }
         marketplace.AddRecords(resource, records);
         for (let childResourceName of resource.children)
         {
             let childResource = directory.find(x => x.name === childResourceName);
             for (let parentRecord of records) {
-                var childRecords = await ordercloudBulk.ListAll(childResource, parentRecord.ID); // assume ID exists. Which is does for all parent types.
-                if (childResource.downloadTransformFunc !== undefined) {
-                    childRecords = childRecords.map(childResource.downloadTransformFunc)
+                if (childResource.shouldAttemptListFunc(parentRecord)) {
+                    var childRecords = await ordercloudBulk.ListAll(childResource, parentRecord.ID); // assume ID exists. Which is does for all parent types.
+                    if (childResource.downloadTransformFunc !== undefined) {
+                        childRecords = childRecords.map(childResource.downloadTransformFunc)
+                    }
+                    for (let childRecord of childRecords) {
+                        childRecord[childResource.parentRefField] = parentRecord.ID;
+                    }
+                    marketplace.AddRecords(childResource, childRecords);
                 }
-                for (let childRecord of childRecords) {
-                    childRecord[childResource.parentRefField] = parentRecord.ID;
-                }
-                marketplace.AddRecords(childResource, childRecords);
             }
             if (childRecords && childRecords.length !== 0) {
                 logger("Found " + childRecords.length + " " + childResourceName);

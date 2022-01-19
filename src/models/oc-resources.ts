@@ -21,7 +21,8 @@ export interface OCResource {
     redactFields?: string[];
     hasOwnerIDField?: string;
     downloadTransformFunc?: (x: any) => any,
-    customValidationFunc?: RecordValidationFunc
+    customValidationFunc?: RecordValidationFunc,
+    shouldAttemptListFunc?: (parentRecord: any) => boolean
 }
 export interface ForeignKeys {
     [fieldName: string]: ForeignKey;

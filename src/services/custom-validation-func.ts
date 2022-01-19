@@ -1,7 +1,8 @@
 import { Validator } from "../commands/validate";
-import _ from 'lodash';
+import _, { find } from 'lodash';
 import { OCResourceEnum } from "../models/oc-resource-enum";
 import { SerializedMarketplace } from "../models/serialized-marketplace";
+import { Spec, VariantSpec } from "ordercloud-javascript-sdk";
 
 export type RecordValidationFunc = (record: any, validator: Validator, allData: SerializedMarketplace) => void
 
@@ -132,6 +133,41 @@ export const SecurityProfileAssignmentValidationFunc: RecordValidationFunc = (re
         }
         if (hasGroupID && !validator.idCache.has(OCResourceEnum.AdminUserGroups, groupID)) {
             validator.addError(`Invalid reference SecurityProfileAssignment.UserGroupID: no AdminUserGroup found with ID \"${groupID}\".`)
+        }
+    }
+}
+
+export const VariantValidationFunc: RecordValidationFunc = (record, validator, allData) => {
+    var variantID: string = record["ID"];
+    var productID: string = record["ProductID"]; 
+    var actualSpecs: VariantSpec[] = record["Specs"] ?? [];
+    var product = allData.Objects[OCResourceEnum.Products]?.find(x => x.ID === productID);
+
+    if (_.isNil(productID) || _.isNil(product)) { return; } // error already addded
+
+    if (actualSpecs.length === 0) {
+        return validator.addError(`Invalid empty array Variant.Specs on Variant with ID \"${variantID}\": a variant must include at least one Spec.`);
+    }
+
+    var assignedSpecIDs = allData.Assignments[OCResourceEnum.SpecProductAssignments]?.filter(x => x.ProductID === productID)?.map(x => x.SpecID) ?? [];
+    var expectedSpecs: Spec[] = allData.Objects[OCResourceEnum.Specs]?.filter(x => x.DefinesVariant && assignedSpecIDs.includes(x.ID)) ?? [];
+
+    for (var actual of actualSpecs) {
+        var specMatch = expectedSpecs.find((x => x.ID === actual.SpecID));
+        if (!specMatch) {
+            validator.addError(`Invalid reference Variant.Specs.SpecID on Variant with ID \"${variantID}\": spec ID \"${actual.SpecID}\" does not match an assigned spec with DefinesVariant.`);
+        } else {
+            var optionMatch = specMatch.Options.find(x => x.ID == actual.OptionID);
+            if (!optionMatch) {
+                validator.addError(`Invalid reference Variant.Specs.OptionID on Variant with ID \"${variantID}\": no option found with ID \"${actual.OptionID}\" on Spec with ID \"${actual.SpecID}\".`);
+            }
+        }
+    }
+
+    for (var expected of expectedSpecs) {
+        var match = actualSpecs.find(x => x.SpecID === expected.ID);
+        if (!match) {
+            validator.addError(`Missing Spec on Variant \"${variantID}\": Specs property must specify an option for Spec with ID \"${expected.ID}\".`);
         }
     }
 }

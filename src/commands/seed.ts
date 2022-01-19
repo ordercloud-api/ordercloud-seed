@@ -8,7 +8,7 @@ import { BuildResourceDirectory } from '../models/oc-resource-directory';
 import { OCResourceEnum } from '../models/oc-resource-enum';
 import { OCResource } from '../models/oc-resources';
 import Random from '../services/random';
-import { REDACTED_MESSAGE,MARKETPLACE_ID, VARIANTS_PROPERTY } from '../constants';
+import { REDACTED_MESSAGE,MARKETPLACE_ID } from '../constants';
 import PortalAPI from '../services/portal';
 import { SerializedMarketplace } from '../models/serialized-marketplace';
 import { ApiClient, Organization } from '@ordercloud/portal-javascript-sdk';
@@ -143,6 +143,8 @@ export async function seed(args: SeedArgs): Promise<SeedResponse | void> {
             await UploadIntegrationEvents(resource);
         } else if (resource.name === OCResourceEnum.Categories) {
             await UploadCategories(resource);
+        } else if (resource.name === OCResourceEnum.Variants) {
+            await GenerateAndPutVariants();
         } else {
             await ordercloudBulk.CreateAll(resource, records);
         }
@@ -151,7 +153,7 @@ export async function seed(args: SeedArgs): Promise<SeedResponse | void> {
         }   
     }
 
-    await GenerateAndPatchVariants();
+    
 
     logger(`Done! Seeded a new marketplace with ID \"${marketplaceID}\" and Name \"${marketplaceName}\".`, MessageType.Success); 
 
@@ -179,15 +181,14 @@ export async function seed(args: SeedArgs): Promise<SeedResponse | void> {
         }
     }
 
-    async function GenerateAndPatchVariants() : Promise<void> {
+    async function GenerateAndPutVariants() : Promise<void> {
         var productsWithVariants = marketplaceData.Objects[OCResourceEnum.Products].filter((p: Product) => p.VariantCount > 0);
         ordercloudBulk.Run("Variants" as any, productsWithVariants, (p: Product) => Products.GenerateVariants(p.ID));
-        for (var product of productsWithVariants) {
-            await ordercloudBulk.Run("Variants" as any, product[VARIANTS_PROPERTY], (v: Variant) => {
-                var variantID = v.Specs.reduce((acc, spec) => `${acc}-${spec.OptionID}`, product.ID);
-                return Products.SaveVariant(product.ID, variantID, v);
-            });
-        }
+        var variants = marketplaceData.Objects[OCResourceEnum.Variants];
+        await ordercloudBulk.Run(OCResourceEnum.Variants, variants, (v: any) => {
+            var variantID = v.Specs.reduce((acc, spec) => `${acc}-${spec.OptionID}`, v.ProductID);
+            return Products.SaveVariant(v.ProductID, variantID, v);
+        });
         logger(`Generated variants for ${productsWithVariants.length} products.`, MessageType.Progress);
     }
 

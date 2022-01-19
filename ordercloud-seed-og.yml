@@ -1,5 +1,5 @@
 Meta:
-  CreatedBySeedingVersion: 1.0.25
+  SeedingToolVersion: 1.0.25
 Objects:
   SecurityProfiles:
     - ID: back-office-admin
@@ -293,6 +293,64 @@ Objects:
           - url: >-
               https://ocdevops.blob.core.windows.net/vercel-integration-assets/face_mask.jpg
         PriceCurrency: USD
+      Variants:
+        - ID: mulberry-silk-facemask-blue
+          Name: null
+          Description: null
+          Active: true
+          ShipWeight: null
+          ShipHeight: null
+          ShipWidth: null
+          ShipLength: null
+          Inventory:
+            QuantityAvailable: 0
+            LastUpdated: '0001-01-01T00:00:00+00:00'
+          Specs:
+            - SpecID: mulberry-silk-facemask-color
+              Name: Color
+              OptionID: blue
+              Value: Blue
+              PriceMarkupType: NoMarkup
+              PriceMarkup: null
+          xp: null
+        - ID: mulberry-silk-facemask-red
+          Name: null
+          Description: null
+          Active: true
+          ShipWeight: null
+          ShipHeight: null
+          ShipWidth: null
+          ShipLength: null
+          Inventory:
+            QuantityAvailable: 0
+            LastUpdated: '0001-01-01T00:00:00+00:00'
+          Specs:
+            - SpecID: mulberry-silk-facemask-color
+              Name: Color
+              OptionID: red
+              Value: Red
+              PriceMarkupType: NoMarkup
+              PriceMarkup: null
+          xp: null
+        - ID: mulberry-silk-facemask-yellow
+          Name: null
+          Description: null
+          Active: true
+          ShipWeight: null
+          ShipHeight: null
+          ShipWidth: null
+          ShipLength: null
+          Inventory:
+            QuantityAvailable: 0
+            LastUpdated: '0001-01-01T00:00:00+00:00'
+          Specs:
+            - SpecID: mulberry-silk-facemask-color
+              Name: Color
+              OptionID: yellow
+              Value: Yellow
+              PriceMarkupType: NoMarkup
+              PriceMarkup: null
+          xp: null
     - OwnerID: <MarketplaceID placeholder>
       DefaultPriceScheduleID: boys-turkish-leather-caliage
       AutoForward: false
@@ -437,6 +495,307 @@ Objects:
           - url: >-
               https://ocdevops.blob.core.windows.net/vercel-integration-assets/purple_shorts.jpg
         PriceCurrency: USD
+      Variants:
+        - ID: mens-intrigue-active-shorts-mysterious-mint-L
+          Name: null
+          Description: null
+          Active: true
+          ShipWeight: null
+          ShipHeight: null
+          ShipWidth: null
+          ShipLength: null
+          Inventory:
+            QuantityAvailable: 0
+            LastUpdated: '0001-01-01T00:00:00+00:00'
+          Specs:
+            - SpecID: intrigue-active-shorts-color
+              Name: Color
+              OptionID: mysterious-mint
+              Value: Mysterious Mint
+              PriceMarkupType: NoMarkup
+              PriceMarkup: null
+            - SpecID: cross-product-size
+              Name: Size
+              OptionID: L
+              Value: Large
+              PriceMarkupType: NoMarkup
+              PriceMarkup: null
+          xp: null
+        - ID: mens-intrigue-active-shorts-mysterious-mint-m
+          Name: null
+          Description: null
+          Active: true
+          ShipWeight: null
+          ShipHeight: null
+          ShipWidth: null
+          ShipLength: null
+          Inventory:
+            QuantityAvailable: 0
+            LastUpdated: '0001-01-01T00:00:00+00:00'
+          Specs:
+            - SpecID: intrigue-active-shorts-color
+              Name: Color
+              OptionID: mysterious-mint
+              Value: Mysterious Mint
+              PriceMarkupType: NoMarkup
+              PriceMarkup: null
+            - SpecID: cross-product-size
+              Name: Size
+              OptionID: m
+              Value: Medium
+              PriceMarkupType: NoMarkup
+              PriceMarkup: null
+          xp: null
+        - ID: mens-intrigue-active-shorts-mysterious-mint-s
+          Name: null
+          Description: null
+          Active: true
+          ShipWeight: null
+          ShipHeight: null
+          ShipWidth: null
+          ShipLength: null
+          Inventory:
+            QuantityAvailable: 0
+            LastUpdated: '0001-01-01T00:00:00+00:00'
+          Specs:
+            - SpecID: intrigue-active-shorts-color
+              Name: Color
+              OptionID: mysterious-mint
+              Value: Mysterious Mint
+              PriceMarkupType: NoMarkup
+              PriceMarkup: null
+            - SpecID: cross-product-size
+              Name: Size
+              OptionID: s
+              Value: Small
+              PriceMarkupType: NoMarkup
+              PriceMarkup: null
+          xp: null
+        - ID: mens-intrigue-active-shorts-mysterious-mint-XL
+          Name: null
+          Description: null
+          Active: true
+          ShipWeight: null
+          ShipHeight: null
+          ShipWidth: null
+          ShipLength: null
+          Inventory:
+            QuantityAvailable: 0
+            LastUpdated: '0001-01-01T00:00:00+00:00'
+          Specs:
+            - SpecID: intrigue-active-shorts-color
+              Name: Color
+              OptionID: mysterious-mint
+              Value: Mysterious Mint
+              PriceMarkupType: NoMarkup
+              PriceMarkup: null
+            - SpecID: cross-product-size
+              Name: Size
+              OptionID: XL
+              Value: Extra Large
+              PriceMarkupType: NoMarkup
+              PriceMarkup: null
+          xp: null
+        - ID: mens-intrigue-active-shorts-obsession-umber-L
+          Name: null
+          Description: null
+          Active: true
+          ShipWeight: null
+          ShipHeight: null
+          ShipWidth: null
+          ShipLength: null
+          Inventory:
+            QuantityAvailable: 0
+            LastUpdated: '0001-01-01T00:00:00+00:00'
+          Specs:
+            - SpecID: intrigue-active-shorts-color
+              Name: Color
+              OptionID: obsession-umber
+              Value: Obsession Umber
+              PriceMarkupType: NoMarkup
+              PriceMarkup: null
+            - SpecID: cross-product-size
+              Name: Size
+              OptionID: L
+              Value: Large
+              PriceMarkupType: NoMarkup
+              PriceMarkup: null
+          xp: null
+        - ID: mens-intrigue-active-shorts-obsession-umber-m
+          Name: null
+          Description: null
+          Active: true
+          ShipWeight: null
+          ShipHeight: null
+          ShipWidth: null
+          ShipLength: null
+          Inventory:
+            QuantityAvailable: 0
+            LastUpdated: '0001-01-01T00:00:00+00:00'
+          Specs:
+            - SpecID: intrigue-active-shorts-color
+              Name: Color
+              OptionID: obsession-umber
+              Value: Obsession Umber
+              PriceMarkupType: NoMarkup
+              PriceMarkup: null
+            - SpecID: cross-product-size
+              Name: Size
+              OptionID: m
+              Value: Medium
+              PriceMarkupType: NoMarkup
+              PriceMarkup: null
+          xp: null
+        - ID: mens-intrigue-active-shorts-obsession-umber-s
+          Name: null
+          Description: null
+          Active: true
+          ShipWeight: null
+          ShipHeight: null
+          ShipWidth: null
+          ShipLength: null
+          Inventory:
+            QuantityAvailable: 0
+            LastUpdated: '0001-01-01T00:00:00+00:00'
+          Specs:
+            - SpecID: intrigue-active-shorts-color
+              Name: Color
+              OptionID: obsession-umber
+              Value: Obsession Umber
+              PriceMarkupType: NoMarkup
+              PriceMarkup: null
+            - SpecID: cross-product-size
+              Name: Size
+              OptionID: s
+              Value: Small
+              PriceMarkupType: NoMarkup
+              PriceMarkup: null
+          xp: null
+        - ID: mens-intrigue-active-shorts-obsession-umber-XL
+          Name: null
+          Description: null
+          Active: true
+          ShipWeight: null
+          ShipHeight: null
+          ShipWidth: null
+          ShipLength: null
+          Inventory:
+            QuantityAvailable: 0
+            LastUpdated: '0001-01-01T00:00:00+00:00'
+          Specs:
+            - SpecID: intrigue-active-shorts-color
+              Name: Color
+              OptionID: obsession-umber
+              Value: Obsession Umber
+              PriceMarkupType: NoMarkup
+              PriceMarkup: null
+            - SpecID: cross-product-size
+              Name: Size
+              OptionID: XL
+              Value: Extra Large
+              PriceMarkupType: NoMarkup
+              PriceMarkup: null
+          xp: null
+        - ID: mens-intrigue-active-shorts-paranoid-purple-L
+          Name: null
+          Description: null
+          Active: true
+          ShipWeight: null
+          ShipHeight: null
+          ShipWidth: null
+          ShipLength: null
+          Inventory:
+            QuantityAvailable: 0
+            LastUpdated: '0001-01-01T00:00:00+00:00'
+          Specs:
+            - SpecID: intrigue-active-shorts-color
+              Name: Color
+              OptionID: paranoid-purple
+              Value: Paranoid Purple
+              PriceMarkupType: NoMarkup
+              PriceMarkup: null
+            - SpecID: cross-product-size
+              Name: Size
+              OptionID: L
+              Value: Large
+              PriceMarkupType: NoMarkup
+              PriceMarkup: null
+          xp: null
+        - ID: mens-intrigue-active-shorts-paranoid-purple-m
+          Name: null
+          Description: null
+          Active: true
+          ShipWeight: null
+          ShipHeight: null
+          ShipWidth: null
+          ShipLength: null
+          Inventory:
+            QuantityAvailable: 0
+            LastUpdated: '0001-01-01T00:00:00+00:00'
+          Specs:
+            - SpecID: intrigue-active-shorts-color
+              Name: Color
+              OptionID: paranoid-purple
+              Value: Paranoid Purple
+              PriceMarkupType: NoMarkup
+              PriceMarkup: null
+            - SpecID: cross-product-size
+              Name: Size
+              OptionID: m
+              Value: Medium
+              PriceMarkupType: NoMarkup
+              PriceMarkup: null
+          xp: null
+        - ID: mens-intrigue-active-shorts-paranoid-purple-s
+          Name: null
+          Description: null
+          Active: true
+          ShipWeight: null
+          ShipHeight: null
+          ShipWidth: null
+          ShipLength: null
+          Inventory:
+            QuantityAvailable: 0
+            LastUpdated: '0001-01-01T00:00:00+00:00'
+          Specs:
+            - SpecID: intrigue-active-shorts-color
+              Name: Color
+              OptionID: paranoid-purple
+              Value: Paranoid Purple
+              PriceMarkupType: NoMarkup
+              PriceMarkup: null
+            - SpecID: cross-product-size
+              Name: Size
+              OptionID: s
+              Value: Small
+              PriceMarkupType: NoMarkup
+              PriceMarkup: null
+          xp: null
+        - ID: mens-intrigue-active-shorts-paranoid-purple-XL
+          Name: null
+          Description: null
+          Active: true
+          ShipWeight: null
+          ShipHeight: null
+          ShipWidth: null
+          ShipLength: null
+          Inventory:
+            QuantityAvailable: 0
+            LastUpdated: '0001-01-01T00:00:00+00:00'
+          Specs:
+            - SpecID: intrigue-active-shorts-color
+              Name: Color
+              OptionID: paranoid-purple
+              Value: Paranoid Purple
+              PriceMarkupType: NoMarkup
+              PriceMarkup: null
+            - SpecID: cross-product-size
+              Name: Size
+              OptionID: XL
+              Value: Extra Large
+              PriceMarkupType: NoMarkup
+              PriceMarkup: null
+          xp: null
     - OwnerID: <MarketplaceID placeholder>
       DefaultPriceScheduleID: penquin-feather-onesie
       AutoForward: false
@@ -544,6 +903,307 @@ Objects:
           - url: >-
               https://ocdevops.blob.core.windows.net/vercel-integration-assets/purple_shorts.jpg
         PriceCurrency: USD
+      Variants:
+        - ID: womens-intrigue-active-shorts-mysterious-mint-L
+          Name: null
+          Description: null
+          Active: true
+          ShipWeight: null
+          ShipHeight: null
+          ShipWidth: null
+          ShipLength: null
+          Inventory:
+            QuantityAvailable: 0
+            LastUpdated: '0001-01-01T00:00:00+00:00'
+          Specs:
+            - SpecID: intrigue-active-shorts-color
+              Name: Color
+              OptionID: mysterious-mint
+              Value: Mysterious Mint
+              PriceMarkupType: NoMarkup
+              PriceMarkup: null
+            - SpecID: cross-product-size
+              Name: Size
+              OptionID: L
+              Value: Large
+              PriceMarkupType: NoMarkup
+              PriceMarkup: null
+          xp: null
+        - ID: womens-intrigue-active-shorts-mysterious-mint-m
+          Name: null
+          Description: null
+          Active: true
+          ShipWeight: null
+          ShipHeight: null
+          ShipWidth: null
+          ShipLength: null
+          Inventory:
+            QuantityAvailable: 0
+            LastUpdated: '0001-01-01T00:00:00+00:00'
+          Specs:
+            - SpecID: intrigue-active-shorts-color
+              Name: Color
+              OptionID: mysterious-mint
+              Value: Mysterious Mint
+              PriceMarkupType: NoMarkup
+              PriceMarkup: null
+            - SpecID: cross-product-size
+              Name: Size
+              OptionID: m
+              Value: Medium
+              PriceMarkupType: NoMarkup
+              PriceMarkup: null
+          xp: null
+        - ID: womens-intrigue-active-shorts-mysterious-mint-s
+          Name: null
+          Description: null
+          Active: true
+          ShipWeight: null
+          ShipHeight: null
+          ShipWidth: null
+          ShipLength: null
+          Inventory:
+            QuantityAvailable: 0
+            LastUpdated: '0001-01-01T00:00:00+00:00'
+          Specs:
+            - SpecID: intrigue-active-shorts-color
+              Name: Color
+              OptionID: mysterious-mint
+              Value: Mysterious Mint
+              PriceMarkupType: NoMarkup
+              PriceMarkup: null
+            - SpecID: cross-product-size
+              Name: Size
+              OptionID: s
+              Value: Small
+              PriceMarkupType: NoMarkup
+              PriceMarkup: null
+          xp: null
+        - ID: womens-intrigue-active-shorts-mysterious-mint-XL
+          Name: null
+          Description: null
+          Active: true
+          ShipWeight: null
+          ShipHeight: null
+          ShipWidth: null
+          ShipLength: null
+          Inventory:
+            QuantityAvailable: 0
+            LastUpdated: '0001-01-01T00:00:00+00:00'
+          Specs:
+            - SpecID: intrigue-active-shorts-color
+              Name: Color
+              OptionID: mysterious-mint
+              Value: Mysterious Mint
+              PriceMarkupType: NoMarkup
+              PriceMarkup: null
+            - SpecID: cross-product-size
+              Name: Size
+              OptionID: XL
+              Value: Extra Large
+              PriceMarkupType: NoMarkup
+              PriceMarkup: null
+          xp: null
+        - ID: womens-intrigue-active-shorts-obsession-umber-L
+          Name: null
+          Description: null
+          Active: true
+          ShipWeight: null
+          ShipHeight: null
+          ShipWidth: null
+          ShipLength: null
+          Inventory:
+            QuantityAvailable: 0
+            LastUpdated: '0001-01-01T00:00:00+00:00'
+          Specs:
+            - SpecID: intrigue-active-shorts-color
+              Name: Color
+              OptionID: obsession-umber
+              Value: Obsession Umber
+              PriceMarkupType: NoMarkup
+              PriceMarkup: null
+            - SpecID: cross-product-size
+              Name: Size
+              OptionID: L
+              Value: Large
+              PriceMarkupType: NoMarkup
+              PriceMarkup: null
+          xp: null
+        - ID: womens-intrigue-active-shorts-obsession-umber-m
+          Name: null
+          Description: null
+          Active: true
+          ShipWeight: null
+          ShipHeight: null
+          ShipWidth: null
+          ShipLength: null
+          Inventory:
+            QuantityAvailable: 0
+            LastUpdated: '0001-01-01T00:00:00+00:00'
+          Specs:
+            - SpecID: intrigue-active-shorts-color
+              Name: Color
+              OptionID: obsession-umber
+              Value: Obsession Umber
+              PriceMarkupType: NoMarkup
+              PriceMarkup: null
+            - SpecID: cross-product-size
+              Name: Size
+              OptionID: m
+              Value: Medium
+              PriceMarkupType: NoMarkup
+              PriceMarkup: null
+          xp: null
+        - ID: womens-intrigue-active-shorts-obsession-umber-s
+          Name: null
+          Description: null
+          Active: true
+          ShipWeight: null
+          ShipHeight: null
+          ShipWidth: null
+          ShipLength: null
+          Inventory:
+            QuantityAvailable: 0
+            LastUpdated: '0001-01-01T00:00:00+00:00'
+          Specs:
+            - SpecID: intrigue-active-shorts-color
+              Name: Color
+              OptionID: obsession-umber
+              Value: Obsession Umber
+              PriceMarkupType: NoMarkup
+              PriceMarkup: null
+            - SpecID: cross-product-size
+              Name: Size
+              OptionID: s
+              Value: Small
+              PriceMarkupType: NoMarkup
+              PriceMarkup: null
+          xp: null
+        - ID: womens-intrigue-active-shorts-obsession-umber-XL
+          Name: null
+          Description: null
+          Active: true
+          ShipWeight: null
+          ShipHeight: null
+          ShipWidth: null
+          ShipLength: null
+          Inventory:
+            QuantityAvailable: 0
+            LastUpdated: '0001-01-01T00:00:00+00:00'
+          Specs:
+            - SpecID: intrigue-active-shorts-color
+              Name: Color
+              OptionID: obsession-umber
+              Value: Obsession Umber
+              PriceMarkupType: NoMarkup
+              PriceMarkup: null
+            - SpecID: cross-product-size
+              Name: Size
+              OptionID: XL
+              Value: Extra Large
+              PriceMarkupType: NoMarkup
+              PriceMarkup: null
+          xp: null
+        - ID: womens-intrigue-active-shorts-paranoid-purple-L
+          Name: null
+          Description: null
+          Active: true
+          ShipWeight: null
+          ShipHeight: null
+          ShipWidth: null
+          ShipLength: null
+          Inventory:
+            QuantityAvailable: 0
+            LastUpdated: '0001-01-01T00:00:00+00:00'
+          Specs:
+            - SpecID: intrigue-active-shorts-color
+              Name: Color
+              OptionID: paranoid-purple
+              Value: Paranoid Purple
+              PriceMarkupType: NoMarkup
+              PriceMarkup: null
+            - SpecID: cross-product-size
+              Name: Size
+              OptionID: L
+              Value: Large
+              PriceMarkupType: NoMarkup
+              PriceMarkup: null
+          xp: null
+        - ID: womens-intrigue-active-shorts-paranoid-purple-m
+          Name: null
+          Description: null
+          Active: true
+          ShipWeight: null
+          ShipHeight: null
+          ShipWidth: null
+          ShipLength: null
+          Inventory:
+            QuantityAvailable: 0
+            LastUpdated: '0001-01-01T00:00:00+00:00'
+          Specs:
+            - SpecID: intrigue-active-shorts-color
+              Name: Color
+              OptionID: paranoid-purple
+              Value: Paranoid Purple
+              PriceMarkupType: NoMarkup
+              PriceMarkup: null
+            - SpecID: cross-product-size
+              Name: Size
+              OptionID: m
+              Value: Medium
+              PriceMarkupType: NoMarkup
+              PriceMarkup: null
+          xp: null
+        - ID: womens-intrigue-active-shorts-paranoid-purple-s
+          Name: null
+          Description: null
+          Active: true
+          ShipWeight: null
+          ShipHeight: null
+          ShipWidth: null
+          ShipLength: null
+          Inventory:
+            QuantityAvailable: 0
+            LastUpdated: '0001-01-01T00:00:00+00:00'
+          Specs:
+            - SpecID: intrigue-active-shorts-color
+              Name: Color
+              OptionID: paranoid-purple
+              Value: Paranoid Purple
+              PriceMarkupType: NoMarkup
+              PriceMarkup: null
+            - SpecID: cross-product-size
+              Name: Size
+              OptionID: s
+              Value: Small
+              PriceMarkupType: NoMarkup
+              PriceMarkup: null
+          xp: null
+        - ID: womens-intrigue-active-shorts-paranoid-purple-XL
+          Name: null
+          Description: null
+          Active: true
+          ShipWeight: null
+          ShipHeight: null
+          ShipWidth: null
+          ShipLength: null
+          Inventory:
+            QuantityAvailable: 0
+            LastUpdated: '0001-01-01T00:00:00+00:00'
+          Specs:
+            - SpecID: intrigue-active-shorts-color
+              Name: Color
+              OptionID: paranoid-purple
+              Value: Paranoid Purple
+              PriceMarkupType: NoMarkup
+              PriceMarkup: null
+            - SpecID: cross-product-size
+              Name: Size
+              OptionID: XL
+              Value: Extra Large
+              PriceMarkupType: NoMarkup
+              PriceMarkup: null
+          xp: null
     - OwnerID: <MarketplaceID placeholder>
       DefaultPriceScheduleID: null
       AutoForward: false
@@ -577,691 +1237,6 @@ Objects:
           - url: >-
               https://ocdevops.blob.core.windows.net/vercel-integration-assets/socks.webp
         PriceCurrency: USD
-  Variants:
-    - ID: mulberry-silk-facemask-blueZZZZ
-      Name: null
-      Description: null
-      Active: true
-      ShipWeight: 1200
-      ShipHeight: null
-      ShipWidth: null
-      ShipLength: null
-      Inventory:
-        QuantityAvailable: 0
-        LastUpdated: '0001-01-01T00:00:00+00:00'
-      Specs:
-        - SpecID: mulberry-silk-facemask-color
-          Name: Color
-          OptionID: blue
-          Value: Blue
-          PriceMarkupType: NoMarkup
-          PriceMarkup: null
-      xp: null
-      ProductID: mulberry-silk-facemask
-    - ID: mulberry-silk-facemask-red
-      Name: null
-      Description: null
-      Active: true
-      ShipWeight: null
-      ShipHeight: null
-      ShipWidth: null
-      ShipLength: null
-      Inventory:
-        QuantityAvailable: 0
-        LastUpdated: '0001-01-01T00:00:00+00:00'
-      Specs:
-        - SpecID: mulberry-silk-facemask-color
-          Name: Color
-          OptionID: red
-          Value: Red
-          PriceMarkupType: NoMarkup
-          PriceMarkup: null
-      xp: null
-      ProductID: mulberry-silk-facemask
-    - ID: mulberry-silk-facemask-yellow
-      Name: null
-      Description: null
-      Active: true
-      ShipWeight: null
-      ShipHeight: null
-      ShipWidth: null
-      ShipLength: null
-      Inventory:
-        QuantityAvailable: 0
-        LastUpdated: '0001-01-01T00:00:00+00:00'
-      Specs:
-        - SpecID: mulberry-silk-facemask-color
-          Name: Color
-          OptionID: yellow
-          Value: Yellow
-          PriceMarkupType: NoMarkup
-          PriceMarkup: null
-      xp: null
-      ProductID: mulberry-silk-facemask
-    - ID: mens-intrigue-active-shorts-mysterious-mint-L
-      Name: null
-      Description: null
-      Active: true
-      ShipWeight: null
-      ShipHeight: null
-      ShipWidth: null
-      ShipLength: null
-      Inventory:
-        QuantityAvailable: 0
-        LastUpdated: '0001-01-01T00:00:00+00:00'
-      Specs:
-        - SpecID: intrigue-active-shorts-color
-          Name: Color
-          OptionID: mysterious-mint
-          Value: Mysterious Mint
-          PriceMarkupType: NoMarkup
-          PriceMarkup: null
-        - SpecID: cross-product-size
-          Name: Size
-          OptionID: L
-          Value: Large
-          PriceMarkupType: NoMarkup
-          PriceMarkup: null
-      xp: null
-      ProductID: mens-intrigue-active-shorts
-    - ID: mens-intrigue-active-shorts-mysterious-mint-m
-      Name: null
-      Description: null
-      Active: true
-      ShipWeight: null
-      ShipHeight: null
-      ShipWidth: null
-      ShipLength: null
-      Inventory:
-        QuantityAvailable: 0
-        LastUpdated: '0001-01-01T00:00:00+00:00'
-      Specs:
-        - SpecID: intrigue-active-shorts-color
-          Name: Color
-          OptionID: mysterious-mint
-          Value: Mysterious Mint
-          PriceMarkupType: NoMarkup
-          PriceMarkup: null
-        - SpecID: cross-product-size
-          Name: Size
-          OptionID: m
-          Value: Medium
-          PriceMarkupType: NoMarkup
-          PriceMarkup: null
-      xp: null
-      ProductID: mens-intrigue-active-shorts
-    - ID: mens-intrigue-active-shorts-mysterious-mint-s
-      Name: null
-      Description: null
-      Active: true
-      ShipWeight: null
-      ShipHeight: null
-      ShipWidth: null
-      ShipLength: null
-      Inventory:
-        QuantityAvailable: 0
-        LastUpdated: '0001-01-01T00:00:00+00:00'
-      Specs:
-        - SpecID: intrigue-active-shorts-color
-          Name: Color
-          OptionID: mysterious-mint
-          Value: Mysterious Mint
-          PriceMarkupType: NoMarkup
-          PriceMarkup: null
-        - SpecID: cross-product-size
-          Name: Size
-          OptionID: s
-          Value: Small
-          PriceMarkupType: NoMarkup
-          PriceMarkup: null
-      xp: null
-      ProductID: mens-intrigue-active-shorts
-    - ID: mens-intrigue-active-shorts-mysterious-mint-XL
-      Name: null
-      Description: null
-      Active: true
-      ShipWeight: null
-      ShipHeight: null
-      ShipWidth: null
-      ShipLength: null
-      Inventory:
-        QuantityAvailable: 0
-        LastUpdated: '0001-01-01T00:00:00+00:00'
-      Specs:
-        - SpecID: intrigue-active-shorts-color
-          Name: Color
-          OptionID: mysterious-mint
-          Value: Mysterious Mint
-          PriceMarkupType: NoMarkup
-          PriceMarkup: null
-        - SpecID: cross-product-size
-          Name: Size
-          OptionID: XL
-          Value: Extra Large
-          PriceMarkupType: NoMarkup
-          PriceMarkup: null
-      xp: null
-      ProductID: mens-intrigue-active-shorts
-    - ID: mens-intrigue-active-shorts-obsession-umber-L
-      Name: null
-      Description: null
-      Active: true
-      ShipWeight: null
-      ShipHeight: null
-      ShipWidth: null
-      ShipLength: null
-      Inventory:
-        QuantityAvailable: 0
-        LastUpdated: '0001-01-01T00:00:00+00:00'
-      Specs:
-        - SpecID: intrigue-active-shorts-color
-          Name: Color
-          OptionID: obsession-umber
-          Value: Obsession Umber
-          PriceMarkupType: NoMarkup
-          PriceMarkup: null
-        - SpecID: cross-product-size
-          Name: Size
-          OptionID: L
-          Value: Large
-          PriceMarkupType: NoMarkup
-          PriceMarkup: null
-      xp: null
-      ProductID: mens-intrigue-active-shorts
-    - ID: mens-intrigue-active-shorts-obsession-umber-m
-      Name: null
-      Description: null
-      Active: true
-      ShipWeight: null
-      ShipHeight: null
-      ShipWidth: null
-      ShipLength: null
-      Inventory:
-        QuantityAvailable: 0
-        LastUpdated: '0001-01-01T00:00:00+00:00'
-      Specs:
-        - SpecID: intrigue-active-shorts-color
-          Name: Color
-          OptionID: obsession-umber
-          Value: Obsession Umber
-          PriceMarkupType: NoMarkup
-          PriceMarkup: null
-        - SpecID: cross-product-size
-          Name: Size
-          OptionID: m
-          Value: Medium
-          PriceMarkupType: NoMarkup
-          PriceMarkup: null
-      xp: null
-      ProductID: mens-intrigue-active-shorts
-    - ID: mens-intrigue-active-shorts-obsession-umber-s
-      Name: null
-      Description: null
-      Active: true
-      ShipWeight: null
-      ShipHeight: null
-      ShipWidth: null
-      ShipLength: null
-      Inventory:
-        QuantityAvailable: 0
-        LastUpdated: '0001-01-01T00:00:00+00:00'
-      Specs:
-        - SpecID: intrigue-active-shorts-color
-          Name: Color
-          OptionID: obsession-umber
-          Value: Obsession Umber
-          PriceMarkupType: NoMarkup
-          PriceMarkup: null
-        - SpecID: cross-product-size
-          Name: Size
-          OptionID: s
-          Value: Small
-          PriceMarkupType: NoMarkup
-          PriceMarkup: null
-      xp: null
-      ProductID: mens-intrigue-active-shorts
-    - ID: mens-intrigue-active-shorts-obsession-umber-XL
-      Name: null
-      Description: null
-      Active: true
-      ShipWeight: null
-      ShipHeight: null
-      ShipWidth: null
-      ShipLength: null
-      Inventory:
-        QuantityAvailable: 0
-        LastUpdated: '0001-01-01T00:00:00+00:00'
-      Specs:
-        - SpecID: intrigue-active-shorts-color
-          Name: Color
-          OptionID: obsession-umber
-          Value: Obsession Umber
-          PriceMarkupType: NoMarkup
-          PriceMarkup: null
-        - SpecID: cross-product-size
-          Name: Size
-          OptionID: XL
-          Value: Extra Large
-          PriceMarkupType: NoMarkup
-          PriceMarkup: null
-      xp: null
-      ProductID: mens-intrigue-active-shorts
-    - ID: mens-intrigue-active-shorts-paranoid-purple-L
-      Name: null
-      Description: null
-      Active: true
-      ShipWeight: null
-      ShipHeight: null
-      ShipWidth: null
-      ShipLength: null
-      Inventory:
-        QuantityAvailable: 0
-        LastUpdated: '0001-01-01T00:00:00+00:00'
-      Specs:
-        - SpecID: intrigue-active-shorts-color
-          Name: Color
-          OptionID: paranoid-purple
-          Value: Paranoid Purple
-          PriceMarkupType: NoMarkup
-          PriceMarkup: null
-        - SpecID: cross-product-size
-          Name: Size
-          OptionID: L
-          Value: Large
-          PriceMarkupType: NoMarkup
-          PriceMarkup: null
-      xp: null
-      ProductID: mens-intrigue-active-shorts
-    - ID: mens-intrigue-active-shorts-paranoid-purple-m
-      Name: null
-      Description: null
-      Active: true
-      ShipWeight: null
-      ShipHeight: null
-      ShipWidth: null
-      ShipLength: null
-      Inventory:
-        QuantityAvailable: 0
-        LastUpdated: '0001-01-01T00:00:00+00:00'
-      Specs:
-        - SpecID: intrigue-active-shorts-color
-          Name: Color
-          OptionID: paranoid-purple
-          Value: Paranoid Purple
-          PriceMarkupType: NoMarkup
-          PriceMarkup: null
-        - SpecID: cross-product-size
-          Name: Size
-          OptionID: m
-          Value: Medium
-          PriceMarkupType: NoMarkup
-          PriceMarkup: null
-      xp: null
-      ProductID: mens-intrigue-active-shorts
-    - ID: mens-intrigue-active-shorts-paranoid-purple-s
-      Name: null
-      Description: null
-      Active: true
-      ShipWeight: null
-      ShipHeight: null
-      ShipWidth: null
-      ShipLength: null
-      Inventory:
-        QuantityAvailable: 0
-        LastUpdated: '0001-01-01T00:00:00+00:00'
-      Specs:
-        - SpecID: intrigue-active-shorts-color
-          Name: Color
-          OptionID: paranoid-purple
-          Value: Paranoid Purple
-          PriceMarkupType: NoMarkup
-          PriceMarkup: null
-        - SpecID: cross-product-size
-          Name: Size
-          OptionID: s
-          Value: Small
-          PriceMarkupType: NoMarkup
-          PriceMarkup: null
-      xp: null
-      ProductID: mens-intrigue-active-shorts
-    - ID: mens-intrigue-active-shorts-paranoid-purple-XL
-      Name: null
-      Description: null
-      Active: true
-      ShipWeight: null
-      ShipHeight: null
-      ShipWidth: null
-      ShipLength: null
-      Inventory:
-        QuantityAvailable: 0
-        LastUpdated: '0001-01-01T00:00:00+00:00'
-      Specs:
-        - SpecID: intrigue-active-shorts-color
-          Name: Color
-          OptionID: paranoid-purple
-          Value: Paranoid Purple
-          PriceMarkupType: NoMarkup
-          PriceMarkup: null
-        - SpecID: cross-product-size
-          Name: Size
-          OptionID: XL
-          Value: Extra Large
-          PriceMarkupType: NoMarkup
-          PriceMarkup: null
-      xp: null
-      ProductID: mens-intrigue-active-shorts
-    - ID: womens-intrigue-active-shorts-mysterious-mint-L
-      Name: null
-      Description: null
-      Active: true
-      ShipWeight: null
-      ShipHeight: null
-      ShipWidth: null
-      ShipLength: null
-      Inventory:
-        QuantityAvailable: 0
-        LastUpdated: '0001-01-01T00:00:00+00:00'
-      Specs:
-        - SpecID: intrigue-active-shorts-color
-          Name: Color
-          OptionID: mysterious-mint
-          Value: Mysterious Mint
-          PriceMarkupType: NoMarkup
-          PriceMarkup: null
-        - SpecID: cross-product-size
-          Name: Size
-          OptionID: L
-          Value: Large
-          PriceMarkupType: NoMarkup
-          PriceMarkup: null
-      xp: null
-      ProductID: womens-intrigue-active-shorts
-    - ID: womens-intrigue-active-shorts-mysterious-mint-m
-      Name: null
-      Description: null
-      Active: true
-      ShipWeight: null
-      ShipHeight: null
-      ShipWidth: null
-      ShipLength: null
-      Inventory:
-        QuantityAvailable: 0
-        LastUpdated: '0001-01-01T00:00:00+00:00'
-      Specs:
-        - SpecID: intrigue-active-shorts-color
-          Name: Color
-          OptionID: mysterious-mint
-          Value: Mysterious Mint
-          PriceMarkupType: NoMarkup
-          PriceMarkup: null
-        - SpecID: cross-product-size
-          Name: Size
-          OptionID: m
-          Value: Medium
-          PriceMarkupType: NoMarkup
-          PriceMarkup: null
-      xp: null
-      ProductID: womens-intrigue-active-shorts
-    - ID: womens-intrigue-active-shorts-mysterious-mint-s
-      Name: null
-      Description: null
-      Active: true
-      ShipWeight: null
-      ShipHeight: null
-      ShipWidth: null
-      ShipLength: null
-      Inventory:
-        QuantityAvailable: 0
-        LastUpdated: '0001-01-01T00:00:00+00:00'
-      Specs:
-        - SpecID: intrigue-active-shorts-color
-          Name: Color
-          OptionID: mysterious-mint
-          Value: Mysterious Mint
-          PriceMarkupType: NoMarkup
-          PriceMarkup: null
-        - SpecID: cross-product-size
-          Name: Size
-          OptionID: s
-          Value: Small
-          PriceMarkupType: NoMarkup
-          PriceMarkup: null
-      xp: null
-      ProductID: womens-intrigue-active-shorts
-    - ID: womens-intrigue-active-shorts-mysterious-mint-XL
-      Name: null
-      Description: null
-      Active: true
-      ShipWeight: null
-      ShipHeight: null
-      ShipWidth: null
-      ShipLength: null
-      Inventory:
-        QuantityAvailable: 0
-        LastUpdated: '0001-01-01T00:00:00+00:00'
-      Specs:
-        - SpecID: intrigue-active-shorts-color
-          Name: Color
-          OptionID: mysterious-mint
-          Value: Mysterious Mint
-          PriceMarkupType: NoMarkup
-          PriceMarkup: null
-        - SpecID: cross-product-size
-          Name: Size
-          OptionID: XL
-          Value: Extra Large
-          PriceMarkupType: NoMarkup
-          PriceMarkup: null
-      xp: null
-      ProductID: womens-intrigue-active-shorts
-    - ID: womens-intrigue-active-shorts-obsession-umber-L
-      Name: null
-      Description: null
-      Active: true
-      ShipWeight: null
-      ShipHeight: null
-      ShipWidth: null
-      ShipLength: null
-      Inventory:
-        QuantityAvailable: 0
-        LastUpdated: '0001-01-01T00:00:00+00:00'
-      Specs:
-        - SpecID: intrigue-active-shorts-color
-          Name: Color
-          OptionID: obsession-umber
-          Value: Obsession Umber
-          PriceMarkupType: NoMarkup
-          PriceMarkup: null
-        - SpecID: cross-product-size
-          Name: Size
-          OptionID: L
-          Value: Large
-          PriceMarkupType: NoMarkup
-          PriceMarkup: null
-      xp: null
-      ProductID: womens-intrigue-active-shorts
-    - ID: womens-intrigue-active-shorts-obsession-umber-m
-      Name: null
-      Description: null
-      Active: true
-      ShipWeight: null
-      ShipHeight: null
-      ShipWidth: null
-      ShipLength: null
-      Inventory:
-        QuantityAvailable: 0
-        LastUpdated: '0001-01-01T00:00:00+00:00'
-      Specs:
-        - SpecID: intrigue-active-shorts-color
-          Name: Color
-          OptionID: obsession-umber
-          Value: Obsession Umber
-          PriceMarkupType: NoMarkup
-          PriceMarkup: null
-        - SpecID: cross-product-size
-          Name: Size
-          OptionID: m
-          Value: Medium
-          PriceMarkupType: NoMarkup
-          PriceMarkup: null
-      xp: null
-      ProductID: womens-intrigue-active-shorts
-    - ID: womens-intrigue-active-shorts-obsession-umber-s
-      Name: null
-      Description: null
-      Active: true
-      ShipWeight: null
-      ShipHeight: null
-      ShipWidth: null
-      ShipLength: null
-      Inventory:
-        QuantityAvailable: 0
-        LastUpdated: '0001-01-01T00:00:00+00:00'
-      Specs:
-        - SpecID: intrigue-active-shorts-color
-          Name: Color
-          OptionID: obsession-umber
-          Value: Obsession Umber
-          PriceMarkupType: NoMarkup
-          PriceMarkup: null
-        - SpecID: cross-product-size
-          Name: Size
-          OptionID: s
-          Value: Small
-          PriceMarkupType: NoMarkup
-          PriceMarkup: null
-      xp: null
-      ProductID: womens-intrigue-active-shorts
-    - ID: womens-intrigue-active-shorts-obsession-umber-XL
-      Name: null
-      Description: null
-      Active: true
-      ShipWeight: null
-      ShipHeight: null
-      ShipWidth: null
-      ShipLength: null
-      Inventory:
-        QuantityAvailable: 0
-        LastUpdated: '0001-01-01T00:00:00+00:00'
-      Specs:
-        - SpecID: intrigue-active-shorts-color
-          Name: Color
-          OptionID: obsession-umber
-          Value: Obsession Umber
-          PriceMarkupType: NoMarkup
-          PriceMarkup: null
-        - SpecID: cross-product-size
-          Name: Size
-          OptionID: XL
-          Value: Extra Large
-          PriceMarkupType: NoMarkup
-          PriceMarkup: null
-      xp: null
-      ProductID: womens-intrigue-active-shorts
-    - ID: womens-intrigue-active-shorts-paranoid-purple-L
-      Name: null
-      Description: null
-      Active: true
-      ShipWeight: null
-      ShipHeight: null
-      ShipWidth: null
-      ShipLength: null
-      Inventory:
-        QuantityAvailable: 0
-        LastUpdated: '0001-01-01T00:00:00+00:00'
-      Specs:
-        - SpecID: intrigue-active-shorts-color
-          Name: Color
-          OptionID: paranoid-purple
-          Value: Paranoid Purple
-          PriceMarkupType: NoMarkup
-          PriceMarkup: null
-        - SpecID: cross-product-size
-          Name: Size
-          OptionID: L
-          Value: Large
-          PriceMarkupType: NoMarkup
-          PriceMarkup: null
-      xp: null
-      ProductID: womens-intrigue-active-shorts
-    - ID: womens-intrigue-active-shorts-paranoid-purple-m
-      Name: null
-      Description: null
-      Active: true
-      ShipWeight: null
-      ShipHeight: null
-      ShipWidth: null
-      ShipLength: null
-      Inventory:
-        QuantityAvailable: 0
-        LastUpdated: '0001-01-01T00:00:00+00:00'
-      Specs:
-        - SpecID: intrigue-active-shorts-color
-          Name: Color
-          OptionID: paranoid-purple
-          Value: Paranoid Purple
-          PriceMarkupType: NoMarkup
-          PriceMarkup: null
-        - SpecID: cross-product-size
-          Name: Size
-          OptionID: m
-          Value: Medium
-          PriceMarkupType: NoMarkup
-          PriceMarkup: null
-      xp: null
-      ProductID: womens-intrigue-active-shorts
-    - ID: womens-intrigue-active-shorts-paranoid-purple-s
-      Name: null
-      Description: null
-      Active: true
-      ShipWeight: null
-      ShipHeight: null
-      ShipWidth: null
-      ShipLength: null
-      Inventory:
-        QuantityAvailable: 0
-        LastUpdated: '0001-01-01T00:00:00+00:00'
-      Specs:
-        - SpecID: intrigue-active-shorts-color
-          Name: Color
-          OptionID: paranoid-purple
-          Value: Paranoid Purple
-          PriceMarkupType: NoMarkup
-          PriceMarkup: null
-        - SpecID: cross-product-size
-          Name: Size
-          OptionID: s
-          Value: Small
-          PriceMarkupType: NoMarkup
-          PriceMarkup: null
-      xp: null
-      ProductID: womens-intrigue-active-shorts
-    - ID: womens-intrigue-active-shorts-paranoid-purple-XL
-      Name: null
-      Description: null
-      Active: true
-      ShipWeight: null
-      ShipHeight: null
-      ShipWidth: null
-      ShipLength: null
-      Inventory:
-        QuantityAvailable: 0
-        LastUpdated: '0001-01-01T00:00:00+00:00'
-      Specs:
-        - SpecID: intrigue-active-shorts-color
-          Name: Color
-          OptionID: paranoid-purple
-          Value: Paranoid Purple
-          PriceMarkupType: NoMarkup
-          PriceMarkup: null
-        - SpecID: cross-product-size
-          Name: Size
-          OptionID: XL
-          Value: Extra Large
-          PriceMarkupType: NoMarkup
-          PriceMarkup: null
-      xp: null
-      ProductID: womens-intrigue-active-shorts
   PriceSchedules:
     - OwnerID: <MarketplaceID placeholder>
       ID: boys-turkish-leather-caliage

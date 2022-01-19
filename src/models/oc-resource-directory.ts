@@ -4,7 +4,7 @@ import { Addresses, AdminAddresses, AdminUserGroups, AdminUsers, ApiClients, App
 import { OCResourceEnum } from "./oc-resource-enum";
 import { OCResource } from "./oc-resources";
 import _ from 'lodash';
-import { ApiClientValidationFunc, ImpersonationConfigValidationFunc, LocaleAssignmentCustomValidationFunc, ProductAssignmentValidationFunc, SecurityProfileAssignmentValidationFunc, WebhookValidationFunc } from "../services/custom-validation-func";
+import { ApiClientValidationFunc, ImpersonationConfigValidationFunc, LocaleAssignmentCustomValidationFunc, ProductAssignmentValidationFunc, SecurityProfileAssignmentValidationFunc, VariantValidationFunc, WebhookValidationFunc } from "../services/custom-validation-func";
 
 const Directory: OCResource[] = [
     { 
@@ -300,7 +300,7 @@ const Directory: OCResource[] = [
             ShipFromAddressID: { foreignResource: OCResourceEnum.AdminAddresses },
             DefaultSupplierID: { foreignResource: OCResourceEnum.Suppliers }
         },
-        children: [OCResourceEnum.ProductSupplierAssignment]
+        children: [OCResourceEnum.ProductSupplierAssignment, OCResourceEnum.Variants]
     },
     {
         name: OCResourceEnum.PriceSchedules, 
@@ -347,6 +347,18 @@ const Directory: OCResource[] = [
         path: "/promotions",
         createPriority: 3,
         hasOwnerIDField: "OwnerID"
+    },
+    {
+        name: OCResourceEnum.Variants, 
+        modelName: "Variant",
+        sdkObject: Products,
+        createPriority: 6,
+        path: "/products/{productID}/variants",
+        parentRefField: "ProductID",
+        isChild: true,
+        listMethodName: 'ListVariants',
+        customValidationFunc: VariantValidationFunc,
+        shouldAttemptListFunc: (product) => (product?.VariantCount > 0)
     },
     {
         name: OCResourceEnum.SecurityProfileAssignments, 
@@ -723,7 +735,9 @@ function ApplyDefaults(resource: OCResource): OCResource {
     resource.requiredCreateFields = resource.requiredCreateFields ?? [];
     resource.redactFields = resource.redactFields ?? [];
     resource.hasOwnerIDField = resource.hasOwnerIDField ?? null;
+    resource.shouldAttemptListFunc = resource.shouldAttemptListFunc ?? ((x) => true);
     return resource;
+
 }
 
 export async function BuildResourceDirectory(includeOpenAPI: boolean = false): Promise<OCResource[]> {
