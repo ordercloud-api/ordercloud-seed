@@ -3,6 +3,7 @@ import _, { find } from 'lodash';
 import { OCResourceEnum } from "../models/oc-resource-enum";
 import { SerializedMarketplace } from "../models/serialized-marketplace";
 import { Spec, VariantSpec } from "ordercloud-javascript-sdk";
+import { MARKETPLACE_ID } from "../constants";
 
 export type RecordValidationFunc = (record: any, validator: Validator, allData: SerializedMarketplace) => void
 
@@ -151,13 +152,18 @@ export const VariantValidationFunc: RecordValidationFunc = (record, validator, a
 
     var assignedSpecIDs = allData.Assignments[OCResourceEnum.SpecProductAssignments]?.filter(x => x.ProductID === productID)?.map(x => x.SpecID) ?? [];
     var expectedSpecs: Spec[] = allData.Objects[OCResourceEnum.Specs]?.filter(x => x.DefinesVariant && assignedSpecIDs.includes(x.ID)) ?? [];
+    var alreadySeenSpecIds = [];
 
     for (var actual of actualSpecs) {
+        if (alreadySeenSpecIds.includes(actual.SpecID)) {
+            validator.addError(`Invalid duplicate SpecID \"${actual.SpecID}\" on Variant with ID \"${variantID}\": each spec should appear only once.`);
+        }
+        alreadySeenSpecIds.push(actual.SpecID);
         var specMatch = expectedSpecs.find((x => x.ID === actual.SpecID));
         if (!specMatch) {
             validator.addError(`Invalid reference Variant.Specs.SpecID on Variant with ID \"${variantID}\": spec ID \"${actual.SpecID}\" does not match an assigned spec with DefinesVariant.`);
         } else {
-            var optionMatch = specMatch.Options.find(x => x.ID == actual.OptionID);
+            var optionMatch = validator.idCache.has(OCResourceEnum.SpecOptions, `${specMatch.ID}/${actual.OptionID}`)
             if (!optionMatch) {
                 validator.addError(`Invalid reference Variant.Specs.OptionID on Variant with ID \"${variantID}\": no option found with ID \"${actual.OptionID}\" on Spec with ID \"${actual.SpecID}\".`);
             }
@@ -171,3 +177,23 @@ export const VariantValidationFunc: RecordValidationFunc = (record, validator, a
         }
     }
 }
+
+export const InventoryRecordValidation: RecordValidationFunc = (record, validator, allData) => {
+    var addressID: string = record["AddressID"];
+    var ownerID: string = record["OwnerID"];
+    var hasAddressID = !_.isNil(addressID);
+    var hasOwnerID = !_.isNil(addressID);
+
+    if (hasAddressID && hasOwnerID) {
+        if (ownerID === MARKETPLACE_ID) {
+            if (!validator.idCache.has(OCResourceEnum.AdminAddresses, addressID)) {
+                validator.addError(`Invalid reference InventoryRecord.AddressID: no Admin Address found with ID \"${addressID}\".`)
+            }
+        } else {
+            if (!validator.idCache.has(OCResourceEnum.SupplierAddresses, `${ownerID}/${addressID}`)) {
+                validator.addError(`Invalid reference InventoryRecord.AddressID: no Address found with ID \"${addressID}\" under supplier with ID \"${ownerID}\".`)
+            }
+        }
+    }
+}
+

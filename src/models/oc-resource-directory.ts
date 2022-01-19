@@ -1,10 +1,9 @@
 import axios from "axios";
-import { isObject } from "lodash";
-import { Addresses, AdminAddresses, AdminUserGroups, AdminUsers, ApiClients, ApprovalRules, Buyers, Catalogs, Categories, CostCenters, CreditCards, ImpersonationConfigs, Incrementors, IntegrationEvents, Locales, MessageSenders, OpenIdConnects, PriceSchedules, ProductFacets, Products, Promotions, SecurityProfiles, Specs, SpendingAccounts, SupplierAddresses, Suppliers, SupplierUserGroups, SupplierUsers, UserGroups, Users, Webhooks, XpIndices } from "ordercloud-javascript-sdk";
+import { Addresses, AdminAddresses, InventoryRecords, AdminUserGroups, AdminUsers, ApiClients, ApprovalRules, Buyers, Catalogs, Categories, CostCenters, CreditCards, ImpersonationConfigs, Incrementors, IntegrationEvents, Locales, MessageSenders, OpenIdConnects, PriceSchedules, ProductFacets, Products, Promotions, SecurityProfiles, Specs, SpendingAccounts, SupplierAddresses, Suppliers, SupplierUserGroups, SupplierUsers, UserGroups, Users, Webhooks, XpIndices } from "ordercloud-javascript-sdk";
 import { OCResourceEnum } from "./oc-resource-enum";
 import { OCResource } from "./oc-resources";
 import _ from 'lodash';
-import { ApiClientValidationFunc, ImpersonationConfigValidationFunc, LocaleAssignmentCustomValidationFunc, ProductAssignmentValidationFunc, SecurityProfileAssignmentValidationFunc, VariantValidationFunc, WebhookValidationFunc } from "../services/custom-validation-func";
+import { ApiClientValidationFunc, ImpersonationConfigValidationFunc, InventoryRecordValidation, LocaleAssignmentCustomValidationFunc, ProductAssignmentValidationFunc, SecurityProfileAssignmentValidationFunc, VariantValidationFunc, WebhookValidationFunc } from "../services/custom-validation-func";
 
 const Directory: OCResource[] = [
     { 
@@ -300,7 +299,7 @@ const Directory: OCResource[] = [
             ShipFromAddressID: { foreignResource: OCResourceEnum.AdminAddresses },
             DefaultSupplierID: { foreignResource: OCResourceEnum.Suppliers }
         },
-        children: [OCResourceEnum.ProductSupplierAssignment, OCResourceEnum.Variants]
+        children: [OCResourceEnum.ProductSupplierAssignment, OCResourceEnum.Variants, OCResourceEnum.InventoryRecords]
     },
     {
         name: OCResourceEnum.PriceSchedules, 
@@ -361,6 +360,17 @@ const Directory: OCResource[] = [
         shouldAttemptListFunc: (product) => (product?.VariantCount > 0)
     },
     {
+        name: OCResourceEnum.InventoryRecords, 
+        modelName: "InventoryRecord",
+        sdkObject: InventoryRecords,
+        createPriority: 5,
+        path: "/products/{productID}/inventoryrecords",
+        parentRefField: "ProductID",
+        isChild: true,
+        hasOwnerIDField: "OwnerID",
+        customValidationFunc: InventoryRecordValidation,
+    },
+    {
         name: OCResourceEnum.SecurityProfileAssignments, 
         modelName: "SecurityProfileAssignment",
         sdkObject: SecurityProfiles,
@@ -412,7 +422,6 @@ const Directory: OCResource[] = [
         createPriority: 6,
         isAssignment: true,
         path: "/locales/assignments",
-
         customValidationFunc: LocaleAssignmentCustomValidationFunc,
         foreignKeys: {
             LocaleID: { 

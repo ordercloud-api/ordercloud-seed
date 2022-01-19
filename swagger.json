@@ -3,7 +3,7 @@
     "info": {
         "title": "OrderCloud",
         "description": "OrderCloud is an awesome C# platform API for making eCommerce applications. It is NOT a complete solution. It's designed to be used as the backend component with various other integrations and services.",
-        "version": "1.0.221.22657",
+        "version": "1.0.228.23654",
         "contact": {
             "name": "OrderCloud",
             "url": "http://ordercloud.io",
@@ -208,6 +208,11 @@
             "x-section-id": "ProductCatalogs"
         },
         {
+            "name": "Inventory Records",
+            "description": "Inventory Records represent physical locations where inventory for a given product exists. Use of Inventory Records will prevent writing to Product.Inventory.QuantityAvailable, which will instead be a sum of inventories across all locations associated to the product.",
+            "x-section-id": "ProductCatalogs"
+        },
+        {
             "name": "Orders and Fulfillment",
             "description": "The central concept within OrderCloud.io is (not surprisingly) the Order. This is where Buyers, Sellers, Products, Addresses, and just about everything else come together to form business transactions. A feature that is somewhat unique to this area of the API is that you'll use the same set of endpoints regardless of whether you're a Buyer, Seller, or Supplier. What's important is the order *direction*, which is either incoming or outgoing. Order IDs are guaranteed unique within that context. As a seller, this means you can aggregate lists of incoming orders from many Buyers, or outgoing orders to many Suppliers. You may filter a list by Buyer or Supplier, but it's not required to uniquely identify an Order. (Buyers typically only deal with outgoing Orders; Suppliers with incoming.) Buyers add Line Items to Orders by specifying a Product, Quantity, and (optionally) Spec values. Shipping is applied at either the Order level or Line Item level. Shipments are independent of Orders; you can ship a partial Order, or aggregate items from multiple Orders onto a single Shipment.",
             "x-id": "OrdersAndFulfillment"
@@ -264,6 +269,8 @@
                             "AdminUserGroupAdmin": "",
                             "AdminUserGroupReader": "",
                             "AdminUserReader": "",
+                            "AnalyticsEventAdmin": "",
+                            "AnalyticsEventReader": "",
                             "ApiClientAdmin": "",
                             "ApiClientReader": "",
                             "ApprovalRuleAdmin": "",
@@ -347,6 +354,8 @@
                             "AdminUserGroupAdmin": "",
                             "AdminUserGroupReader": "",
                             "AdminUserReader": "",
+                            "AnalyticsEventAdmin": "",
+                            "AnalyticsEventReader": "",
                             "ApiClientAdmin": "",
                             "ApiClientReader": "",
                             "ApprovalRuleAdmin": "",
@@ -478,7 +487,8 @@
                 },
                 "properties": {
                     "ID": {
-                        "type": "string"
+                        "type": "string",
+                        "maxLength": 100
                     },
                     "DateCreated": {
                         "type": "string",
@@ -801,7 +811,8 @@
                 },
                 "properties": {
                     "ID": {
-                        "type": "string"
+                        "type": "string",
+                        "maxLength": 100
                     },
                     "Name": {
                         "type": "string",
@@ -845,7 +856,8 @@
                 },
                 "properties": {
                     "ID": {
-                        "type": "string"
+                        "type": "string",
+                        "maxLength": 100
                     },
                     "Name": {
                         "type": "string",
@@ -893,7 +905,8 @@
                 "properties": {
                     "ID": {
                         "type": "string",
-                        "readOnly": true
+                        "readOnly": true,
+                        "maxLength": 100
                     },
                     "Shipping": {
                         "type": "boolean"
@@ -975,7 +988,8 @@
                 "properties": {
                     "ID": {
                         "type": "string",
-                        "readOnly": true
+                        "readOnly": true,
+                        "maxLength": 100
                     },
                     "Editable": {
                         "type": "boolean",
@@ -983,7 +997,8 @@
                     },
                     "Token": {
                         "type": "string",
-                        "description": "Token provided by the credit card processor used to reference the card with that processor."
+                        "description": "Token provided by the credit card processor used to reference the card with that processor.",
+                        "maxLength": 100
                     },
                     "DateCreated": {
                         "type": "string",
@@ -1065,7 +1080,8 @@
                         "readOnly": true
                     },
                     "ID": {
-                        "type": "string"
+                        "type": "string",
+                        "maxLength": 100
                     },
                     "Name": {
                         "type": "string",
@@ -1146,7 +1162,8 @@
                 },
                 "properties": {
                     "ID": {
-                        "type": "string"
+                        "type": "string",
+                        "maxLength": 100
                     },
                     "Name": {
                         "type": "string",
@@ -1167,7 +1184,8 @@
                 },
                 "properties": {
                     "ID": {
-                        "type": "string"
+                        "type": "string",
+                        "maxLength": 100
                     },
                     "OwnerID": {
                         "type": "string",
@@ -1232,7 +1250,8 @@
                 },
                 "properties": {
                     "ID": {
-                        "type": "string"
+                        "type": "string",
+                        "maxLength": 100
                     },
                     "Name": {
                         "type": "string",
@@ -1335,7 +1354,8 @@
                 },
                 "properties": {
                     "ID": {
-                        "type": "string"
+                        "type": "string",
+                        "maxLength": 100
                     },
                     "Name": {
                         "type": "string",
@@ -1379,11 +1399,13 @@
                 },
                 "properties": {
                     "ID": {
-                        "type": "string"
+                        "type": "string",
+                        "maxLength": 100
                     },
                     "Token": {
                         "type": "string",
-                        "description": "Token provided by the credit card processor used to reference the card with that processor."
+                        "description": "Token provided by the credit card processor used to reference the card with that processor.",
+                        "maxLength": 100
                     },
                     "DateCreated": {
                         "type": "string",
@@ -1472,7 +1494,8 @@
                 },
                 "properties": {
                     "ID": {
-                        "type": "string"
+                        "type": "string",
+                        "maxLength": 100
                     },
                     "ImpersonationBuyerID": {
                         "type": "string",
@@ -1517,7 +1540,8 @@
                 "properties": {
                     "ID": {
                         "type": "string",
-                        "description": "The string \"{replace-with-incrementor-ID}\" can be passed into any ID field to populate the next ID in the sequence. It can also be prefixed with other ID safe characters."
+                        "description": "The string \"{replace-with-incrementor-ID}\" can be passed into any ID field to populate the next ID in the sequence. It can also be prefixed with other ID safe characters.",
+                        "maxLength": 100
                     },
                     "Name": {
                         "type": "string",
@@ -1556,7 +1580,8 @@
                         }
                     },
                     "ID": {
-                        "type": "string"
+                        "type": "string",
+                        "maxLength": 100
                     },
                     "ConfigData": {
                         "type": "object",
@@ -1618,12 +1643,76 @@
                     "QuantityAvailable": {
                         "type": "integer",
                         "format": "int32",
-                        "description": "Automatically decrements on order submit."
+                        "description": "Automatically decrements on order submit. If you utilize InventoryRecords either at the product or variant level, this property becomes readonly, and is derived from the sum of all QuantityAvailable of each InventoryRecord. If VariantLevelTracking is enabled, this is the sum of all variant quantities, so the value may not be very useful beyond using it to filter out products with no variant level inventory available."
                     },
                     "LastUpdated": {
                         "type": "string",
                         "format": "date-time",
                         "readOnly": true
+                    }
+                }
+            },
+            "InventoryRecord": {
+                "type": "object",
+                "example": {
+                    "ID": "",
+                    "OwnerID": "",
+                    "Address": {
+                        "ID": "",
+                        "DateCreated": "2018-01-01T00:00:00-06:00",
+                        "CompanyName": "",
+                        "FirstName": "",
+                        "LastName": "",
+                        "Street1": "",
+                        "Street2": "",
+                        "City": "",
+                        "State": "",
+                        "Zip": "",
+                        "Country": "",
+                        "Phone": "",
+                        "AddressName": "",
+                        "xp": {}
+                    },
+                    "AddressID": "",
+                    "OrderCanExceed": false,
+                    "QuantityAvailable": 0,
+                    "LastUpdated": "2018-01-01T00:00:00-06:00",
+                    "xp": {}
+                },
+                "properties": {
+                    "ID": {
+                        "type": "string",
+                        "maxLength": 100
+                    },
+                    "OwnerID": {
+                        "type": "string"
+                    },
+                    "Address": {
+                        "allOf": [
+                            {
+                                "$ref": "#/components/schemas/Address"
+                            }
+                        ],
+                        "readOnly": true
+                    },
+                    "AddressID": {
+                        "type": "string",
+                        "description": "Since an InventoryRecord represents a physical location where inventory for a given product exists, AddressID is required."
+                    },
+                    "OrderCanExceed": {
+                        "type": "boolean"
+                    },
+                    "QuantityAvailable": {
+                        "type": "integer",
+                        "format": "int32"
+                    },
+                    "LastUpdated": {
+                        "type": "string",
+                        "format": "date-time",
+                        "readOnly": true
+                    },
+                    "xp": {
+                        "type": "object"
                     }
                 }
             },
@@ -1698,6 +1787,7 @@
                         "xp": {}
                     },
                     "SupplierID": "",
+                    "InventoryRecordID": "",
                     "Specs": [
                         {
                             "SpecID": "",
@@ -1712,7 +1802,8 @@
                 },
                 "properties": {
                     "ID": {
-                        "type": "string"
+                        "type": "string",
+                        "maxLength": 100
                     },
                     "ProductID": {
                         "type": "string"
@@ -1812,6 +1903,10 @@
                         "type": "string",
                         "readOnly": true
                     },
+                    "InventoryRecordID": {
+                        "type": "string",
+                        "description": "Inventory Record ID of which product inventory location to use. The Inventory Record ID cannot be modified once an order is submitted"
+                    },
                     "Specs": {
                         "type": "array",
                         "items": {
@@ -1866,7 +1961,8 @@
                 },
                 "properties": {
                     "ID": {
-                        "type": "string"
+                        "type": "string",
+                        "maxLength": 100
                     },
                     "Name": {
                         "type": "string"
@@ -1947,7 +2043,8 @@
                 },
                 "properties": {
                     "ID": {
-                        "type": "string"
+                        "type": "string",
+                        "maxLength": 100
                     },
                     "Name": {
                         "type": "string"
@@ -2018,7 +2115,8 @@
                 },
                 "properties": {
                     "ID": {
-                        "type": "string"
+                        "type": "string",
+                        "maxLength": 100
                     },
                     "OwnerID": {
                         "type": "string",
@@ -2064,7 +2162,8 @@
                 "properties": {
                     "ID": {
                         "type": "string",
-                        "readOnly": true
+                        "readOnly": true,
+                        "maxLength": 100
                     },
                     "DefaultCatalogID": {
                         "type": "string",
@@ -2080,7 +2179,8 @@
                 "properties": {
                     "ID": {
                         "type": "string",
-                        "readOnly": true
+                        "readOnly": true,
+                        "maxLength": 100
                     }
                 }
             },
@@ -2154,7 +2254,8 @@
                 },
                 "properties": {
                     "ID": {
-                        "type": "string"
+                        "type": "string",
+                        "maxLength": 100
                     },
                     "Name": {
                         "type": "string"
@@ -2245,7 +2346,8 @@
                 "properties": {
                     "ID": {
                         "type": "string",
-                        "readOnly": true
+                        "readOnly": true,
+                        "maxLength": 100
                     }
                 }
             },
@@ -2372,7 +2474,8 @@
                         "readOnly": true
                     },
                     "ID": {
-                        "type": "string"
+                        "type": "string",
+                        "maxLength": 100
                     },
                     "Username": {
                         "type": "string",
@@ -2461,7 +2564,8 @@
                 "properties": {
                     "ID": {
                         "type": "string",
-                        "description": "ID of this OpenID Connect configuration object. Each object allows authentication to one OrderCloud ApiClient through one Identity Providing Party."
+                        "description": "ID of this OpenID Connect configuration object. Each object allows authentication to one OrderCloud ApiClient through one Identity Providing Party.",
+                        "maxLength": 100
                     },
                     "OrderCloudApiClientID": {
                         "type": "string",
@@ -2581,7 +2685,8 @@
                 },
                 "properties": {
                     "ID": {
-                        "type": "string"
+                        "type": "string",
+                        "maxLength": 100
                     },
                     "FromUser": {
                         "allOf": [
@@ -2915,7 +3020,8 @@
                         "readOnly": true
                     },
                     "ID": {
-                        "type": "string"
+                        "type": "string",
+                        "maxLength": 100
                     },
                     "LineItemLevel": {
                         "type": "boolean",
@@ -3290,6 +3396,7 @@
                                 "xp": {}
                             },
                             "SupplierID": "",
+                            "InventoryRecordID": "",
                             "Specs": [
                                 {
                                     "SpecID": "",
@@ -3579,7 +3686,8 @@
                 },
                 "properties": {
                     "ID": {
-                        "type": "string"
+                        "type": "string",
+                        "maxLength": 100
                     },
                     "Type": {
                         "$ref": "#/components/schemas/PaymentType"
@@ -3643,7 +3751,8 @@
                 },
                 "properties": {
                     "ID": {
-                        "type": "string"
+                        "type": "string",
+                        "maxLength": 100
                     },
                     "Type": {
                         "type": "string"
@@ -3742,7 +3851,8 @@
                         "description": "ID of the organization that owns the PriceSchedule. Only the Marketplace Owner can override the OwnerID on create."
                     },
                     "ID": {
-                        "type": "string"
+                        "type": "string",
+                        "maxLength": 100
                     },
                     "Name": {
                         "type": "string",
@@ -3836,7 +3946,8 @@
                         "description": "If true, when this product is ordered by a Buyer, it will automatically be added to a new Order from the Marketplace Owner to the Default Supplier and submitted. Requires a valid DefaultSupplierID."
                     },
                     "ID": {
-                        "type": "string"
+                        "type": "string",
+                        "maxLength": 100
                     },
                     "Name": {
                         "type": "string",
@@ -3920,7 +4031,8 @@
                 },
                 "properties": {
                     "SellerID": {
-                        "type": "string"
+                        "type": "string",
+                        "description": "Marketplace owner can write to this property when creating product assignments for other sellers. A PriceScheduleID owned by the SellerID is required in order to write to this property."
                     },
                     "ProductID": {
                         "type": "string"
@@ -3963,7 +4075,8 @@
                 },
                 "properties": {
                     "ID": {
-                        "type": "string"
+                        "type": "string",
+                        "maxLength": 100
                     },
                     "Name": {
                         "type": "string",
@@ -4005,7 +4118,8 @@
                         "type": "string"
                     },
                     "ID": {
-                        "type": "string"
+                        "type": "string",
+                        "maxLength": 100
                     },
                     "Name": {
                         "type": "string",
@@ -4052,7 +4166,8 @@
                 },
                 "properties": {
                     "ID": {
-                        "type": "string"
+                        "type": "string",
+                        "maxLength": 100
                     },
                     "LineItemLevel": {
                         "type": "boolean",
@@ -4232,7 +4347,8 @@
                 },
                 "properties": {
                     "ID": {
-                        "type": "string"
+                        "type": "string",
+                        "maxLength": 100
                     },
                     "Name": {
                         "type": "string",
@@ -4447,7 +4563,8 @@
                 },
                 "properties": {
                     "ID": {
-                        "type": "string"
+                        "type": "string",
+                        "maxLength": 100
                     },
                     "BuyerID": {
                         "type": "string"
@@ -4682,7 +4799,8 @@
                         "description": "ID of the organization that owns the Spec. Only the Marketplace Owner can override the OwnerID on create."
                     },
                     "ID": {
-                        "type": "string"
+                        "type": "string",
+                        "maxLength": 100
                     },
                     "ListOrder": {
                         "type": "integer",
@@ -4705,7 +4823,7 @@
                     },
                     "DefaultOptionID": {
                         "type": "string",
-                        "description": "If no Spec.OptionID is passed in the LineItemSpec, this option will be used."
+                        "description": "This property can only be written to after both the Spec and Option have been created. If no Spec.OptionID is passed in the LineItemSpec, this option will be used."
                     },
                     "DefinesVariant": {
                         "type": "boolean",
@@ -4741,7 +4859,8 @@
                 },
                 "properties": {
                     "ID": {
-                        "type": "string"
+                        "type": "string",
+                        "maxLength": 100
                     },
                     "Value": {
                         "type": "string",
@@ -4807,7 +4926,8 @@
                 },
                 "properties": {
                     "ID": {
-                        "type": "string"
+                        "type": "string",
+                        "maxLength": 100
                     },
                     "Name": {
                         "type": "string",
@@ -4874,7 +4994,8 @@
                 },
                 "properties": {
                     "ID": {
-                        "type": "string"
+                        "type": "string",
+                        "maxLength": 100
                     },
                     "Name": {
                         "type": "string",
@@ -4906,7 +5027,8 @@
                 },
                 "properties": {
                     "ID": {
-                        "type": "string"
+                        "type": "string",
+                        "maxLength": 100
                     },
                     "Name": {
                         "type": "string",
@@ -4953,7 +5075,8 @@
                 },
                 "properties": {
                     "ID": {
-                        "type": "string"
+                        "type": "string",
+                        "maxLength": 100
                     },
                     "Username": {
                         "type": "string",
@@ -5031,7 +5154,8 @@
                 },
                 "properties": {
                     "ID": {
-                        "type": "string"
+                        "type": "string",
+                        "maxLength": 100
                     },
                     "Name": {
                         "type": "string",
@@ -5099,7 +5223,8 @@
                 },
                 "properties": {
                     "ID": {
-                        "type": "string"
+                        "type": "string",
+                        "maxLength": 100
                     },
                     "Name": {
                         "type": "string"
@@ -5224,7 +5349,8 @@
                 },
                 "properties": {
                     "ID": {
-                        "type": "string"
+                        "type": "string",
+                        "maxLength": 100
                     },
                     "Name": {
                         "type": "string"
@@ -5324,7 +5450,8 @@
                     "ApprovalRule",
                     "Catalog",
                     "ProductFacet",
-                    "MessageSender"
+                    "MessageSender",
+                    "InventoryRecord"
                 ],
                 "description": ""
             },
@@ -9311,6 +9438,129 @@
                         "OAuth2": [
                             "FullAccess",
                             "CreditCardAdmin"
+                        ]
+                    }
+                ]
+            }
+        },
+        "/buyers/{buyerID}/sellers": {
+            "get": {
+                "responses": {
+                    "200": {
+                        "description": "",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "properties": {
+                                        "Items": {
+                                            "type": "array",
+                                            "items": {
+                                                "$ref": "#/components/schemas/BuyerSupplier"
+                                            }
+                                        },
+                                        "Meta": {
+                                            "$ref": "#/components/schemas/Meta"
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                },
+                "operationId": "Buyers.ListBuyerSellers",
+                "tags": [
+                    "Buyers"
+                ],
+                "parameters": [
+                    {
+                        "name": "buyerID",
+                        "in": "path",
+                        "description": "ID of the buyer.",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "name": "search",
+                        "in": "query",
+                        "description": "Word or phrase to search for.",
+                        "required": false,
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "name": "searchOn",
+                        "in": "query",
+                        "description": "Comma-delimited list of fields to search on.",
+                        "required": false,
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "type": "string",
+                                "enum": [
+                                    "ID",
+                                    "Name"
+                                ]
+                            }
+                        }
+                    },
+                    {
+                        "name": "sortBy",
+                        "in": "query",
+                        "description": "Comma-delimited list of fields to sort by.",
+                        "required": false,
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "type": "string",
+                                "enum": [
+                                    "Name",
+                                    "ID",
+                                    "!Name",
+                                    "!ID"
+                                ]
+                            }
+                        }
+                    },
+                    {
+                        "name": "page",
+                        "in": "query",
+                        "description": "Page of results to return. Default: 1. When paginating through many items (> page 30), we recommend the \"Last ID\" method, as outlined in the Advanced Querying documentation.",
+                        "required": false,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    },
+                    {
+                        "name": "pageSize",
+                        "in": "query",
+                        "description": "Number of results to return per page. Default: 20, max: 100.",
+                        "required": false,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    },
+                    {
+                        "name": "filters",
+                        "in": "query",
+                        "description": "Any additional key/value pairs passed in the query string are interpretted as filters. Valid keys are top-level properties of the returned model or 'xp.???'",
+                        "required": false,
+                        "schema": {
+                            "type": "object"
+                        }
+                    }
+                ],
+                "summary": "Get a list of buyer buyer sellers.",
+                "description": "",
+                "security": [
+                    {
+                        "OAuth2": [
+                            "FullAccess",
+                            "BuyerAdmin",
+                            "BuyerReader"
                         ]
                     }
                 ]
@@ -13471,6 +13721,7 @@
                                 ],
                                 "required": [
                                     "ElevatedRoles",
+                                    "CustomImplementationUrl",
                                     "Name",
                                     "HashKey"
                                 ]
@@ -13561,6 +13812,7 @@
                                 ],
                                 "required": [
                                     "ElevatedRoles",
+                                    "CustomImplementationUrl",
                                     "Name",
                                     "HashKey"
                                 ]
@@ -15609,6 +15861,15 @@
                                     "Comments"
                                 ]
                             }
+                        }
+                    },
+                    {
+                        "name": "searchType",
+                        "in": "query",
+                        "description": "Type of search to perform. Possible values: AnyTerm (default), AllTermsAnyField, AllTermsSameField, ExactPhrase, ExactPhrasePrefix.",
+                        "required": false,
+                        "schema": {
+                            "$ref": "#/components/schemas/SearchType"
                         }
                     },
                     {
@@ -18648,6 +18909,15 @@
                                     "Comments"
                                 ]
                             }
+                        }
+                    },
+                    {
+                        "name": "searchType",
+                        "in": "query",
+                        "description": "Type of search to perform. Possible values: AnyTerm (default), AllTermsAnyField, AllTermsSameField, ExactPhrase, ExactPhrasePrefix.",
+                        "required": false,
+                        "schema": {
+                            "$ref": "#/components/schemas/SearchType"
                         }
                     },
                     {
@@ -23273,6 +23543,407 @@
                 ]
             }
         },
+        "/products/{productID}/inventoryrecords": {
+            "get": {
+                "responses": {
+                    "200": {
+                        "description": "",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "properties": {
+                                        "Items": {
+                                            "type": "array",
+                                            "items": {
+                                                "$ref": "#/components/schemas/InventoryRecord"
+                                            }
+                                        },
+                                        "Meta": {
+                                            "$ref": "#/components/schemas/Meta"
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                },
+                "operationId": "InventoryRecords.List",
+                "tags": [
+                    "Inventory Records"
+                ],
+                "parameters": [
+                    {
+                        "name": "productID",
+                        "in": "path",
+                        "description": "ID of the product.",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "name": "search",
+                        "in": "query",
+                        "description": "Word or phrase to search for.",
+                        "required": false,
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "name": "searchOn",
+                        "in": "query",
+                        "description": "Comma-delimited list of fields to search on.",
+                        "required": false,
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "type": "string",
+                                "enum": [
+                                    "ID",
+                                    "AddressID"
+                                ]
+                            }
+                        }
+                    },
+                    {
+                        "name": "sortBy",
+                        "in": "query",
+                        "description": "Comma-delimited list of fields to sort by.",
+                        "required": false,
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "type": "string",
+                                "enum": [
+                                    "ID",
+                                    "AddressID",
+                                    "!ID",
+                                    "!AddressID"
+                                ]
+                            }
+                        }
+                    },
+                    {
+                        "name": "page",
+                        "in": "query",
+                        "description": "Page of results to return. Default: 1. When paginating through many items (> page 30), we recommend the \"Last ID\" method, as outlined in the Advanced Querying documentation.",
+                        "required": false,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    },
+                    {
+                        "name": "pageSize",
+                        "in": "query",
+                        "description": "Number of results to return per page. Default: 20, max: 100.",
+                        "required": false,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    },
+                    {
+                        "name": "filters",
+                        "in": "query",
+                        "description": "Any additional key/value pairs passed in the query string are interpretted as filters. Valid keys are top-level properties of the returned model or 'xp.???'",
+                        "required": false,
+                        "schema": {
+                            "type": "object"
+                        }
+                    }
+                ],
+                "summary": "Get a list of inventory records.",
+                "description": "",
+                "security": [
+                    {
+                        "OAuth2": [
+                            "FullAccess",
+                            "ProductAdmin",
+                            "ProductReader"
+                        ]
+                    }
+                ]
+            },
+            "post": {
+                "responses": {
+                    "201": {
+                        "description": "If ID is provided and an object with that ID already exists, a 409 (conflict) error is returned.",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/InventoryRecord"
+                                }
+                            }
+                        }
+                    }
+                },
+                "operationId": "InventoryRecords.Create",
+                "tags": [
+                    "Inventory Records"
+                ],
+                "requestBody": {
+                    "required": true,
+                    "description": "",
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "allOf": [
+                                    {
+                                        "$ref": "#/components/schemas/InventoryRecord"
+                                    }
+                                ],
+                                "required": [
+                                    "AddressID"
+                                ]
+                            }
+                        }
+                    }
+                },
+                "parameters": [
+                    {
+                        "name": "productID",
+                        "in": "path",
+                        "description": "ID of the product.",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "summary": "Create a new inventory record.",
+                "description": "If ID is provided and an object with that ID already exists, a 409 (conflict) error is returned.",
+                "security": [
+                    {
+                        "OAuth2": [
+                            "FullAccess",
+                            "ProductAdmin"
+                        ]
+                    }
+                ]
+            }
+        },
+        "/products/{productID}/inventoryrecords/{inventoryRecordID}": {
+            "get": {
+                "responses": {
+                    "200": {
+                        "description": "",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/InventoryRecord"
+                                }
+                            }
+                        }
+                    }
+                },
+                "operationId": "InventoryRecords.Get",
+                "tags": [
+                    "Inventory Records"
+                ],
+                "parameters": [
+                    {
+                        "name": "productID",
+                        "in": "path",
+                        "description": "ID of the product.",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "name": "inventoryRecordID",
+                        "in": "path",
+                        "description": "ID of the inventory record.",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "summary": "Get a single inventory record.",
+                "description": "",
+                "security": [
+                    {
+                        "OAuth2": [
+                            "FullAccess",
+                            "ProductAdmin",
+                            "ProductReader"
+                        ]
+                    }
+                ]
+            },
+            "put": {
+                "responses": {
+                    "200": {
+                        "description": "If an object with the same ID already exists, it will be overwritten.",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/InventoryRecord"
+                                }
+                            }
+                        }
+                    }
+                },
+                "operationId": "InventoryRecords.Save",
+                "tags": [
+                    "Inventory Records"
+                ],
+                "requestBody": {
+                    "required": true,
+                    "description": "",
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "allOf": [
+                                    {
+                                        "$ref": "#/components/schemas/InventoryRecord"
+                                    }
+                                ],
+                                "required": [
+                                    "AddressID"
+                                ]
+                            }
+                        }
+                    }
+                },
+                "parameters": [
+                    {
+                        "name": "productID",
+                        "in": "path",
+                        "description": "ID of the product.",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "name": "inventoryRecordID",
+                        "in": "path",
+                        "description": "ID of the inventory record.",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "summary": "Create or update an inventory record.",
+                "description": "If an object with the same ID already exists, it will be overwritten.",
+                "security": [
+                    {
+                        "OAuth2": [
+                            "FullAccess",
+                            "ProductAdmin"
+                        ]
+                    }
+                ]
+            },
+            "delete": {
+                "responses": {
+                    "204": {
+                        "description": ""
+                    }
+                },
+                "operationId": "InventoryRecords.Delete",
+                "tags": [
+                    "Inventory Records"
+                ],
+                "parameters": [
+                    {
+                        "name": "productID",
+                        "in": "path",
+                        "description": "ID of the product.",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "name": "inventoryRecordID",
+                        "in": "path",
+                        "description": "ID of the inventory record.",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "summary": "Delete an inventory record.",
+                "description": "",
+                "security": [
+                    {
+                        "OAuth2": [
+                            "FullAccess",
+                            "ProductAdmin"
+                        ]
+                    }
+                ]
+            },
+            "patch": {
+                "responses": {
+                    "200": {
+                        "description": "",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/InventoryRecord"
+                                }
+                            }
+                        }
+                    }
+                },
+                "operationId": "InventoryRecords.Patch",
+                "tags": [
+                    "Inventory Records"
+                ],
+                "requestBody": {
+                    "required": true,
+                    "description": "",
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "allOf": [
+                                    {
+                                        "$ref": "#/components/schemas/InventoryRecord"
+                                    }
+                                ]
+                            }
+                        }
+                    }
+                },
+                "parameters": [
+                    {
+                        "name": "productID",
+                        "in": "path",
+                        "description": "ID of the product.",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "name": "inventoryRecordID",
+                        "in": "path",
+                        "description": "ID of the inventory record.",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "summary": "Partially update an inventory record.",
+                "description": "",
+                "security": [
+                    {
+                        "OAuth2": [
+                            "FullAccess",
+                            "ProductAdmin"
+                        ]
+                    }
+                ]
+            }
+        },
         "/products/{productID}/specs": {
             "get": {
                 "responses": {
@@ -23906,6 +24577,461 @@
                     }
                 ],
                 "summary": "Partially update a product variant.",
+                "description": "",
+                "security": [
+                    {
+                        "OAuth2": [
+                            "FullAccess",
+                            "ProductAdmin"
+                        ]
+                    }
+                ]
+            }
+        },
+        "/products/{productID}/variants/{variantID}/inventoryrecords": {
+            "get": {
+                "responses": {
+                    "200": {
+                        "description": "",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "properties": {
+                                        "Items": {
+                                            "type": "array",
+                                            "items": {
+                                                "$ref": "#/components/schemas/InventoryRecord"
+                                            }
+                                        },
+                                        "Meta": {
+                                            "$ref": "#/components/schemas/Meta"
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                },
+                "operationId": "InventoryRecords.ListVariant",
+                "tags": [
+                    "Inventory Records"
+                ],
+                "parameters": [
+                    {
+                        "name": "productID",
+                        "in": "path",
+                        "description": "ID of the product.",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "name": "variantID",
+                        "in": "path",
+                        "description": "ID of the variant.",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "name": "search",
+                        "in": "query",
+                        "description": "Word or phrase to search for.",
+                        "required": false,
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "name": "searchOn",
+                        "in": "query",
+                        "description": "Comma-delimited list of fields to search on.",
+                        "required": false,
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "type": "string",
+                                "enum": [
+                                    "ID",
+                                    "AddressID"
+                                ]
+                            }
+                        }
+                    },
+                    {
+                        "name": "sortBy",
+                        "in": "query",
+                        "description": "Comma-delimited list of fields to sort by.",
+                        "required": false,
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "type": "string",
+                                "enum": [
+                                    "ID",
+                                    "AddressID",
+                                    "!ID",
+                                    "!AddressID"
+                                ]
+                            }
+                        }
+                    },
+                    {
+                        "name": "page",
+                        "in": "query",
+                        "description": "Page of results to return. Default: 1. When paginating through many items (> page 30), we recommend the \"Last ID\" method, as outlined in the Advanced Querying documentation.",
+                        "required": false,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    },
+                    {
+                        "name": "pageSize",
+                        "in": "query",
+                        "description": "Number of results to return per page. Default: 20, max: 100.",
+                        "required": false,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    },
+                    {
+                        "name": "filters",
+                        "in": "query",
+                        "description": "Any additional key/value pairs passed in the query string are interpretted as filters. Valid keys are top-level properties of the returned model or 'xp.???'",
+                        "required": false,
+                        "schema": {
+                            "type": "object"
+                        }
+                    }
+                ],
+                "summary": "Get a list of inventory record variants.",
+                "description": "",
+                "security": [
+                    {
+                        "OAuth2": [
+                            "FullAccess",
+                            "ProductAdmin",
+                            "ProductReader"
+                        ]
+                    }
+                ]
+            },
+            "post": {
+                "responses": {
+                    "201": {
+                        "description": "",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/InventoryRecord"
+                                }
+                            }
+                        }
+                    }
+                },
+                "operationId": "InventoryRecords.CreateVariant",
+                "tags": [
+                    "Inventory Records"
+                ],
+                "requestBody": {
+                    "required": true,
+                    "description": "",
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "allOf": [
+                                    {
+                                        "$ref": "#/components/schemas/InventoryRecord"
+                                    }
+                                ],
+                                "required": [
+                                    "AddressID"
+                                ]
+                            }
+                        }
+                    }
+                },
+                "parameters": [
+                    {
+                        "name": "productID",
+                        "in": "path",
+                        "description": "ID of the product.",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "name": "variantID",
+                        "in": "path",
+                        "description": "ID of the variant.",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "summary": "Create a new inventory record variant.",
+                "description": "",
+                "security": [
+                    {
+                        "OAuth2": [
+                            "FullAccess",
+                            "ProductAdmin"
+                        ]
+                    }
+                ]
+            }
+        },
+        "/products/{productID}/variants/{variantID}/inventoryrecords/{inventoryRecordID}": {
+            "get": {
+                "responses": {
+                    "200": {
+                        "description": "",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/InventoryRecord"
+                                }
+                            }
+                        }
+                    }
+                },
+                "operationId": "InventoryRecords.GetVariant",
+                "tags": [
+                    "Inventory Records"
+                ],
+                "parameters": [
+                    {
+                        "name": "productID",
+                        "in": "path",
+                        "description": "ID of the product.",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "name": "variantID",
+                        "in": "path",
+                        "description": "ID of the variant.",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "name": "inventoryRecordID",
+                        "in": "path",
+                        "description": "ID of the inventory record.",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "summary": "Get a single inventory record variant.",
+                "description": "",
+                "security": [
+                    {
+                        "OAuth2": [
+                            "FullAccess",
+                            "ProductAdmin",
+                            "ProductReader"
+                        ]
+                    }
+                ]
+            },
+            "put": {
+                "responses": {
+                    "200": {
+                        "description": "",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/InventoryRecord"
+                                }
+                            }
+                        }
+                    }
+                },
+                "operationId": "InventoryRecords.SaveVariant",
+                "tags": [
+                    "Inventory Records"
+                ],
+                "requestBody": {
+                    "required": true,
+                    "description": "",
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "allOf": [
+                                    {
+                                        "$ref": "#/components/schemas/InventoryRecord"
+                                    }
+                                ],
+                                "required": [
+                                    "AddressID"
+                                ]
+                            }
+                        }
+                    }
+                },
+                "parameters": [
+                    {
+                        "name": "productID",
+                        "in": "path",
+                        "description": "ID of the product.",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "name": "variantID",
+                        "in": "path",
+                        "description": "ID of the variant.",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "name": "inventoryRecordID",
+                        "in": "path",
+                        "description": "ID of the inventory record.",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "summary": "Create or update an inventory record variant.",
+                "description": "",
+                "security": [
+                    {
+                        "OAuth2": [
+                            "FullAccess",
+                            "ProductAdmin"
+                        ]
+                    }
+                ]
+            },
+            "delete": {
+                "responses": {
+                    "204": {
+                        "description": ""
+                    }
+                },
+                "operationId": "InventoryRecords.DeleteVariant",
+                "tags": [
+                    "Inventory Records"
+                ],
+                "parameters": [
+                    {
+                        "name": "productID",
+                        "in": "path",
+                        "description": "ID of the product.",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "name": "variantID",
+                        "in": "path",
+                        "description": "ID of the variant.",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "name": "inventoryRecordID",
+                        "in": "path",
+                        "description": "ID of the inventory record.",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "summary": "Delete an inventory record variant.",
+                "description": "",
+                "security": [
+                    {
+                        "OAuth2": [
+                            "FullAccess",
+                            "ProductAdmin"
+                        ]
+                    }
+                ]
+            },
+            "patch": {
+                "responses": {
+                    "200": {
+                        "description": "",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/InventoryRecord"
+                                }
+                            }
+                        }
+                    }
+                },
+                "operationId": "InventoryRecords.PatchVariant",
+                "tags": [
+                    "Inventory Records"
+                ],
+                "requestBody": {
+                    "required": true,
+                    "description": "",
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "allOf": [
+                                    {
+                                        "$ref": "#/components/schemas/InventoryRecord"
+                                    }
+                                ]
+                            }
+                        }
+                    }
+                },
+                "parameters": [
+                    {
+                        "name": "productID",
+                        "in": "path",
+                        "description": "ID of the product.",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "name": "variantID",
+                        "in": "path",
+                        "description": "ID of the variant.",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "name": "inventoryRecordID",
+                        "in": "path",
+                        "description": "ID of the inventory record.",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "summary": "Partially update an inventory record variant.",
                 "description": "",
                 "security": [
                     {
@@ -30080,7 +31206,7 @@
                     {
                         "name": "thingType",
                         "in": "path",
-                        "description": "Thing type of the xp index. Possible values: Address, Variant, Order, LineItem, CostCenter, CreditCard, Payment, Spec, SpecOption, UserGroup, Company, Category, PriceSchedule, Shipment, SpendingAccount, User, Promotion, ApprovalRule, Catalog, ProductFacet, MessageSender.",
+                        "description": "Thing type of the xp index. Possible values: Address, Variant, Order, LineItem, CostCenter, CreditCard, Payment, Spec, SpecOption, UserGroup, Company, Category, PriceSchedule, Shipment, SpendingAccount, User, Promotion, ApprovalRule, Catalog, ProductFacet, MessageSender, InventoryRecord.",
                         "required": true,
                         "schema": {
                             "$ref": "#/components/schemas/XpThingType"

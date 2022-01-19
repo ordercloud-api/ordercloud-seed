@@ -156,12 +156,20 @@ test('partys assigned Locale must match  the price schedules currency', async ()
 
 test('variant validation', async () => {
     var resp = await validateFile("./tests/data/invalid-variant-details.yml");
-    expect(resp.errors.length).toBe(6);
+    expect(resp.errors.length).toBe(7);
     expect(resp.errors[0]).toBe("Required field Variants.ProductID: cannot have value undefined.");
     expect(resp.errors[1]).toBe("Invalid reference Variants.ProductID: no Products found with ID \"productzz\".");
     expect(resp.errors[2]).toBe("Invalid empty array Variant.Specs on Variant with ID \"missing-specs\": a variant must include at least one Spec.");
     expect(resp.errors[3]).toBe("Missing Spec on Variant \"missing-size\": Specs property must specify an option for Spec with ID \"size\".");
     expect(resp.errors[4]).toBe("Invalid reference Variant.Specs.OptionID on Variant with ID \"bad-size-option\": no option found with ID \"XX\" on Spec with ID \"size\".");
-    expect(resp.errors[5]).toBe("Invalid reference Variant.Specs.SpecID on Variant with ID \"extra-bad-spec\": spec ID \"material\" does not match an assigned spec with DefinesVariant.");
+    expect(resp.errors[5]).toBe("Invalid duplicate SpecID \"size\" on Variant with ID \"two-entries-for-spec\": each spec should appear only once.");
+    expect(resp.errors[6]).toBe("Invalid reference Variant.Specs.SpecID on Variant with ID \"extra-bad-spec\": spec ID \"material\" does not match an assigned spec with DefinesVariant.");
+});
+
+test('inventory records validation', async () => {
+    var resp = await validateFile("./tests/data/inventory-records.yml");
+    expect(resp.errors.length).toBe(2);
+    expect(resp.errors[0]).toBe("Invalid reference InventoryRecord.AddressID: no Admin Address found with ID \"supplier-address-1\".");
+    expect(resp.errors[1]).toBe("Invalid reference InventoryRecord.AddressID: no Address found with ID \"admin-address-2\" under supplier with ID \"supplier1\".");
 });
 

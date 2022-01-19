@@ -1,588 +1,108 @@
 Meta:
   CreatedBySeedingVersion: 1.0.25
 Objects:
-  SecurityProfiles:
-    - ID: back-office-admin
-      Name: Back Office Admin
-      Roles:
-        - FullAccess
-      CustomRoles: []
-      PasswordConfig: null
-    - ID: buyer-middleware
-      Name: Buyer Middleware
-      Roles:
-        - FullAccess
-      CustomRoles: []
-      PasswordConfig: null
+  SecurityProfiles: []
   ImpersonationConfigs: []
   OpenIdConnects: []
-  AdminUsers:
-    - ID: integrations-default-context-user
-      Username: default-context-user
-      Password: null
-      FirstName: Default
-      LastName: Context
-      Email: fake@email.com
-      Phone: null
-      TermsAccepted: null
-      Active: true
-      xp: null
-      AvailableRoles:
-        - FullAccess
-      DateCreated: '2021-09-23T22:04:03.093+00:00'
-      PasswordLastSetDate: null
+  AdminUsers: []
   AdminUserGroups: []
-  AdminAddresses: []
+  AdminAddresses:
+    - ID: admin-address-1
+      DateCreated: '2022-01-19T20:29:57.067+00:00'
+      CompanyName: null
+      FirstName: null
+      LastName: null
+      Street1: 4th
+      Street2: null
+      City: Minneapolis
+      State: MN
+      Zip: '55409'
+      Country: US
+      Phone: null
+      AddressName: null
+      xp: null
+    - ID: admin-address-2
+      DateCreated: '2022-01-19T20:29:57.06+00:00'
+      CompanyName: null
+      FirstName: null
+      LastName: null
+      Street1: 4th
+      Street2: null
+      City: Minneapolis
+      State: MN
+      Zip: '55409'
+      Country: US
+      Phone: null
+      AddressName: null
+      xp: null
   MessageSenders: []
-  ApiClients:
-    - ID: 527c8a6c-20a3-4a5a-bd5b-abc71967475b
-      ClientSecret: <Redacted. Leave unchanged.>
-      AccessTokenDuration: 600
-      Active: true
-      AppName: Vercel-Integration-Connector
-      RefreshTokenDuration: 5760
-      DefaultContextUserName: anonymous-shopper
-      xp: null
-      AllowAnyBuyer: false
-      AllowAnySupplier: false
-      AllowSeller: false
-      IsAnonBuyer: true
-      AssignedBuyerCount: 1
-      AssignedSupplierCount: 0
-      OrderCheckoutIntegrationEventID: null
-      OrderCheckoutIntegrationEventName: null
-      MinimumRequiredRoles: []
-      MinimumRequiredCustomRoles: []
-      MaximumGrantedRoles: []
-      MaximumGrantedCustomRoles: []
-    - ID: d3f456ef-a52e-4426-9cd0-acd3cda5936a
-      ClientSecret: null
-      AccessTokenDuration: 600
-      Active: true
-      AppName: Back Office App
-      RefreshTokenDuration: 5760
-      DefaultContextUserName: null
-      xp: null
-      AllowAnyBuyer: false
-      AllowAnySupplier: false
-      AllowSeller: true
-      IsAnonBuyer: false
-      AssignedBuyerCount: 0
-      AssignedSupplierCount: 0
-      OrderCheckoutIntegrationEventID: null
-      OrderCheckoutIntegrationEventName: null
-      MinimumRequiredRoles: []
-      MinimumRequiredCustomRoles: []
-      MaximumGrantedRoles: []
-      MaximumGrantedCustomRoles: []
+  ApiClients: []
   Locales: []
   Incrementors: []
   Webhooks: []
   IntegrationEvents: []
   XpIndices: []
-  Buyers:
-    - ID: solitary-storefront
-      Name: Solitary Storefront
-      DefaultCatalogID: solitary-storefront
-      Active: true
-      DateCreated: '2021-09-23T22:04:04.797+00:00'
+  Buyers: []
+  Catalogs: []
+  Suppliers:
+    - ID: supplier1
+      Name: supplier2
+      Active: false
+      DateCreated: '2022-01-19T20:29:57.323+00:00'
+      AllBuyersCanOrder: false
       xp: null
-  Users:
-    - ID: default-anonymous-shopper
-      Username: anonymous-shopper
-      Password: null
-      FirstName: anonymous
-      LastName: shopper
-      Email: fake@emai.com
+  SupplierUsers: []
+  SupplierUserGroups: []
+  SupplierAddresses:
+    - ID: supplier-address-1
+      DateCreated: '2022-01-19T20:29:57.733+00:00'
+      CompanyName: null
+      FirstName: null
+      LastName: null
+      Street1: 4th
+      Street2: null
+      City: Minneapolis
+      State: MN
+      Zip: '55409'
+      Country: US
       Phone: null
-      TermsAccepted: null
-      Active: true
-      xp:
-        something: else
-      AvailableRoles:
-        - FullAccess
-      DateCreated: '2021-09-23T22:04:07.77+00:00'
-      PasswordLastSetDate: null
-      BuyerID: solitary-storefront
-  UserGroups: []
-  Addresses: []
-  CostCenters: []
-  CreditCards: []
-  SpendingAccounts: []
-  ApprovalRules: []
-  Catalogs:
-    - ID: solitary-storefront
-      OwnerID: <MarketplaceID placeholder>
-      Name: 'Solitary Storefront '
-      Description: 'Default catalog for Solitary Storefront '
-      Active: true
-      CategoryCount: 15
+      AddressName: null
       xp: null
-  Categories:
-    - ID: womens
-      Name: Women's
-      Description: null
-      ListOrder: 1
-      Active: true
-      ParentID: null
-      ChildCount: 3
-      xp: null
-      CatalogID: solitary-storefront
-    - ID: mens
-      Name: Men's
-      Description: null
-      ListOrder: 2
-      Active: true
-      ParentID: null
-      ChildCount: 2
-      xp: null
-      CatalogID: solitary-storefront
-    - ID: kids
-      Name: Kid's
-      Description: null
-      ListOrder: 3
-      Active: true
-      ParentID: null
-      ChildCount: 3
-      xp: null
-      CatalogID: solitary-storefront
-    - ID: general
-      Name: General
-      Description: null
-      ListOrder: 4
-      Active: true
-      ParentID: null
-      ChildCount: 1
-      xp: null
-      CatalogID: solitary-storefront
-    - ID: masks
-      Name: Face Masks
-      Description: null
-      ListOrder: 1
-      Active: true
-      ParentID: general
-      ChildCount: 0
-      xp: null
-      CatalogID: solitary-storefront
-    - ID: girls
-      Name: Girls
-      Description: null
-      ListOrder: 1
-      Active: true
-      ParentID: kids
-      ChildCount: 1
-      xp: null
-      CatalogID: solitary-storefront
-    - ID: mens-jackets
-      Name: Jackets
-      Description: null
-      ListOrder: 1
-      Active: true
-      ParentID: mens
-      ChildCount: 0
-      xp: null
-      CatalogID: solitary-storefront
-    - ID: womens-jackets
-      Name: Jackets
-      Description: null
-      ListOrder: 1
-      Active: true
-      ParentID: womens
-      ChildCount: 0
-      xp: null
-      CatalogID: solitary-storefront
-    - ID: womens-bottoms
-      Name: Bottoms
-      Description: null
-      ListOrder: 2
-      Active: true
-      ParentID: womens
-      ChildCount: 0
-      xp: null
-      CatalogID: solitary-storefront
-    - ID: mens-bottoms
-      Name: Bottoms
-      Description: null
-      ListOrder: 2
-      Active: true
-      ParentID: mens
-      ChildCount: 0
-      xp: null
-      CatalogID: solitary-storefront
-    - ID: boys
-      Name: Boys
-      Description: null
-      ListOrder: 2
-      Active: true
-      ParentID: kids
-      ChildCount: 1
-      xp: null
-      CatalogID: solitary-storefront
-    - ID: toddlers
-      Name: Toddlers'
-      Description: null
-      ListOrder: 3
-      Active: true
-      ParentID: kids
-      ChildCount: 0
-      xp: null
-      CatalogID: solitary-storefront
-    - ID: womens-socks
-      Name: Socks
-      Description: null
-      ListOrder: 3
-      Active: true
-      ParentID: womens
-      ChildCount: 0
-      xp: null
-      CatalogID: solitary-storefront
-    - ID: girls-shoes
-      Name: Shoes
-      Description: null
-      ListOrder: 1
-      Active: true
-      ParentID: girls
-      ChildCount: 0
-      xp: null
-      CatalogID: solitary-storefront
-    - ID: boys-shoes
-      Name: Shoes
-      Description: null
-      ListOrder: 2
-      Active: true
-      ParentID: boys
-      ChildCount: 0
-      xp: null
-      CatalogID: solitary-storefront
-  Suppliers: []
+      SupplierID: supplier1
   Products:
     - OwnerID: <MarketplaceID placeholder>
-      DefaultPriceScheduleID: mulberry-silk-facemask
+      DefaultPriceScheduleID: null
       AutoForward: false
-      ID: mulberry-silk-facemask
-      Name: ' Mulberry Silk Facemask'
+      ID: product1
+      Name: product1
       Description: >-
         A luxurious fabric, mulberry silk is named for the mulberry leaves the
         uniquely bred silkworms feed on. A mask for your face.
       QuantityMultiplier: 1
-      ShipWeight: 5
-      ShipHeight: null
-      ShipWidth: null
-      ShipLength: null
-      Active: true
-      SpecCount: 1
-      VariantCount: 3
-      ShipFromAddressID: null
-      Inventory:
-        Enabled: true
-        NotificationPoint: null
-        VariantLevelTracking: false
-        OrderCanExceed: false
-        QuantityAvailable: 30
-        LastUpdated: '2021-09-23T22:04:07.92+00:00'
-      DefaultSupplierID: null
-      AllSuppliersCanSell: false
-      xp:
-        Facets:
-          Color:
-            - yellow
-            - red
-            - blue
-        Price: 35
-        Images:
-          - url: >-
-              https://ocdevops.blob.core.windows.net/vercel-integration-assets/face_mask.jpg
-        PriceCurrency: USD
-    - OwnerID: <MarketplaceID placeholder>
-      DefaultPriceScheduleID: boys-turkish-leather-caliage
-      AutoForward: false
-      ID: boys-turkish-leather-caliage
-      Name: Boy's Turkish Leather Caliage
-      Description: >-
-        Hobnailed sandal-boots used by the roman military, Caliage will go
-        toe-to-toe with Air Jordans in intimidating your child's classmates.  
-      QuantityMultiplier: 1
-      ShipWeight: 10
-      ShipHeight: null
-      ShipWidth: null
-      ShipLength: null
-      Active: true
-      SpecCount: 0
-      VariantCount: 0
-      ShipFromAddressID: null
-      Inventory:
-        Enabled: true
-        NotificationPoint: null
-        VariantLevelTracking: false
-        OrderCanExceed: false
-        QuantityAvailable: 30
-        LastUpdated: '2021-09-23T22:04:07.967+00:00'
-      DefaultSupplierID: null
-      AllSuppliersCanSell: false
-      xp:
-        Facets:
-          Color:
-            - orange
-            - black
-        Price: 75
-        Images:
-          - url: >-
-              https://ocdevops.blob.core.windows.net/vercel-integration-assets/sandels.jpg
-        PriceCurrency: USD
-    - OwnerID: <MarketplaceID placeholder>
-      DefaultPriceScheduleID: girls-turkish-leather-caliage
-      AutoForward: false
-      ID: girls-turkish-leather-caliage
-      Name: Girl's Turkish Leather Caliage
-      Description: >-
-        Hobnailed sandal-boots used by the roman military, Caliage will go
-        toe-to-toe with Air Jordans in intimidating your child's classmates.
-        Same as the boy's version, but comes in pink.
-      QuantityMultiplier: 1
-      ShipWeight: 10
-      ShipHeight: null
-      ShipWidth: null
-      ShipLength: null
-      Active: true
-      SpecCount: 0
-      VariantCount: 0
-      ShipFromAddressID: null
-      Inventory:
-        Enabled: true
-        NotificationPoint: null
-        VariantLevelTracking: false
-        OrderCanExceed: false
-        QuantityAvailable: 30
-        LastUpdated: '2021-09-23T22:04:08.067+00:00'
-      DefaultSupplierID: null
-      AllSuppliersCanSell: false
-      xp:
-        Facets:
-          Color:
-            - orange
-            - black
-        Price: 75
-        Images:
-          - url: >-
-              https://ocdevops.blob.core.windows.net/vercel-integration-assets/sandels.jpg
-        PriceCurrency: USD
-    - OwnerID: <MarketplaceID placeholder>
-      DefaultPriceScheduleID: mens-hellion-onyx-jacket
-      AutoForward: false
-      ID: mens-hellion-onyx-jacket
-      Name: Men's Helion Onyx Jacket
-      Description: >-
-        Bright like the sun and dark like midnight. A blindingly perfect jacket.
-        Comes in colors. 
-      QuantityMultiplier: 1
-      ShipWeight: 22
-      ShipHeight: null
-      ShipWidth: null
-      ShipLength: null
-      Active: true
-      SpecCount: 1
-      VariantCount: 0
-      ShipFromAddressID: null
-      Inventory:
-        Enabled: true
-        NotificationPoint: null
-        VariantLevelTracking: false
-        OrderCanExceed: false
-        QuantityAvailable: 30
-        LastUpdated: '2021-09-23T22:04:08.16+00:00'
-      DefaultSupplierID: null
-      AllSuppliersCanSell: false
-      xp:
-        Facets:
-          Color:
-            - yellow
-            - black
-        Price: 120
-        Images:
-          - url: >-
-              https://ocdevops.blob.core.windows.net/vercel-integration-assets/jacket.jpg
-        PriceCurrency: USD
-    - OwnerID: <MarketplaceID placeholder>
-      DefaultPriceScheduleID: mens-intrigue-active-shorts
-      AutoForward: false
-      ID: mens-intrigue-active-shorts
-      Name: Men's Intrigue(TM) Active Shorts
-      Description: 'Intrigued? These shorts inspire curiosity, interest, even fascination.  '
-      QuantityMultiplier: 1
-      ShipWeight: 5
+      ShipWeight: null
       ShipHeight: null
       ShipWidth: null
       ShipLength: null
       Active: true
       SpecCount: 2
-      VariantCount: 12
+      VariantCount: 4
       ShipFromAddressID: null
       Inventory:
         Enabled: true
         NotificationPoint: null
         VariantLevelTracking: false
         OrderCanExceed: false
-        QuantityAvailable: 30
-        LastUpdated: '2021-09-23T22:04:08.263+00:00'
+        QuantityAvailable: 100
+        LastUpdated: '2022-01-19T20:29:58.31+00:00'
       DefaultSupplierID: null
       AllSuppliersCanSell: false
-      xp:
-        Facets:
-          Color:
-            - purple
-            - orange
-            - green
-        Price: 50
-        Images:
-          - url: >-
-              https://ocdevops.blob.core.windows.net/vercel-integration-assets/purple_shorts.jpg
-        PriceCurrency: USD
-    - OwnerID: <MarketplaceID placeholder>
-      DefaultPriceScheduleID: penquin-feather-onesie
-      AutoForward: false
-      ID: penquin-feather-onesie
-      Name: Penguin Feather Onesie
-      Description: >-
-        Material is 100% A-grade penquin feathers. Feather's harvested humanely
-        and sustainably from free-range penguins. 
-      QuantityMultiplier: 1
-      ShipWeight: 10
-      ShipHeight: null
-      ShipWidth: null
-      ShipLength: null
-      Active: true
-      SpecCount: 0
-      VariantCount: 0
-      ShipFromAddressID: null
-      Inventory:
-        Enabled: true
-        NotificationPoint: null
-        VariantLevelTracking: false
-        OrderCanExceed: false
-        QuantityAvailable: 30
-        LastUpdated: '2021-09-23T22:04:08.38+00:00'
-      DefaultSupplierID: null
-      AllSuppliersCanSell: false
-      xp:
-        Facets:
-          Color:
-            - white
-            - black
-        Price: 80
-        Images:
-          - url: >-
-              https://ocdevops.blob.core.windows.net/vercel-integration-assets/penquin.jpg
-        PriceCurrency: USD
-    - OwnerID: <MarketplaceID placeholder>
-      DefaultPriceScheduleID: womens-hellion-onyx-jacket
-      AutoForward: false
-      ID: womens-hellion-onyx-jacket
-      Name: Women's Helion Onyx Jacket
-      Description: >-
-        Bright like the sun and dark like midnight. A blindingly perfect jacket.
-        Comes in colors. 
-      QuantityMultiplier: 1
-      ShipWeight: 21
-      ShipHeight: null
-      ShipWidth: null
-      ShipLength: null
-      Active: true
-      SpecCount: 1
-      VariantCount: 0
-      ShipFromAddressID: null
-      Inventory:
-        Enabled: true
-        NotificationPoint: null
-        VariantLevelTracking: false
-        OrderCanExceed: false
-        QuantityAvailable: 30
-        LastUpdated: '2021-09-23T22:04:08.467+00:00'
-      DefaultSupplierID: null
-      AllSuppliersCanSell: false
-      xp:
-        Facets:
-          Color:
-            - yellow
-            - black
-        Price: 120
-        Images:
-          - url: >-
-              https://ocdevops.blob.core.windows.net/vercel-integration-assets/jacket.jpg
-        PriceCurrency: USD
-    - OwnerID: <MarketplaceID placeholder>
-      DefaultPriceScheduleID: womens-intrigue-active-shorts
-      AutoForward: false
-      ID: womens-intrigue-active-shorts
-      Name: Women's Intrigue(TM) Active Shorts
-      Description: 'Intrigued? These shorts inspire curiosity, interest, even fascination.  '
-      QuantityMultiplier: 1
-      ShipWeight: 10
-      ShipHeight: null
-      ShipWidth: null
-      ShipLength: null
-      Active: true
-      SpecCount: 2
-      VariantCount: 12
-      ShipFromAddressID: null
-      Inventory:
-        Enabled: true
-        NotificationPoint: null
-        VariantLevelTracking: false
-        OrderCanExceed: false
-        QuantityAvailable: 30
-        LastUpdated: '2021-09-23T22:04:08.567+00:00'
-      DefaultSupplierID: null
-      AllSuppliersCanSell: false
-      xp:
-        Facets:
-          Color:
-            - purple
-            - orange
-            - green
-        Price: 50
-        Images:
-          - url: >-
-              https://ocdevops.blob.core.windows.net/vercel-integration-assets/purple_shorts.jpg
-        PriceCurrency: USD
-    - OwnerID: <MarketplaceID placeholder>
-      DefaultPriceScheduleID: null
-      AutoForward: false
-      ID: womens-spiked-wool-socks
-      Name: Women's Spiked Wool Socks
-      Description: >-
-        Metal spikes embedded in a carbon fiber plate give these socks
-        outstanding grip for navigating ice. Finally, traverse a frozen crevasse
-        without sacrificing comfort. 
-      QuantityMultiplier: 1
-      ShipWeight: 5
-      ShipHeight: null
-      ShipWidth: null
-      ShipLength: null
-      Active: true
-      SpecCount: 0
-      VariantCount: 0
-      ShipFromAddressID: null
-      Inventory:
-        Enabled: true
-        NotificationPoint: null
-        VariantLevelTracking: false
-        OrderCanExceed: false
-        QuantityAvailable: 30
-        LastUpdated: '2021-09-23T22:04:08.67+00:00'
-      DefaultSupplierID: null
-      AllSuppliersCanSell: false
-      xp:
-        Price: 25
-        Images:
-          - url: >-
-              https://ocdevops.blob.core.windows.net/vercel-integration-assets/socks.webp
-        PriceCurrency: USD
+      xp: null
   Variants:
-    - ID: mulberry-silk-facemask-blueZZZZ
+    - ID: perfect
       Name: null
       Description: null
-      Active: true
-      ShipWeight: 1200
+      Active: false
+      ShipWeight: null
       ShipHeight: null
       ShipWidth: null
       ShipLength: null
@@ -590,15 +110,21 @@ Objects:
         QuantityAvailable: 0
         LastUpdated: '0001-01-01T00:00:00+00:00'
       Specs:
-        - SpecID: mulberry-silk-facemask-color
-          Name: Color
+        - SpecID: color
+          Name: color
           OptionID: blue
-          Value: Blue
+          Value: blue
+          PriceMarkupType: NoMarkup
+          PriceMarkup: null
+        - SpecID: size
+          Name: size
+          OptionID: M
+          Value: M
           PriceMarkupType: NoMarkup
           PriceMarkup: null
       xp: null
-      ProductID: mulberry-silk-facemask
-    - ID: mulberry-silk-facemask-red
+      ProductID: product1
+    - ID: product1-blue-S
       Name: null
       Description: null
       Active: true
@@ -610,15 +136,47 @@ Objects:
         QuantityAvailable: 0
         LastUpdated: '0001-01-01T00:00:00+00:00'
       Specs:
-        - SpecID: mulberry-silk-facemask-color
-          Name: Color
+        - SpecID: color
+          Name: color
+          OptionID: blue
+          Value: blue
+          PriceMarkupType: NoMarkup
+          PriceMarkup: null
+        - SpecID: size
+          Name: size
+          OptionID: S
+          Value: S
+          PriceMarkupType: NoMarkup
+          PriceMarkup: null
+      xp: null
+      ProductID: product1
+    - ID: product1-red-M
+      Name: null
+      Description: null
+      Active: true
+      ShipWeight: null
+      ShipHeight: null
+      ShipWidth: null
+      ShipLength: null
+      Inventory:
+        QuantityAvailable: 0
+        LastUpdated: '0001-01-01T00:00:00+00:00'
+      Specs:
+        - SpecID: color
+          Name: color
           OptionID: red
-          Value: Red
+          Value: red
+          PriceMarkupType: NoMarkup
+          PriceMarkup: null
+        - SpecID: size
+          Name: size
+          OptionID: M
+          Value: M
           PriceMarkupType: NoMarkup
           PriceMarkup: null
       xp: null
-      ProductID: mulberry-silk-facemask
-    - ID: mulberry-silk-facemask-yellow
+      ProductID: product1
+    - ID: product1-red-S
       Name: null
       Description: null
       Active: true
@@ -630,1096 +188,220 @@ Objects:
         QuantityAvailable: 0
         LastUpdated: '0001-01-01T00:00:00+00:00'
       Specs:
-        - SpecID: mulberry-silk-facemask-color
-          Name: Color
-          OptionID: yellow
-          Value: Yellow
+        - SpecID: color
+          Name: color
+          OptionID: red
+          Value: red
+          PriceMarkupType: NoMarkup
+          PriceMarkup: null
+        - SpecID: size
+          Name: size
+          OptionID: S
+          Value: S
           PriceMarkupType: NoMarkup
           PriceMarkup: null
       xp: null
-      ProductID: mulberry-silk-facemask
-    - ID: mens-intrigue-active-shorts-mysterious-mint-L
-      Name: null
-      Description: null
-      Active: true
-      ShipWeight: null
-      ShipHeight: null
-      ShipWidth: null
-      ShipLength: null
-      Inventory:
-        QuantityAvailable: 0
-        LastUpdated: '0001-01-01T00:00:00+00:00'
-      Specs:
-        - SpecID: intrigue-active-shorts-color
-          Name: Color
-          OptionID: mysterious-mint
-          Value: Mysterious Mint
-          PriceMarkupType: NoMarkup
-          PriceMarkup: null
-        - SpecID: cross-product-size
-          Name: Size
-          OptionID: L
-          Value: Large
-          PriceMarkupType: NoMarkup
-          PriceMarkup: null
+      ProductID: product1
+  InventoryRecords:
+    - ID: 8-Bp8iUQtkqVrfDOs23SEw
+      OwnerID: supplier1
+      Address:
+        ID: supplier-address-1
+        DateCreated: '2022-01-19T20:29:57.733+00:00'
+        CompanyName: null
+        FirstName: null
+        LastName: null
+        Street1: 4th
+        Street2: null
+        City: Minneapolis
+        State: MN
+        Zip: '55409'
+        Country: US
+        Phone: null
+        AddressName: null
+        xp: null
+      AddressID: supplier-address-1
+      OrderCanExceed: false
+      QuantityAvailable: 40
+      LastUpdated: '2022-01-19T20:29:59.893+00:00'
       xp: null
-      ProductID: mens-intrigue-active-shorts
-    - ID: mens-intrigue-active-shorts-mysterious-mint-m
-      Name: null
-      Description: null
-      Active: true
-      ShipWeight: null
-      ShipHeight: null
-      ShipWidth: null
-      ShipLength: null
-      Inventory:
-        QuantityAvailable: 0
-        LastUpdated: '0001-01-01T00:00:00+00:00'
-      Specs:
-        - SpecID: intrigue-active-shorts-color
-          Name: Color
-          OptionID: mysterious-mint
-          Value: Mysterious Mint
-          PriceMarkupType: NoMarkup
-          PriceMarkup: null
-        - SpecID: cross-product-size
-          Name: Size
-          OptionID: m
-          Value: Medium
-          PriceMarkupType: NoMarkup
-          PriceMarkup: null
+      ProductID: product1
+    - ID: G7xda-eGqEWnLTL0rovZMg
+      OwnerID: IjEoZYS3YEO8OJNy
+      Address:
+        ID: admin-address-1
+        DateCreated: '2022-01-19T20:29:57.067+00:00'
+        CompanyName: null
+        FirstName: null
+        LastName: null
+        Street1: 4th
+        Street2: null
+        City: Minneapolis
+        State: MN
+        Zip: '55409'
+        Country: US
+        Phone: null
+        AddressName: null
+        xp: null
+      AddressID: admin-address-1
+      OrderCanExceed: false
+      QuantityAvailable: 10
+      LastUpdated: '2022-01-19T20:29:59.64+00:00'
       xp: null
-      ProductID: mens-intrigue-active-shorts
-    - ID: mens-intrigue-active-shorts-mysterious-mint-s
-      Name: null
-      Description: null
-      Active: true
-      ShipWeight: null
-      ShipHeight: null
-      ShipWidth: null
-      ShipLength: null
-      Inventory:
-        QuantityAvailable: 0
-        LastUpdated: '0001-01-01T00:00:00+00:00'
-      Specs:
-        - SpecID: intrigue-active-shorts-color
-          Name: Color
-          OptionID: mysterious-mint
-          Value: Mysterious Mint
-          PriceMarkupType: NoMarkup
-          PriceMarkup: null
-        - SpecID: cross-product-size
-          Name: Size
-          OptionID: s
-          Value: Small
-          PriceMarkupType: NoMarkup
-          PriceMarkup: null
+      ProductID: product1
+    - ID: jV8cpe-16E25bfwN49EfPQ
+      OwnerID: supplier1
+      Address:
+        ID: supplier-address-1
+        DateCreated: '2022-01-19T20:29:57.733+00:00'
+        CompanyName: null
+        FirstName: null
+        LastName: null
+        Street1: 4th
+        Street2: null
+        City: Minneapolis
+        State: MN
+        Zip: '55409'
+        Country: US
+        Phone: null
+        AddressName: null
+        xp: null
+      AddressID: supplier-address-1
+      OrderCanExceed: false
+      QuantityAvailable: 30
+      LastUpdated: '2022-01-19T20:29:59.763+00:00'
       xp: null
-      ProductID: mens-intrigue-active-shorts
-    - ID: mens-intrigue-active-shorts-mysterious-mint-XL
-      Name: null
-      Description: null
-      Active: true
-      ShipWeight: null
-      ShipHeight: null
-      ShipWidth: null
-      ShipLength: null
-      Inventory:
-        QuantityAvailable: 0
-        LastUpdated: '0001-01-01T00:00:00+00:00'
-      Specs:
-        - SpecID: intrigue-active-shorts-color
-          Name: Color
-          OptionID: mysterious-mint
-          Value: Mysterious Mint
-          PriceMarkupType: NoMarkup
-          PriceMarkup: null
-        - SpecID: cross-product-size
-          Name: Size
-          OptionID: XL
-          Value: Extra Large
-          PriceMarkupType: NoMarkup
-          PriceMarkup: null
+      ProductID: product1
+    - ID: q_ZGb_ZFl0-XdLT2C3jw2A
+      OwnerID: IjEoZYS3YEO8OJNy
+      Address:
+        ID: admin-address-2
+        DateCreated: '2022-01-19T20:29:57.06+00:00'
+        CompanyName: null
+        FirstName: null
+        LastName: null
+        Street1: 4th
+        Street2: null
+        City: Minneapolis
+        State: MN
+        Zip: '55409'
+        Country: US
+        Phone: null
+        AddressName: null
+        xp: null
+      AddressID: admin-address-2
+      OrderCanExceed: false
+      QuantityAvailable: 20
+      LastUpdated: '2022-01-19T20:29:59.727+00:00'
       xp: null
-      ProductID: mens-intrigue-active-shorts
-    - ID: mens-intrigue-active-shorts-obsession-umber-L
-      Name: null
-      Description: null
-      Active: true
-      ShipWeight: null
-      ShipHeight: null
-      ShipWidth: null
-      ShipLength: null
-      Inventory:
-        QuantityAvailable: 0
-        LastUpdated: '0001-01-01T00:00:00+00:00'
-      Specs:
-        - SpecID: intrigue-active-shorts-color
-          Name: Color
-          OptionID: obsession-umber
-          Value: Obsession Umber
-          PriceMarkupType: NoMarkup
-          PriceMarkup: null
-        - SpecID: cross-product-size
-          Name: Size
-          OptionID: L
-          Value: Large
-          PriceMarkupType: NoMarkup
-          PriceMarkup: null
-      xp: null
-      ProductID: mens-intrigue-active-shorts
-    - ID: mens-intrigue-active-shorts-obsession-umber-m
-      Name: null
-      Description: null
-      Active: true
-      ShipWeight: null
-      ShipHeight: null
-      ShipWidth: null
-      ShipLength: null
-      Inventory:
-        QuantityAvailable: 0
-        LastUpdated: '0001-01-01T00:00:00+00:00'
-      Specs:
-        - SpecID: intrigue-active-shorts-color
-          Name: Color
-          OptionID: obsession-umber
-          Value: Obsession Umber
-          PriceMarkupType: NoMarkup
-          PriceMarkup: null
-        - SpecID: cross-product-size
-          Name: Size
-          OptionID: m
-          Value: Medium
-          PriceMarkupType: NoMarkup
-          PriceMarkup: null
-      xp: null
-      ProductID: mens-intrigue-active-shorts
-    - ID: mens-intrigue-active-shorts-obsession-umber-s
-      Name: null
-      Description: null
-      Active: true
-      ShipWeight: null
-      ShipHeight: null
-      ShipWidth: null
-      ShipLength: null
-      Inventory:
-        QuantityAvailable: 0
-        LastUpdated: '0001-01-01T00:00:00+00:00'
-      Specs:
-        - SpecID: intrigue-active-shorts-color
-          Name: Color
-          OptionID: obsession-umber
-          Value: Obsession Umber
-          PriceMarkupType: NoMarkup
-          PriceMarkup: null
-        - SpecID: cross-product-size
-          Name: Size
-          OptionID: s
-          Value: Small
-          PriceMarkupType: NoMarkup
-          PriceMarkup: null
-      xp: null
-      ProductID: mens-intrigue-active-shorts
-    - ID: mens-intrigue-active-shorts-obsession-umber-XL
-      Name: null
-      Description: null
-      Active: true
-      ShipWeight: null
-      ShipHeight: null
-      ShipWidth: null
-      ShipLength: null
-      Inventory:
-        QuantityAvailable: 0
-        LastUpdated: '0001-01-01T00:00:00+00:00'
-      Specs:
-        - SpecID: intrigue-active-shorts-color
-          Name: Color
-          OptionID: obsession-umber
-          Value: Obsession Umber
-          PriceMarkupType: NoMarkup
-          PriceMarkup: null
-        - SpecID: cross-product-size
-          Name: Size
-          OptionID: XL
-          Value: Extra Large
-          PriceMarkupType: NoMarkup
-          PriceMarkup: null
-      xp: null
-      ProductID: mens-intrigue-active-shorts
-    - ID: mens-intrigue-active-shorts-paranoid-purple-L
-      Name: null
-      Description: null
-      Active: true
-      ShipWeight: null
-      ShipHeight: null
-      ShipWidth: null
-      ShipLength: null
-      Inventory:
-        QuantityAvailable: 0
-        LastUpdated: '0001-01-01T00:00:00+00:00'
-      Specs:
-        - SpecID: intrigue-active-shorts-color
-          Name: Color
-          OptionID: paranoid-purple
-          Value: Paranoid Purple
-          PriceMarkupType: NoMarkup
-          PriceMarkup: null
-        - SpecID: cross-product-size
-          Name: Size
-          OptionID: L
-          Value: Large
-          PriceMarkupType: NoMarkup
-          PriceMarkup: null
-      xp: null
-      ProductID: mens-intrigue-active-shorts
-    - ID: mens-intrigue-active-shorts-paranoid-purple-m
-      Name: null
-      Description: null
-      Active: true
-      ShipWeight: null
-      ShipHeight: null
-      ShipWidth: null
-      ShipLength: null
-      Inventory:
-        QuantityAvailable: 0
-        LastUpdated: '0001-01-01T00:00:00+00:00'
-      Specs:
-        - SpecID: intrigue-active-shorts-color
-          Name: Color
-          OptionID: paranoid-purple
-          Value: Paranoid Purple
-          PriceMarkupType: NoMarkup
-          PriceMarkup: null
-        - SpecID: cross-product-size
-          Name: Size
-          OptionID: m
-          Value: Medium
-          PriceMarkupType: NoMarkup
-          PriceMarkup: null
-      xp: null
-      ProductID: mens-intrigue-active-shorts
-    - ID: mens-intrigue-active-shorts-paranoid-purple-s
-      Name: null
-      Description: null
-      Active: true
-      ShipWeight: null
-      ShipHeight: null
-      ShipWidth: null
-      ShipLength: null
-      Inventory:
-        QuantityAvailable: 0
-        LastUpdated: '0001-01-01T00:00:00+00:00'
-      Specs:
-        - SpecID: intrigue-active-shorts-color
-          Name: Color
-          OptionID: paranoid-purple
-          Value: Paranoid Purple
-          PriceMarkupType: NoMarkup
-          PriceMarkup: null
-        - SpecID: cross-product-size
-          Name: Size
-          OptionID: s
-          Value: Small
-          PriceMarkupType: NoMarkup
-          PriceMarkup: null
-      xp: null
-      ProductID: mens-intrigue-active-shorts
-    - ID: mens-intrigue-active-shorts-paranoid-purple-XL
-      Name: null
-      Description: null
-      Active: true
-      ShipWeight: null
-      ShipHeight: null
-      ShipWidth: null
-      ShipLength: null
-      Inventory:
-        QuantityAvailable: 0
-        LastUpdated: '0001-01-01T00:00:00+00:00'
-      Specs:
-        - SpecID: intrigue-active-shorts-color
-          Name: Color
-          OptionID: paranoid-purple
-          Value: Paranoid Purple
-          PriceMarkupType: NoMarkup
-          PriceMarkup: null
-        - SpecID: cross-product-size
-          Name: Size
-          OptionID: XL
-          Value: Extra Large
-          PriceMarkupType: NoMarkup
-          PriceMarkup: null
-      xp: null
-      ProductID: mens-intrigue-active-shorts
-    - ID: womens-intrigue-active-shorts-mysterious-mint-L
-      Name: null
-      Description: null
-      Active: true
-      ShipWeight: null
-      ShipHeight: null
-      ShipWidth: null
-      ShipLength: null
-      Inventory:
-        QuantityAvailable: 0
-        LastUpdated: '0001-01-01T00:00:00+00:00'
-      Specs:
-        - SpecID: intrigue-active-shorts-color
-          Name: Color
-          OptionID: mysterious-mint
-          Value: Mysterious Mint
-          PriceMarkupType: NoMarkup
-          PriceMarkup: null
-        - SpecID: cross-product-size
-          Name: Size
-          OptionID: L
-          Value: Large
-          PriceMarkupType: NoMarkup
-          PriceMarkup: null
-      xp: null
-      ProductID: womens-intrigue-active-shorts
-    - ID: womens-intrigue-active-shorts-mysterious-mint-m
-      Name: null
-      Description: null
-      Active: true
-      ShipWeight: null
-      ShipHeight: null
-      ShipWidth: null
-      ShipLength: null
-      Inventory:
-        QuantityAvailable: 0
-        LastUpdated: '0001-01-01T00:00:00+00:00'
-      Specs:
-        - SpecID: intrigue-active-shorts-color
-          Name: Color
-          OptionID: mysterious-mint
-          Value: Mysterious Mint
-          PriceMarkupType: NoMarkup
-          PriceMarkup: null
-        - SpecID: cross-product-size
-          Name: Size
-          OptionID: m
-          Value: Medium
-          PriceMarkupType: NoMarkup
-          PriceMarkup: null
-      xp: null
-      ProductID: womens-intrigue-active-shorts
-    - ID: womens-intrigue-active-shorts-mysterious-mint-s
-      Name: null
-      Description: null
-      Active: true
-      ShipWeight: null
-      ShipHeight: null
-      ShipWidth: null
-      ShipLength: null
-      Inventory:
-        QuantityAvailable: 0
-        LastUpdated: '0001-01-01T00:00:00+00:00'
-      Specs:
-        - SpecID: intrigue-active-shorts-color
-          Name: Color
-          OptionID: mysterious-mint
-          Value: Mysterious Mint
-          PriceMarkupType: NoMarkup
-          PriceMarkup: null
-        - SpecID: cross-product-size
-          Name: Size
-          OptionID: s
-          Value: Small
-          PriceMarkupType: NoMarkup
-          PriceMarkup: null
-      xp: null
-      ProductID: womens-intrigue-active-shorts
-    - ID: womens-intrigue-active-shorts-mysterious-mint-XL
-      Name: null
-      Description: null
-      Active: true
-      ShipWeight: null
-      ShipHeight: null
-      ShipWidth: null
-      ShipLength: null
-      Inventory:
-        QuantityAvailable: 0
-        LastUpdated: '0001-01-01T00:00:00+00:00'
-      Specs:
-        - SpecID: intrigue-active-shorts-color
-          Name: Color
-          OptionID: mysterious-mint
-          Value: Mysterious Mint
-          PriceMarkupType: NoMarkup
-          PriceMarkup: null
-        - SpecID: cross-product-size
-          Name: Size
-          OptionID: XL
-          Value: Extra Large
-          PriceMarkupType: NoMarkup
-          PriceMarkup: null
-      xp: null
-      ProductID: womens-intrigue-active-shorts
-    - ID: womens-intrigue-active-shorts-obsession-umber-L
-      Name: null
-      Description: null
-      Active: true
-      ShipWeight: null
-      ShipHeight: null
-      ShipWidth: null
-      ShipLength: null
-      Inventory:
-        QuantityAvailable: 0
-        LastUpdated: '0001-01-01T00:00:00+00:00'
-      Specs:
-        - SpecID: intrigue-active-shorts-color
-          Name: Color
-          OptionID: obsession-umber
-          Value: Obsession Umber
-          PriceMarkupType: NoMarkup
-          PriceMarkup: null
-        - SpecID: cross-product-size
-          Name: Size
-          OptionID: L
-          Value: Large
-          PriceMarkupType: NoMarkup
-          PriceMarkup: null
-      xp: null
-      ProductID: womens-intrigue-active-shorts
-    - ID: womens-intrigue-active-shorts-obsession-umber-m
-      Name: null
-      Description: null
-      Active: true
-      ShipWeight: null
-      ShipHeight: null
-      ShipWidth: null
-      ShipLength: null
-      Inventory:
-        QuantityAvailable: 0
-        LastUpdated: '0001-01-01T00:00:00+00:00'
-      Specs:
-        - SpecID: intrigue-active-shorts-color
-          Name: Color
-          OptionID: obsession-umber
-          Value: Obsession Umber
-          PriceMarkupType: NoMarkup
-          PriceMarkup: null
-        - SpecID: cross-product-size
-          Name: Size
-          OptionID: m
-          Value: Medium
-          PriceMarkupType: NoMarkup
-          PriceMarkup: null
-      xp: null
-      ProductID: womens-intrigue-active-shorts
-    - ID: womens-intrigue-active-shorts-obsession-umber-s
-      Name: null
-      Description: null
-      Active: true
-      ShipWeight: null
-      ShipHeight: null
-      ShipWidth: null
-      ShipLength: null
-      Inventory:
-        QuantityAvailable: 0
-        LastUpdated: '0001-01-01T00:00:00+00:00'
-      Specs:
-        - SpecID: intrigue-active-shorts-color
-          Name: Color
-          OptionID: obsession-umber
-          Value: Obsession Umber
-          PriceMarkupType: NoMarkup
-          PriceMarkup: null
-        - SpecID: cross-product-size
-          Name: Size
-          OptionID: s
-          Value: Small
-          PriceMarkupType: NoMarkup
-          PriceMarkup: null
-      xp: null
-      ProductID: womens-intrigue-active-shorts
-    - ID: womens-intrigue-active-shorts-obsession-umber-XL
-      Name: null
-      Description: null
-      Active: true
-      ShipWeight: null
-      ShipHeight: null
-      ShipWidth: null
-      ShipLength: null
-      Inventory:
-        QuantityAvailable: 0
-        LastUpdated: '0001-01-01T00:00:00+00:00'
-      Specs:
-        - SpecID: intrigue-active-shorts-color
-          Name: Color
-          OptionID: obsession-umber
-          Value: Obsession Umber
-          PriceMarkupType: NoMarkup
-          PriceMarkup: null
-        - SpecID: cross-product-size
-          Name: Size
-          OptionID: XL
-          Value: Extra Large
-          PriceMarkupType: NoMarkup
-          PriceMarkup: null
-      xp: null
-      ProductID: womens-intrigue-active-shorts
-    - ID: womens-intrigue-active-shorts-paranoid-purple-L
-      Name: null
-      Description: null
-      Active: true
-      ShipWeight: null
-      ShipHeight: null
-      ShipWidth: null
-      ShipLength: null
-      Inventory:
-        QuantityAvailable: 0
-        LastUpdated: '0001-01-01T00:00:00+00:00'
-      Specs:
-        - SpecID: intrigue-active-shorts-color
-          Name: Color
-          OptionID: paranoid-purple
-          Value: Paranoid Purple
-          PriceMarkupType: NoMarkup
-          PriceMarkup: null
-        - SpecID: cross-product-size
-          Name: Size
-          OptionID: L
-          Value: Large
-          PriceMarkupType: NoMarkup
-          PriceMarkup: null
-      xp: null
-      ProductID: womens-intrigue-active-shorts
-    - ID: womens-intrigue-active-shorts-paranoid-purple-m
-      Name: null
-      Description: null
-      Active: true
-      ShipWeight: null
-      ShipHeight: null
-      ShipWidth: null
-      ShipLength: null
-      Inventory:
-        QuantityAvailable: 0
-        LastUpdated: '0001-01-01T00:00:00+00:00'
-      Specs:
-        - SpecID: intrigue-active-shorts-color
-          Name: Color
-          OptionID: paranoid-purple
-          Value: Paranoid Purple
-          PriceMarkupType: NoMarkup
-          PriceMarkup: null
-        - SpecID: cross-product-size
-          Name: Size
-          OptionID: m
-          Value: Medium
-          PriceMarkupType: NoMarkup
-          PriceMarkup: null
-      xp: null
-      ProductID: womens-intrigue-active-shorts
-    - ID: womens-intrigue-active-shorts-paranoid-purple-s
-      Name: null
-      Description: null
-      Active: true
-      ShipWeight: null
-      ShipHeight: null
-      ShipWidth: null
-      ShipLength: null
-      Inventory:
-        QuantityAvailable: 0
-        LastUpdated: '0001-01-01T00:00:00+00:00'
-      Specs:
-        - SpecID: intrigue-active-shorts-color
-          Name: Color
-          OptionID: paranoid-purple
-          Value: Paranoid Purple
-          PriceMarkupType: NoMarkup
-          PriceMarkup: null
-        - SpecID: cross-product-size
-          Name: Size
-          OptionID: s
-          Value: Small
-          PriceMarkupType: NoMarkup
-          PriceMarkup: null
-      xp: null
-      ProductID: womens-intrigue-active-shorts
-    - ID: womens-intrigue-active-shorts-paranoid-purple-XL
-      Name: null
-      Description: null
-      Active: true
-      ShipWeight: null
-      ShipHeight: null
-      ShipWidth: null
-      ShipLength: null
-      Inventory:
-        QuantityAvailable: 0
-        LastUpdated: '0001-01-01T00:00:00+00:00'
-      Specs:
-        - SpecID: intrigue-active-shorts-color
-          Name: Color
-          OptionID: paranoid-purple
-          Value: Paranoid Purple
-          PriceMarkupType: NoMarkup
-          PriceMarkup: null
-        - SpecID: cross-product-size
-          Name: Size
-          OptionID: XL
-          Value: Extra Large
-          PriceMarkupType: NoMarkup
-          PriceMarkup: null
-      xp: null
-      ProductID: womens-intrigue-active-shorts
-  PriceSchedules:
-    - OwnerID: <MarketplaceID placeholder>
-      ID: boys-turkish-leather-caliage
-      Name: boys-turkish-leather-caliage
-      ApplyTax: true
-      ApplyShipping: true
-      MinQuantity: 1
-      MaxQuantity: null
-      UseCumulativeQuantity: false
-      RestrictedQuantity: false
-      PriceBreaks:
-        - Quantity: 1
-          Price: 75
-      Currency: null
-      xp: null
-    - OwnerID: <MarketplaceID placeholder>
-      ID: girls-turkish-leather-caliage
-      Name: girls-turkish-leather-caliage
-      ApplyTax: true
-      ApplyShipping: true
-      MinQuantity: 1
-      MaxQuantity: null
-      UseCumulativeQuantity: false
-      RestrictedQuantity: false
-      PriceBreaks:
-        - Quantity: 1
-          Price: 75
-      Currency: null
-      xp: null
-    - OwnerID: <MarketplaceID placeholder>
-      ID: mens-hellion-onyx-jacket
-      Name: mens-hellion-onyx-jacket
-      ApplyTax: true
-      ApplyShipping: true
-      MinQuantity: 1
-      MaxQuantity: null
-      UseCumulativeQuantity: false
-      RestrictedQuantity: false
-      PriceBreaks:
-        - Quantity: 1
-          Price: 120
-      Currency: null
-      xp: null
-    - OwnerID: <MarketplaceID placeholder>
-      ID: mens-intrigue-active-shorts
-      Name: mens-intrigue-active-shorts
-      ApplyTax: true
-      ApplyShipping: true
-      MinQuantity: 1
-      MaxQuantity: null
-      UseCumulativeQuantity: false
-      RestrictedQuantity: false
-      PriceBreaks:
-        - Quantity: 1
-          Price: 50
-      Currency: null
-      xp: null
-    - OwnerID: <MarketplaceID placeholder>
-      ID: mulberry-silk-facemask
-      Name: mulberry-silk-facemask
-      ApplyTax: true
-      ApplyShipping: true
-      MinQuantity: 1
-      MaxQuantity: null
-      UseCumulativeQuantity: false
-      RestrictedQuantity: false
-      PriceBreaks:
-        - Quantity: 1
-          Price: 35
-      Currency: null
-      xp: null
-    - OwnerID: <MarketplaceID placeholder>
-      ID: penquin-feather-onesie
-      Name: penquin-feather-onesie
-      ApplyTax: true
-      ApplyShipping: true
-      MinQuantity: 1
-      MaxQuantity: null
-      UseCumulativeQuantity: false
-      RestrictedQuantity: false
-      PriceBreaks:
-        - Quantity: 1
-          Price: 80
-      Currency: null
-      xp: null
-    - OwnerID: <MarketplaceID placeholder>
-      ID: womens-hellion-onyx-jacket
-      Name: womens-hellion-onyx-jacket
-      ApplyTax: true
-      ApplyShipping: true
-      MinQuantity: 1
-      MaxQuantity: null
-      UseCumulativeQuantity: false
-      RestrictedQuantity: false
-      PriceBreaks:
-        - Quantity: 1
-          Price: 120
-      Currency: null
-      xp: null
-    - OwnerID: <MarketplaceID placeholder>
-      ID: womens-intrigue-active-shorts
-      Name: womens-intrigue-active-shorts
-      ApplyTax: true
-      ApplyShipping: true
-      MinQuantity: 1
-      MaxQuantity: null
-      UseCumulativeQuantity: false
-      RestrictedQuantity: false
-      PriceBreaks:
-        - Quantity: 1
-          Price: 50
-      Currency: null
-      xp: null
-    - OwnerID: <MarketplaceID placeholder>
-      ID: womens-spiked-wool-socks
-      Name: womens-spiked-wool-socks
-      ApplyTax: true
-      ApplyShipping: true
-      MinQuantity: 1
-      MaxQuantity: null
-      UseCumulativeQuantity: false
-      RestrictedQuantity: false
-      PriceBreaks:
-        - Quantity: 1
-          Price: 25
-      Currency: null
-      xp: null
+      ProductID: product1
+  PriceSchedules: []
   Specs:
     - OwnerID: <MarketplaceID placeholder>
-      ID: intrigue-active-shorts-color
+      ID: color
       ListOrder: 0
-      Name: Color
+      Name: color
       DefaultValue: null
       Required: true
       AllowOpenText: false
-      DefaultOptionID: obsession-umber
+      DefaultOptionID: red
       DefinesVariant: true
       xp: null
-      OptionCount: 3
-      Options:
-        - ID: mysterious-mint
-          Value: Mysterious Mint
-          ListOrder: 0
-          IsOpenText: false
-          PriceMarkupType: NoMarkup
-          PriceMarkup: null
-          xp:
-            hexColor: '#b6e3c2'
-        - ID: obsession-umber
-          Value: Obsession Umber
-          ListOrder: 0
-          IsOpenText: false
-          PriceMarkupType: NoMarkup
-          PriceMarkup: null
-          xp:
-            hexColor: '#db8b3b'
-        - ID: paranoid-purple
-          Value: Paranoid Purple
-          ListOrder: 0
-          IsOpenText: false
-          PriceMarkupType: NoMarkup
-          PriceMarkup: null
-          xp:
-            hexColor: '#752175'
-    - OwnerID: <MarketplaceID placeholder>
-      ID: mulberry-silk-facemask-color
-      ListOrder: 0
-      Name: Color
-      DefaultValue: null
-      Required: true
-      AllowOpenText: false
-      DefaultOptionID: blue
-      DefinesVariant: true
-      xp: null
-      OptionCount: 3
+      OptionCount: 2
       Options:
         - ID: blue
-          Value: Blue
+          Value: blue
           ListOrder: 0
           IsOpenText: false
           PriceMarkupType: NoMarkup
           PriceMarkup: null
-          xp:
-            hexColor: '#2e53c9'
+          xp: null
         - ID: red
-          Value: Red
+          Value: red
           ListOrder: 0
           IsOpenText: false
           PriceMarkupType: NoMarkup
           PriceMarkup: null
-          xp:
-            hexColor: '#c9382e'
-        - ID: yellow
-          Value: Yellow
-          ListOrder: 0
-          IsOpenText: false
-          PriceMarkupType: NoMarkup
-          PriceMarkup: null
-          xp:
-            hexColor: '#c9c42e'
+          xp: null
     - OwnerID: <MarketplaceID placeholder>
-      ID: cross-product-size
+      ID: size
       ListOrder: 0
-      Name: Size
+      Name: size
       DefaultValue: null
       Required: true
       AllowOpenText: false
-      DefaultOptionID: null
+      DefaultOptionID: S
       DefinesVariant: true
       xp: null
-      OptionCount: 4
+      OptionCount: 2
       Options:
-        - ID: L
-          Value: Large
+        - ID: M
+          Value: M
           ListOrder: 0
           IsOpenText: false
           PriceMarkupType: NoMarkup
           PriceMarkup: null
           xp: null
-        - ID: m
-          Value: Medium
-          ListOrder: 0
-          IsOpenText: false
-          PriceMarkupType: NoMarkup
-          PriceMarkup: null
-          xp: null
-        - ID: s
-          Value: Small
-          ListOrder: 0
-          IsOpenText: false
-          PriceMarkupType: NoMarkup
-          PriceMarkup: null
-          xp: null
-        - ID: XL
-          Value: Extra Large
+        - ID: S
+          Value: S
           ListOrder: 0
           IsOpenText: false
           PriceMarkupType: NoMarkup
           PriceMarkup: null
           xp: null
   SpecOptions:
-    - ID: mysterious-mint
-      Value: Mysterious Mint
-      ListOrder: 0
-      IsOpenText: false
-      PriceMarkupType: NoMarkup
-      PriceMarkup: null
-      xp:
-        hexColor: '#b6e3c2'
-      SpecID: intrigue-active-shorts-color
-    - ID: obsession-umber
-      Value: Obsession Umber
-      ListOrder: 0
-      IsOpenText: false
-      PriceMarkupType: NoMarkup
-      PriceMarkup: null
-      xp:
-        hexColor: '#db8b3b'
-      SpecID: intrigue-active-shorts-color
-    - ID: paranoid-purple
-      Value: Paranoid Purple
-      ListOrder: 0
-      IsOpenText: false
-      PriceMarkupType: NoMarkup
-      PriceMarkup: null
-      xp:
-        hexColor: '#752175'
-      SpecID: intrigue-active-shorts-color
     - ID: blue
-      Value: Blue
+      Value: blue
       ListOrder: 0
       IsOpenText: false
       PriceMarkupType: NoMarkup
       PriceMarkup: null
-      xp:
-        hexColor: '#2e53c9'
-      SpecID: mulberry-silk-facemask-color
+      xp: null
+      SpecID: color
     - ID: red
-      Value: Red
-      ListOrder: 0
-      IsOpenText: false
-      PriceMarkupType: NoMarkup
-      PriceMarkup: null
-      xp:
-        hexColor: '#c9382e'
-      SpecID: mulberry-silk-facemask-color
-    - ID: yellow
-      Value: Yellow
-      ListOrder: 0
-      IsOpenText: false
-      PriceMarkupType: NoMarkup
-      PriceMarkup: null
-      xp:
-        hexColor: '#c9c42e'
-      SpecID: mulberry-silk-facemask-color
-    - ID: L
-      Value: Large
+      Value: red
       ListOrder: 0
       IsOpenText: false
       PriceMarkupType: NoMarkup
       PriceMarkup: null
       xp: null
-      SpecID: cross-product-size
-    - ID: m
-      Value: Medium
+      SpecID: color
+    - ID: M
+      Value: M
       ListOrder: 0
       IsOpenText: false
       PriceMarkupType: NoMarkup
       PriceMarkup: null
       xp: null
-      SpecID: cross-product-size
-    - ID: s
-      Value: Small
+      SpecID: size
+    - ID: S
+      Value: S
       ListOrder: 0
       IsOpenText: false
       PriceMarkupType: NoMarkup
       PriceMarkup: null
       xp: null
-      SpecID: cross-product-size
-    - ID: XL
-      Value: Extra Large
-      ListOrder: 0
-      IsOpenText: false
-      PriceMarkupType: NoMarkup
-      PriceMarkup: null
-      xp: null
-      SpecID: cross-product-size
-  ProductFacets:
-    - ID: color
-      Name: Color
-      XpPath: Facets.Color
-      ListOrder: 0
-      MinCount: 1
-      xp:
-        options:
-          - black
-          - white
-          - yellow
-          - red
-          - blue
-          - green
-          - orange
-          - purple
+      SpecID: size
+  ProductFacets: []
   Promotions: []
 Assignments:
-  UserGroupAssignments: []
-  SpendingAccountAssignments: []
-  AddressAssignments: []
-  CostCenterAssignments: []
-  CreditCardAssignments: []
-  CategoryAssignments: []
-  CategoryProductAssignments:
-    - CategoryID: boys-shoes
-      ProductID: boys-turkish-leather-caliage
-      ListOrder: null
-      CatalogID: solitary-storefront
-    - CategoryID: girls-shoes
-      ProductID: girls-turkish-leather-caliage
-      ListOrder: null
-      CatalogID: solitary-storefront
-    - CategoryID: masks
-      ProductID: mulberry-silk-facemask
-      ListOrder: null
-      CatalogID: solitary-storefront
-    - CategoryID: mens-bottoms
-      ProductID: mens-intrigue-active-shorts
-      ListOrder: null
-      CatalogID: solitary-storefront
-    - CategoryID: mens-jackets
-      ProductID: mens-hellion-onyx-jacket
-      ListOrder: null
-      CatalogID: solitary-storefront
-    - CategoryID: toddlers
-      ProductID: penquin-feather-onesie
-      ListOrder: null
-      CatalogID: solitary-storefront
-    - CategoryID: womens-bottoms
-      ProductID: womens-intrigue-active-shorts
-      ListOrder: null
-      CatalogID: solitary-storefront
-    - CategoryID: womens-jackets
-      ProductID: womens-hellion-onyx-jacket
-      ListOrder: null
-      CatalogID: solitary-storefront
-    - CategoryID: womens-socks
-      ProductID: womens-spiked-wool-socks
-      ListOrder: null
-      CatalogID: solitary-storefront
+  SupplierUserGroupsAssignments: []
+  SupplierBuyerAssignment: []
   ProductSupplierAssignment: []
-  SecurityProfileAssignments:
-    - SecurityProfileID: back-office-admin
-      BuyerID: null
-      SupplierID: null
-      UserID: null
-      UserGroupID: null
-    - SecurityProfileID: buyer-middleware
-      BuyerID: solitary-storefront
-      SupplierID: null
-      UserID: null
-      UserGroupID: null
+  SecurityProfileAssignments: []
   AdminUserGroupAssignments: []
-  ApiClientAssignments:
-    - ApiClientID: 527c8a6c-20a3-4a5a-bd5b-abc71967475b
-      BuyerID: solitary-storefront
-      SupplierID: null
+  ApiClientAssignments: []
   LocaleAssignments: []
   ProductAssignments: []
-  CatalogAssignments:
-    - CatalogID: solitary-storefront
-      BuyerID: solitary-storefront
-      ViewAllCategories: true
-      ViewAllProducts: true
-  ProductCatalogAssignment:
-    - CatalogID: solitary-storefront
-      ProductID: boys-turkish-leather-caliage
-    - CatalogID: solitary-storefront
-      ProductID: girls-turkish-leather-caliage
-    - CatalogID: solitary-storefront
-      ProductID: mens-hellion-onyx-jacket
-    - CatalogID: solitary-storefront
-      ProductID: mens-intrigue-active-shorts
-    - CatalogID: solitary-storefront
-      ProductID: mulberry-silk-facemask
-    - CatalogID: solitary-storefront
-      ProductID: penquin-feather-onesie
-    - CatalogID: solitary-storefront
-      ProductID: womens-hellion-onyx-jacket
-    - CatalogID: solitary-storefront
-      ProductID: womens-intrigue-active-shorts
-    - CatalogID: solitary-storefront
-      ProductID: womens-spiked-wool-socks
+  CatalogAssignments: []
+  ProductCatalogAssignment: []
   SpecProductAssignments:
-    - SpecID: cross-product-size
-      ProductID: mens-hellion-onyx-jacket
+    - SpecID: color
+      ProductID: product1
       DefaultValue: null
-      DefaultOptionID: null
-    - SpecID: cross-product-size
-      ProductID: mens-intrigue-active-shorts
+      DefaultOptionID: red
+    - SpecID: size
+      ProductID: product1
       DefaultValue: null
-      DefaultOptionID: null
-    - SpecID: cross-product-size
-      ProductID: womens-hellion-onyx-jacket
-      DefaultValue: null
-      DefaultOptionID: null
-    - SpecID: cross-product-size
-      ProductID: womens-intrigue-active-shorts
-      DefaultValue: null
-      DefaultOptionID: null
-    - SpecID: intrigue-active-shorts-color
-      ProductID: mens-intrigue-active-shorts
-      DefaultValue: null
-      DefaultOptionID: obsession-umber
-    - SpecID: intrigue-active-shorts-color
-      ProductID: womens-intrigue-active-shorts
-      DefaultValue: null
-      DefaultOptionID: obsession-umber
-    - SpecID: mulberry-silk-facemask-color
-      ProductID: mulberry-silk-facemask
-      DefaultValue: null
-      DefaultOptionID: blue
+      DefaultOptionID: S
   PromotionAssignment: []

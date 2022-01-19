@@ -12,22 +12,40 @@ Objects:
     - ID: color
       Name: color
       DefinesVariant: true
-      Options:
-        - ID: red
-        - ID: blue
+      DefaultOptionID: red
+      Required: true
     - ID: size
       Name: size
       DefinesVariant: true
-      Options:
-        - ID: S
-        - ID: M
-        - ID: L
+      Required: true
+      DefaultOptionID: S
     - ID: material
       Name: material
       DefinesVariant: false
-      Options:
-        - ID: cotton
-        - ID: wool
+      DefaultOptionID: cotton
+      Required: true
+  SpecOptions:
+    - ID: red
+      SpecID: color
+      Value: red
+    - ID: blue
+      SpecID: color
+      Value: blue
+    - ID: S
+      SpecID: size
+      Value: S
+    - ID: M
+      SpecID: size
+      Value: M
+    - ID: L
+      SpecID: size
+      Value: L
+    - ID: cotton
+      SpecID: material
+      Value: cotton
+    - ID: wool
+      SpecID: material
+      Value: wool
   Variants:
     - ID: missing-product-ID
     - ID: bad-product-ID

@@ -34,7 +34,7 @@
     "jwt-decode": "^3.1.2",
     "lodash": "^4.17.21",
     "node-emoji": "^1.10.0",
-    "ordercloud-javascript-sdk": "^4.2.2",
+    "ordercloud-javascript-sdk": "^4.3.2",
     "qs": "^6.9.6",
     "typescript": "^4.2.3",
     "yargs": "^15.4.1"
