@@ -51,8 +51,7 @@ validate ./folder/my-file.yml
 import { download, seed, validate } from "@ordercloud/seeding";
 
 await seed({
-    username: "xxxxxx", 
-    password: "xxxxxx", 
+    portalJWT: "xxxxxx", 
     filePath: "./folder/ordercloud-data.yml",
     logger: (message:string, type: MessageType) => {
          console.log(message)
