@@ -59,8 +59,8 @@ await seed({
 }); 
  ```
  
- ```
-var myData: SerializedMarketplace = { ... }
+ ```typescript
+var myData: SerializedMarketplace = { ... };
 
 await seed({
     portalJWT: "xxxxxx", 
