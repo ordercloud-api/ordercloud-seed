@@ -58,6 +58,18 @@ await seed({
     }
 }); 
  ```
+ 
+ ```
+var myData: SerializedMarketplace = { ... }
+
+await seed({
+    portalJWT: "xxxxxx", 
+    rawData: myData,
+    logger: (message:string, type: MessageType) => {
+         console.log(message)
+    }
+}); 
+ ```
 
 ## Marketplace Templates
 
