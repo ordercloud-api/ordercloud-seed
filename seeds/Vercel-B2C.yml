@@ -9,6 +9,7 @@ Objects:
         - MeXpAdmin
         - PasswordReset
         - Shopper
+        - BuyerReader
       CustomRoles: []
       PasswordConfig: null
     - ID: full-access-admin
@@ -108,7 +109,13 @@ Objects:
       DefaultCatalogID: solitary-storefront
       Active: true
       DateCreated: '2021-10-06T18:06:06.76+00:00'
-      xp: null
+      xp:
+        StorefrontConfig:
+          LogoUrl: https://www.insightsforprofessionals.com/getmedia/fd59ca81-768f-4ebe-b47f-b1f7db535e49/sitecore?maxsidesize=1200&resizemode=force
+          Theme:
+            PrimaryColorHex: "#f54842"
+            SecondaryColorHex: "#ffffff"
+          HomePageLayout:   
   Users:
     - ID: default-anonymous-shopper
       Username: anonymous-shopper
