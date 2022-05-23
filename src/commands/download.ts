@@ -88,6 +88,7 @@ export async function download(args: DownloadArgs): Promise<SerializedMarketplac
             for (let parentRecord of records) {
                 if (childResource.shouldAttemptListFunc(parentRecord)) {
                     var childRecords = await ordercloudBulk.ListAll(childResource, parentRecord.ID); // assume ID exists. Which is does for all parent types.
+                    PlaceHoldMarketplaceID(childResource, childRecords);
                     if (childResource.downloadTransformFunc !== undefined) {
                         childRecords = childRecords.map(childResource.downloadTransformFunc)
                     }
@@ -99,6 +100,7 @@ export async function download(args: DownloadArgs): Promise<SerializedMarketplac
                         var grandChildResource = directory.find(x => x.name === OCResourceEnum.VariantInventoryRecords);
                         for (var variant of childRecords) {
                             var variantInventoryRecords = await ordercloudBulk.ListAll(grandChildResource, parentRecord.ID, variant.ID);
+                            PlaceHoldMarketplaceID(grandChildResource, variantInventoryRecords);
                             for (let grandChildRecord of variantInventoryRecords) {
                                 grandChildRecord["ProductID"] = parentRecord.ID;
                                 grandChildRecord["VariantID"] = variant.ID;
