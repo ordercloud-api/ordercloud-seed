@@ -1,9 +1,9 @@
 import axios from "axios";
-import { Addresses, AdminAddresses, InventoryRecords, AdminUserGroups, AdminUsers, ApiClients, ApprovalRules, Buyers, Catalogs, Categories, CostCenters, CreditCards, ImpersonationConfigs, Incrementors, IntegrationEvents, Locales, MessageSenders, OpenIdConnects, PriceSchedules, ProductFacets, Products, Promotions, SecurityProfiles, Specs, SpendingAccounts, SupplierAddresses, Suppliers, SupplierUserGroups, SupplierUsers, UserGroups, Users, Webhooks, XpIndices } from "ordercloud-javascript-sdk";
+import { Addresses, AdminAddresses, InventoryRecords, AdminUserGroups, AdminUsers, ApiClients, ApprovalRules, Buyers, Catalogs, Categories, CostCenters, CreditCards, ImpersonationConfigs, Incrementors, IntegrationEvents, Locales, MessageSenders, OpenIdConnects, PriceSchedules, ProductFacets, Products, Promotions, SecurityProfiles, Specs, SpendingAccounts, SupplierAddresses, Suppliers, SupplierUserGroups, SupplierUsers, UserGroups, Users, Webhooks, XpIndices, SellerApprovalRules } from "ordercloud-javascript-sdk";
 import { OCResourceEnum } from "./oc-resource-enum";
 import { OCResource } from "./oc-resources";
 import _ from 'lodash';
-import { ApiClientValidationFunc, ImpersonationConfigValidationFunc, InventoryRecordValidation, LocaleAssignmentCustomValidationFunc, ProductAssignmentValidationFunc, SecurityProfileAssignmentValidationFunc, VariantInventoryRecordValidation, VariantValidationFunc, WebhookValidationFunc } from "../services/custom-validation-func";
+import { ApiClientValidationFunc, ImpersonationConfigValidationFunc, InventoryRecordValidation, LocaleAssignmentCustomValidationFunc, ProductAssignmentValidationFunc, SecurityProfileAssignmentValidationFunc, SellerApprovalRuleValidationFunc, VariantInventoryRecordValidation, VariantValidationFunc, WebhookValidationFunc } from "../services/custom-validation-func";
 
 const Directory: OCResource[] = [
     { 
@@ -90,7 +90,8 @@ const Directory: OCResource[] = [
         redactFields: ["ClientSecret"],
         foreignKeys:
         {
-            IntegrationEventID: { foreignResource: OCResourceEnum.IntegrationEvents }
+            OrderCheckoutIntegrationEventID: { foreignResource: OCResourceEnum.IntegrationEvents },
+            OrderReturnIntegrationEventID: { foreignResource: OCResourceEnum.IntegrationEvents }
         },
         downloadTransformFunc: (x) => {
             x.ID = x.ID.toLowerCase(); // funky platform thing with API CLient ID casing
@@ -389,6 +390,15 @@ const Directory: OCResource[] = [
             ProductID: { foreignResource: OCResourceEnum.Products }
         },
         customValidationFunc: VariantInventoryRecordValidation,
+    },
+    {
+        name: OCResourceEnum.SellerApprovalRules,
+        modelName: "SellerApprovalRule",
+        sdkObject: SellerApprovalRules,
+        createPriority: 4,
+        path: "/approvalrules",
+        hasOwnerIDField: "OwnerID",
+        customValidationFunc: SellerApprovalRuleValidationFunc
     },
     {
         name: OCResourceEnum.SecurityProfileAssignments, 

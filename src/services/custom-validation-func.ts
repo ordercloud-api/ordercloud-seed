@@ -86,8 +86,25 @@ export const LocaleAssignmentCustomValidationFunc: RecordValidationFunc = (recor
     }
 }
 
-export const ApiClientValidationFunc: RecordValidationFunc = (record, validator) => {
+export const ApiClientValidationFunc: RecordValidationFunc = (record, validator, allData) => {
     var defaultContextUsername: string = record["DefaultContextUserName"];
+    var orderCheckoutIntegrationEventID: string = record["OrderCheckoutIntegrationEventID"];
+    var orderReturnIntegrationEventID: string = record["OrderReturnIntegrationEventID"];
+
+    if (!_.isNil(orderCheckoutIntegrationEventID)) {
+        var event = allData.Objects[OCResourceEnum.IntegrationEvents]?.find(x => x.ID === orderCheckoutIntegrationEventID);
+        if (event && event.EventType != "OrderCheckout") {
+            validator.addError(`ApiClient.OrderCheckoutIntegrationEventID cannot have value "${orderCheckoutIntegrationEventID}" because this integration event does not have type "OrderCheckout".`);
+        }
+    }
+
+    if (!_.isNil(orderReturnIntegrationEventID)) {
+        var event = allData.Objects[OCResourceEnum.IntegrationEvents]?.find(x => x.ID === orderReturnIntegrationEventID);
+        if (event && event.EventType != "OrderReturn") {
+            validator.addError(`ApiClient.OrderReturnIntegrationEventID cannot have value "${orderReturnIntegrationEventID}" because this integration event does not have type "OrderReturn".`);
+        }
+    }
+
     if (!_.isNil(defaultContextUsername) && !validator.usernameCache.has(defaultContextUsername)) {
         validator.addError(`Invalid reference ApiClients.DefaultContextUserName: no User, SupplierUser or AdminUser found with Username \"${defaultContextUsername}\".`);
     }
@@ -214,7 +231,7 @@ export const VariantInventoryRecordValidation: RecordValidationFunc = (record, v
     var ownerID: string = record["OwnerID"];
     var variantID: string = record["VariantID"]
     var hasAddressID = !_.isNil(addressID);
-    var hasOwnerID = !_.isNil(addressID);
+    var hasOwnerID = !_.isNil(ownerID);
 
     if (allData.Objects[OCResourceEnum.InventoryRecords]?.some(x => x.ProductID === productID)) {
         return validator.addError(`Invalid use of InventoryRecords and VariantInventoryRecords on product with ID \"${productID}\".`)
@@ -246,4 +263,24 @@ export const VariantInventoryRecordValidation: RecordValidationFunc = (record, v
         }
     }
 }
+
+export const SellerApprovalRuleValidationFunc: RecordValidationFunc = (record, validator) => {
+    var ownerID: string = record["OwnerID"];
+    var approvingGroupID: string = record["ApprovingGroupID"];
+    var hasOwnerID = !_.isNil(ownerID);
+    var hasApprovingGroupID = !_.isNil(approvingGroupID);
+
+    if (hasApprovingGroupID && hasOwnerID) {
+        if (ownerID === MARKETPLACE_ID) {
+            if (!validator.idCache.has(OCResourceEnum.AdminUserGroups, approvingGroupID)) {
+                validator.addError(`Invalid reference SellerApprovalRule.ApprovingGroupID: no Admin User Group found with ID \"${approvingGroupID}\".`)
+            }
+        } else {
+            if (!validator.idCache.has(OCResourceEnum.SupplierUserGroups, `${ownerID}/${approvingGroupID}`)) {
+                validator.addError(`Invalid reference SellerApprovalRule.ApprovingGroupID: no User Group found with ID \"${approvingGroupID}\" under supplier with ID \"${ownerID}\".`)
+            }
+        }
+    }
+}
+
 

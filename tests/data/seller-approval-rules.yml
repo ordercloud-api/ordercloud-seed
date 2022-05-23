@@ -1,0 +1,33 @@
+Objects: 
+  Suppliers:
+    - ID: supplier1
+      Name: supplier1
+    - ID: supplier2
+      Name: supplier2
+  SupplierUserGroups:
+    - ID: supplier-group-1
+      SupplierID: supplier1
+      Name: supplier-group-1
+    - ID: supplier-group-2
+      SupplierID: supplier2
+      Name: supplier-group-2
+  AdminUserGroups:
+    - ID: admin-group-1
+      Name: admin-group-1
+  SellerApprovalRules:
+    - OwnerID: supplier1
+      ApprovingGroupID: supplier-group-2
+      ApprovalType: OrderReturn
+      RuleExpression: "true"
+    - OwnerID: supplier1
+      ApprovingGroupID: supplier-group-1
+      ApprovalType: OrderReturn
+      RuleExpression: "true"
+    - OwnerID: <MarketplaceID placeholder>
+      ApprovingGroupID: supplier-group-1
+      ApprovalType: OrderReturn
+      RuleExpression: "true"  
+    - OwnerID: <MarketplaceID placeholder>
+      ApprovingGroupID: admin-group-1
+      ApprovalType: OrderReturn
+      RuleExpression: "true"

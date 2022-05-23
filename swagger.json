@@ -3,7 +3,7 @@
     "info": {
         "title": "OrderCloud",
         "description": "OrderCloud is an awesome C# platform API for making eCommerce applications. It is NOT a complete solution. It's designed to be used as the backend component with various other integrations and services.",
-        "version": "1.0.228.23654",
+        "version": "1.0.239.25688",
         "contact": {
             "name": "OrderCloud",
             "url": "http://ordercloud.io",
@@ -243,6 +243,16 @@
             "x-section-id": "OrdersAndFulfillment"
         },
         {
+            "name": "Order Returns",
+            "description": "An OrderReturn represents a transaction between two parties. It can be a record of physical items being returned, or simply a credit being issued not tied to the return of an item.",
+            "x-section-id": "OrdersAndFulfillment"
+        },
+        {
+            "name": "Seller Approval Rules",
+            "description": "Order return approval rules are used to verify the integrity of an order return. Common examples include order returns exceeding a specified refund amount or order returns that contain no physical items to return. Properties are also available to control the triggers and timing for processing approvals whether parallel to another rule, or in succession of a previous rule.",
+            "x-section-id": "OrdersAndFulfillment"
+        },
+        {
             "name": "Me and My Stuff",
             "description": "With an understanding of the robust visibility options involving roles, group-level assignments, Buyer-specific pricing, \"Active\" bits, and the like, you might be wondering, where are all these rules actually enforced? This is the job of the resources that begin with \"me\". Whether authenticated as yourself or impersonating as someone else, you see only what that user is allowed to see. A good rule of thumb is that, other than authentication, you should be able to build an entire Buyer experience using only endpoints that start with \"orders\" or \"me\".",
             "x-id": "MeAndMyStuff"
@@ -269,8 +279,6 @@
                             "AdminUserGroupAdmin": "",
                             "AdminUserGroupReader": "",
                             "AdminUserReader": "",
-                            "AnalyticsEventAdmin": "",
-                            "AnalyticsEventReader": "",
                             "ApiClientAdmin": "",
                             "ApiClientReader": "",
                             "ApprovalRuleAdmin": "",
@@ -289,12 +297,10 @@
                             "CreditCardAdmin": "",
                             "CreditCardReader": "",
                             "FullAccess": "",
-                            "GrantForAnyRole": "",
                             "IncrementorAdmin": "",
                             "IncrementorReader": "",
                             "IntegrationEventAdmin": "",
                             "IntegrationEventReader": "",
-                            "InventoryAdmin": "",
                             "LocaleAdmin": "",
                             "LocaleReader": "",
                             "MeAddressAdmin": "",
@@ -354,8 +360,6 @@
                             "AdminUserGroupAdmin": "",
                             "AdminUserGroupReader": "",
                             "AdminUserReader": "",
-                            "AnalyticsEventAdmin": "",
-                            "AnalyticsEventReader": "",
                             "ApiClientAdmin": "",
                             "ApiClientReader": "",
                             "ApprovalRuleAdmin": "",
@@ -374,12 +378,10 @@
                             "CreditCardAdmin": "",
                             "CreditCardReader": "",
                             "FullAccess": "",
-                            "GrantForAnyRole": "",
                             "IncrementorAdmin": "",
                             "IncrementorReader": "",
                             "IntegrationEventAdmin": "",
                             "IntegrationEventReader": "",
-                            "InventoryAdmin": "",
                             "LocaleAdmin": "",
                             "LocaleReader": "",
                             "MeAddressAdmin": "",
@@ -590,14 +592,16 @@
                     "AssignedSupplierCount": 0,
                     "OrderCheckoutIntegrationEventID": "",
                     "OrderCheckoutIntegrationEventName": "",
+                    "OrderReturnIntegrationEventID": "",
+                    "OrderReturnIntegrationEventName": "",
                     "MinimumRequiredRoles": [
-                        "DevCenter"
+                        "ApiClientAdmin"
                     ],
                     "MinimumRequiredCustomRoles": [
                         ""
                     ],
                     "MaximumGrantedRoles": [
-                        "DevCenter"
+                        "ApiClientAdmin"
                     ],
                     "MaximumGrantedCustomRoles": [
                         ""
@@ -666,6 +670,14 @@
                         "description": "If populated, an error will be thrown when attempting to submit an order that has not been processed through the OrderCheckout Integration."
                     },
                     "OrderCheckoutIntegrationEventName": {
+                        "type": "string",
+                        "readOnly": true
+                    },
+                    "OrderReturnIntegrationEventID": {
+                        "type": "string",
+                        "description": "If populated, and not overriden by an OrderAdmin, the integration event will be used to calculate ReturnAmount on the Order Return or each individual return item."
+                    },
+                    "OrderReturnIntegrationEventName": {
                         "type": "string",
                         "readOnly": true
                     },
@@ -745,7 +757,6 @@
                     "FullAccess",
                     "IncrementorAdmin",
                     "IncrementorReader",
-                    "InventoryAdmin",
                     "LocaleReader",
                     "LocaleAdmin",
                     "MeAddressAdmin",
@@ -799,6 +810,19 @@
                 ],
                 "description": ""
             },
+            "ApprovalInfo": {
+                "type": "object",
+                "example": {
+                    "Comments": ""
+                },
+                "properties": {
+                    "Comments": {
+                        "type": "string",
+                        "description": "Comments to be saved with the order approval or denial.",
+                        "maxLength": 2000
+                    }
+                }
+            },
             "ApprovalRule": {
                 "type": "object",
                 "example": {
@@ -841,6 +865,14 @@
                     "Pending",
                     "Approved",
                     "Declined"
+                ],
+                "description": ""
+            },
+            "ApprovalType": {
+                "type": "string",
+                "enum": [
+                    "Order",
+                    "OrderReturn"
                 ],
                 "description": ""
             },
@@ -909,14 +941,17 @@
                         "maxLength": 100
                     },
                     "Shipping": {
-                        "type": "boolean"
+                        "type": "boolean",
+                        "description": "Indicates whether this Address can be used as a Shipping Address on an Order or Line Item."
                     },
                     "Billing": {
-                        "type": "boolean"
+                        "type": "boolean",
+                        "description": "Indicates whether this Address can be used as a Billing Address on an Order."
                     },
                     "Editable": {
                         "type": "boolean",
-                        "readOnly": true
+                        "readOnly": true,
+                        "description": "Indicates whether this Address can be edited by the current User."
                     },
                     "DateCreated": {
                         "type": "string",
@@ -1040,10 +1075,14 @@
                         "PriceBreaks": [
                             {
                                 "Quantity": 0,
-                                "Price": 0
+                                "Price": 0,
+                                "SalePrice": 0
                             }
                         ],
                         "Currency": "",
+                        "SaleStart": "2018-01-01T00:00:00-06:00",
+                        "SaleEnd": "2018-01-01T00:00:00-06:00",
+                        "IsOnSale": false,
                         "xp": {}
                     },
                     "ID": "",
@@ -1068,6 +1107,7 @@
                     },
                     "DefaultSupplierID": "",
                     "AllSuppliersCanSell": false,
+                    "Returnable": false,
                     "xp": {}
                 },
                 "properties": {
@@ -1148,6 +1188,9 @@
                     "AllSuppliersCanSell": {
                         "type": "boolean",
                         "description": "If true, all suppliers are eligible to opt into selling this product."
+                    },
+                    "Returnable": {
+                        "type": "boolean"
                     },
                     "xp": {
                         "type": "object"
@@ -1450,12 +1493,600 @@
                     }
                 }
             },
+            "ExtendedLineItem": {
+                "type": "object",
+                "example": {
+                    "OrderID": "",
+                    "Order": {
+                        "ID": "",
+                        "FromUser": {
+                            "ID": "",
+                            "Username": "",
+                            "Password": "",
+                            "FirstName": "",
+                            "LastName": "",
+                            "Email": "",
+                            "Phone": "",
+                            "TermsAccepted": "2018-01-01T00:00:00-06:00",
+                            "Active": false,
+                            "xp": {},
+                            "AvailableRoles": [
+                                ""
+                            ],
+                            "Locale": {
+                                "ID": "",
+                                "OwnerID": "",
+                                "Currency": "",
+                                "Language": ""
+                            },
+                            "DateCreated": "2018-01-01T00:00:00-06:00",
+                            "PasswordLastSetDate": "2018-01-01T00:00:00-06:00"
+                        },
+                        "FromCompanyID": "",
+                        "ToCompanyID": "",
+                        "FromUserID": "",
+                        "BillingAddressID": "",
+                        "BillingAddress": {
+                            "ID": "",
+                            "DateCreated": "2018-01-01T00:00:00-06:00",
+                            "CompanyName": "",
+                            "FirstName": "",
+                            "LastName": "",
+                            "Street1": "",
+                            "Street2": "",
+                            "City": "",
+                            "State": "",
+                            "Zip": "",
+                            "Country": "",
+                            "Phone": "",
+                            "AddressName": "",
+                            "xp": {}
+                        },
+                        "ShippingAddressID": "",
+                        "Comments": "",
+                        "LineItemCount": 0,
+                        "Status": "Unsubmitted",
+                        "DateCreated": "2018-01-01T00:00:00-06:00",
+                        "DateSubmitted": "2018-01-01T00:00:00-06:00",
+                        "DateApproved": "2018-01-01T00:00:00-06:00",
+                        "DateDeclined": "2018-01-01T00:00:00-06:00",
+                        "DateCanceled": "2018-01-01T00:00:00-06:00",
+                        "DateCompleted": "2018-01-01T00:00:00-06:00",
+                        "LastUpdated": "2018-01-01T00:00:00-06:00",
+                        "Subtotal": 0,
+                        "ShippingCost": 0,
+                        "TaxCost": 0,
+                        "PromotionDiscount": 0,
+                        "Currency": "",
+                        "Total": 0,
+                        "IsSubmitted": false,
+                        "xp": {}
+                    },
+                    "ID": "",
+                    "ProductID": "",
+                    "Quantity": 0,
+                    "DateAdded": "2018-01-01T00:00:00-06:00",
+                    "QuantityShipped": 0,
+                    "UnitPrice": 0,
+                    "PromotionDiscount": 0,
+                    "LineTotal": 0,
+                    "LineSubtotal": 0,
+                    "CostCenter": "",
+                    "DateNeeded": "2018-01-01T00:00:00-06:00",
+                    "ShippingAccount": "",
+                    "ShippingAddressID": "",
+                    "ShipFromAddressID": "",
+                    "Product": {
+                        "ID": "",
+                        "Name": "",
+                        "Description": "",
+                        "Returnable": false,
+                        "QuantityMultiplier": 0,
+                        "ShipWeight": 0,
+                        "ShipHeight": 0,
+                        "ShipWidth": 0,
+                        "ShipLength": 0,
+                        "DefaultSupplierID": "",
+                        "xp": {}
+                    },
+                    "Variant": {
+                        "ID": "",
+                        "Name": "",
+                        "Description": "",
+                        "ShipWeight": 0,
+                        "ShipHeight": 0,
+                        "ShipWidth": 0,
+                        "ShipLength": 0,
+                        "xp": {}
+                    },
+                    "ShippingAddress": {
+                        "ID": "",
+                        "DateCreated": "2018-01-01T00:00:00-06:00",
+                        "CompanyName": "",
+                        "FirstName": "",
+                        "LastName": "",
+                        "Street1": "",
+                        "Street2": "",
+                        "City": "",
+                        "State": "",
+                        "Zip": "",
+                        "Country": "",
+                        "Phone": "",
+                        "AddressName": "",
+                        "xp": {}
+                    },
+                    "ShipFromAddress": {
+                        "ID": "",
+                        "DateCreated": "2018-01-01T00:00:00-06:00",
+                        "CompanyName": "",
+                        "FirstName": "",
+                        "LastName": "",
+                        "Street1": "",
+                        "Street2": "",
+                        "City": "",
+                        "State": "",
+                        "Zip": "",
+                        "Country": "",
+                        "Phone": "",
+                        "AddressName": "",
+                        "xp": {}
+                    },
+                    "SupplierID": "",
+                    "InventoryRecordID": "",
+                    "PriceScheduleID": "",
+                    "PriceOverridden": false,
+                    "Specs": [
+                        {
+                            "SpecID": "",
+                            "Name": "",
+                            "OptionID": "",
+                            "Value": "",
+                            "PriceMarkupType": "NoMarkup",
+                            "PriceMarkup": 0
+                        }
+                    ],
+                    "xp": {}
+                },
+                "properties": {
+                    "OrderID": {
+                        "type": "string"
+                    },
+                    "Order": {
+                        "allOf": [
+                            {
+                                "$ref": "#/components/schemas/Order"
+                            }
+                        ],
+                        "description": "Returned only when include=Order (or include=Order.???) is provided in the query string."
+                    },
+                    "ID": {
+                        "type": "string",
+                        "maxLength": 100
+                    },
+                    "ProductID": {
+                        "type": "string"
+                    },
+                    "Quantity": {
+                        "type": "integer",
+                        "format": "int32",
+                        "default": 1,
+                        "minimum": 1
+                    },
+                    "DateAdded": {
+                        "type": "string",
+                        "format": "date-time",
+                        "readOnly": true
+                    },
+                    "QuantityShipped": {
+                        "type": "integer",
+                        "format": "int32",
+                        "readOnly": true,
+                        "description": "Sum of QuantityShipped from all shipment items."
+                    },
+                    "UnitPrice": {
+                        "type": "number",
+                        "format": "float",
+                        "description": "Auto calculated Price per Quantity. Modification requires OverrideUnitPrice Role."
+                    },
+                    "PromotionDiscount": {
+                        "type": "number",
+                        "format": "float",
+                        "readOnly": true,
+                        "description": "Sum of all line item level promotion discount amounts applied."
+                    },
+                    "LineTotal": {
+                        "type": "number",
+                        "format": "float",
+                        "readOnly": true,
+                        "description": "LineSubtotal - PromotionDiscount"
+                    },
+                    "LineSubtotal": {
+                        "type": "number",
+                        "format": "float",
+                        "readOnly": true,
+                        "description": "UnitPrice x Quantity"
+                    },
+                    "CostCenter": {
+                        "type": "string",
+                        "description": "For reference only, does not influence any OrderCloud behavior."
+                    },
+                    "DateNeeded": {
+                        "type": "string",
+                        "format": "date-time"
+                    },
+                    "ShippingAccount": {
+                        "type": "string",
+                        "description": "For reference only, does not influence any OrderCloud behavior."
+                    },
+                    "ShippingAddressID": {
+                        "type": "string"
+                    },
+                    "ShipFromAddressID": {
+                        "type": "string",
+                        "description": "Marketplace Owner or Supplier AddressID where the product will be shipped from. Can be used to calculate shipping costs."
+                    },
+                    "Product": {
+                        "allOf": [
+                            {
+                                "$ref": "#/components/schemas/LineItemProduct"
+                            }
+                        ],
+                        "readOnly": true
+                    },
+                    "Variant": {
+                        "allOf": [
+                            {
+                                "$ref": "#/components/schemas/LineItemVariant"
+                            }
+                        ],
+                        "readOnly": true
+                    },
+                    "ShippingAddress": {
+                        "allOf": [
+                            {
+                                "$ref": "#/components/schemas/Address"
+                            }
+                        ],
+                        "readOnly": true
+                    },
+                    "ShipFromAddress": {
+                        "allOf": [
+                            {
+                                "$ref": "#/components/schemas/Address"
+                            }
+                        ],
+                        "readOnly": true
+                    },
+                    "SupplierID": {
+                        "type": "string",
+                        "readOnly": true
+                    },
+                    "InventoryRecordID": {
+                        "type": "string",
+                        "description": "Inventory Record ID of which product inventory location to use. The Inventory Record ID cannot be modified once an order is submitted."
+                    },
+                    "PriceScheduleID": {
+                        "type": "string",
+                        "readOnly": true,
+                        "description": "ID of the Price Schedule used to determine Unit price."
+                    },
+                    "PriceOverridden": {
+                        "type": "boolean",
+                        "readOnly": true,
+                        "description": "If true, UnitPrice was overwritten."
+                    },
+                    "Specs": {
+                        "type": "array",
+                        "items": {
+                            "$ref": "#/components/schemas/LineItemSpec"
+                        }
+                    },
+                    "xp": {
+                        "type": "object"
+                    }
+                }
+            },
+            "ExtendedOrder": {
+                "type": "object",
+                "example": {
+                    "LineItems": [
+                        {
+                            "ID": "",
+                            "ProductID": "",
+                            "Quantity": 0,
+                            "DateAdded": "2018-01-01T00:00:00-06:00",
+                            "QuantityShipped": 0,
+                            "UnitPrice": 0,
+                            "PromotionDiscount": 0,
+                            "LineTotal": 0,
+                            "LineSubtotal": 0,
+                            "CostCenter": "",
+                            "DateNeeded": "2018-01-01T00:00:00-06:00",
+                            "ShippingAccount": "",
+                            "ShippingAddressID": "",
+                            "ShipFromAddressID": "",
+                            "Product": {
+                                "ID": "",
+                                "Name": "",
+                                "Description": "",
+                                "Returnable": false,
+                                "QuantityMultiplier": 0,
+                                "ShipWeight": 0,
+                                "ShipHeight": 0,
+                                "ShipWidth": 0,
+                                "ShipLength": 0,
+                                "DefaultSupplierID": "",
+                                "xp": {}
+                            },
+                            "Variant": {
+                                "ID": "",
+                                "Name": "",
+                                "Description": "",
+                                "ShipWeight": 0,
+                                "ShipHeight": 0,
+                                "ShipWidth": 0,
+                                "ShipLength": 0,
+                                "xp": {}
+                            },
+                            "ShippingAddress": {
+                                "ID": "",
+                                "DateCreated": "2018-01-01T00:00:00-06:00",
+                                "CompanyName": "",
+                                "FirstName": "",
+                                "LastName": "",
+                                "Street1": "",
+                                "Street2": "",
+                                "City": "",
+                                "State": "",
+                                "Zip": "",
+                                "Country": "",
+                                "Phone": "",
+                                "AddressName": "",
+                                "xp": {}
+                            },
+                            "ShipFromAddress": {
+                                "ID": "",
+                                "DateCreated": "2018-01-01T00:00:00-06:00",
+                                "CompanyName": "",
+                                "FirstName": "",
+                                "LastName": "",
+                                "Street1": "",
+                                "Street2": "",
+                                "City": "",
+                                "State": "",
+                                "Zip": "",
+                                "Country": "",
+                                "Phone": "",
+                                "AddressName": "",
+                                "xp": {}
+                            },
+                            "SupplierID": "",
+                            "InventoryRecordID": "",
+                            "PriceScheduleID": "",
+                            "PriceOverridden": false,
+                            "Specs": [
+                                {
+                                    "SpecID": "",
+                                    "Name": "",
+                                    "OptionID": "",
+                                    "Value": "",
+                                    "PriceMarkupType": "NoMarkup",
+                                    "PriceMarkup": 0
+                                }
+                            ],
+                            "xp": {}
+                        }
+                    ],
+                    "ID": "",
+                    "FromUser": {
+                        "ID": "",
+                        "Username": "",
+                        "Password": "",
+                        "FirstName": "",
+                        "LastName": "",
+                        "Email": "",
+                        "Phone": "",
+                        "TermsAccepted": "2018-01-01T00:00:00-06:00",
+                        "Active": false,
+                        "xp": {},
+                        "AvailableRoles": [
+                            ""
+                        ],
+                        "Locale": {
+                            "ID": "",
+                            "OwnerID": "",
+                            "Currency": "",
+                            "Language": ""
+                        },
+                        "DateCreated": "2018-01-01T00:00:00-06:00",
+                        "PasswordLastSetDate": "2018-01-01T00:00:00-06:00"
+                    },
+                    "FromCompanyID": "",
+                    "ToCompanyID": "",
+                    "FromUserID": "",
+                    "BillingAddressID": "",
+                    "BillingAddress": {
+                        "ID": "",
+                        "DateCreated": "2018-01-01T00:00:00-06:00",
+                        "CompanyName": "",
+                        "FirstName": "",
+                        "LastName": "",
+                        "Street1": "",
+                        "Street2": "",
+                        "City": "",
+                        "State": "",
+                        "Zip": "",
+                        "Country": "",
+                        "Phone": "",
+                        "AddressName": "",
+                        "xp": {}
+                    },
+                    "ShippingAddressID": "",
+                    "Comments": "",
+                    "LineItemCount": 0,
+                    "Status": "Unsubmitted",
+                    "DateCreated": "2018-01-01T00:00:00-06:00",
+                    "DateSubmitted": "2018-01-01T00:00:00-06:00",
+                    "DateApproved": "2018-01-01T00:00:00-06:00",
+                    "DateDeclined": "2018-01-01T00:00:00-06:00",
+                    "DateCanceled": "2018-01-01T00:00:00-06:00",
+                    "DateCompleted": "2018-01-01T00:00:00-06:00",
+                    "LastUpdated": "2018-01-01T00:00:00-06:00",
+                    "Subtotal": 0,
+                    "ShippingCost": 0,
+                    "TaxCost": 0,
+                    "PromotionDiscount": 0,
+                    "Currency": "",
+                    "Total": 0,
+                    "IsSubmitted": false,
+                    "xp": {}
+                },
+                "properties": {
+                    "LineItems": {
+                        "type": "array",
+                        "items": {
+                            "$ref": "#/components/schemas/LineItem"
+                        }
+                    },
+                    "ID": {
+                        "type": "string",
+                        "maxLength": 100
+                    },
+                    "FromUser": {
+                        "allOf": [
+                            {
+                                "$ref": "#/components/schemas/User"
+                            }
+                        ],
+                        "readOnly": true,
+                        "description": "User placing the order."
+                    },
+                    "FromCompanyID": {
+                        "type": "string",
+                        "description": "ID of the Buyer or Marketplace Owner placing the order. Mainly useful to the Marketplace Owner or Supplier receiving it."
+                    },
+                    "ToCompanyID": {
+                        "type": "string",
+                        "description": "ID of the Marketplace Owner or Supplier receiving the order, only writable on create. Mainly useful to the Buyer or Marketplace Owner placing it."
+                    },
+                    "FromUserID": {
+                        "type": "string",
+                        "description": "This property is only writable when creating an order from the marketplace owner perspective on behalf of a buyer user."
+                    },
+                    "BillingAddressID": {
+                        "type": "string"
+                    },
+                    "BillingAddress": {
+                        "allOf": [
+                            {
+                                "$ref": "#/components/schemas/Address"
+                            }
+                        ],
+                        "readOnly": true
+                    },
+                    "ShippingAddressID": {
+                        "type": "string",
+                        "description": "ID of the Shipping Address for all LineItems on the Order. Null when there are multiple Shipping Addresses involved."
+                    },
+                    "Comments": {
+                        "type": "string",
+                        "maxLength": 2000
+                    },
+                    "LineItemCount": {
+                        "type": "integer",
+                        "format": "int32",
+                        "readOnly": true
+                    },
+                    "Status": {
+                        "$ref": "#/components/schemas/OrderStatus",
+                        "readOnly": true
+                    },
+                    "DateCreated": {
+                        "type": "string",
+                        "format": "date-time",
+                        "readOnly": true
+                    },
+                    "DateSubmitted": {
+                        "type": "string",
+                        "format": "date-time",
+                        "readOnly": true,
+                        "description": "NULL until the order passes from the buyer to the Marketplace Owner, including when Status is PendingApproval."
+                    },
+                    "DateApproved": {
+                        "type": "string",
+                        "format": "date-time",
+                        "readOnly": true
+                    },
+                    "DateDeclined": {
+                        "type": "string",
+                        "format": "date-time",
+                        "readOnly": true
+                    },
+                    "DateCanceled": {
+                        "type": "string",
+                        "format": "date-time",
+                        "readOnly": true
+                    },
+                    "DateCompleted": {
+                        "type": "string",
+                        "format": "date-time",
+                        "readOnly": true,
+                        "description": "Populated when all items on an order have shipped, or the order is explicitly completed."
+                    },
+                    "LastUpdated": {
+                        "type": "string",
+                        "format": "date-time",
+                        "readOnly": true
+                    },
+                    "Subtotal": {
+                        "type": "number",
+                        "format": "float",
+                        "readOnly": true,
+                        "description": "Sum of all LineItem.LineSubtotals."
+                    },
+                    "ShippingCost": {
+                        "type": "number",
+                        "format": "float",
+                        "description": "Modifying requires OverrideShipping Role."
+                    },
+                    "TaxCost": {
+                        "type": "number",
+                        "format": "float",
+                        "description": "Modifying requires TaxOverride Role."
+                    },
+                    "PromotionDiscount": {
+                        "type": "number",
+                        "format": "float",
+                        "readOnly": true,
+                        "description": "Sum of all Promotion.Amounts applied to the order."
+                    },
+                    "Currency": {
+                        "type": "string",
+                        "readOnly": true,
+                        "description": "Inherited from the user placing the order."
+                    },
+                    "Total": {
+                        "type": "number",
+                        "format": "float",
+                        "readOnly": true,
+                        "description": "Subtotal + TaxCost + ShippingCost - PromotionDiscount"
+                    },
+                    "IsSubmitted": {
+                        "type": "boolean",
+                        "readOnly": true,
+                        "description": "True if this Order has been passed from the Buyer to the Marketplace Owner."
+                    },
+                    "xp": {
+                        "type": "object"
+                    }
+                }
+            },
             "ImpersonateTokenRequest": {
                 "type": "object",
                 "example": {
                     "ClientID": "",
                     "Roles": [
-                        "DevCenter"
+                        "ApiClientAdmin"
                     ],
                     "CustomRoles": [
                         ""
@@ -1563,7 +2194,7 @@
                 "type": "object",
                 "example": {
                     "ElevatedRoles": [
-                        "DevCenter"
+                        "ApiClientAdmin"
                     ],
                     "ID": "",
                     "ConfigData": {},
@@ -1608,7 +2239,8 @@
                 "type": "string",
                 "enum": [
                     "OrderCheckout",
-                    "OpenIDConnect"
+                    "OpenIDConnect",
+                    "OrderReturn"
                 ],
                 "description": ""
             },
@@ -1737,11 +2369,13 @@
                         "ID": "",
                         "Name": "",
                         "Description": "",
+                        "Returnable": false,
                         "QuantityMultiplier": 0,
                         "ShipWeight": 0,
                         "ShipHeight": 0,
                         "ShipWidth": 0,
                         "ShipLength": 0,
+                        "DefaultSupplierID": "",
                         "xp": {}
                     },
                     "Variant": {
@@ -1788,6 +2422,8 @@
                     },
                     "SupplierID": "",
                     "InventoryRecordID": "",
+                    "PriceScheduleID": "",
+                    "PriceOverridden": false,
                     "Specs": [
                         {
                             "SpecID": "",
@@ -1905,7 +2541,17 @@
                     },
                     "InventoryRecordID": {
                         "type": "string",
-                        "description": "Inventory Record ID of which product inventory location to use. The Inventory Record ID cannot be modified once an order is submitted"
+                        "description": "Inventory Record ID of which product inventory location to use. The Inventory Record ID cannot be modified once an order is submitted."
+                    },
+                    "PriceScheduleID": {
+                        "type": "string",
+                        "readOnly": true,
+                        "description": "ID of the Price Schedule used to determine Unit price."
+                    },
+                    "PriceOverridden": {
+                        "type": "boolean",
+                        "readOnly": true,
+                        "description": "If true, UnitPrice was overwritten."
                     },
                     "Specs": {
                         "type": "array",
@@ -1952,11 +2598,13 @@
                     "ID": "",
                     "Name": "",
                     "Description": "",
+                    "Returnable": false,
                     "QuantityMultiplier": 0,
                     "ShipWeight": 0,
                     "ShipHeight": 0,
                     "ShipWidth": 0,
                     "ShipLength": 0,
+                    "DefaultSupplierID": "",
                     "xp": {}
                 },
                 "properties": {
@@ -1969,6 +2617,9 @@
                     },
                     "Description": {
                         "type": "string"
+                    },
+                    "Returnable": {
+                        "type": "boolean"
                     },
                     "QuantityMultiplier": {
                         "type": "integer",
@@ -1989,6 +2640,9 @@
                     "ShipLength": {
                         "type": "number",
                         "format": "float"
+                    },
+                    "DefaultSupplierID": {
+                        "type": "string"
                     },
                     "xp": {
                         "type": "object"
@@ -2247,7 +2901,7 @@
                     "Description": "",
                     "URL": "",
                     "ElevatedRoles": [
-                        "DevCenter"
+                        "ApiClientAdmin"
                     ],
                     "SharedKey": "",
                     "xp": {}
@@ -2334,7 +2988,15 @@
                     "OrderApproved",
                     "OrderSubmittedForYourApprovalHasBeenApproved",
                     "OrderSubmittedForYourApprovalHasBeenDeclined",
-                    "NewUserInvitation"
+                    "NewUserInvitation",
+                    "OrderReturnDeclined",
+                    "OrderReturnSubmitted",
+                    "OrderReturnSubmittedForYourApproval",
+                    "OrderReturnSubmittedForApproval",
+                    "OrderReturnApproved",
+                    "OrderReturnSubmittedForYourApprovalHasBeenApproved",
+                    "OrderReturnSubmittedForYourApprovalHasBeenDeclined",
+                    "OrderReturnCompleted"
                 ],
                 "description": ""
             },
@@ -2376,6 +3038,9 @@
                             "type": "integer",
                             "format": "int32"
                         }
+                    },
+                    "NextPageKey": {
+                        "type": "string"
                     }
                 }
             },
@@ -2410,6 +3075,9 @@
                             "type": "integer",
                             "format": "int32"
                         }
+                    },
+                    "NextPageKey": {
+                        "type": "string"
                     }
                 }
             },
@@ -2820,10 +3488,10 @@
             "OrderApproval": {
                 "type": "object",
                 "example": {
+                    "AllowResubmit": false,
                     "ApprovalRuleID": "",
                     "ApprovingGroupID": "",
                     "Status": "Pending",
-                    "AllowResubmit": false,
                     "DateCreated": "2018-01-01T00:00:00-06:00",
                     "DateCompleted": "2018-01-01T00:00:00-06:00",
                     "Approver": {
@@ -2852,6 +3520,11 @@
                     "Comments": ""
                 },
                 "properties": {
+                    "AllowResubmit": {
+                        "type": "boolean",
+                        "readOnly": true,
+                        "description": "If true, the submitting user will be able to modify the order and resubmit for approval."
+                    },
                     "ApprovalRuleID": {
                         "type": "string",
                         "readOnly": true
@@ -2863,11 +3536,6 @@
                     "Status": {
                         "$ref": "#/components/schemas/ApprovalStatus",
                         "readOnly": true
-                    },
-                    "AllowResubmit": {
-                        "type": "boolean",
-                        "readOnly": true,
-                        "description": "If true, the submitting user will be able to modify the order and resubmit for approval."
                     },
                     "DateCreated": {
                         "type": "string",
@@ -2896,16 +3564,18 @@
             "OrderApprovalInfo": {
                 "type": "object",
                 "example": {
-                    "Comments": "",
-                    "AllowResubmit": false
+                    "AllowResubmit": false,
+                    "Comments": ""
                 },
                 "properties": {
+                    "AllowResubmit": {
+                        "type": "boolean",
+                        "description": "Only relevant when declining an order. Changes the Order Status back to Open and allows the user to make changes and resubmit."
+                    },
                     "Comments": {
                         "type": "string",
+                        "description": "Comments to be saved with the order approval or denial.",
                         "maxLength": 2000
-                    },
-                    "AllowResubmit": {
-                        "type": "boolean"
                     }
                 }
             },
@@ -3093,6 +3763,212 @@
                     },
                     "xp": {
                         "type": "object"
+                    }
+                }
+            },
+            "OrderReturn": {
+                "type": "object",
+                "example": {
+                    "ID": "",
+                    "OrderID": "",
+                    "PaymentIDs": [
+                        ""
+                    ],
+                    "Status": "Unsubmitted",
+                    "DateCreated": "2018-01-01T00:00:00-06:00",
+                    "DateSubmitted": "2018-01-01T00:00:00-06:00",
+                    "DateApproved": "2018-01-01T00:00:00-06:00",
+                    "DateDeclined": "2018-01-01T00:00:00-06:00",
+                    "DateCanceled": "2018-01-01T00:00:00-06:00",
+                    "DateCompleted": "2018-01-01T00:00:00-06:00",
+                    "LastUpdated": "2018-01-01T00:00:00-06:00",
+                    "RefundAmount": 0,
+                    "Comments": "",
+                    "ItemsToReturn": [
+                        {
+                            "LineItemID": "",
+                            "Quantity": 0,
+                            "RefundAmount": 0,
+                            "Comments": ""
+                        }
+                    ],
+                    "xp": {}
+                },
+                "properties": {
+                    "ID": {
+                        "type": "string",
+                        "maxLength": 100
+                    },
+                    "OrderID": {
+                        "type": "string"
+                    },
+                    "PaymentIDs": {
+                        "type": "array",
+                        "items": {
+                            "type": "string"
+                        },
+                        "readOnly": true,
+                        "description": "IDs of Payments associated with this OrderReturn."
+                    },
+                    "Status": {
+                        "$ref": "#/components/schemas/OrderStatus",
+                        "readOnly": true
+                    },
+                    "DateCreated": {
+                        "type": "string",
+                        "format": "date-time",
+                        "readOnly": true
+                    },
+                    "DateSubmitted": {
+                        "type": "string",
+                        "format": "date-time",
+                        "readOnly": true,
+                        "description": "NULL until the order return passes from the buyer to the Marketplace Owner, including when Status is PendingApproval."
+                    },
+                    "DateApproved": {
+                        "type": "string",
+                        "format": "date-time",
+                        "readOnly": true
+                    },
+                    "DateDeclined": {
+                        "type": "string",
+                        "format": "date-time",
+                        "readOnly": true
+                    },
+                    "DateCanceled": {
+                        "type": "string",
+                        "format": "date-time",
+                        "readOnly": true
+                    },
+                    "DateCompleted": {
+                        "type": "string",
+                        "format": "date-time",
+                        "readOnly": true,
+                        "description": "Populated when payment to customer has been completed."
+                    },
+                    "LastUpdated": {
+                        "type": "string",
+                        "format": "date-time",
+                        "readOnly": true
+                    },
+                    "RefundAmount": {
+                        "type": "number",
+                        "format": "float"
+                    },
+                    "Comments": {
+                        "type": "string",
+                        "maxLength": 2000
+                    },
+                    "ItemsToReturn": {
+                        "type": "array",
+                        "items": {
+                            "$ref": "#/components/schemas/OrderReturnItem"
+                        }
+                    },
+                    "xp": {
+                        "type": "object"
+                    }
+                }
+            },
+            "OrderReturnApproval": {
+                "type": "object",
+                "example": {
+                    "OrderReturnID": "",
+                    "ApprovalRuleID": "",
+                    "ApprovingGroupID": "",
+                    "Status": "Pending",
+                    "DateCreated": "2018-01-01T00:00:00-06:00",
+                    "DateCompleted": "2018-01-01T00:00:00-06:00",
+                    "Approver": {
+                        "ID": "",
+                        "Username": "",
+                        "Password": "",
+                        "FirstName": "",
+                        "LastName": "",
+                        "Email": "",
+                        "Phone": "",
+                        "TermsAccepted": "2018-01-01T00:00:00-06:00",
+                        "Active": false,
+                        "xp": {},
+                        "AvailableRoles": [
+                            ""
+                        ],
+                        "Locale": {
+                            "ID": "",
+                            "OwnerID": "",
+                            "Currency": "",
+                            "Language": ""
+                        },
+                        "DateCreated": "2018-01-01T00:00:00-06:00",
+                        "PasswordLastSetDate": "2018-01-01T00:00:00-06:00"
+                    },
+                    "Comments": ""
+                },
+                "properties": {
+                    "OrderReturnID": {
+                        "type": "string"
+                    },
+                    "ApprovalRuleID": {
+                        "type": "string",
+                        "readOnly": true
+                    },
+                    "ApprovingGroupID": {
+                        "type": "string",
+                        "readOnly": true
+                    },
+                    "Status": {
+                        "$ref": "#/components/schemas/ApprovalStatus",
+                        "readOnly": true
+                    },
+                    "DateCreated": {
+                        "type": "string",
+                        "format": "date-time",
+                        "readOnly": true
+                    },
+                    "DateCompleted": {
+                        "type": "string",
+                        "format": "date-time",
+                        "readOnly": true
+                    },
+                    "Approver": {
+                        "allOf": [
+                            {
+                                "$ref": "#/components/schemas/User"
+                            }
+                        ],
+                        "readOnly": true
+                    },
+                    "Comments": {
+                        "type": "string",
+                        "readOnly": true
+                    }
+                }
+            },
+            "OrderReturnItem": {
+                "type": "object",
+                "example": {
+                    "LineItemID": "",
+                    "Quantity": 0,
+                    "RefundAmount": 0,
+                    "Comments": ""
+                },
+                "properties": {
+                    "LineItemID": {
+                        "type": "string"
+                    },
+                    "Quantity": {
+                        "type": "integer",
+                        "format": "int32",
+                        "default": 0,
+                        "minimum": 0
+                    },
+                    "RefundAmount": {
+                        "type": "number",
+                        "format": "float"
+                    },
+                    "Comments": {
+                        "type": "string",
+                        "maxLength": 500
                     }
                 }
             },
@@ -3346,11 +4222,13 @@
                                 "ID": "",
                                 "Name": "",
                                 "Description": "",
+                                "Returnable": false,
                                 "QuantityMultiplier": 0,
                                 "ShipWeight": 0,
                                 "ShipHeight": 0,
                                 "ShipWidth": 0,
                                 "ShipLength": 0,
+                                "DefaultSupplierID": "",
                                 "xp": {}
                             },
                             "Variant": {
@@ -3397,6 +4275,8 @@
                             },
                             "SupplierID": "",
                             "InventoryRecordID": "",
+                            "PriceScheduleID": "",
+                            "PriceOverridden": false,
                             "Specs": [
                                 {
                                     "SpecID": "",
@@ -3407,6 +4287,29 @@
                                     "PriceMarkup": 0
                                 }
                             ],
+                            "xp": {}
+                        }
+                    ],
+                    "OrderPromotions": [
+                        {
+                            "Amount": 0,
+                            "LineItemID": "",
+                            "ID": "",
+                            "LineItemLevel": false,
+                            "Code": "",
+                            "Name": "",
+                            "RedemptionLimit": 0,
+                            "RedemptionLimitPerUser": 0,
+                            "RedemptionCount": 0,
+                            "Description": "",
+                            "FinePrint": "",
+                            "StartDate": "2018-01-01T00:00:00-06:00",
+                            "ExpirationDate": "2018-01-01T00:00:00-06:00",
+                            "EligibleExpression": "",
+                            "ValueExpression": "",
+                            "CanCombine": false,
+                            "AllowAllBuyers": false,
+                            "OwnerID": "",
                             "xp": {}
                         }
                     ],
@@ -3484,6 +4387,12 @@
                         "type": "array",
                         "items": {
                             "$ref": "#/components/schemas/LineItem"
+                        }
+                    },
+                    "OrderPromotions": {
+                        "type": "array",
+                        "items": {
+                            "$ref": "#/components/schemas/OrderPromotion"
                         }
                     },
                     "ShipEstimateResponse": {
@@ -3669,6 +4578,7 @@
                     "Currency": "",
                     "Amount": 0,
                     "Accepted": false,
+                    "OrderReturnID": "",
                     "xp": {},
                     "Transactions": [
                         {
@@ -3717,12 +4627,15 @@
                     "Amount": {
                         "type": "number",
                         "format": "float",
-                        "description": "If null, Payment applies to order total (or total of specific Line Items, if set), minus any other Payments where Amount is set.",
-                        "minimum": 0.0
+                        "description": "If null, Payment applies to order total (or total of specific Line Items, if set), minus any other Payments where Amount is set. Value can only be negative if processing a payment for an OrderReturn."
                     },
                     "Accepted": {
                         "type": "boolean",
                         "description": "All payments must be Accepted to submit an order."
+                    },
+                    "OrderReturnID": {
+                        "type": "string",
+                        "description": "Used to indicate this payment is associated with an Order Return."
                     },
                     "xp": {
                         "type": "object"
@@ -3798,7 +4711,8 @@
                 "type": "object",
                 "example": {
                     "Quantity": 0,
-                    "Price": 0
+                    "Price": 0,
+                    "SalePrice": 0
                 },
                 "properties": {
                     "Quantity": {
@@ -3811,6 +4725,11 @@
                         "type": "number",
                         "format": "float",
                         "description": "Price per unit."
+                    },
+                    "SalePrice": {
+                        "type": "number",
+                        "format": "float",
+                        "description": "Optional. Sale Price per unit. If the current date/time is within the PriceSchedule SaleStart and SaleEnd, this SalePrice will be used."
                     }
                 }
             },
@@ -3839,10 +4758,14 @@
                     "PriceBreaks": [
                         {
                             "Quantity": 0,
-                            "Price": 0
+                            "Price": 0,
+                            "SalePrice": 0
                         }
                     ],
                     "Currency": "",
+                    "SaleStart": "2018-01-01T00:00:00-06:00",
+                    "SaleEnd": "2018-01-01T00:00:00-06:00",
+                    "IsOnSale": false,
                     "xp": {}
                 },
                 "properties": {
@@ -3897,6 +4820,23 @@
                         "description": "We recommend using ISO-4217 Currency Codes for compatibility with tax and payment processors.",
                         "maxLength": 100
                     },
+                    "SaleStart": {
+                        "type": "string",
+                        "format": "date-time",
+                        "default": null,
+                        "description": "Optional. Starting date/time for PriceBreak.SalePrice to be used as the price for the LineItem. Requires that the PriceBreak.SalePrice value is set."
+                    },
+                    "SaleEnd": {
+                        "type": "string",
+                        "format": "date-time",
+                        "default": null,
+                        "description": "Optional. Ending date/time for PriceBreak.SalePrice to be used as the price for the LineItem. Requires that the PriceBreak.SalePrice value is set."
+                    },
+                    "IsOnSale": {
+                        "type": "boolean",
+                        "readOnly": true,
+                        "description": "Is the price currently a sale price. Determined by the SaleStart and SaleEnd date/times and the presence of PriceBreak.SalePrice value being set."
+                    },
                     "xp": {
                         "type": "object"
                     }
@@ -3930,6 +4870,7 @@
                     },
                     "DefaultSupplierID": "",
                     "AllSuppliersCanSell": false,
+                    "Returnable": false,
                     "xp": {}
                 },
                 "properties": {
@@ -4014,6 +4955,9 @@
                     "AllSuppliersCanSell": {
                         "type": "boolean",
                         "description": "If true, all suppliers are eligible to opt into selling this product."
+                    },
+                    "Returnable": {
+                        "type": "boolean"
                     },
                     "xp": {
                         "type": "object"
@@ -4326,7 +5270,7 @@
                     "ID": "",
                     "Name": "",
                     "Roles": [
-                        "DevCenter"
+                        "ApiClientAdmin"
                     ],
                     "CustomRoles": [
                         ""
@@ -4400,6 +5344,52 @@
                     },
                     "UserGroupID": {
                         "type": "string"
+                    }
+                }
+            },
+            "SellerApprovalRule": {
+                "type": "object",
+                "example": {
+                    "OwnerID": "",
+                    "ApprovalType": "Order",
+                    "ID": "",
+                    "Name": "",
+                    "Description": "",
+                    "ApprovingGroupID": "",
+                    "RuleExpression": "",
+                    "xp": {}
+                },
+                "properties": {
+                    "OwnerID": {
+                        "type": "string",
+                        "description": "ID of the organization who owns the rule. Only the MPO can write a value other than their own organization ID. The value is used to look up the ApprovingGroupID."
+                    },
+                    "ApprovalType": {
+                        "$ref": "#/components/schemas/ApprovalType",
+                        "description": "OrderReturn is the only Type supported currently. We plan to expand to Orders in the future."
+                    },
+                    "ID": {
+                        "type": "string",
+                        "maxLength": 100
+                    },
+                    "Name": {
+                        "type": "string",
+                        "maxLength": 100
+                    },
+                    "Description": {
+                        "type": "string",
+                        "maxLength": 2000
+                    },
+                    "ApprovingGroupID": {
+                        "type": "string"
+                    },
+                    "RuleExpression": {
+                        "type": "string",
+                        "description": "The expression evaluated to determine an order requires approval. See Rules Engine documentation for formatting details.",
+                        "maxLength": 400
+                    },
+                    "xp": {
+                        "type": "object"
                     }
                 }
             },
@@ -4639,11 +5629,13 @@
                         "ID": "",
                         "Name": "",
                         "Description": "",
+                        "Returnable": false,
                         "QuantityMultiplier": 0,
                         "ShipWeight": 0,
                         "ShipHeight": 0,
                         "ShipWidth": 0,
                         "ShipLength": 0,
+                        "DefaultSupplierID": "",
                         "xp": {}
                     },
                     "Variant": {
@@ -5333,7 +6325,7 @@
                     "Url": "",
                     "HashKey": "",
                     "ElevatedRoles": [
-                        "DevCenter"
+                        "ApiClientAdmin"
                     ],
                     "ConfigData": {},
                     "BeforeProcessRequest": false,
@@ -5433,6 +6425,7 @@
                     "Address",
                     "Variant",
                     "Order",
+                    "OrderReturn",
                     "LineItem",
                     "CostCenter",
                     "CreditCard",
@@ -5448,6 +6441,7 @@
                     "User",
                     "Promotion",
                     "ApprovalRule",
+                    "SellerApprovalRule",
                     "Catalog",
                     "ProductFacet",
                     "MessageSender",
@@ -5628,7 +6622,7 @@
                     {
                         "name": "filters",
                         "in": "query",
-                        "description": "Any additional key/value pairs passed in the query string are interpretted as filters. Valid keys are top-level properties of the returned model or 'xp.???'",
+                        "description": "An object or dictionary representing key/value pairs to apply as filters. Valid keys are top-level properties of the returned model or 'xp.???'",
                         "required": false,
                         "schema": {
                             "type": "object"
@@ -5994,7 +6988,7 @@
                     {
                         "name": "filters",
                         "in": "query",
-                        "description": "Any additional key/value pairs passed in the query string are interpretted as filters. Valid keys are top-level properties of the returned model or 'xp.???'",
+                        "description": "An object or dictionary representing key/value pairs to apply as filters. Valid keys are top-level properties of the returned model or 'xp.???'",
                         "required": false,
                         "schema": {
                             "type": "object"
@@ -6350,7 +7344,7 @@
                     {
                         "name": "filters",
                         "in": "query",
-                        "description": "Any additional key/value pairs passed in the query string are interpretted as filters. Valid keys are top-level properties of the returned model or 'xp.???'",
+                        "description": "An object or dictionary representing key/value pairs to apply as filters. Valid keys are top-level properties of the returned model or 'xp.???'",
                         "required": false,
                         "schema": {
                             "type": "object"
@@ -6728,6 +7722,361 @@
                 ]
             }
         },
+        "/approvalrules": {
+            "get": {
+                "responses": {
+                    "200": {
+                        "description": "",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "properties": {
+                                        "Items": {
+                                            "type": "array",
+                                            "items": {
+                                                "$ref": "#/components/schemas/SellerApprovalRule"
+                                            }
+                                        },
+                                        "Meta": {
+                                            "$ref": "#/components/schemas/Meta"
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                },
+                "operationId": "SellerApprovalRules.List",
+                "tags": [
+                    "Seller Approval Rules"
+                ],
+                "parameters": [
+                    {
+                        "name": "search",
+                        "in": "query",
+                        "description": "Word or phrase to search for.",
+                        "required": false,
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "name": "searchOn",
+                        "in": "query",
+                        "description": "Comma-delimited list of fields to search on.",
+                        "required": false,
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "type": "string",
+                                "enum": [
+                                    "ID",
+                                    "Name",
+                                    "Description",
+                                    "RuleExpression"
+                                ]
+                            }
+                        }
+                    },
+                    {
+                        "name": "sortBy",
+                        "in": "query",
+                        "description": "Comma-delimited list of fields to sort by.",
+                        "required": false,
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "type": "string",
+                                "enum": [
+                                    "Name",
+                                    "ID",
+                                    "ApprovingGroupID",
+                                    "RuleExpression",
+                                    "!Name",
+                                    "!ID",
+                                    "!ApprovingGroupID",
+                                    "!RuleExpression"
+                                ]
+                            }
+                        }
+                    },
+                    {
+                        "name": "page",
+                        "in": "query",
+                        "description": "Page of results to return. Default: 1. When paginating through many items (> page 30), we recommend the \"Last ID\" method, as outlined in the Advanced Querying documentation.",
+                        "required": false,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    },
+                    {
+                        "name": "pageSize",
+                        "in": "query",
+                        "description": "Number of results to return per page. Default: 20, max: 100.",
+                        "required": false,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    },
+                    {
+                        "name": "filters",
+                        "in": "query",
+                        "description": "An object or dictionary representing key/value pairs to apply as filters. Valid keys are top-level properties of the returned model or 'xp.???'",
+                        "required": false,
+                        "schema": {
+                            "type": "object"
+                        }
+                    }
+                ],
+                "summary": "Get a list of seller approval rules.",
+                "description": "",
+                "security": [
+                    {
+                        "OAuth2": [
+                            "FullAccess",
+                            "OrderAdmin",
+                            "ApprovalRuleReader"
+                        ]
+                    }
+                ]
+            },
+            "post": {
+                "responses": {
+                    "201": {
+                        "description": "If ID is provided and an object with that ID already exists, a 409 (conflict) error is returned.",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/SellerApprovalRule"
+                                }
+                            }
+                        }
+                    }
+                },
+                "operationId": "SellerApprovalRules.Create",
+                "tags": [
+                    "Seller Approval Rules"
+                ],
+                "requestBody": {
+                    "required": true,
+                    "description": "",
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "allOf": [
+                                    {
+                                        "$ref": "#/components/schemas/SellerApprovalRule"
+                                    }
+                                ],
+                                "required": [
+                                    "ApprovalType",
+                                    "ApprovingGroupID",
+                                    "RuleExpression"
+                                ]
+                            }
+                        }
+                    }
+                },
+                "summary": "Create a new seller approval rule.",
+                "description": "If ID is provided and an object with that ID already exists, a 409 (conflict) error is returned.",
+                "security": [
+                    {
+                        "OAuth2": [
+                            "FullAccess",
+                            "OrderAdmin"
+                        ]
+                    }
+                ]
+            }
+        },
+        "/approvalrules/{approvalRuleID}": {
+            "get": {
+                "responses": {
+                    "200": {
+                        "description": "",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/SellerApprovalRule"
+                                }
+                            }
+                        }
+                    }
+                },
+                "operationId": "SellerApprovalRules.Get",
+                "tags": [
+                    "Seller Approval Rules"
+                ],
+                "parameters": [
+                    {
+                        "name": "approvalRuleID",
+                        "in": "path",
+                        "description": "ID of the approval rule.",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "summary": "Get a single seller approval rule.",
+                "description": "",
+                "security": [
+                    {
+                        "OAuth2": [
+                            "FullAccess",
+                            "OrderAdmin",
+                            "ApprovalRuleReader"
+                        ]
+                    }
+                ]
+            },
+            "put": {
+                "responses": {
+                    "200": {
+                        "description": "If an object with the same ID already exists, it will be overwritten.",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/SellerApprovalRule"
+                                }
+                            }
+                        }
+                    }
+                },
+                "operationId": "SellerApprovalRules.Save",
+                "tags": [
+                    "Seller Approval Rules"
+                ],
+                "requestBody": {
+                    "required": true,
+                    "description": "",
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "allOf": [
+                                    {
+                                        "$ref": "#/components/schemas/SellerApprovalRule"
+                                    }
+                                ],
+                                "required": [
+                                    "ApprovalType",
+                                    "ApprovingGroupID",
+                                    "RuleExpression"
+                                ]
+                            }
+                        }
+                    }
+                },
+                "parameters": [
+                    {
+                        "name": "approvalRuleID",
+                        "in": "path",
+                        "description": "ID of the approval rule.",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "summary": "Create or update a seller approval rule.",
+                "description": "If an object with the same ID already exists, it will be overwritten.",
+                "security": [
+                    {
+                        "OAuth2": [
+                            "FullAccess",
+                            "OrderAdmin"
+                        ]
+                    }
+                ]
+            },
+            "delete": {
+                "responses": {
+                    "204": {
+                        "description": ""
+                    }
+                },
+                "operationId": "SellerApprovalRules.Delete",
+                "tags": [
+                    "Seller Approval Rules"
+                ],
+                "parameters": [
+                    {
+                        "name": "approvalRuleID",
+                        "in": "path",
+                        "description": "ID of the approval rule.",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "summary": "Delete a seller approval rule.",
+                "description": "",
+                "security": [
+                    {
+                        "OAuth2": [
+                            "FullAccess",
+                            "OrderAdmin"
+                        ]
+                    }
+                ]
+            },
+            "patch": {
+                "responses": {
+                    "200": {
+                        "description": "",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/SellerApprovalRule"
+                                }
+                            }
+                        }
+                    }
+                },
+                "operationId": "SellerApprovalRules.Patch",
+                "tags": [
+                    "Seller Approval Rules"
+                ],
+                "requestBody": {
+                    "required": true,
+                    "description": "",
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "allOf": [
+                                    {
+                                        "$ref": "#/components/schemas/SellerApprovalRule"
+                                    }
+                                ]
+                            }
+                        }
+                    }
+                },
+                "parameters": [
+                    {
+                        "name": "approvalRuleID",
+                        "in": "path",
+                        "description": "ID of the approval rule.",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "summary": "Partially update a seller approval rule.",
+                "description": "",
+                "security": [
+                    {
+                        "OAuth2": [
+                            "FullAccess",
+                            "OrderAdmin"
+                        ]
+                    }
+                ]
+            }
+        },
         "/buyers": {
             "get": {
                 "responses": {
@@ -6824,7 +8173,7 @@
                     {
                         "name": "filters",
                         "in": "query",
-                        "description": "Any additional key/value pairs passed in the query string are interpretted as filters. Valid keys are top-level properties of the returned model or 'xp.???'",
+                        "description": "An object or dictionary representing key/value pairs to apply as filters. Valid keys are top-level properties of the returned model or 'xp.???'",
                         "required": false,
                         "schema": {
                             "type": "object"
@@ -7208,7 +8557,7 @@
                     {
                         "name": "filters",
                         "in": "query",
-                        "description": "Any additional key/value pairs passed in the query string are interpretted as filters. Valid keys are top-level properties of the returned model or 'xp.???'",
+                        "description": "An object or dictionary representing key/value pairs to apply as filters. Valid keys are top-level properties of the returned model or 'xp.???'",
                         "required": false,
                         "schema": {
                             "type": "object"
@@ -7902,7 +9251,7 @@
                     {
                         "name": "filters",
                         "in": "query",
-                        "description": "Any additional key/value pairs passed in the query string are interpretted as filters. Valid keys are top-level properties of the returned model or 'xp.???'",
+                        "description": "An object or dictionary representing key/value pairs to apply as filters. Valid keys are top-level properties of the returned model or 'xp.???'",
                         "required": false,
                         "schema": {
                             "type": "object"
@@ -8306,7 +9655,7 @@
                     {
                         "name": "filters",
                         "in": "query",
-                        "description": "Any additional key/value pairs passed in the query string are interpretted as filters. Valid keys are top-level properties of the returned model or 'xp.???'",
+                        "description": "An object or dictionary representing key/value pairs to apply as filters. Valid keys are top-level properties of the returned model or 'xp.???'",
                         "required": false,
                         "schema": {
                             "type": "object"
@@ -8933,7 +10282,7 @@
                     {
                         "name": "filters",
                         "in": "query",
-                        "description": "Any additional key/value pairs passed in the query string are interpretted as filters. Valid keys are top-level properties of the returned model or 'xp.???'",
+                        "description": "An object or dictionary representing key/value pairs to apply as filters. Valid keys are top-level properties of the returned model or 'xp.???'",
                         "required": false,
                         "schema": {
                             "type": "object"
@@ -9546,7 +10895,7 @@
                     {
                         "name": "filters",
                         "in": "query",
-                        "description": "Any additional key/value pairs passed in the query string are interpretted as filters. Valid keys are top-level properties of the returned model or 'xp.???'",
+                        "description": "An object or dictionary representing key/value pairs to apply as filters. Valid keys are top-level properties of the returned model or 'xp.???'",
                         "required": false,
                         "schema": {
                             "type": "object"
@@ -9670,7 +11019,7 @@
                     {
                         "name": "filters",
                         "in": "query",
-                        "description": "Any additional key/value pairs passed in the query string are interpretted as filters. Valid keys are top-level properties of the returned model or 'xp.???'",
+                        "description": "An object or dictionary representing key/value pairs to apply as filters. Valid keys are top-level properties of the returned model or 'xp.???'",
                         "required": false,
                         "schema": {
                             "type": "object"
@@ -10292,7 +11641,7 @@
                     {
                         "name": "filters",
                         "in": "query",
-                        "description": "Any additional key/value pairs passed in the query string are interpretted as filters. Valid keys are top-level properties of the returned model or 'xp.???'",
+                        "description": "An object or dictionary representing key/value pairs to apply as filters. Valid keys are top-level properties of the returned model or 'xp.???'",
                         "required": false,
                         "schema": {
                             "type": "object"
@@ -10903,7 +12252,7 @@
                     {
                         "name": "filters",
                         "in": "query",
-                        "description": "Any additional key/value pairs passed in the query string are interpretted as filters. Valid keys are top-level properties of the returned model or 'xp.???'",
+                        "description": "An object or dictionary representing key/value pairs to apply as filters. Valid keys are top-level properties of the returned model or 'xp.???'",
                         "required": false,
                         "schema": {
                             "type": "object"
@@ -11443,7 +12792,7 @@
                     {
                         "name": "filters",
                         "in": "query",
-                        "description": "Any additional key/value pairs passed in the query string are interpretted as filters. Valid keys are top-level properties of the returned model or 'xp.???'",
+                        "description": "An object or dictionary representing key/value pairs to apply as filters. Valid keys are top-level properties of the returned model or 'xp.???'",
                         "required": false,
                         "schema": {
                             "type": "object"
@@ -11850,7 +13199,7 @@
                     {
                         "name": "filters",
                         "in": "query",
-                        "description": "Any additional key/value pairs passed in the query string are interpretted as filters. Valid keys are top-level properties of the returned model or 'xp.???'",
+                        "description": "An object or dictionary representing key/value pairs to apply as filters. Valid keys are top-level properties of the returned model or 'xp.???'",
                         "required": false,
                         "schema": {
                             "type": "object"
@@ -12975,7 +14324,7 @@
                     {
                         "name": "filters",
                         "in": "query",
-                        "description": "Any additional key/value pairs passed in the query string are interpretted as filters. Valid keys are top-level properties of the returned model or 'xp.???'",
+                        "description": "An object or dictionary representing key/value pairs to apply as filters. Valid keys are top-level properties of the returned model or 'xp.???'",
                         "required": false,
                         "schema": {
                             "type": "object"
@@ -13322,7 +14671,7 @@
                     {
                         "name": "filters",
                         "in": "query",
-                        "description": "Any additional key/value pairs passed in the query string are interpretted as filters. Valid keys are top-level properties of the returned model or 'xp.???'",
+                        "description": "An object or dictionary representing key/value pairs to apply as filters. Valid keys are top-level properties of the returned model or 'xp.???'",
                         "required": false,
                         "schema": {
                             "type": "object"
@@ -13672,7 +15021,7 @@
                     {
                         "name": "filters",
                         "in": "query",
-                        "description": "Any additional key/value pairs passed in the query string are interpretted as filters. Valid keys are top-level properties of the returned model or 'xp.???'",
+                        "description": "An object or dictionary representing key/value pairs to apply as filters. Valid keys are top-level properties of the returned model or 'xp.???'",
                         "required": false,
                         "schema": {
                             "type": "object"
@@ -13720,7 +15069,6 @@
                                     }
                                 ],
                                 "required": [
-                                    "ElevatedRoles",
                                     "CustomImplementationUrl",
                                     "Name",
                                     "HashKey"
@@ -13811,7 +15159,6 @@
                                     }
                                 ],
                                 "required": [
-                                    "ElevatedRoles",
                                     "CustomImplementationUrl",
                                     "Name",
                                     "HashKey"
@@ -13929,6 +15276,176 @@
                 ]
             }
         },
+        "/lineitems/{direction}": {
+            "get": {
+                "responses": {
+                    "200": {
+                        "description": "",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "properties": {
+                                        "Items": {
+                                            "type": "array",
+                                            "items": {
+                                                "$ref": "#/components/schemas/ExtendedLineItem"
+                                            }
+                                        },
+                                        "Meta": {
+                                            "$ref": "#/components/schemas/Meta"
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                },
+                "operationId": "LineItems.ListAcrossOrders",
+                "tags": [
+                    "Line Items"
+                ],
+                "parameters": [
+                    {
+                        "name": "direction",
+                        "in": "path",
+                        "description": "Direction of the order, from the current user's perspective. Possible values: incoming, outgoing, all.",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/components/schemas/OrderDirection"
+                        }
+                    },
+                    {
+                        "name": "buyerID",
+                        "in": "query",
+                        "description": "ID of the buyer.",
+                        "required": false,
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "name": "supplierID",
+                        "in": "query",
+                        "description": "ID of the supplier.",
+                        "required": false,
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "name": "from",
+                        "in": "query",
+                        "description": "Lower bound of date range that the order was created.",
+                        "required": false,
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "name": "to",
+                        "in": "query",
+                        "description": "Upper bound of date range that the order was created.",
+                        "required": false,
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "name": "search",
+                        "in": "query",
+                        "description": "Word or phrase to search for.",
+                        "required": false,
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "name": "searchOn",
+                        "in": "query",
+                        "description": "Comma-delimited list of fields to search on.",
+                        "required": false,
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "type": "string",
+                                "enum": [
+                                    "ID",
+                                    "ProductID"
+                                ]
+                            }
+                        }
+                    },
+                    {
+                        "name": "searchType",
+                        "in": "query",
+                        "description": "Type of search to perform. Possible values: AnyTerm (default), AllTermsAnyField, AllTermsSameField, ExactPhrase, ExactPhrasePrefix.",
+                        "required": false,
+                        "schema": {
+                            "$ref": "#/components/schemas/SearchType"
+                        }
+                    },
+                    {
+                        "name": "sortBy",
+                        "in": "query",
+                        "description": "Comma-delimited list of fields to sort by.",
+                        "required": false,
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "type": "string",
+                                "enum": [
+                                    "DateAdded",
+                                    "ID",
+                                    "ProductID",
+                                    "!DateAdded",
+                                    "!ID",
+                                    "!ProductID"
+                                ]
+                            }
+                        }
+                    },
+                    {
+                        "name": "page",
+                        "in": "query",
+                        "description": "Page of results to return. Default: 1. When paginating through many items (> page 30), we recommend the \"Last ID\" method, as outlined in the Advanced Querying documentation.",
+                        "required": false,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    },
+                    {
+                        "name": "pageSize",
+                        "in": "query",
+                        "description": "Number of results to return per page. Default: 20, max: 100.",
+                        "required": false,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    },
+                    {
+                        "name": "filters",
+                        "in": "query",
+                        "description": "An object or dictionary representing key/value pairs to apply as filters. Valid keys are top-level properties of the returned model or 'xp.???'",
+                        "required": false,
+                        "schema": {
+                            "type": "object"
+                        }
+                    }
+                ],
+                "summary": "Get a list of line item across orders.",
+                "description": "",
+                "security": [
+                    {
+                        "OAuth2": [
+                            "FullAccess",
+                            "OrderAdmin",
+                            "OrderReader"
+                        ]
+                    }
+                ]
+            }
+        },
         "/locales": {
             "get": {
                 "responses": {
@@ -14021,7 +15538,7 @@
                     {
                         "name": "filters",
                         "in": "query",
-                        "description": "Any additional key/value pairs passed in the query string are interpretted as filters. Valid keys are top-level properties of the returned model or 'xp.???'",
+                        "description": "An object or dictionary representing key/value pairs to apply as filters. Valid keys are top-level properties of the returned model or 'xp.???'",
                         "required": false,
                         "schema": {
                             "type": "object"
@@ -14725,7 +16242,7 @@
                     {
                         "name": "filters",
                         "in": "query",
-                        "description": "Any additional key/value pairs passed in the query string are interpretted as filters. Valid keys are top-level properties of the returned model or 'xp.???'",
+                        "description": "An object or dictionary representing key/value pairs to apply as filters. Valid keys are top-level properties of the returned model or 'xp.???'",
                         "required": false,
                         "schema": {
                             "type": "object"
@@ -15074,7 +16591,7 @@
                     {
                         "name": "filters",
                         "in": "query",
-                        "description": "Any additional key/value pairs passed in the query string are interpretted as filters. Valid keys are top-level properties of the returned model or 'xp.???'",
+                        "description": "An object or dictionary representing key/value pairs to apply as filters. Valid keys are top-level properties of the returned model or 'xp.???'",
                         "required": false,
                         "schema": {
                             "type": "object"
@@ -15265,7 +16782,7 @@
                     {
                         "name": "filters",
                         "in": "query",
-                        "description": "Any additional key/value pairs passed in the query string are interpretted as filters. Valid keys are top-level properties of the returned model or 'xp.???'",
+                        "description": "An object or dictionary representing key/value pairs to apply as filters. Valid keys are top-level properties of the returned model or 'xp.???'",
                         "required": false,
                         "schema": {
                             "type": "object"
@@ -15429,7 +16946,7 @@
                     {
                         "name": "filters",
                         "in": "query",
-                        "description": "Any additional key/value pairs passed in the query string are interpretted as filters. Valid keys are top-level properties of the returned model or 'xp.???'",
+                        "description": "An object or dictionary representing key/value pairs to apply as filters. Valid keys are top-level properties of the returned model or 'xp.???'",
                         "required": false,
                         "schema": {
                             "type": "object"
@@ -15550,7 +17067,7 @@
                     {
                         "name": "filters",
                         "in": "query",
-                        "description": "Any additional key/value pairs passed in the query string are interpretted as filters. Valid keys are top-level properties of the returned model or 'xp.???'",
+                        "description": "An object or dictionary representing key/value pairs to apply as filters. Valid keys are top-level properties of the returned model or 'xp.???'",
                         "required": false,
                         "schema": {
                             "type": "object"
@@ -15943,7 +17460,7 @@
                     {
                         "name": "filters",
                         "in": "query",
-                        "description": "Any additional key/value pairs passed in the query string are interpretted as filters. Valid keys are top-level properties of the returned model or 'xp.???'",
+                        "description": "An object or dictionary representing key/value pairs to apply as filters. Valid keys are top-level properties of the returned model or 'xp.???'",
                         "required": false,
                         "schema": {
                             "type": "object"
@@ -16140,7 +17657,7 @@
                     {
                         "name": "filters",
                         "in": "query",
-                        "description": "Any additional key/value pairs passed in the query string are interpretted as filters. Valid keys are top-level properties of the returned model or 'xp.???'",
+                        "description": "An object or dictionary representing key/value pairs to apply as filters. Valid keys are top-level properties of the returned model or 'xp.???'",
                         "required": false,
                         "schema": {
                             "type": "object"
@@ -16333,7 +17850,7 @@
                     {
                         "name": "filters",
                         "in": "query",
-                        "description": "Any additional key/value pairs passed in the query string are interpretted as filters. Valid keys are top-level properties of the returned model or 'xp.???'",
+                        "description": "An object or dictionary representing key/value pairs to apply as filters. Valid keys are top-level properties of the returned model or 'xp.???'",
                         "required": false,
                         "schema": {
                             "type": "object"
@@ -16526,7 +18043,7 @@
                     {
                         "name": "filters",
                         "in": "query",
-                        "description": "Any additional key/value pairs passed in the query string are interpretted as filters. Valid keys are top-level properties of the returned model or 'xp.???'",
+                        "description": "An object or dictionary representing key/value pairs to apply as filters. Valid keys are top-level properties of the returned model or 'xp.???'",
                         "required": false,
                         "schema": {
                             "type": "object"
@@ -16710,7 +18227,7 @@
                     {
                         "name": "filters",
                         "in": "query",
-                        "description": "Any additional key/value pairs passed in the query string are interpretted as filters. Valid keys are top-level properties of the returned model or 'xp.???'",
+                        "description": "An object or dictionary representing key/value pairs to apply as filters. Valid keys are top-level properties of the returned model or 'xp.???'",
                         "required": false,
                         "schema": {
                             "type": "object"
@@ -16890,7 +18407,7 @@
                     {
                         "name": "filters",
                         "in": "query",
-                        "description": "Any additional key/value pairs passed in the query string are interpretted as filters. Valid keys are top-level properties of the returned model or 'xp.???'",
+                        "description": "An object or dictionary representing key/value pairs to apply as filters. Valid keys are top-level properties of the returned model or 'xp.???'",
                         "required": false,
                         "schema": {
                             "type": "object"
@@ -17107,7 +18624,7 @@
                     {
                         "name": "filters",
                         "in": "query",
-                        "description": "Any additional key/value pairs passed in the query string are interpretted as filters. Valid keys are top-level properties of the returned model or 'xp.???'",
+                        "description": "An object or dictionary representing key/value pairs to apply as filters. Valid keys are top-level properties of the returned model or 'xp.???'",
                         "required": false,
                         "schema": {
                             "type": "object"
@@ -17243,7 +18760,7 @@
                     {
                         "name": "filters",
                         "in": "query",
-                        "description": "Any additional key/value pairs passed in the query string are interpretted as filters. Valid keys are top-level properties of the returned model or 'xp.???'",
+                        "description": "An object or dictionary representing key/value pairs to apply as filters. Valid keys are top-level properties of the returned model or 'xp.???'",
                         "required": false,
                         "schema": {
                             "type": "object"
@@ -17429,7 +18946,7 @@
                     {
                         "name": "filters",
                         "in": "query",
-                        "description": "Any additional key/value pairs passed in the query string are interpretted as filters. Valid keys are top-level properties of the returned model or 'xp.???'",
+                        "description": "An object or dictionary representing key/value pairs to apply as filters. Valid keys are top-level properties of the returned model or 'xp.???'",
                         "required": false,
                         "schema": {
                             "type": "object"
@@ -17543,7 +19060,7 @@
                     {
                         "name": "filters",
                         "in": "query",
-                        "description": "Any additional key/value pairs passed in the query string are interpretted as filters. Valid keys are top-level properties of the returned model or 'xp.???'",
+                        "description": "An object or dictionary representing key/value pairs to apply as filters. Valid keys are top-level properties of the returned model or 'xp.???'",
                         "required": false,
                         "schema": {
                             "type": "object"
@@ -17698,7 +19215,7 @@
                     {
                         "name": "filters",
                         "in": "query",
-                        "description": "Any additional key/value pairs passed in the query string are interpretted as filters. Valid keys are top-level properties of the returned model or 'xp.???'",
+                        "description": "An object or dictionary representing key/value pairs to apply as filters. Valid keys are top-level properties of the returned model or 'xp.???'",
                         "required": false,
                         "schema": {
                             "type": "object"
@@ -17811,7 +19328,7 @@
                     {
                         "name": "filters",
                         "in": "query",
-                        "description": "Any additional key/value pairs passed in the query string are interpretted as filters. Valid keys are top-level properties of the returned model or 'xp.???'",
+                        "description": "An object or dictionary representing key/value pairs to apply as filters. Valid keys are top-level properties of the returned model or 'xp.???'",
                         "required": false,
                         "schema": {
                             "type": "object"
@@ -18398,7 +19915,7 @@
                     {
                         "name": "filters",
                         "in": "query",
-                        "description": "Any additional key/value pairs passed in the query string are interpretted as filters. Valid keys are top-level properties of the returned model or 'xp.???'",
+                        "description": "An object or dictionary representing key/value pairs to apply as filters. Valid keys are top-level properties of the returned model or 'xp.???'",
                         "required": false,
                         "schema": {
                             "type": "object"
@@ -18546,7 +20063,7 @@
                     {
                         "name": "filters",
                         "in": "query",
-                        "description": "Any additional key/value pairs passed in the query string are interpretted as filters. Valid keys are top-level properties of the returned model or 'xp.???'",
+                        "description": "An object or dictionary representing key/value pairs to apply as filters. Valid keys are top-level properties of the returned model or 'xp.???'",
                         "required": false,
                         "schema": {
                             "type": "object"
@@ -18559,6 +20076,7 @@
                     {
                         "OAuth2": [
                             "FullAccess",
+                            "OpenIDConnectAdmin",
                             "OpenIDConnectReader"
                         ]
                     }
@@ -18610,8 +20128,7 @@
                     {
                         "OAuth2": [
                             "FullAccess",
-                            "OpenIDConnectAdmin",
-                            "OpenIDConnectReader"
+                            "OpenIDConnectAdmin"
                         ]
                     }
                 ]
@@ -18652,6 +20169,7 @@
                     {
                         "OAuth2": [
                             "FullAccess",
+                            "OpenIDConnectAdmin",
                             "OpenIDConnectReader"
                         ]
                     }
@@ -18714,8 +20232,7 @@
                     {
                         "OAuth2": [
                             "FullAccess",
-                            "OpenIDConnectAdmin",
-                            "OpenIDConnectReader"
+                            "OpenIDConnectAdmin"
                         ]
                     }
                 ]
@@ -18747,8 +20264,7 @@
                     {
                         "OAuth2": [
                             "FullAccess",
-                            "OpenIDConnectAdmin",
-                            "OpenIDConnectReader"
+                            "OpenIDConnectAdmin"
                         ]
                     }
                 ]
@@ -18802,8 +20318,932 @@
                     {
                         "OAuth2": [
                             "FullAccess",
-                            "OpenIDConnectAdmin",
-                            "OpenIDConnectReader"
+                            "OpenIDConnectAdmin"
+                        ]
+                    }
+                ]
+            }
+        },
+        "/orderreturns": {
+            "get": {
+                "responses": {
+                    "200": {
+                        "description": "",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "properties": {
+                                        "Items": {
+                                            "type": "array",
+                                            "items": {
+                                                "$ref": "#/components/schemas/OrderReturn"
+                                            }
+                                        },
+                                        "Meta": {
+                                            "$ref": "#/components/schemas/Meta"
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                },
+                "operationId": "OrderReturns.List",
+                "tags": [
+                    "Order Returns"
+                ],
+                "parameters": [
+                    {
+                        "name": "approvable",
+                        "in": "query",
+                        "description": "Only returns orders awaiting the user's approval if true.",
+                        "required": false,
+                        "schema": {
+                            "type": "boolean"
+                        }
+                    },
+                    {
+                        "name": "search",
+                        "in": "query",
+                        "description": "Word or phrase to search for.",
+                        "required": false,
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "name": "searchOn",
+                        "in": "query",
+                        "description": "Comma-delimited list of fields to search on.",
+                        "required": false,
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "type": "string",
+                                "enum": []
+                            }
+                        }
+                    },
+                    {
+                        "name": "sortBy",
+                        "in": "query",
+                        "description": "Comma-delimited list of fields to sort by.",
+                        "required": false,
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "type": "string",
+                                "enum": [
+                                    "DateSubmitted",
+                                    "DateCreated",
+                                    "DateApproved",
+                                    "DateDeclined",
+                                    "DateCanceled",
+                                    "DateCompleted",
+                                    "LastUpdated",
+                                    "!DateSubmitted",
+                                    "!DateCreated",
+                                    "!DateApproved",
+                                    "!DateDeclined",
+                                    "!DateCanceled",
+                                    "!DateCompleted",
+                                    "!LastUpdated"
+                                ]
+                            }
+                        }
+                    },
+                    {
+                        "name": "page",
+                        "in": "query",
+                        "description": "Page of results to return. Default: 1. When paginating through many items (> page 30), we recommend the \"Last ID\" method, as outlined in the Advanced Querying documentation.",
+                        "required": false,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    },
+                    {
+                        "name": "pageSize",
+                        "in": "query",
+                        "description": "Number of results to return per page. Default: 20, max: 100.",
+                        "required": false,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    },
+                    {
+                        "name": "filters",
+                        "in": "query",
+                        "description": "An object or dictionary representing key/value pairs to apply as filters. Valid keys are top-level properties of the returned model or 'xp.???'",
+                        "required": false,
+                        "schema": {
+                            "type": "object"
+                        }
+                    }
+                ],
+                "summary": "Get a list of order returns.",
+                "description": "",
+                "security": [
+                    {
+                        "OAuth2": [
+                            "FullAccess",
+                            "OrderAdmin",
+                            "Shopper",
+                            "OrderReader"
+                        ]
+                    }
+                ]
+            },
+            "post": {
+                "responses": {
+                    "201": {
+                        "description": "If ID is provided and an object with that ID already exists, a 409 (conflict) error is returned.",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/OrderReturn"
+                                }
+                            }
+                        }
+                    }
+                },
+                "operationId": "OrderReturns.Create",
+                "tags": [
+                    "Order Returns"
+                ],
+                "requestBody": {
+                    "required": true,
+                    "description": "",
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "allOf": [
+                                    {
+                                        "$ref": "#/components/schemas/OrderReturn"
+                                    }
+                                ],
+                                "required": [
+                                    "OrderID"
+                                ]
+                            }
+                        }
+                    }
+                },
+                "summary": "Create a new order return.",
+                "description": "If ID is provided and an object with that ID already exists, a 409 (conflict) error is returned.",
+                "security": [
+                    {
+                        "OAuth2": [
+                            "FullAccess",
+                            "OrderAdmin",
+                            "Shopper"
+                        ]
+                    }
+                ]
+            }
+        },
+        "/orderreturns/{returnID}": {
+            "get": {
+                "responses": {
+                    "200": {
+                        "description": "",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/OrderReturn"
+                                }
+                            }
+                        }
+                    }
+                },
+                "operationId": "OrderReturns.Get",
+                "tags": [
+                    "Order Returns"
+                ],
+                "parameters": [
+                    {
+                        "name": "returnID",
+                        "in": "path",
+                        "description": "ID of the return.",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "summary": "Get a single order return.",
+                "description": "",
+                "security": [
+                    {
+                        "OAuth2": [
+                            "FullAccess",
+                            "OrderAdmin",
+                            "Shopper",
+                            "OrderReader"
+                        ]
+                    }
+                ]
+            },
+            "put": {
+                "responses": {
+                    "200": {
+                        "description": "If an object with the same ID already exists, it will be overwritten.",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/OrderReturn"
+                                }
+                            }
+                        }
+                    }
+                },
+                "operationId": "OrderReturns.Save",
+                "tags": [
+                    "Order Returns"
+                ],
+                "requestBody": {
+                    "required": true,
+                    "description": "",
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "allOf": [
+                                    {
+                                        "$ref": "#/components/schemas/OrderReturn"
+                                    }
+                                ],
+                                "required": [
+                                    "OrderID"
+                                ]
+                            }
+                        }
+                    }
+                },
+                "parameters": [
+                    {
+                        "name": "returnID",
+                        "in": "path",
+                        "description": "ID of the return.",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "summary": "Create or update an order return.",
+                "description": "If an object with the same ID already exists, it will be overwritten.",
+                "security": [
+                    {
+                        "OAuth2": [
+                            "FullAccess",
+                            "OrderAdmin",
+                            "Shopper"
+                        ]
+                    }
+                ]
+            },
+            "delete": {
+                "responses": {
+                    "204": {
+                        "description": ""
+                    }
+                },
+                "operationId": "OrderReturns.Delete",
+                "tags": [
+                    "Order Returns"
+                ],
+                "parameters": [
+                    {
+                        "name": "returnID",
+                        "in": "path",
+                        "description": "ID of the return.",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "summary": "Delete an order return.",
+                "description": "",
+                "security": [
+                    {
+                        "OAuth2": [
+                            "FullAccess",
+                            "OrderAdmin",
+                            "Shopper"
+                        ]
+                    }
+                ]
+            },
+            "patch": {
+                "responses": {
+                    "200": {
+                        "description": "",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/OrderReturn"
+                                }
+                            }
+                        }
+                    }
+                },
+                "operationId": "OrderReturns.Patch",
+                "tags": [
+                    "Order Returns"
+                ],
+                "requestBody": {
+                    "required": true,
+                    "description": "",
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "allOf": [
+                                    {
+                                        "$ref": "#/components/schemas/OrderReturn"
+                                    }
+                                ]
+                            }
+                        }
+                    }
+                },
+                "parameters": [
+                    {
+                        "name": "returnID",
+                        "in": "path",
+                        "description": "ID of the return.",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "summary": "Partially update an order return.",
+                "description": "",
+                "security": [
+                    {
+                        "OAuth2": [
+                            "FullAccess",
+                            "OrderAdmin",
+                            "Shopper"
+                        ]
+                    }
+                ]
+            }
+        },
+        "/orderreturns/{returnID}/approvals": {
+            "get": {
+                "responses": {
+                    "200": {
+                        "description": "Returns all Approvals associated with the Order Return.",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "properties": {
+                                        "Items": {
+                                            "type": "array",
+                                            "items": {
+                                                "$ref": "#/components/schemas/OrderReturnApproval"
+                                            }
+                                        },
+                                        "Meta": {
+                                            "$ref": "#/components/schemas/Meta"
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                },
+                "operationId": "OrderReturns.ListApprovals",
+                "tags": [
+                    "Order Returns"
+                ],
+                "parameters": [
+                    {
+                        "name": "returnID",
+                        "in": "path",
+                        "description": "ID of the return.",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "name": "search",
+                        "in": "query",
+                        "description": "Word or phrase to search for.",
+                        "required": false,
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "name": "searchOn",
+                        "in": "query",
+                        "description": "Comma-delimited list of fields to search on.",
+                        "required": false,
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "type": "string",
+                                "enum": [
+                                    "ApprovalRuleID",
+                                    "ApprovingGroupID",
+                                    "Approver",
+                                    "Comments"
+                                ]
+                            }
+                        }
+                    },
+                    {
+                        "name": "sortBy",
+                        "in": "query",
+                        "description": "Comma-delimited list of fields to sort by.",
+                        "required": false,
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "type": "string",
+                                "enum": [
+                                    "DateCreated",
+                                    "ApprovalRuleID",
+                                    "ApprovingGroupID",
+                                    "Status",
+                                    "DateCompleted",
+                                    "Approver",
+                                    "!DateCreated",
+                                    "!ApprovalRuleID",
+                                    "!ApprovingGroupID",
+                                    "!Status",
+                                    "!DateCompleted",
+                                    "!Approver"
+                                ]
+                            }
+                        }
+                    },
+                    {
+                        "name": "page",
+                        "in": "query",
+                        "description": "Page of results to return. Default: 1. When paginating through many items (> page 30), we recommend the \"Last ID\" method, as outlined in the Advanced Querying documentation.",
+                        "required": false,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    },
+                    {
+                        "name": "pageSize",
+                        "in": "query",
+                        "description": "Number of results to return per page. Default: 20, max: 100.",
+                        "required": false,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    },
+                    {
+                        "name": "filters",
+                        "in": "query",
+                        "description": "An object or dictionary representing key/value pairs to apply as filters. Valid keys are top-level properties of the returned model or 'xp.???'",
+                        "required": false,
+                        "schema": {
+                            "type": "object"
+                        }
+                    }
+                ],
+                "summary": "Get a list of order return approvals.",
+                "description": "Returns all Approvals associated with the Order Return.",
+                "security": [
+                    {
+                        "OAuth2": [
+                            "FullAccess",
+                            "OrderAdmin",
+                            "Shopper",
+                            "OrderReader"
+                        ]
+                    }
+                ]
+            }
+        },
+        "/orderreturns/{returnID}/approve": {
+            "post": {
+                "responses": {
+                    "201": {
+                        "description": "",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/OrderReturn"
+                                }
+                            }
+                        }
+                    }
+                },
+                "operationId": "OrderReturns.Approve",
+                "tags": [
+                    "Order Returns"
+                ],
+                "requestBody": {
+                    "required": true,
+                    "description": "",
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "allOf": [
+                                    {
+                                        "$ref": "#/components/schemas/ApprovalInfo"
+                                    }
+                                ]
+                            }
+                        }
+                    }
+                },
+                "parameters": [
+                    {
+                        "name": "returnID",
+                        "in": "path",
+                        "description": "ID of the return.",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "summary": "Approve an order return.",
+                "description": "",
+                "security": [
+                    {
+                        "OAuth2": [
+                            "FullAccess",
+                            "OrderAdmin"
+                        ]
+                    }
+                ]
+            }
+        },
+        "/orderreturns/{returnID}/cancel": {
+            "post": {
+                "responses": {
+                    "201": {
+                        "description": "",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/OrderReturn"
+                                }
+                            }
+                        }
+                    }
+                },
+                "operationId": "OrderReturns.Cancel",
+                "tags": [
+                    "Order Returns"
+                ],
+                "parameters": [
+                    {
+                        "name": "returnID",
+                        "in": "path",
+                        "description": "ID of the return.",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "summary": "Cancel an OrderReturn.",
+                "description": "",
+                "security": [
+                    {
+                        "OAuth2": [
+                            "FullAccess",
+                            "OrderAdmin",
+                            "Shopper"
+                        ]
+                    }
+                ]
+            }
+        },
+        "/orderreturns/{returnID}/complete": {
+            "post": {
+                "responses": {
+                    "201": {
+                        "description": "Use only when an order return won't have an associated payment. You will not to reopen an order return after completing it.",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/OrderReturn"
+                                }
+                            }
+                        }
+                    }
+                },
+                "operationId": "OrderReturns.Complete",
+                "tags": [
+                    "Order Returns"
+                ],
+                "parameters": [
+                    {
+                        "name": "returnID",
+                        "in": "path",
+                        "description": "ID of the return.",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "summary": "Complete an OrderReturn.",
+                "description": "Use only when an order return won't have an associated payment. You will not to reopen an order return after completing it.",
+                "security": [
+                    {
+                        "OAuth2": [
+                            "FullAccess",
+                            "OrderAdmin"
+                        ]
+                    }
+                ]
+            }
+        },
+        "/orderreturns/{returnID}/decline": {
+            "post": {
+                "responses": {
+                    "201": {
+                        "description": "",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/OrderReturn"
+                                }
+                            }
+                        }
+                    }
+                },
+                "operationId": "OrderReturns.Decline",
+                "tags": [
+                    "Order Returns"
+                ],
+                "requestBody": {
+                    "required": true,
+                    "description": "",
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "allOf": [
+                                    {
+                                        "$ref": "#/components/schemas/ApprovalInfo"
+                                    }
+                                ]
+                            }
+                        }
+                    }
+                },
+                "parameters": [
+                    {
+                        "name": "returnID",
+                        "in": "path",
+                        "description": "ID of the return.",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "summary": "Decline an order return.",
+                "description": "",
+                "security": [
+                    {
+                        "OAuth2": [
+                            "FullAccess",
+                            "OrderAdmin"
+                        ]
+                    }
+                ]
+            }
+        },
+        "/orderreturns/{returnID}/eligibleapprovers": {
+            "get": {
+                "responses": {
+                    "200": {
+                        "description": "Returns all Users who can approve or decline this order return (but have not done so).",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "properties": {
+                                        "Items": {
+                                            "type": "array",
+                                            "items": {
+                                                "$ref": "#/components/schemas/User"
+                                            }
+                                        },
+                                        "Meta": {
+                                            "$ref": "#/components/schemas/Meta"
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                },
+                "operationId": "OrderReturns.ListEligibleApprovers",
+                "tags": [
+                    "Order Returns"
+                ],
+                "parameters": [
+                    {
+                        "name": "returnID",
+                        "in": "path",
+                        "description": "ID of the return.",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "name": "search",
+                        "in": "query",
+                        "description": "Word or phrase to search for.",
+                        "required": false,
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "name": "searchOn",
+                        "in": "query",
+                        "description": "Comma-delimited list of fields to search on.",
+                        "required": false,
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "type": "string",
+                                "enum": [
+                                    "ID",
+                                    "Username",
+                                    "LastName",
+                                    "FirstName",
+                                    "Email"
+                                ]
+                            }
+                        }
+                    },
+                    {
+                        "name": "sortBy",
+                        "in": "query",
+                        "description": "Comma-delimited list of fields to sort by.",
+                        "required": false,
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "type": "string",
+                                "enum": [
+                                    "LastName",
+                                    "FirstName",
+                                    "Username",
+                                    "ID",
+                                    "Email",
+                                    "DateCreated",
+                                    "PasswordLastSetDate",
+                                    "!LastName",
+                                    "!FirstName",
+                                    "!Username",
+                                    "!ID",
+                                    "!Email",
+                                    "!DateCreated",
+                                    "!PasswordLastSetDate"
+                                ]
+                            }
+                        }
+                    },
+                    {
+                        "name": "page",
+                        "in": "query",
+                        "description": "Page of results to return. Default: 1. When paginating through many items (> page 30), we recommend the \"Last ID\" method, as outlined in the Advanced Querying documentation.",
+                        "required": false,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    },
+                    {
+                        "name": "pageSize",
+                        "in": "query",
+                        "description": "Number of results to return per page. Default: 20, max: 100.",
+                        "required": false,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    },
+                    {
+                        "name": "filters",
+                        "in": "query",
+                        "description": "An object or dictionary representing key/value pairs to apply as filters. Valid keys are top-level properties of the returned model or 'xp.???'",
+                        "required": false,
+                        "schema": {
+                            "type": "object"
+                        }
+                    }
+                ],
+                "summary": "Get a list of order return eligible approvers.",
+                "description": "Returns all Users who can approve or decline this order return (but have not done so).",
+                "security": [
+                    {
+                        "OAuth2": [
+                            "FullAccess",
+                            "OrderAdmin",
+                            "OrderReader"
+                        ]
+                    }
+                ]
+            }
+        },
+        "/orderreturns/{returnID}/items/{lineItemID}": {
+            "delete": {
+                "responses": {
+                    "200": {
+                        "description": "",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/OrderReturn"
+                                }
+                            }
+                        }
+                    }
+                },
+                "operationId": "OrderReturns.DeleteItem",
+                "tags": [
+                    "Order Returns"
+                ],
+                "parameters": [
+                    {
+                        "name": "returnID",
+                        "in": "path",
+                        "description": "ID of the return.",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "name": "lineItemID",
+                        "in": "path",
+                        "description": "ID of the line item.",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "summary": "Delete an order return item.",
+                "description": "",
+                "security": [
+                    {
+                        "OAuth2": [
+                            "FullAccess",
+                            "OrderAdmin",
+                            "Shopper"
+                        ]
+                    }
+                ]
+            }
+        },
+        "/orderreturns/{returnID}/submit": {
+            "post": {
+                "responses": {
+                    "201": {
+                        "description": "",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/OrderReturn"
+                                }
+                            }
+                        }
+                    }
+                },
+                "operationId": "OrderReturns.Submit",
+                "tags": [
+                    "Order Returns"
+                ],
+                "parameters": [
+                    {
+                        "name": "returnID",
+                        "in": "path",
+                        "description": "ID of the return.",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "summary": "Submit an order return submit.",
+                "description": "",
+                "security": [
+                    {
+                        "OAuth2": [
+                            "FullAccess",
+                            "OrderAdmin",
+                            "Shopper"
                         ]
                     }
                 ]
@@ -18991,7 +21431,7 @@
                     {
                         "name": "filters",
                         "in": "query",
-                        "description": "Any additional key/value pairs passed in the query string are interpretted as filters. Valid keys are top-level properties of the returned model or 'xp.???'",
+                        "description": "An object or dictionary representing key/value pairs to apply as filters. Valid keys are top-level properties of the returned model or 'xp.???'",
                         "required": false,
                         "schema": {
                             "type": "object"
@@ -19374,17 +21814,17 @@
                                 "type": "string",
                                 "enum": [
                                     "DateCreated",
+                                    "AllowResubmit",
                                     "ApprovalRuleID",
                                     "ApprovingGroupID",
                                     "Status",
-                                    "AllowResubmit",
                                     "DateCompleted",
                                     "Approver",
                                     "!DateCreated",
+                                    "!AllowResubmit",
                                     "!ApprovalRuleID",
                                     "!ApprovingGroupID",
                                     "!Status",
-                                    "!AllowResubmit",
                                     "!DateCompleted",
                                     "!Approver"
                                 ]
@@ -19412,7 +21852,7 @@
                     {
                         "name": "filters",
                         "in": "query",
-                        "description": "Any additional key/value pairs passed in the query string are interpretted as filters. Valid keys are top-level properties of the returned model or 'xp.???'",
+                        "description": "An object or dictionary representing key/value pairs to apply as filters. Valid keys are top-level properties of the returned model or 'xp.???'",
                         "required": false,
                         "schema": {
                             "type": "object"
@@ -19980,7 +22420,7 @@
                     {
                         "name": "filters",
                         "in": "query",
-                        "description": "Any additional key/value pairs passed in the query string are interpretted as filters. Valid keys are top-level properties of the returned model or 'xp.???'",
+                        "description": "An object or dictionary representing key/value pairs to apply as filters. Valid keys are top-level properties of the returned model or 'xp.???'",
                         "required": false,
                         "schema": {
                             "type": "object"
@@ -20283,7 +22723,7 @@
                     {
                         "name": "filters",
                         "in": "query",
-                        "description": "Any additional key/value pairs passed in the query string are interpretted as filters. Valid keys are top-level properties of the returned model or 'xp.???'",
+                        "description": "An object or dictionary representing key/value pairs to apply as filters. Valid keys are top-level properties of the returned model or 'xp.???'",
                         "required": false,
                         "schema": {
                             "type": "object"
@@ -20907,7 +23347,7 @@
                     {
                         "name": "filters",
                         "in": "query",
-                        "description": "Any additional key/value pairs passed in the query string are interpretted as filters. Valid keys are top-level properties of the returned model or 'xp.???'",
+                        "description": "An object or dictionary representing key/value pairs to apply as filters. Valid keys are top-level properties of the returned model or 'xp.???'",
                         "required": false,
                         "schema": {
                             "type": "object"
@@ -21445,7 +23885,7 @@
                     {
                         "name": "filters",
                         "in": "query",
-                        "description": "Any additional key/value pairs passed in the query string are interpretted as filters. Valid keys are top-level properties of the returned model or 'xp.???'",
+                        "description": "An object or dictionary representing key/value pairs to apply as filters. Valid keys are top-level properties of the returned model or 'xp.???'",
                         "required": false,
                         "schema": {
                             "type": "object"
@@ -21776,7 +24216,7 @@
                     {
                         "name": "filters",
                         "in": "query",
-                        "description": "Any additional key/value pairs passed in the query string are interpretted as filters. Valid keys are top-level properties of the returned model or 'xp.???'",
+                        "description": "An object or dictionary representing key/value pairs to apply as filters. Valid keys are top-level properties of the returned model or 'xp.???'",
                         "required": false,
                         "schema": {
                             "type": "object"
@@ -22384,7 +24824,7 @@
                     {
                         "name": "filters",
                         "in": "query",
-                        "description": "Any additional key/value pairs passed in the query string are interpretted as filters. Valid keys are top-level properties of the returned model or 'xp.???'",
+                        "description": "An object or dictionary representing key/value pairs to apply as filters. Valid keys are top-level properties of the returned model or 'xp.???'",
                         "required": false,
                         "schema": {
                             "type": "object"
@@ -22835,7 +25275,7 @@
                     {
                         "name": "filters",
                         "in": "query",
-                        "description": "Any additional key/value pairs passed in the query string are interpretted as filters. Valid keys are top-level properties of the returned model or 'xp.???'",
+                        "description": "An object or dictionary representing key/value pairs to apply as filters. Valid keys are top-level properties of the returned model or 'xp.???'",
                         "required": false,
                         "schema": {
                             "type": "object"
@@ -23221,7 +25661,7 @@
                     {
                         "name": "filters",
                         "in": "query",
-                        "description": "Any additional key/value pairs passed in the query string are interpretted as filters. Valid keys are top-level properties of the returned model or 'xp.???'",
+                        "description": "An object or dictionary representing key/value pairs to apply as filters. Valid keys are top-level properties of the returned model or 'xp.???'",
                         "required": false,
                         "schema": {
                             "type": "object"
@@ -23646,7 +26086,7 @@
                     {
                         "name": "filters",
                         "in": "query",
-                        "description": "Any additional key/value pairs passed in the query string are interpretted as filters. Valid keys are top-level properties of the returned model or 'xp.???'",
+                        "description": "An object or dictionary representing key/value pairs to apply as filters. Valid keys are top-level properties of the returned model or 'xp.???'",
                         "required": false,
                         "schema": {
                             "type": "object"
@@ -24049,7 +26489,7 @@
                     {
                         "name": "filters",
                         "in": "query",
-                        "description": "Any additional key/value pairs passed in the query string are interpretted as filters. Valid keys are top-level properties of the returned model or 'xp.???'",
+                        "description": "An object or dictionary representing key/value pairs to apply as filters. Valid keys are top-level properties of the returned model or 'xp.???'",
                         "required": false,
                         "schema": {
                             "type": "object"
@@ -24174,7 +26614,7 @@
                     {
                         "name": "filters",
                         "in": "query",
-                        "description": "Any additional key/value pairs passed in the query string are interpretted as filters. Valid keys are top-level properties of the returned model or 'xp.???'",
+                        "description": "An object or dictionary representing key/value pairs to apply as filters. Valid keys are top-level properties of the returned model or 'xp.???'",
                         "required": false,
                         "schema": {
                             "type": "object"
@@ -24391,7 +26831,7 @@
                     {
                         "name": "filters",
                         "in": "query",
-                        "description": "Any additional key/value pairs passed in the query string are interpretted as filters. Valid keys are top-level properties of the returned model or 'xp.???'",
+                        "description": "An object or dictionary representing key/value pairs to apply as filters. Valid keys are top-level properties of the returned model or 'xp.???'",
                         "required": false,
                         "schema": {
                             "type": "object"
@@ -24513,7 +26953,7 @@
                         }
                     }
                 ],
-                "summary": "Create or update a product variant.",
+                "summary": "Update a product variant.",
                 "description": "Update a product variant.",
                 "security": [
                     {
@@ -24700,7 +27140,7 @@
                     {
                         "name": "filters",
                         "in": "query",
-                        "description": "Any additional key/value pairs passed in the query string are interpretted as filters. Valid keys are top-level properties of the returned model or 'xp.???'",
+                        "description": "An object or dictionary representing key/value pairs to apply as filters. Valid keys are top-level properties of the returned model or 'xp.???'",
                         "required": false,
                         "schema": {
                             "type": "object"
@@ -25362,7 +27802,7 @@
                     {
                         "name": "filters",
                         "in": "query",
-                        "description": "Any additional key/value pairs passed in the query string are interpretted as filters. Valid keys are top-level properties of the returned model or 'xp.???'",
+                        "description": "An object or dictionary representing key/value pairs to apply as filters. Valid keys are top-level properties of the returned model or 'xp.???'",
                         "required": false,
                         "schema": {
                             "type": "object"
@@ -25919,7 +28359,7 @@
                     {
                         "name": "filters",
                         "in": "query",
-                        "description": "Any additional key/value pairs passed in the query string are interpretted as filters. Valid keys are top-level properties of the returned model or 'xp.???'",
+                        "description": "An object or dictionary representing key/value pairs to apply as filters. Valid keys are top-level properties of the returned model or 'xp.???'",
                         "required": false,
                         "schema": {
                             "type": "object"
@@ -26529,7 +28969,7 @@
                     {
                         "name": "filters",
                         "in": "query",
-                        "description": "Any additional key/value pairs passed in the query string are interpretted as filters. Valid keys are top-level properties of the returned model or 'xp.???'",
+                        "description": "An object or dictionary representing key/value pairs to apply as filters. Valid keys are top-level properties of the returned model or 'xp.???'",
                         "required": false,
                         "schema": {
                             "type": "object"
@@ -26869,7 +29309,7 @@
                     {
                         "name": "filters",
                         "in": "query",
-                        "description": "Any additional key/value pairs passed in the query string are interpretted as filters. Valid keys are top-level properties of the returned model or 'xp.???'",
+                        "description": "An object or dictionary representing key/value pairs to apply as filters. Valid keys are top-level properties of the returned model or 'xp.???'",
                         "required": false,
                         "schema": {
                             "type": "object"
@@ -27280,7 +29720,7 @@
                     {
                         "name": "filters",
                         "in": "query",
-                        "description": "Any additional key/value pairs passed in the query string are interpretted as filters. Valid keys are top-level properties of the returned model or 'xp.???'",
+                        "description": "An object or dictionary representing key/value pairs to apply as filters. Valid keys are top-level properties of the returned model or 'xp.???'",
                         "required": false,
                         "schema": {
                             "type": "object"
@@ -27634,7 +30074,7 @@
                     {
                         "name": "filters",
                         "in": "query",
-                        "description": "Any additional key/value pairs passed in the query string are interpretted as filters. Valid keys are top-level properties of the returned model or 'xp.???'",
+                        "description": "An object or dictionary representing key/value pairs to apply as filters. Valid keys are top-level properties of the returned model or 'xp.???'",
                         "required": false,
                         "schema": {
                             "type": "object"
@@ -28073,7 +30513,7 @@
                     {
                         "name": "filters",
                         "in": "query",
-                        "description": "Any additional key/value pairs passed in the query string are interpretted as filters. Valid keys are top-level properties of the returned model or 'xp.???'",
+                        "description": "An object or dictionary representing key/value pairs to apply as filters. Valid keys are top-level properties of the returned model or 'xp.???'",
                         "required": false,
                         "schema": {
                             "type": "object"
@@ -28225,7 +30665,7 @@
                     {
                         "name": "filters",
                         "in": "query",
-                        "description": "Any additional key/value pairs passed in the query string are interpretted as filters. Valid keys are top-level properties of the returned model or 'xp.???'",
+                        "description": "An object or dictionary representing key/value pairs to apply as filters. Valid keys are top-level properties of the returned model or 'xp.???'",
                         "required": false,
                         "schema": {
                             "type": "object"
@@ -28609,7 +31049,7 @@
                     {
                         "name": "filters",
                         "in": "query",
-                        "description": "Any additional key/value pairs passed in the query string are interpretted as filters. Valid keys are top-level properties of the returned model or 'xp.???'",
+                        "description": "An object or dictionary representing key/value pairs to apply as filters. Valid keys are top-level properties of the returned model or 'xp.???'",
                         "required": false,
                         "schema": {
                             "type": "object"
@@ -29061,7 +31501,7 @@
                     {
                         "name": "filters",
                         "in": "query",
-                        "description": "Any additional key/value pairs passed in the query string are interpretted as filters. Valid keys are top-level properties of the returned model or 'xp.???'",
+                        "description": "An object or dictionary representing key/value pairs to apply as filters. Valid keys are top-level properties of the returned model or 'xp.???'",
                         "required": false,
                         "schema": {
                             "type": "object"
@@ -29269,7 +31709,7 @@
                     {
                         "name": "filters",
                         "in": "query",
-                        "description": "Any additional key/value pairs passed in the query string are interpretted as filters. Valid keys are top-level properties of the returned model or 'xp.???'",
+                        "description": "An object or dictionary representing key/value pairs to apply as filters. Valid keys are top-level properties of the returned model or 'xp.???'",
                         "required": false,
                         "schema": {
                             "type": "object"
@@ -29880,7 +32320,7 @@
                     {
                         "name": "filters",
                         "in": "query",
-                        "description": "Any additional key/value pairs passed in the query string are interpretted as filters. Valid keys are top-level properties of the returned model or 'xp.???'",
+                        "description": "An object or dictionary representing key/value pairs to apply as filters. Valid keys are top-level properties of the returned model or 'xp.???'",
                         "required": false,
                         "schema": {
                             "type": "object"
@@ -30281,7 +32721,7 @@
                     {
                         "name": "filters",
                         "in": "query",
-                        "description": "Any additional key/value pairs passed in the query string are interpretted as filters. Valid keys are top-level properties of the returned model or 'xp.???'",
+                        "description": "An object or dictionary representing key/value pairs to apply as filters. Valid keys are top-level properties of the returned model or 'xp.???'",
                         "required": false,
                         "schema": {
                             "type": "object"
@@ -30787,7 +33227,7 @@
                     {
                         "name": "filters",
                         "in": "query",
-                        "description": "Any additional key/value pairs passed in the query string are interpretted as filters. Valid keys are top-level properties of the returned model or 'xp.???'",
+                        "description": "An object or dictionary representing key/value pairs to apply as filters. Valid keys are top-level properties of the returned model or 'xp.???'",
                         "required": false,
                         "schema": {
                             "type": "object"
@@ -31136,7 +33576,7 @@
                     {
                         "name": "filters",
                         "in": "query",
-                        "description": "Any additional key/value pairs passed in the query string are interpretted as filters. Valid keys are top-level properties of the returned model or 'xp.???'",
+                        "description": "An object or dictionary representing key/value pairs to apply as filters. Valid keys are top-level properties of the returned model or 'xp.???'",
                         "required": false,
                         "schema": {
                             "type": "object"
@@ -31206,7 +33646,7 @@
                     {
                         "name": "thingType",
                         "in": "path",
-                        "description": "Thing type of the xp index. Possible values: Address, Variant, Order, LineItem, CostCenter, CreditCard, Payment, Spec, SpecOption, UserGroup, Company, Category, PriceSchedule, Shipment, SpendingAccount, User, Promotion, ApprovalRule, Catalog, ProductFacet, MessageSender, InventoryRecord.",
+                        "description": "Thing type of the xp index. Possible values: Address, Variant, Order, OrderReturn, LineItem, CostCenter, CreditCard, Payment, Spec, SpecOption, UserGroup, Company, Category, PriceSchedule, Shipment, SpendingAccount, User, Promotion, ApprovalRule, SellerApprovalRule, Catalog, ProductFacet, MessageSender, InventoryRecord.",
                         "required": true,
                         "schema": {
                             "$ref": "#/components/schemas/XpThingType"

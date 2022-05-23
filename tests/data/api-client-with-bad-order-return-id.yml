@@ -1,0 +1,33 @@
+Objects: 
+  ApiClients:
+    - ID: api1 
+      AppName: api
+      AccessTokenDuration: 1
+      OrderReturnIntegrationEventID: does-not-exist
+    - ID: api2 
+      AppName: api
+      AccessTokenDuration: 1
+      OrderCheckoutIntegrationEventID: checkout
+      OrderReturnIntegrationEventID: return
+    - ID: api3 
+      AppName: api
+      AccessTokenDuration: 1
+      OrderCheckoutIntegrationEventID: return
+      OrderReturnIntegrationEventID: checkout
+  IntegrationEvents:
+    - ElevatedRoles:
+        - FullAccess
+      ID: checkout
+      ConfigData: null
+      EventType: OrderCheckout
+      CustomImplementationUrl: https://www.replace.this.com/api/checkout
+      Name: Checkout Commerce Integrations
+      HashKey: <Redacted. Leave unchanged.>
+    - ElevatedRoles:
+        - FullAccess
+      ID: return
+      ConfigData: null
+      EventType: OrderReturn
+      CustomImplementationUrl: https://www.replace.this.com/api/checkout
+      Name: Checkout Commerce Integrations
+      HashKey: <Redacted. Leave unchanged.>

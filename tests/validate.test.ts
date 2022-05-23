@@ -190,3 +190,17 @@ test('variant inventory records validation', async () => {
     expect(resp.errors[3]).toBe("Invalid reference InventoryRecord.AddressID: no Address found with ID \"admin-address-2\" under supplier with ID \"supplier1\".");
 });
 
+test('api client with bad order return id', async () => {
+    var resp = await validateFile("./tests/data/api-client-with-bad-order-return-id.yml");
+    expect(resp.errors.length).toBe(3);
+    expect(resp.errors[0]).toBe("Invalid reference ApiClients.OrderReturnIntegrationEventID: no IntegrationEvents found with ID \"does-not-exist\".");
+    expect(resp.errors[1]).toBe("ApiClient.OrderCheckoutIntegrationEventID cannot have value \"return\" because this integration event does not have type \"OrderCheckout\".");
+    expect(resp.errors[2]).toBe("ApiClient.OrderReturnIntegrationEventID cannot have value \"checkout\" because this integration event does not have type \"OrderReturn\".");
+});
+
+test('seller approval rules', async () => {
+    var resp = await validateFile("./tests/data/seller-approval-rules.yml");
+    expect(resp.errors.length).toBe(2);
+    expect(resp.errors[0]).toBe("Invalid reference SellerApprovalRule.ApprovingGroupID: no User Group found with ID \"supplier-group-2\" under supplier with ID \"supplier1\".");
+    expect(resp.errors[1]).toBe("Invalid reference SellerApprovalRule.ApprovingGroupID: no Admin User Group found with ID \"supplier-group-1\".");
+});

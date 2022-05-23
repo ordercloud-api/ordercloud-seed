@@ -1,83 +1,348 @@
 Meta:
-  CreatedBySeedingVersion: 1.0.25
+  CreatedBySeedingVersion: 1.0.26
 Objects:
-  SecurityProfiles: []
+  SecurityProfiles:
+    - ID: anonymous-shopper
+      Name: Anonymous Shopper
+      Roles:
+        - BuyerReader
+        - MeAddressAdmin
+        - MeAdmin
+        - MeCreditCardAdmin
+        - MeXpAdmin
+        - PasswordReset
+        - Shopper
+      CustomRoles: []
+      PasswordConfig: null
+    - ID: full-access-admin
+      Name: Full Access Admin
+      Roles:
+        - FullAccess
+      CustomRoles: []
+      PasswordConfig: null
   ImpersonationConfigs: []
   OpenIdConnects: []
-  AdminUsers: []
-  AdminUserGroups: []
-  AdminAddresses:
-    - ID: admin-address-1
-      DateCreated: '2022-01-19T22:21:06.203+00:00'
-      CompanyName: null
-      FirstName: null
-      LastName: null
-      Street1: 4th
-      Street2: null
-      City: Minneapolis
-      State: MN
-      Zip: '55409'
-      Country: US
+  AdminUsers:
+    - ID: integrations-default-context-user
+      Username: default-context-user
+      Password: null
+      FirstName: Default
+      LastName: Context
+      Email: fake@email.com
       Phone: null
-      AddressName: null
+      TermsAccepted: null
+      Active: true
       xp: null
-    - ID: admin-address-2
-      DateCreated: '2022-01-19T22:21:06.28+00:00'
-      CompanyName: null
-      FirstName: null
-      LastName: null
-      Street1: 4th
-      Street2: null
-      City: Minneapolis
-      State: MN
-      Zip: '55409'
-      Country: US
-      Phone: null
-      AddressName: null
+      AvailableRoles:
+        - FullAccess
+      DateCreated: '2022-05-12T15:48:16.693+00:00'
+      PasswordLastSetDate: null
+  AdminUserGroups:
+    - ID: admin-user-group1
+      Name: admin-user-group1
+      Description: null
       xp: null
+  AdminAddresses: []
   MessageSenders: []
-  ApiClients: []
+  ApiClients:
+    - ID: 132bfc24-bb64-4f7f-98f1-866e35e4c176
+      ClientSecret: <Redacted. Leave unchanged.>
+      AccessTokenDuration: 600
+      Active: true
+      AppName: Vercel-Middleware-Connector
+      RefreshTokenDuration: 43200
+      DefaultContextUserName: default-context-user
+      xp: null
+      AllowAnyBuyer: false
+      AllowAnySupplier: false
+      AllowSeller: true
+      IsAnonBuyer: false
+      AssignedBuyerCount: 0
+      AssignedSupplierCount: 0
+      OrderCheckoutIntegrationEventID: null
+      OrderCheckoutIntegrationEventName: null
+      OrderReturnIntegrationEventID: null
+      OrderReturnIntegrationEventName: null
+      MinimumRequiredRoles: []
+      MinimumRequiredCustomRoles: []
+      MaximumGrantedRoles: []
+      MaximumGrantedCustomRoles: []
+    - ID: 70086830-42bf-41a8-9480-dd8be3d7bf56
+      ClientSecret: null
+      AccessTokenDuration: 600
+      Active: true
+      AppName: Vercel-Storefront-Connector
+      RefreshTokenDuration: 43200
+      DefaultContextUserName: anonymous-shopper
+      xp: null
+      AllowAnyBuyer: false
+      AllowAnySupplier: false
+      AllowSeller: false
+      IsAnonBuyer: true
+      AssignedBuyerCount: 1
+      AssignedSupplierCount: 0
+      OrderCheckoutIntegrationEventID: 2VfVrivMSUG600c6zC-4kg
+      OrderCheckoutIntegrationEventName: Checkout
+      OrderReturnIntegrationEventID: 3sLMuulA1EScK6hZiCVq4w
+      OrderReturnIntegrationEventName: Return
+      MinimumRequiredRoles: []
+      MinimumRequiredCustomRoles: []
+      MaximumGrantedRoles: []
+      MaximumGrantedCustomRoles: []
+    - ID: f8b2b56e-ffe6-4234-b776-38869876d1b7
+      ClientSecret: null
+      AccessTokenDuration: 600
+      Active: true
+      AppName: Back Office App
+      RefreshTokenDuration: 5760
+      DefaultContextUserName: null
+      xp: null
+      AllowAnyBuyer: false
+      AllowAnySupplier: true
+      AllowSeller: true
+      IsAnonBuyer: false
+      AssignedBuyerCount: 0
+      AssignedSupplierCount: 0
+      OrderCheckoutIntegrationEventID: null
+      OrderCheckoutIntegrationEventName: null
+      OrderReturnIntegrationEventID: null
+      OrderReturnIntegrationEventName: null
+      MinimumRequiredRoles: []
+      MinimumRequiredCustomRoles: []
+      MaximumGrantedRoles: []
+      MaximumGrantedCustomRoles: []
   Locales: []
   Incrementors: []
   Webhooks: []
-  IntegrationEvents: []
+  IntegrationEvents:
+    - ElevatedRoles:
+        - ApiClientAdmin
+        - AddressReader
+        - AdminAddressAdmin
+        - ApprovalRuleReader
+      ID: 2VfVrivMSUG600c6zC-4kg
+      ConfigData: null
+      EventType: OrderCheckout
+      CustomImplementationUrl: '*&^%^%^&#*@@&#@'
+      Name: Checkout
+      HashKey: <Redacted. Leave unchanged.>
+    - ElevatedRoles:
+        - ApiClientAdmin
+        - AddressReader
+        - AdminAddressAdmin
+        - ApprovalRuleReader
+        - UnsubmittedOrderReader
+        - UserGroupReader
+        - SupplierAddressReader
+        - SupplierUserGroupReader
+      ID: 3sLMuulA1EScK6hZiCVq4w
+      ConfigData: null
+      EventType: OrderReturn
+      CustomImplementationUrl: '*&^%^%^&#*@@&#@'
+      Name: Return
+      HashKey: <Redacted. Leave unchanged.>
   XpIndices: []
-  Buyers: []
-  Catalogs: []
+  Buyers:
+    - ID: 3VF-bRTcs0mWpho8QGWiXQ
+      Name: 'testing '
+      DefaultCatalogID: 3VF-bRTcs0mWpho8QGWiXQ
+      Active: false
+      DateCreated: '2022-05-12T15:49:20.14+00:00'
+      xp: null
+    - ID: solitary-storefront
+      Name: Solitary Storefront
+      DefaultCatalogID: solitary-storefront
+      Active: true
+      DateCreated: '2022-05-12T15:48:19.217+00:00'
+      xp:
+        StorefrontConfig:
+          LogoUrl: >-
+            https://www.insightsforprofessionals.com/getmedia/fd59ca81-768f-4ebe-b47f-b1f7db535e49/sitecore?maxsidesize=1200&resizemode=force
+          Theme:
+            PrimaryColorHex: '#f54842'
+            SecondaryColorHex: '#ffffff'
+          HomePageLayout: null
+  Users:
+    - ID: default-anonymous-shopper
+      Username: anonymous-shopper
+      Password: null
+      FirstName: anonymous
+      LastName: shopper
+      Email: fake@emai.com
+      Phone: null
+      TermsAccepted: null
+      Active: true
+      xp:
+        something: else
+      AvailableRoles:
+        - BuyerReader
+        - MeAddressAdmin
+        - MeAdmin
+        - MeCreditCardAdmin
+        - MeXpAdmin
+        - PasswordReset
+        - Shopper
+      DateCreated: '2022-05-12T15:48:22.99+00:00'
+      PasswordLastSetDate: null
+      BuyerID: solitary-storefront
+  UserGroups:
+    - ID: 6LppM_rrSken9qoLTnC7pQ
+      Name: buyer-group-testing
+      Description: null
+      xp: null
+      BuyerID: 3VF-bRTcs0mWpho8QGWiXQ
+  Addresses: []
+  CostCenters: []
+  CreditCards: []
+  SpendingAccounts: []
+  ApprovalRules: []
+  Catalogs:
+    - ID: solitary-storefront
+      OwnerID: <MarketplaceID placeholder>
+      Name: 'Solitary Storefront '
+      Description: 'Default catalog for Solitary Storefront '
+      Active: true
+      CategoryCount: 4
+      xp: null
+    - ID: 3VF-bRTcs0mWpho8QGWiXQ
+      OwnerID: <MarketplaceID placeholder>
+      Name: 'testing '
+      Description: 'Default catalog for testing '
+      Active: true
+      CategoryCount: 0
+      xp: null
+  Categories:
+    - ID: headwear
+      Name: Headwear
+      Description: null
+      ListOrder: 1
+      Active: true
+      ParentID: null
+      ChildCount: 0
+      xp: null
+      CatalogID: solitary-storefront
+    - ID: shirts
+      Name: Shirts
+      Description: null
+      ListOrder: 2
+      Active: true
+      ParentID: null
+      ChildCount: 0
+      xp: null
+      CatalogID: solitary-storefront
+    - ID: jackets
+      Name: Jackets
+      Description: null
+      ListOrder: 3
+      Active: true
+      ParentID: null
+      ChildCount: 0
+      xp: null
+      CatalogID: solitary-storefront
+    - ID: bottoms
+      Name: Bottoms
+      Description: null
+      ListOrder: 4
+      Active: true
+      ParentID: null
+      ChildCount: 0
+      xp: null
+      CatalogID: solitary-storefront
   Suppliers:
     - ID: supplier1
       Name: supplier1
-      Active: false
-      DateCreated: '2022-01-19T22:21:06.573+00:00'
+      Active: true
+      DateCreated: '2022-05-23T15:37:07.27+00:00'
+      AllBuyersCanOrder: false
+      xp: null
+    - ID: supplier2
+      Name: supplier2
+      Active: true
+      DateCreated: '2022-05-23T15:37:10.997+00:00'
       AllBuyersCanOrder: false
       xp: null
   SupplierUsers: []
-  SupplierUserGroups: []
-  SupplierAddresses:
-    - ID: supplier-address-1
-      DateCreated: '2022-01-19T22:21:06.883+00:00'
-      CompanyName: null
-      FirstName: null
-      LastName: null
-      Street1: 4th
-      Street2: null
-      City: Minneapolis
-      State: MN
-      Zip: '55409'
-      Country: US
-      Phone: null
-      AddressName: null
+  SupplierUserGroups:
+    - ID: supplier-group-1
+      Name: supplier-group-1
+      Description: null
       xp: null
       SupplierID: supplier1
+    - ID: supplier-group-2
+      Name: supplier-group-2
+      Description: null
+      xp: null
+      SupplierID: supplier2
+  SupplierAddresses: []
   Products:
     - OwnerID: <MarketplaceID placeholder>
-      DefaultPriceScheduleID: null
+      DefaultPriceScheduleID: black-hat
       AutoForward: false
-      ID: product1
-      Name: product1
+      ID: black-hat
+      Name: Black Hat
       Description: >-
-        A luxurious fabric, mulberry silk is named for the mulberry leaves the
-        uniquely bred silkworms feed on. A mask for your face.
+        The Next.js beanie has arrived! This embroidered beauty has a snug fit
+        that ensures you're going to feel cozy and warm whatever you're doing.
+
+
+        • 60% cotton, 40% acrylic
+
+        • Breathable cotton blend
+
+        • Form-fitting shape
+
+        • One size fits most
+      QuantityMultiplier: 1
+      ShipWeight: null
+      ShipHeight: null
+      ShipWidth: null
+      ShipLength: null
+      Active: true
+      SpecCount: 0
+      VariantCount: 0
+      ShipFromAddressID: null
+      Inventory:
+        Enabled: false
+        NotificationPoint: null
+        VariantLevelTracking: false
+        OrderCanExceed: false
+        QuantityAvailable: null
+        LastUpdated: '2022-05-12T15:48:20.283+00:00'
+      DefaultSupplierID: null
+      AllSuppliersCanSell: false
+      Returnable: false
+      xp:
+        Price: 80
+        Images:
+          - url: >-
+              https://ocdevops.blob.core.windows.net/vercel-integration-assets/black_hat_1.png
+          - url: >-
+              https://ocdevops.blob.core.windows.net/vercel-integration-assets/black_hat_2.png
+          - url: >-
+              https://ocdevops.blob.core.windows.net/vercel-integration-assets/black_hat_3.png
+        PriceCurrency: USD
+    - OwnerID: <MarketplaceID placeholder>
+      DefaultPriceScheduleID: bomber-jacket
+      AutoForward: false
+      ID: bomber-jacket
+      Name: Bomber Jacket
+      Description: >-
+        Combining durability and style, this bomber jacket is a great addition
+        to any wardrobe. It’s a real statement piece that makes even the
+        simplest outfit look fashionable.
+
+
+        • 60% cotton, 40% polyester fleece
+
+        • 7.4 oz/yd² (250.9 g/m²)
+
+        • Ribbed crew neck, waistband, and cuffs
+
+        • Raglan sleeves
+
+        • Slash pockets
+
+        • YKK zipper
       QuantityMultiplier: 1
       ShipWeight: null
       ShipHeight: null
@@ -85,46 +350,427 @@ Objects:
       ShipLength: null
       Active: true
       SpecCount: 2
+      VariantCount: 8
+      ShipFromAddressID: null
+      Inventory:
+        Enabled: false
+        NotificationPoint: null
+        VariantLevelTracking: false
+        OrderCanExceed: false
+        QuantityAvailable: null
+        LastUpdated: '2022-05-12T15:48:20.287+00:00'
+      DefaultSupplierID: null
+      AllSuppliersCanSell: false
+      Returnable: false
+      xp:
+        Price: 52
+        Images:
+          - url: >-
+              https://ocdevops.blob.core.windows.net/vercel-integration-assets/bomber_jacket_1.png
+          - url: >-
+              https://ocdevops.blob.core.windows.net/vercel-integration-assets/bomber_jacket_2.png
+        PriceCurrency: USD
+    - OwnerID: <MarketplaceID placeholder>
+      DefaultPriceScheduleID: champion-jacket
+      AutoForward: false
+      ID: champion-jacket
+      Name: Champion Jacket
+      Description: >-
+        Protect yourself from the elements with this Champion packable jacket.
+        This wind and rain resistant polyester jacket with a detailed embroidery
+        design has a practical hood, front kangaroo pocket, and zipped pouch
+        pocket which you can pull out and use to scrunch the jacket into for
+        convenient storage. • 100% polyester micro poplin • Wind and rain
+        resistant • Half zip pullover with a hood • Front kangaroo pocket •
+        Hidden zipped pouch pocket • Packable in the zipped pouch pocket •
+        Adjustable bungee draw cord at hood and bottom hem • Elastic cuffs •
+        Embroidered “C” logo on the left sleeve
+      QuantityMultiplier: 1
+      ShipWeight: null
+      ShipHeight: null
+      ShipWidth: null
+      ShipLength: null
+      Active: true
+      SpecCount: 1
       VariantCount: 4
       ShipFromAddressID: null
       Inventory:
-        Enabled: true
+        Enabled: false
         NotificationPoint: null
-        VariantLevelTracking: true
+        VariantLevelTracking: false
         OrderCanExceed: false
-        QuantityAvailable: 70
-        LastUpdated: '2022-01-19T22:21:07.48+00:00'
+        QuantityAvailable: null
+        LastUpdated: '2022-05-12T15:48:20.613+00:00'
       DefaultSupplierID: null
       AllSuppliersCanSell: false
-      xp: null
+      Returnable: false
+      xp:
+        Price: 51.5
+        Images:
+          - url: >-
+              https://ocdevops.blob.core.windows.net/vercel-integration-assets/champion_jacket_1.png
+          - url: >-
+              https://ocdevops.blob.core.windows.net/vercel-integration-assets/champion_jacket_2.png
+          - url: >-
+              https://ocdevops.blob.core.windows.net/vercel-integration-assets/champion_jacket_3.png
+        PriceCurrency: USD
+    - OwnerID: <MarketplaceID placeholder>
+      DefaultPriceScheduleID: joggers
+      AutoForward: false
+      ID: joggers
+      Name: Joggers
+      Description: >-
+        Get ready for that 10K run or take it slow in your backyard—these
+        joggers are sure to make you feel comfortable either way.
+
+
+        • 60% cotton, 40% polyester pre-shrunk fleece
+
+        • Fabric weight: 7.2 oz/yd² (244 g/m²)
+
+        • 1x1 rib cuffs with spandex for stretch and recovery
+
+        • Elastic waistband with external drawcord
+
+        • Contrast drawcord and side pockets (all body colors include charcoal
+        gray contrast detailing except black heather, which has black)
+
+        • Lower rise on the front, longer rise on the backside
+
+        • Pilling-resistant
+
+        • Tapered leg
+      QuantityMultiplier: 1
+      ShipWeight: null
+      ShipHeight: null
+      ShipWidth: null
+      ShipLength: null
+      Active: true
+      SpecCount: 1
+      VariantCount: 4
+      ShipFromAddressID: null
+      Inventory:
+        Enabled: false
+        NotificationPoint: null
+        VariantLevelTracking: false
+        OrderCanExceed: false
+        QuantityAvailable: null
+        LastUpdated: '2022-05-12T15:48:20.647+00:00'
+      DefaultSupplierID: null
+      AllSuppliersCanSell: false
+      Returnable: false
+      xp:
+        Price: 34
+        Images:
+          - url: >-
+              https://ocdevops.blob.core.windows.net/vercel-integration-assets/joggers_1.png
+          - url: >-
+              https://ocdevops.blob.core.windows.net/vercel-integration-assets/joggers_2.png
+          - url: >-
+              https://ocdevops.blob.core.windows.net/vercel-integration-assets/joggers_3.png
+        PriceCurrency: USD
+    - OwnerID: <MarketplaceID placeholder>
+      DefaultPriceScheduleID: letterman-jacket
+      AutoForward: false
+      ID: letterman-jacket
+      Name: Letterman Jacket
+      Description: >-
+        Reward yourself, friends, and teammates for their hard work and
+        determination—get a set of matching Letterman Jackets! This jacket
+        sports a gently contoured silhouette and striped twill-taped neck,
+        cuffs, and hem. It’s also has a warm fleece lining, 2 spacious slash
+        pockets, and contrasting white snap buttons closure in front. • 65%
+        ring-spun combed cotton, 35% polyester fleece • Regular fit • Fleece
+        lining • 2x2 rib-knit collar, cuffs, and hem • Front closure with white
+        snap buttons • Twill-taped neck in matching color • 2 matching fabric
+        front slash pockets • Blank product sourced from Indonesia
+      QuantityMultiplier: 1
+      ShipWeight: null
+      ShipHeight: null
+      ShipWidth: null
+      ShipLength: null
+      Active: true
+      SpecCount: 1
+      VariantCount: 4
+      ShipFromAddressID: null
+      Inventory:
+        Enabled: false
+        NotificationPoint: null
+        VariantLevelTracking: false
+        OrderCanExceed: false
+        QuantityAvailable: null
+        LastUpdated: '2022-05-12T15:48:20.64+00:00'
+      DefaultSupplierID: null
+      AllSuppliersCanSell: false
+      Returnable: false
+      xp:
+        Price: 54
+        Images:
+          - url: >-
+              https://ocdevops.blob.core.windows.net/vercel-integration-assets/letterman_1.jpg
+          - url: >-
+              https://ocdevops.blob.core.windows.net/vercel-integration-assets/letterman_2.jpg
+        PriceCurrency: USD
+    - OwnerID: <MarketplaceID placeholder>
+      DefaultPriceScheduleID: lightweight-jacket
+      AutoForward: false
+      ID: lightweight-jacket
+      Name: Lightweight Jacket
+      Description: >-
+        Add a little zing to your winter wardrobe with this vibrant
+        Winter-breaker Jacket. With a brushed fleece inside, and a relaxed
+        unisex fit, this jacket is just the stuff of the dreams, so be quick to
+        grab yourself one!
+
+
+        Long sleeve ripstop jacket colorblocked in black. Rough pattern in
+        obsidian black and brown printed throughout. Printed graphic in white
+        throughout. Logo-woven webbing trim in white and black throughout.
+        Bungee-style drawstring at hood featuring rubberized logo hardware. Zip
+        closure at front. Rubberized logo appliqué at chest. Welt pockets and
+        textile logo patch in orange at waist. Elasticized cuffs. Partially
+        lined. Black hardware.
+
+        • 60% cotton, 40% acrylic
+
+        • Breathable cotton blend
+
+        • Form-fitting shape
+
+        • One size fits most
+      QuantityMultiplier: 1
+      ShipWeight: null
+      ShipHeight: null
+      ShipWidth: null
+      ShipLength: null
+      Active: true
+      SpecCount: 2
+      VariantCount: 8
+      ShipFromAddressID: null
+      Inventory:
+        Enabled: false
+        NotificationPoint: null
+        VariantLevelTracking: false
+        OrderCanExceed: false
+        QuantityAvailable: null
+        LastUpdated: '2022-05-12T15:48:20.817+00:00'
+      DefaultSupplierID: null
+      AllSuppliersCanSell: false
+      Returnable: false
+      xp:
+        Price: 249.99
+        Images:
+          - url: >-
+              https://ocdevops.blob.core.windows.net/vercel-integration-assets/light_jacket_1.png
+          - url: >-
+              https://ocdevops.blob.core.windows.net/vercel-integration-assets/light_jacket_2.png
+          - url: >-
+              https://ocdevops.blob.core.windows.net/vercel-integration-assets/light_jacket_3.png
+          - url: >-
+              https://ocdevops.blob.core.windows.net/vercel-integration-assets/light_jacket_4.png
+          - url: >-
+              https://ocdevops.blob.core.windows.net/vercel-integration-assets/light_jacket_5.png
+          - url: >-
+              https://ocdevops.blob.core.windows.net/vercel-integration-assets/light_jacket_6.png
+        PriceCurrency: USD
+    - OwnerID: <MarketplaceID placeholder>
+      DefaultPriceScheduleID: mask
+      AutoForward: false
+      ID: mask
+      Name: Mask
+      Description: >-
+        This durable face mask is made from two layers of treated fabric and
+        features elastic ear loops and a center flat seam that ensure a close
+        fit. It's machine-washable and reusable. Sold in packs of 3.
+      QuantityMultiplier: 1
+      ShipWeight: null
+      ShipHeight: null
+      ShipWidth: null
+      ShipLength: null
+      Active: true
+      SpecCount: 1
+      VariantCount: 2
+      ShipFromAddressID: null
+      Inventory:
+        Enabled: false
+        NotificationPoint: null
+        VariantLevelTracking: false
+        OrderCanExceed: false
+        QuantityAvailable: null
+        LastUpdated: '2022-05-12T15:48:20.783+00:00'
+      DefaultSupplierID: null
+      AllSuppliersCanSell: false
+      Returnable: false
+      xp:
+        Price: 39
+        Images:
+          - url: >-
+              https://ocdevops.blob.core.windows.net/vercel-integration-assets/mask_1.png
+          - url: >-
+              https://ocdevops.blob.core.windows.net/vercel-integration-assets/mask_2.png
+          - url: >-
+              https://ocdevops.blob.core.windows.net/vercel-integration-assets/mask_3.png
+          - url: >-
+              https://ocdevops.blob.core.windows.net/vercel-integration-assets/mask_4.png
+        PriceCurrency: USD
+    - OwnerID: <MarketplaceID placeholder>
+      DefaultPriceScheduleID: short-sleeve-t-shirt
+      AutoForward: false
+      ID: short-sleeve-t-shirt
+      Name: Short Sleeve T Shirt
+      Description: >-
+        A super-soft, form-fitting, breathable t-shirt with a slightly lower
+        neckline than a classic t-shirt.
+
+
+        • Tri-blend construction (50% polyester/25% cotton/25% rayon)
+
+        • Pre-shrunk fabric
+
+        • 40 singles thread weight
+
+        • Ribbed crew neck with set-in sleeves
+
+        • Form fitting
+      QuantityMultiplier: 1
+      ShipWeight: null
+      ShipHeight: null
+      ShipWidth: null
+      ShipLength: null
+      Active: true
+      SpecCount: 2
+      VariantCount: 16
+      ShipFromAddressID: null
+      Inventory:
+        Enabled: false
+        NotificationPoint: null
+        VariantLevelTracking: false
+        OrderCanExceed: false
+        QuantityAvailable: null
+        LastUpdated: '2022-05-12T15:48:20.85+00:00'
+      DefaultSupplierID: null
+      AllSuppliersCanSell: false
+      Returnable: false
+      xp:
+        Price: 25
+        Images:
+          - url: >-
+              https://ocdevops.blob.core.windows.net/vercel-integration-assets/short-t_1.png
+          - url: >-
+              https://ocdevops.blob.core.windows.net/vercel-integration-assets/short-t_2.png
+          - url: >-
+              https://ocdevops.blob.core.windows.net/vercel-integration-assets/short-t_3.png
+          - url: >-
+              https://ocdevops.blob.core.windows.net/vercel-integration-assets/short-t_4.png
+        PriceCurrency: USD
+    - OwnerID: <MarketplaceID placeholder>
+      DefaultPriceScheduleID: skinny-joggers
+      AutoForward: false
+      ID: skinny-joggers
+      Name: Skinny Joggers
+      Description: >-
+        It looks like you found your next favorite workout sweatpants—the slim
+        fit joggers are light and breathable, making them perfect for sports. Or
+        if you feel like lounging on the couch, these soft joggers are just what
+        you need. • 65% polyester, 35% cotton • Fabric weight: 250 g/m² (10.5
+        oz/y²) • Elastic waistband with a self-colored flat cord • Brushed metal
+        eyelets for the cord • Double layer ribbed ankle cuffs • Side pockets
+        with double layered ribbed hem • Back patch pocket • Slim fit (women may
+        want to order a size down)
+      QuantityMultiplier: 1
+      ShipWeight: null
+      ShipHeight: null
+      ShipWidth: null
+      ShipLength: null
+      Active: true
+      SpecCount: 1
+      VariantCount: 4
+      ShipFromAddressID: null
+      Inventory:
+        Enabled: false
+        NotificationPoint: null
+        VariantLevelTracking: false
+        OrderCanExceed: false
+        QuantityAvailable: null
+        LastUpdated: '2022-05-12T15:48:21.057+00:00'
+      DefaultSupplierID: null
+      AllSuppliersCanSell: false
+      Returnable: false
+      xp:
+        Price: 44
+        Images:
+          - url: >-
+              https://ocdevops.blob.core.windows.net/vercel-integration-assets/skinny_joggers_1.png
+          - url: >-
+              https://ocdevops.blob.core.windows.net/vercel-integration-assets/skinny_joggers_2.png
+          - url: >-
+              https://ocdevops.blob.core.windows.net/vercel-integration-assets/skinny_joggers_3.png
+          - url: >-
+              https://ocdevops.blob.core.windows.net/vercel-integration-assets/skinny_joggers_4.png
+        PriceCurrency: USD
+    - OwnerID: <MarketplaceID placeholder>
+      DefaultPriceScheduleID: t-shirt
+      AutoForward: false
+      ID: t-shirt
+      Name: T-shirt
+      Description: >-
+        This t-shirt is a must-have in your wardrobe, combining the timeless fit
+        of a classic tee with an intricate embroidered detail that brings the
+        shirt to a whole new level. It's soft and durable, so be prepared to
+        have a new favorite t-shirt!
+
+        Long sleeve ripstop jacket colorblocked in black. Rough pattern in
+        obsidian black and brown printed throughout. Printed graphic in white
+        throughout. Logo-woven webbing trim in white and black throughout.
+        Bungee-style drawstring at hood featuring rubberized logo hardware. Zip
+        closure at front. Rubberized logo appliqué at chest. Welt pockets and
+        textile logo patch in orange at waist. Elasticized cuffs. Partially
+        lined. Black hardware.
+
+        • 60% cotton, 40% acrylic
+
+        • Breathable cotton blend
+
+        • Form-fitting shape
+
+        • One size fits most
+      QuantityMultiplier: 1
+      ShipWeight: null
+      ShipHeight: null
+      ShipWidth: null
+      ShipLength: null
+      Active: true
+      SpecCount: 2
+      VariantCount: 8
+      ShipFromAddressID: null
+      Inventory:
+        Enabled: false
+        NotificationPoint: null
+        VariantLevelTracking: false
+        OrderCanExceed: false
+        QuantityAvailable: null
+        LastUpdated: '2022-05-12T15:48:21.123+00:00'
+      DefaultSupplierID: null
+      AllSuppliersCanSell: false
+      Returnable: false
+      xp:
+        Price: 40
+        Images:
+          - url: >-
+              https://ocdevops.blob.core.windows.net/vercel-integration-assets/t-shirt_1.png
+          - url: >-
+              https://ocdevops.blob.core.windows.net/vercel-integration-assets/t-shirt_2.png
+          - url: >-
+              https://ocdevops.blob.core.windows.net/vercel-integration-assets/t-shirt_3.png
+          - url: >-
+              https://ocdevops.blob.core.windows.net/vercel-integration-assets/t-shirt_4.png
+          - url: >-
+              https://ocdevops.blob.core.windows.net/vercel-integration-assets/t-shirt_5.png
+          - url: >-
+              https://ocdevops.blob.core.windows.net/vercel-integration-assets/t-shirt_6.png
+        PriceCurrency: USD
   Variants:
-    - ID: ground
-      Name: null
-      Description: null
-      Active: false
-      ShipWeight: null
-      ShipHeight: null
-      ShipWidth: null
-      ShipLength: null
-      Inventory:
-        QuantityAvailable: 40
-        LastUpdated: '0001-01-01T00:00:00+00:00'
-      Specs:
-        - SpecID: color
-          Name: color
-          OptionID: red
-          Value: red
-          PriceMarkupType: NoMarkup
-          PriceMarkup: null
-        - SpecID: size
-          Name: size
-          OptionID: M
-          Value: M
-          PriceMarkupType: NoMarkup
-          PriceMarkup: null
-      xp: null
-      ProductID: product1
-    - ID: product1-blue-S
+    - ID: bomber-jacket-black-L
       Name: null
       Description: null
       Active: true
@@ -132,25 +778,23 @@ Objects:
       ShipHeight: null
       ShipWidth: null
       ShipLength: null
-      Inventory:
-        QuantityAvailable: 0
-        LastUpdated: '0001-01-01T00:00:00+00:00'
+      Inventory: null
       Specs:
-        - SpecID: color
-          Name: color
-          OptionID: blue
-          Value: blue
+        - SpecID: bomber-jacket-color
+          Name: Color
+          OptionID: black
+          Value: Black
           PriceMarkupType: NoMarkup
           PriceMarkup: null
-        - SpecID: size
-          Name: size
-          OptionID: S
-          Value: S
+        - SpecID: cross-product-size
+          Name: Size
+          OptionID: L
+          Value: Large
           PriceMarkupType: NoMarkup
           PriceMarkup: null
       xp: null
-      ProductID: product1
-    - ID: product1-red-S
+      ProductID: bomber-jacket
+    - ID: bomber-jacket-black-M
       Name: null
       Description: null
       Active: true
@@ -158,207 +802,1872 @@ Objects:
       ShipHeight: null
       ShipWidth: null
       ShipLength: null
-      Inventory:
-        QuantityAvailable: 0
-        LastUpdated: '0001-01-01T00:00:00+00:00'
+      Inventory: null
       Specs:
-        - SpecID: color
-          Name: color
-          OptionID: red
-          Value: red
+        - SpecID: bomber-jacket-color
+          Name: Color
+          OptionID: black
+          Value: Black
           PriceMarkupType: NoMarkup
           PriceMarkup: null
-        - SpecID: size
-          Name: size
-          OptionID: S
-          Value: S
+        - SpecID: cross-product-size
+          Name: Size
+          OptionID: M
+          Value: Medium
           PriceMarkupType: NoMarkup
           PriceMarkup: null
       xp: null
-      ProductID: product1
-    - ID: sky
+      ProductID: bomber-jacket
+    - ID: bomber-jacket-black-S
       Name: null
       Description: null
-      Active: false
+      Active: true
       ShipWeight: null
       ShipHeight: null
       ShipWidth: null
       ShipLength: null
-      Inventory:
-        QuantityAvailable: 30
-        LastUpdated: '0001-01-01T00:00:00+00:00'
+      Inventory: null
       Specs:
-        - SpecID: color
-          Name: color
-          OptionID: blue
-          Value: blue
+        - SpecID: bomber-jacket-color
+          Name: Color
+          OptionID: black
+          Value: Black
           PriceMarkupType: NoMarkup
           PriceMarkup: null
-        - SpecID: size
-          Name: size
+        - SpecID: cross-product-size
+          Name: Size
+          OptionID: S
+          Value: Small
+          PriceMarkupType: NoMarkup
+          PriceMarkup: null
+      xp: null
+      ProductID: bomber-jacket
+    - ID: bomber-jacket-black-XL
+      Name: null
+      Description: null
+      Active: true
+      ShipWeight: null
+      ShipHeight: null
+      ShipWidth: null
+      ShipLength: null
+      Inventory: null
+      Specs:
+        - SpecID: bomber-jacket-color
+          Name: Color
+          OptionID: black
+          Value: Black
+          PriceMarkupType: NoMarkup
+          PriceMarkup: null
+        - SpecID: cross-product-size
+          Name: Size
+          OptionID: XL
+          Value: Extra Large
+          PriceMarkupType: NoMarkup
+          PriceMarkup: null
+      xp: null
+      ProductID: bomber-jacket
+    - ID: bomber-jacket-olive-L
+      Name: null
+      Description: null
+      Active: true
+      ShipWeight: null
+      ShipHeight: null
+      ShipWidth: null
+      ShipLength: null
+      Inventory: null
+      Specs:
+        - SpecID: bomber-jacket-color
+          Name: Color
+          OptionID: olive
+          Value: Olive
+          PriceMarkupType: Percentage
+          PriceMarkup: 10
+        - SpecID: cross-product-size
+          Name: Size
+          OptionID: L
+          Value: Large
+          PriceMarkupType: NoMarkup
+          PriceMarkup: null
+      xp: null
+      ProductID: bomber-jacket
+    - ID: bomber-jacket-olive-M
+      Name: null
+      Description: null
+      Active: true
+      ShipWeight: null
+      ShipHeight: null
+      ShipWidth: null
+      ShipLength: null
+      Inventory: null
+      Specs:
+        - SpecID: bomber-jacket-color
+          Name: Color
+          OptionID: olive
+          Value: Olive
+          PriceMarkupType: Percentage
+          PriceMarkup: 10
+        - SpecID: cross-product-size
+          Name: Size
           OptionID: M
-          Value: M
+          Value: Medium
           PriceMarkupType: NoMarkup
           PriceMarkup: null
       xp: null
-      ProductID: product1
-  VariantInventoryRecords:
-    - ID: LCGhMUIqMEWjr6xlUxPXRw
-      OwnerID: supplier1
-      Address:
-        ID: supplier-address-1
-        DateCreated: '2022-01-19T22:21:06.883+00:00'
-        CompanyName: null
-        FirstName: null
-        LastName: null
-        Street1: 4th
-        Street2: null
-        City: Minneapolis
-        State: MN
-        Zip: '55409'
-        Country: US
-        Phone: null
-        AddressName: null
-        xp: null
-      AddressID: supplier-address-1
-      OrderCanExceed: false
-      QuantityAvailable: 40
-      LastUpdated: '2022-01-19T22:21:10.93+00:00'
+      ProductID: bomber-jacket
+    - ID: bomber-jacket-olive-S
+      Name: null
+      Description: null
+      Active: true
+      ShipWeight: null
+      ShipHeight: null
+      ShipWidth: null
+      ShipLength: null
+      Inventory: null
+      Specs:
+        - SpecID: bomber-jacket-color
+          Name: Color
+          OptionID: olive
+          Value: Olive
+          PriceMarkupType: Percentage
+          PriceMarkup: 10
+        - SpecID: cross-product-size
+          Name: Size
+          OptionID: S
+          Value: Small
+          PriceMarkupType: NoMarkup
+          PriceMarkup: null
       xp: null
-      ProductID: product1
-      VariantID: ground
-    - ID: ilPNYZRnNU22Pk2GJafjzA
-      OwnerID: supplier1
-      Address:
-        ID: supplier-address-1
-        DateCreated: '2022-01-19T22:21:06.883+00:00'
-        CompanyName: null
-        FirstName: null
-        LastName: null
-        Street1: 4th
-        Street2: null
-        City: Minneapolis
-        State: MN
-        Zip: '55409'
-        Country: US
-        Phone: null
-        AddressName: null
-        xp: null
-      AddressID: supplier-address-1
-      OrderCanExceed: false
-      QuantityAvailable: 30
-      LastUpdated: '2022-01-19T22:21:10.87+00:00'
+      ProductID: bomber-jacket
+    - ID: bomber-jacket-olive-XL
+      Name: null
+      Description: null
+      Active: true
+      ShipWeight: null
+      ShipHeight: null
+      ShipWidth: null
+      ShipLength: null
+      Inventory: null
+      Specs:
+        - SpecID: bomber-jacket-color
+          Name: Color
+          OptionID: olive
+          Value: Olive
+          PriceMarkupType: Percentage
+          PriceMarkup: 10
+        - SpecID: cross-product-size
+          Name: Size
+          OptionID: XL
+          Value: Extra Large
+          PriceMarkupType: NoMarkup
+          PriceMarkup: null
       xp: null
-      ProductID: product1
-      VariantID: sky
+      ProductID: bomber-jacket
+    - ID: champion-jacket-L
+      Name: null
+      Description: null
+      Active: true
+      ShipWeight: null
+      ShipHeight: null
+      ShipWidth: null
+      ShipLength: null
+      Inventory: null
+      Specs:
+        - SpecID: cross-product-size
+          Name: Size
+          OptionID: L
+          Value: Large
+          PriceMarkupType: NoMarkup
+          PriceMarkup: null
+      xp: null
+      ProductID: champion-jacket
+    - ID: champion-jacket-M
+      Name: null
+      Description: null
+      Active: true
+      ShipWeight: null
+      ShipHeight: null
+      ShipWidth: null
+      ShipLength: null
+      Inventory: null
+      Specs:
+        - SpecID: cross-product-size
+          Name: Size
+          OptionID: M
+          Value: Medium
+          PriceMarkupType: NoMarkup
+          PriceMarkup: null
+      xp: null
+      ProductID: champion-jacket
+    - ID: champion-jacket-S
+      Name: null
+      Description: null
+      Active: true
+      ShipWeight: null
+      ShipHeight: null
+      ShipWidth: null
+      ShipLength: null
+      Inventory: null
+      Specs:
+        - SpecID: cross-product-size
+          Name: Size
+          OptionID: S
+          Value: Small
+          PriceMarkupType: NoMarkup
+          PriceMarkup: null
+      xp: null
+      ProductID: champion-jacket
+    - ID: champion-jacket-XL
+      Name: null
+      Description: null
+      Active: true
+      ShipWeight: null
+      ShipHeight: null
+      ShipWidth: null
+      ShipLength: null
+      Inventory: null
+      Specs:
+        - SpecID: cross-product-size
+          Name: Size
+          OptionID: XL
+          Value: Extra Large
+          PriceMarkupType: NoMarkup
+          PriceMarkup: null
+      xp: null
+      ProductID: champion-jacket
+    - ID: joggers-L
+      Name: null
+      Description: null
+      Active: true
+      ShipWeight: null
+      ShipHeight: null
+      ShipWidth: null
+      ShipLength: null
+      Inventory: null
+      Specs:
+        - SpecID: cross-product-size
+          Name: Size
+          OptionID: L
+          Value: Large
+          PriceMarkupType: NoMarkup
+          PriceMarkup: null
+      xp: null
+      ProductID: joggers
+    - ID: joggers-M
+      Name: null
+      Description: null
+      Active: true
+      ShipWeight: null
+      ShipHeight: null
+      ShipWidth: null
+      ShipLength: null
+      Inventory: null
+      Specs:
+        - SpecID: cross-product-size
+          Name: Size
+          OptionID: M
+          Value: Medium
+          PriceMarkupType: NoMarkup
+          PriceMarkup: null
+      xp: null
+      ProductID: joggers
+    - ID: joggers-S
+      Name: null
+      Description: null
+      Active: true
+      ShipWeight: null
+      ShipHeight: null
+      ShipWidth: null
+      ShipLength: null
+      Inventory: null
+      Specs:
+        - SpecID: cross-product-size
+          Name: Size
+          OptionID: S
+          Value: Small
+          PriceMarkupType: NoMarkup
+          PriceMarkup: null
+      xp: null
+      ProductID: joggers
+    - ID: joggers-XL
+      Name: null
+      Description: null
+      Active: true
+      ShipWeight: null
+      ShipHeight: null
+      ShipWidth: null
+      ShipLength: null
+      Inventory: null
+      Specs:
+        - SpecID: cross-product-size
+          Name: Size
+          OptionID: XL
+          Value: Extra Large
+          PriceMarkupType: NoMarkup
+          PriceMarkup: null
+      xp: null
+      ProductID: joggers
+    - ID: letterman-jacket-L
+      Name: null
+      Description: null
+      Active: true
+      ShipWeight: null
+      ShipHeight: null
+      ShipWidth: null
+      ShipLength: null
+      Inventory: null
+      Specs:
+        - SpecID: cross-product-size
+          Name: Size
+          OptionID: L
+          Value: Large
+          PriceMarkupType: NoMarkup
+          PriceMarkup: null
+      xp: null
+      ProductID: letterman-jacket
+    - ID: letterman-jacket-M
+      Name: null
+      Description: null
+      Active: true
+      ShipWeight: null
+      ShipHeight: null
+      ShipWidth: null
+      ShipLength: null
+      Inventory: null
+      Specs:
+        - SpecID: cross-product-size
+          Name: Size
+          OptionID: M
+          Value: Medium
+          PriceMarkupType: NoMarkup
+          PriceMarkup: null
+      xp: null
+      ProductID: letterman-jacket
+    - ID: letterman-jacket-S
+      Name: null
+      Description: null
+      Active: true
+      ShipWeight: null
+      ShipHeight: null
+      ShipWidth: null
+      ShipLength: null
+      Inventory: null
+      Specs:
+        - SpecID: cross-product-size
+          Name: Size
+          OptionID: S
+          Value: Small
+          PriceMarkupType: NoMarkup
+          PriceMarkup: null
+      xp: null
+      ProductID: letterman-jacket
+    - ID: letterman-jacket-XL
+      Name: null
+      Description: null
+      Active: true
+      ShipWeight: null
+      ShipHeight: null
+      ShipWidth: null
+      ShipLength: null
+      Inventory: null
+      Specs:
+        - SpecID: cross-product-size
+          Name: Size
+          OptionID: XL
+          Value: Extra Large
+          PriceMarkupType: NoMarkup
+          PriceMarkup: null
+      xp: null
+      ProductID: letterman-jacket
+    - ID: lightweight-jacket-Black-L
+      Name: null
+      Description: null
+      Active: true
+      ShipWeight: null
+      ShipHeight: null
+      ShipWidth: null
+      ShipLength: null
+      Inventory: null
+      Specs:
+        - SpecID: black-and-white
+          Name: Color
+          OptionID: Black
+          Value: black
+          PriceMarkupType: NoMarkup
+          PriceMarkup: null
+        - SpecID: cross-product-size
+          Name: Size
+          OptionID: L
+          Value: Large
+          PriceMarkupType: NoMarkup
+          PriceMarkup: null
+      xp: null
+      ProductID: lightweight-jacket
+    - ID: lightweight-jacket-Black-M
+      Name: null
+      Description: null
+      Active: true
+      ShipWeight: null
+      ShipHeight: null
+      ShipWidth: null
+      ShipLength: null
+      Inventory: null
+      Specs:
+        - SpecID: black-and-white
+          Name: Color
+          OptionID: Black
+          Value: black
+          PriceMarkupType: NoMarkup
+          PriceMarkup: null
+        - SpecID: cross-product-size
+          Name: Size
+          OptionID: M
+          Value: Medium
+          PriceMarkupType: NoMarkup
+          PriceMarkup: null
+      xp: null
+      ProductID: lightweight-jacket
+    - ID: lightweight-jacket-Black-S
+      Name: null
+      Description: null
+      Active: true
+      ShipWeight: null
+      ShipHeight: null
+      ShipWidth: null
+      ShipLength: null
+      Inventory: null
+      Specs:
+        - SpecID: black-and-white
+          Name: Color
+          OptionID: Black
+          Value: black
+          PriceMarkupType: NoMarkup
+          PriceMarkup: null
+        - SpecID: cross-product-size
+          Name: Size
+          OptionID: S
+          Value: Small
+          PriceMarkupType: NoMarkup
+          PriceMarkup: null
+      xp: null
+      ProductID: lightweight-jacket
+    - ID: lightweight-jacket-Black-XL
+      Name: null
+      Description: null
+      Active: true
+      ShipWeight: null
+      ShipHeight: null
+      ShipWidth: null
+      ShipLength: null
+      Inventory: null
+      Specs:
+        - SpecID: black-and-white
+          Name: Color
+          OptionID: Black
+          Value: black
+          PriceMarkupType: NoMarkup
+          PriceMarkup: null
+        - SpecID: cross-product-size
+          Name: Size
+          OptionID: XL
+          Value: Extra Large
+          PriceMarkupType: NoMarkup
+          PriceMarkup: null
+      xp: null
+      ProductID: lightweight-jacket
+    - ID: lightweight-jacket-white-L
+      Name: null
+      Description: null
+      Active: true
+      ShipWeight: null
+      ShipHeight: null
+      ShipWidth: null
+      ShipLength: null
+      Inventory: null
+      Specs:
+        - SpecID: black-and-white
+          Name: Color
+          OptionID: white
+          Value: White
+          PriceMarkupType: NoMarkup
+          PriceMarkup: null
+        - SpecID: cross-product-size
+          Name: Size
+          OptionID: L
+          Value: Large
+          PriceMarkupType: NoMarkup
+          PriceMarkup: null
+      xp: null
+      ProductID: lightweight-jacket
+    - ID: lightweight-jacket-white-M
+      Name: null
+      Description: null
+      Active: true
+      ShipWeight: null
+      ShipHeight: null
+      ShipWidth: null
+      ShipLength: null
+      Inventory: null
+      Specs:
+        - SpecID: black-and-white
+          Name: Color
+          OptionID: white
+          Value: White
+          PriceMarkupType: NoMarkup
+          PriceMarkup: null
+        - SpecID: cross-product-size
+          Name: Size
+          OptionID: M
+          Value: Medium
+          PriceMarkupType: NoMarkup
+          PriceMarkup: null
+      xp: null
+      ProductID: lightweight-jacket
+    - ID: lightweight-jacket-white-S
+      Name: null
+      Description: null
+      Active: true
+      ShipWeight: null
+      ShipHeight: null
+      ShipWidth: null
+      ShipLength: null
+      Inventory: null
+      Specs:
+        - SpecID: black-and-white
+          Name: Color
+          OptionID: white
+          Value: White
+          PriceMarkupType: NoMarkup
+          PriceMarkup: null
+        - SpecID: cross-product-size
+          Name: Size
+          OptionID: S
+          Value: Small
+          PriceMarkupType: NoMarkup
+          PriceMarkup: null
+      xp: null
+      ProductID: lightweight-jacket
+    - ID: lightweight-jacket-white-XL
+      Name: null
+      Description: null
+      Active: true
+      ShipWeight: null
+      ShipHeight: null
+      ShipWidth: null
+      ShipLength: null
+      Inventory: null
+      Specs:
+        - SpecID: black-and-white
+          Name: Color
+          OptionID: white
+          Value: White
+          PriceMarkupType: NoMarkup
+          PriceMarkup: null
+        - SpecID: cross-product-size
+          Name: Size
+          OptionID: XL
+          Value: Extra Large
+          PriceMarkupType: NoMarkup
+          PriceMarkup: null
+      xp: null
+      ProductID: lightweight-jacket
+    - ID: mask-Black
+      Name: null
+      Description: null
+      Active: true
+      ShipWeight: null
+      ShipHeight: null
+      ShipWidth: null
+      ShipLength: null
+      Inventory: null
+      Specs:
+        - SpecID: black-and-white
+          Name: Color
+          OptionID: Black
+          Value: black
+          PriceMarkupType: NoMarkup
+          PriceMarkup: null
+      xp: null
+      ProductID: mask
+    - ID: mask-white
+      Name: null
+      Description: null
+      Active: true
+      ShipWeight: null
+      ShipHeight: null
+      ShipWidth: null
+      ShipLength: null
+      Inventory: null
+      Specs:
+        - SpecID: black-and-white
+          Name: Color
+          OptionID: white
+          Value: White
+          PriceMarkupType: NoMarkup
+          PriceMarkup: null
+      xp: null
+      ProductID: mask
+    - ID: short-sleeve-t-shirt-Aqua-L
+      Name: null
+      Description: null
+      Active: true
+      ShipWeight: null
+      ShipHeight: null
+      ShipWidth: null
+      ShipLength: null
+      Inventory: null
+      Specs:
+        - SpecID: short-sleeve-t-shirt-color
+          Name: Color
+          OptionID: Aqua
+          Value: aqua
+          PriceMarkupType: NoMarkup
+          PriceMarkup: null
+        - SpecID: cross-product-size
+          Name: Size
+          OptionID: L
+          Value: Large
+          PriceMarkupType: NoMarkup
+          PriceMarkup: null
+      xp: null
+      ProductID: short-sleeve-t-shirt
+    - ID: short-sleeve-t-shirt-Aqua-M
+      Name: null
+      Description: null
+      Active: true
+      ShipWeight: null
+      ShipHeight: null
+      ShipWidth: null
+      ShipLength: null
+      Inventory: null
+      Specs:
+        - SpecID: short-sleeve-t-shirt-color
+          Name: Color
+          OptionID: Aqua
+          Value: aqua
+          PriceMarkupType: NoMarkup
+          PriceMarkup: null
+        - SpecID: cross-product-size
+          Name: Size
+          OptionID: M
+          Value: Medium
+          PriceMarkupType: NoMarkup
+          PriceMarkup: null
+      xp: null
+      ProductID: short-sleeve-t-shirt
+    - ID: short-sleeve-t-shirt-Aqua-S
+      Name: null
+      Description: null
+      Active: true
+      ShipWeight: null
+      ShipHeight: null
+      ShipWidth: null
+      ShipLength: null
+      Inventory: null
+      Specs:
+        - SpecID: short-sleeve-t-shirt-color
+          Name: Color
+          OptionID: Aqua
+          Value: aqua
+          PriceMarkupType: NoMarkup
+          PriceMarkup: null
+        - SpecID: cross-product-size
+          Name: Size
+          OptionID: S
+          Value: Small
+          PriceMarkupType: NoMarkup
+          PriceMarkup: null
+      xp: null
+      ProductID: short-sleeve-t-shirt
+    - ID: short-sleeve-t-shirt-Aqua-XL
+      Name: null
+      Description: null
+      Active: true
+      ShipWeight: null
+      ShipHeight: null
+      ShipWidth: null
+      ShipLength: null
+      Inventory: null
+      Specs:
+        - SpecID: short-sleeve-t-shirt-color
+          Name: Color
+          OptionID: Aqua
+          Value: aqua
+          PriceMarkupType: NoMarkup
+          PriceMarkup: null
+        - SpecID: cross-product-size
+          Name: Size
+          OptionID: XL
+          Value: Extra Large
+          PriceMarkupType: NoMarkup
+          PriceMarkup: null
+      xp: null
+      ProductID: short-sleeve-t-shirt
+    - ID: short-sleeve-t-shirt-light-brown-L
+      Name: null
+      Description: null
+      Active: true
+      ShipWeight: null
+      ShipHeight: null
+      ShipWidth: null
+      ShipLength: null
+      Inventory: null
+      Specs:
+        - SpecID: short-sleeve-t-shirt-color
+          Name: Color
+          OptionID: light-brown
+          Value: Light Brown
+          PriceMarkupType: NoMarkup
+          PriceMarkup: null
+        - SpecID: cross-product-size
+          Name: Size
+          OptionID: L
+          Value: Large
+          PriceMarkupType: NoMarkup
+          PriceMarkup: null
+      xp: null
+      ProductID: short-sleeve-t-shirt
+    - ID: short-sleeve-t-shirt-light-brown-M
+      Name: null
+      Description: null
+      Active: true
+      ShipWeight: null
+      ShipHeight: null
+      ShipWidth: null
+      ShipLength: null
+      Inventory: null
+      Specs:
+        - SpecID: short-sleeve-t-shirt-color
+          Name: Color
+          OptionID: light-brown
+          Value: Light Brown
+          PriceMarkupType: NoMarkup
+          PriceMarkup: null
+        - SpecID: cross-product-size
+          Name: Size
+          OptionID: M
+          Value: Medium
+          PriceMarkupType: NoMarkup
+          PriceMarkup: null
+      xp: null
+      ProductID: short-sleeve-t-shirt
+    - ID: short-sleeve-t-shirt-light-brown-S
+      Name: null
+      Description: null
+      Active: true
+      ShipWeight: null
+      ShipHeight: null
+      ShipWidth: null
+      ShipLength: null
+      Inventory: null
+      Specs:
+        - SpecID: short-sleeve-t-shirt-color
+          Name: Color
+          OptionID: light-brown
+          Value: Light Brown
+          PriceMarkupType: NoMarkup
+          PriceMarkup: null
+        - SpecID: cross-product-size
+          Name: Size
+          OptionID: S
+          Value: Small
+          PriceMarkupType: NoMarkup
+          PriceMarkup: null
+      xp: null
+      ProductID: short-sleeve-t-shirt
+    - ID: short-sleeve-t-shirt-light-brown-XL
+      Name: null
+      Description: null
+      Active: true
+      ShipWeight: null
+      ShipHeight: null
+      ShipWidth: null
+      ShipLength: null
+      Inventory: null
+      Specs:
+        - SpecID: short-sleeve-t-shirt-color
+          Name: Color
+          OptionID: light-brown
+          Value: Light Brown
+          PriceMarkupType: NoMarkup
+          PriceMarkup: null
+        - SpecID: cross-product-size
+          Name: Size
+          OptionID: XL
+          Value: Extra Large
+          PriceMarkupType: NoMarkup
+          PriceMarkup: null
+      xp: null
+      ProductID: short-sleeve-t-shirt
+    - ID: short-sleeve-t-shirt-orange-L
+      Name: null
+      Description: null
+      Active: true
+      ShipWeight: null
+      ShipHeight: null
+      ShipWidth: null
+      ShipLength: null
+      Inventory: null
+      Specs:
+        - SpecID: short-sleeve-t-shirt-color
+          Name: Color
+          OptionID: orange
+          Value: Orange
+          PriceMarkupType: NoMarkup
+          PriceMarkup: null
+        - SpecID: cross-product-size
+          Name: Size
+          OptionID: L
+          Value: Large
+          PriceMarkupType: NoMarkup
+          PriceMarkup: null
+      xp: null
+      ProductID: short-sleeve-t-shirt
+    - ID: short-sleeve-t-shirt-orange-M
+      Name: null
+      Description: null
+      Active: true
+      ShipWeight: null
+      ShipHeight: null
+      ShipWidth: null
+      ShipLength: null
+      Inventory: null
+      Specs:
+        - SpecID: short-sleeve-t-shirt-color
+          Name: Color
+          OptionID: orange
+          Value: Orange
+          PriceMarkupType: NoMarkup
+          PriceMarkup: null
+        - SpecID: cross-product-size
+          Name: Size
+          OptionID: M
+          Value: Medium
+          PriceMarkupType: NoMarkup
+          PriceMarkup: null
+      xp: null
+      ProductID: short-sleeve-t-shirt
+    - ID: short-sleeve-t-shirt-orange-S
+      Name: null
+      Description: null
+      Active: true
+      ShipWeight: null
+      ShipHeight: null
+      ShipWidth: null
+      ShipLength: null
+      Inventory: null
+      Specs:
+        - SpecID: short-sleeve-t-shirt-color
+          Name: Color
+          OptionID: orange
+          Value: Orange
+          PriceMarkupType: NoMarkup
+          PriceMarkup: null
+        - SpecID: cross-product-size
+          Name: Size
+          OptionID: S
+          Value: Small
+          PriceMarkupType: NoMarkup
+          PriceMarkup: null
+      xp: null
+      ProductID: short-sleeve-t-shirt
+    - ID: short-sleeve-t-shirt-orange-XL
+      Name: null
+      Description: null
+      Active: true
+      ShipWeight: null
+      ShipHeight: null
+      ShipWidth: null
+      ShipLength: null
+      Inventory: null
+      Specs:
+        - SpecID: short-sleeve-t-shirt-color
+          Name: Color
+          OptionID: orange
+          Value: Orange
+          PriceMarkupType: NoMarkup
+          PriceMarkup: null
+        - SpecID: cross-product-size
+          Name: Size
+          OptionID: XL
+          Value: Extra Large
+          PriceMarkupType: NoMarkup
+          PriceMarkup: null
+      xp: null
+      ProductID: short-sleeve-t-shirt
+    - ID: short-sleeve-t-shirt-Peach-L
+      Name: null
+      Description: null
+      Active: true
+      ShipWeight: null
+      ShipHeight: null
+      ShipWidth: null
+      ShipLength: null
+      Inventory: null
+      Specs:
+        - SpecID: short-sleeve-t-shirt-color
+          Name: Color
+          OptionID: Peach
+          Value: peach
+          PriceMarkupType: NoMarkup
+          PriceMarkup: null
+        - SpecID: cross-product-size
+          Name: Size
+          OptionID: L
+          Value: Large
+          PriceMarkupType: NoMarkup
+          PriceMarkup: null
+      xp: null
+      ProductID: short-sleeve-t-shirt
+    - ID: short-sleeve-t-shirt-Peach-M
+      Name: null
+      Description: null
+      Active: true
+      ShipWeight: null
+      ShipHeight: null
+      ShipWidth: null
+      ShipLength: null
+      Inventory: null
+      Specs:
+        - SpecID: short-sleeve-t-shirt-color
+          Name: Color
+          OptionID: Peach
+          Value: peach
+          PriceMarkupType: NoMarkup
+          PriceMarkup: null
+        - SpecID: cross-product-size
+          Name: Size
+          OptionID: M
+          Value: Medium
+          PriceMarkupType: NoMarkup
+          PriceMarkup: null
+      xp: null
+      ProductID: short-sleeve-t-shirt
+    - ID: short-sleeve-t-shirt-Peach-S
+      Name: null
+      Description: null
+      Active: true
+      ShipWeight: null
+      ShipHeight: null
+      ShipWidth: null
+      ShipLength: null
+      Inventory: null
+      Specs:
+        - SpecID: short-sleeve-t-shirt-color
+          Name: Color
+          OptionID: Peach
+          Value: peach
+          PriceMarkupType: NoMarkup
+          PriceMarkup: null
+        - SpecID: cross-product-size
+          Name: Size
+          OptionID: S
+          Value: Small
+          PriceMarkupType: NoMarkup
+          PriceMarkup: null
+      xp: null
+      ProductID: short-sleeve-t-shirt
+    - ID: short-sleeve-t-shirt-Peach-XL
+      Name: null
+      Description: null
+      Active: true
+      ShipWeight: null
+      ShipHeight: null
+      ShipWidth: null
+      ShipLength: null
+      Inventory: null
+      Specs:
+        - SpecID: short-sleeve-t-shirt-color
+          Name: Color
+          OptionID: Peach
+          Value: peach
+          PriceMarkupType: NoMarkup
+          PriceMarkup: null
+        - SpecID: cross-product-size
+          Name: Size
+          OptionID: XL
+          Value: Extra Large
+          PriceMarkupType: NoMarkup
+          PriceMarkup: null
+      xp: null
+      ProductID: short-sleeve-t-shirt
+    - ID: skinny-joggers-L
+      Name: null
+      Description: null
+      Active: true
+      ShipWeight: null
+      ShipHeight: null
+      ShipWidth: null
+      ShipLength: null
+      Inventory: null
+      Specs:
+        - SpecID: cross-product-size
+          Name: Size
+          OptionID: L
+          Value: Large
+          PriceMarkupType: NoMarkup
+          PriceMarkup: null
+      xp: null
+      ProductID: skinny-joggers
+    - ID: skinny-joggers-M
+      Name: null
+      Description: null
+      Active: true
+      ShipWeight: null
+      ShipHeight: null
+      ShipWidth: null
+      ShipLength: null
+      Inventory: null
+      Specs:
+        - SpecID: cross-product-size
+          Name: Size
+          OptionID: M
+          Value: Medium
+          PriceMarkupType: NoMarkup
+          PriceMarkup: null
+      xp: null
+      ProductID: skinny-joggers
+    - ID: skinny-joggers-S
+      Name: null
+      Description: null
+      Active: true
+      ShipWeight: null
+      ShipHeight: null
+      ShipWidth: null
+      ShipLength: null
+      Inventory: null
+      Specs:
+        - SpecID: cross-product-size
+          Name: Size
+          OptionID: S
+          Value: Small
+          PriceMarkupType: NoMarkup
+          PriceMarkup: null
+      xp: null
+      ProductID: skinny-joggers
+    - ID: skinny-joggers-XL
+      Name: null
+      Description: null
+      Active: true
+      ShipWeight: null
+      ShipHeight: null
+      ShipWidth: null
+      ShipLength: null
+      Inventory: null
+      Specs:
+        - SpecID: cross-product-size
+          Name: Size
+          OptionID: XL
+          Value: Extra Large
+          PriceMarkupType: NoMarkup
+          PriceMarkup: null
+      xp: null
+      ProductID: skinny-joggers
+    - ID: t-shirt-Black-L
+      Name: null
+      Description: null
+      Active: true
+      ShipWeight: null
+      ShipHeight: null
+      ShipWidth: null
+      ShipLength: null
+      Inventory: null
+      Specs:
+        - SpecID: black-and-white
+          Name: Color
+          OptionID: Black
+          Value: black
+          PriceMarkupType: NoMarkup
+          PriceMarkup: null
+        - SpecID: cross-product-size
+          Name: Size
+          OptionID: L
+          Value: Large
+          PriceMarkupType: NoMarkup
+          PriceMarkup: null
+      xp: null
+      ProductID: t-shirt
+    - ID: t-shirt-Black-M
+      Name: null
+      Description: null
+      Active: true
+      ShipWeight: null
+      ShipHeight: null
+      ShipWidth: null
+      ShipLength: null
+      Inventory: null
+      Specs:
+        - SpecID: black-and-white
+          Name: Color
+          OptionID: Black
+          Value: black
+          PriceMarkupType: NoMarkup
+          PriceMarkup: null
+        - SpecID: cross-product-size
+          Name: Size
+          OptionID: M
+          Value: Medium
+          PriceMarkupType: NoMarkup
+          PriceMarkup: null
+      xp: null
+      ProductID: t-shirt
+    - ID: t-shirt-Black-S
+      Name: null
+      Description: null
+      Active: true
+      ShipWeight: null
+      ShipHeight: null
+      ShipWidth: null
+      ShipLength: null
+      Inventory: null
+      Specs:
+        - SpecID: black-and-white
+          Name: Color
+          OptionID: Black
+          Value: black
+          PriceMarkupType: NoMarkup
+          PriceMarkup: null
+        - SpecID: cross-product-size
+          Name: Size
+          OptionID: S
+          Value: Small
+          PriceMarkupType: NoMarkup
+          PriceMarkup: null
+      xp: null
+      ProductID: t-shirt
+    - ID: t-shirt-Black-XL
+      Name: null
+      Description: null
+      Active: true
+      ShipWeight: null
+      ShipHeight: null
+      ShipWidth: null
+      ShipLength: null
+      Inventory: null
+      Specs:
+        - SpecID: black-and-white
+          Name: Color
+          OptionID: Black
+          Value: black
+          PriceMarkupType: NoMarkup
+          PriceMarkup: null
+        - SpecID: cross-product-size
+          Name: Size
+          OptionID: XL
+          Value: Extra Large
+          PriceMarkupType: NoMarkup
+          PriceMarkup: null
+      xp: null
+      ProductID: t-shirt
+    - ID: t-shirt-white-L
+      Name: null
+      Description: null
+      Active: true
+      ShipWeight: null
+      ShipHeight: null
+      ShipWidth: null
+      ShipLength: null
+      Inventory: null
+      Specs:
+        - SpecID: black-and-white
+          Name: Color
+          OptionID: white
+          Value: White
+          PriceMarkupType: NoMarkup
+          PriceMarkup: null
+        - SpecID: cross-product-size
+          Name: Size
+          OptionID: L
+          Value: Large
+          PriceMarkupType: NoMarkup
+          PriceMarkup: null
+      xp: null
+      ProductID: t-shirt
+    - ID: t-shirt-white-M
+      Name: null
+      Description: null
+      Active: true
+      ShipWeight: null
+      ShipHeight: null
+      ShipWidth: null
+      ShipLength: null
+      Inventory: null
+      Specs:
+        - SpecID: black-and-white
+          Name: Color
+          OptionID: white
+          Value: White
+          PriceMarkupType: NoMarkup
+          PriceMarkup: null
+        - SpecID: cross-product-size
+          Name: Size
+          OptionID: M
+          Value: Medium
+          PriceMarkupType: NoMarkup
+          PriceMarkup: null
+      xp: null
+      ProductID: t-shirt
+    - ID: t-shirt-white-S
+      Name: null
+      Description: null
+      Active: true
+      ShipWeight: null
+      ShipHeight: null
+      ShipWidth: null
+      ShipLength: null
+      Inventory: null
+      Specs:
+        - SpecID: black-and-white
+          Name: Color
+          OptionID: white
+          Value: White
+          PriceMarkupType: NoMarkup
+          PriceMarkup: null
+        - SpecID: cross-product-size
+          Name: Size
+          OptionID: S
+          Value: Small
+          PriceMarkupType: NoMarkup
+          PriceMarkup: null
+      xp: null
+      ProductID: t-shirt
+    - ID: t-shirt-white-XL
+      Name: null
+      Description: null
+      Active: true
+      ShipWeight: null
+      ShipHeight: null
+      ShipWidth: null
+      ShipLength: null
+      Inventory: null
+      Specs:
+        - SpecID: black-and-white
+          Name: Color
+          OptionID: white
+          Value: White
+          PriceMarkupType: NoMarkup
+          PriceMarkup: null
+        - SpecID: cross-product-size
+          Name: Size
+          OptionID: XL
+          Value: Extra Large
+          PriceMarkupType: NoMarkup
+          PriceMarkup: null
+      xp: null
+      ProductID: t-shirt
+  VariantInventoryRecords: []
   InventoryRecords: []
-  PriceSchedules: []
+  PriceSchedules:
+    - OwnerID: <MarketplaceID placeholder>
+      ID: black-hat
+      Name: Black Hat
+      ApplyTax: true
+      ApplyShipping: true
+      MinQuantity: 1
+      MaxQuantity: null
+      UseCumulativeQuantity: false
+      RestrictedQuantity: false
+      PriceBreaks:
+        - Quantity: 1
+          Price: 80
+          SalePrice: null
+      Currency: null
+      SaleStart: null
+      SaleEnd: null
+      IsOnSale: false
+      xp: null
+    - OwnerID: <MarketplaceID placeholder>
+      ID: bomber-jacket
+      Name: Bomber Jacket
+      ApplyTax: true
+      ApplyShipping: true
+      MinQuantity: 1
+      MaxQuantity: null
+      UseCumulativeQuantity: false
+      RestrictedQuantity: false
+      PriceBreaks:
+        - Quantity: 1
+          Price: 52
+          SalePrice: null
+      Currency: null
+      SaleStart: null
+      SaleEnd: null
+      IsOnSale: false
+      xp: null
+    - OwnerID: <MarketplaceID placeholder>
+      ID: champion-jacket
+      Name: Champion Jacket
+      ApplyTax: true
+      ApplyShipping: true
+      MinQuantity: 1
+      MaxQuantity: null
+      UseCumulativeQuantity: false
+      RestrictedQuantity: false
+      PriceBreaks:
+        - Quantity: 1
+          Price: 51.5
+          SalePrice: null
+      Currency: null
+      SaleStart: null
+      SaleEnd: null
+      IsOnSale: false
+      xp: null
+    - OwnerID: <MarketplaceID placeholder>
+      ID: joggers
+      Name: Joggers
+      ApplyTax: true
+      ApplyShipping: true
+      MinQuantity: 1
+      MaxQuantity: null
+      UseCumulativeQuantity: false
+      RestrictedQuantity: false
+      PriceBreaks:
+        - Quantity: 1
+          Price: 34
+          SalePrice: null
+      Currency: null
+      SaleStart: null
+      SaleEnd: null
+      IsOnSale: false
+      xp: null
+    - OwnerID: <MarketplaceID placeholder>
+      ID: letterman-jacket
+      Name: Letterman Jacket
+      ApplyTax: true
+      ApplyShipping: true
+      MinQuantity: 1
+      MaxQuantity: null
+      UseCumulativeQuantity: false
+      RestrictedQuantity: false
+      PriceBreaks:
+        - Quantity: 1
+          Price: 54
+          SalePrice: null
+      Currency: null
+      SaleStart: null
+      SaleEnd: null
+      IsOnSale: false
+      xp: null
+    - OwnerID: <MarketplaceID placeholder>
+      ID: lightweight-jacket
+      Name: Lightweight Jacket
+      ApplyTax: true
+      ApplyShipping: true
+      MinQuantity: 1
+      MaxQuantity: null
+      UseCumulativeQuantity: false
+      RestrictedQuantity: false
+      PriceBreaks:
+        - Quantity: 1
+          Price: 249.99
+          SalePrice: null
+      Currency: null
+      SaleStart: null
+      SaleEnd: null
+      IsOnSale: false
+      xp: null
+    - OwnerID: <MarketplaceID placeholder>
+      ID: mask
+      Name: Mask
+      ApplyTax: true
+      ApplyShipping: true
+      MinQuantity: 1
+      MaxQuantity: null
+      UseCumulativeQuantity: false
+      RestrictedQuantity: false
+      PriceBreaks:
+        - Quantity: 1
+          Price: 39
+          SalePrice: null
+      Currency: null
+      SaleStart: null
+      SaleEnd: null
+      IsOnSale: false
+      xp: null
+    - OwnerID: <MarketplaceID placeholder>
+      ID: short-sleeve-t-shirt
+      Name: Short Sleeve T Shirt
+      ApplyTax: true
+      ApplyShipping: true
+      MinQuantity: 1
+      MaxQuantity: null
+      UseCumulativeQuantity: false
+      RestrictedQuantity: false
+      PriceBreaks:
+        - Quantity: 1
+          Price: 25
+          SalePrice: null
+      Currency: null
+      SaleStart: null
+      SaleEnd: null
+      IsOnSale: false
+      xp: null
+    - OwnerID: <MarketplaceID placeholder>
+      ID: skinny-joggers
+      Name: Skinny Joggers
+      ApplyTax: true
+      ApplyShipping: true
+      MinQuantity: 1
+      MaxQuantity: null
+      UseCumulativeQuantity: false
+      RestrictedQuantity: false
+      PriceBreaks:
+        - Quantity: 1
+          Price: 44
+          SalePrice: null
+      Currency: null
+      SaleStart: null
+      SaleEnd: null
+      IsOnSale: false
+      xp: null
+    - OwnerID: <MarketplaceID placeholder>
+      ID: t-shirt
+      Name: T Shirt
+      ApplyTax: true
+      ApplyShipping: true
+      MinQuantity: 1
+      MaxQuantity: null
+      UseCumulativeQuantity: false
+      RestrictedQuantity: false
+      PriceBreaks:
+        - Quantity: 1
+          Price: 40
+          SalePrice: null
+      Currency: null
+      SaleStart: null
+      SaleEnd: null
+      IsOnSale: false
+      xp: null
   Specs:
     - OwnerID: <MarketplaceID placeholder>
-      ID: color
+      ID: black-and-white
       ListOrder: 0
-      Name: color
+      Name: Color
       DefaultValue: null
       Required: true
       AllowOpenText: false
-      DefaultOptionID: red
+      DefaultOptionID: null
       DefinesVariant: true
       xp: null
       OptionCount: 2
       Options:
-        - ID: blue
-          Value: blue
+        - ID: Black
+          Value: black
           ListOrder: 0
           IsOpenText: false
           PriceMarkupType: NoMarkup
           PriceMarkup: null
-          xp: null
-        - ID: red
-          Value: red
+          xp:
+            hexColor: '#000000'
+        - ID: white
+          Value: White
           ListOrder: 0
           IsOpenText: false
           PriceMarkupType: NoMarkup
           PriceMarkup: null
-          xp: null
+          xp:
+            hexColor: '#ffffff'
     - OwnerID: <MarketplaceID placeholder>
-      ID: size
+      ID: bomber-jacket-color
       ListOrder: 0
-      Name: size
+      Name: Color
       DefaultValue: null
       Required: true
       AllowOpenText: false
-      DefaultOptionID: S
+      DefaultOptionID: null
       DefinesVariant: true
       xp: null
       OptionCount: 2
       Options:
+        - ID: black
+          Value: Black
+          ListOrder: 0
+          IsOpenText: false
+          PriceMarkupType: NoMarkup
+          PriceMarkup: null
+          xp:
+            hexColor: '#000000'
+        - ID: olive
+          Value: Olive
+          ListOrder: 0
+          IsOpenText: false
+          PriceMarkupType: Percentage
+          PriceMarkup: 10
+          xp:
+            hexColor: '#5c6d16'
+    - OwnerID: <MarketplaceID placeholder>
+      ID: short-sleeve-t-shirt-color
+      ListOrder: 0
+      Name: Color
+      DefaultValue: null
+      Required: true
+      AllowOpenText: false
+      DefaultOptionID: null
+      DefinesVariant: true
+      xp: null
+      OptionCount: 4
+      Options:
+        - ID: Aqua
+          Value: aqua
+          ListOrder: 0
+          IsOpenText: false
+          PriceMarkupType: NoMarkup
+          PriceMarkup: null
+          xp:
+            hexColor: '#00eaff'
+        - ID: light-brown
+          Value: Light Brown
+          ListOrder: 0
+          IsOpenText: false
+          PriceMarkupType: NoMarkup
+          PriceMarkup: null
+          xp:
+            hexColor: '#c1a7a7'
+        - ID: orange
+          Value: Orange
+          ListOrder: 0
+          IsOpenText: false
+          PriceMarkupType: NoMarkup
+          PriceMarkup: null
+          xp:
+            hexColor: '#fccd4d'
+        - ID: Peach
+          Value: peach
+          ListOrder: 0
+          IsOpenText: false
+          PriceMarkupType: NoMarkup
+          PriceMarkup: null
+          xp:
+            hexColor: '#f7cf95'
+    - OwnerID: <MarketplaceID placeholder>
+      ID: cross-product-size
+      ListOrder: 0
+      Name: Size
+      DefaultValue: null
+      Required: true
+      AllowOpenText: false
+      DefaultOptionID: null
+      DefinesVariant: true
+      xp: null
+      OptionCount: 4
+      Options:
+        - ID: L
+          Value: Large
+          ListOrder: 0
+          IsOpenText: false
+          PriceMarkupType: NoMarkup
+          PriceMarkup: null
+          xp: null
         - ID: M
-          Value: M
+          Value: Medium
           ListOrder: 0
           IsOpenText: false
           PriceMarkupType: NoMarkup
           PriceMarkup: null
           xp: null
         - ID: S
-          Value: S
+          Value: Small
+          ListOrder: 0
+          IsOpenText: false
+          PriceMarkupType: NoMarkup
+          PriceMarkup: null
+          xp: null
+        - ID: XL
+          Value: Extra Large
           ListOrder: 0
           IsOpenText: false
           PriceMarkupType: NoMarkup
           PriceMarkup: null
           xp: null
   SpecOptions:
-    - ID: blue
-      Value: blue
+    - ID: Black
+      Value: black
+      ListOrder: 0
+      IsOpenText: false
+      PriceMarkupType: NoMarkup
+      PriceMarkup: null
+      xp:
+        hexColor: '#000000'
+      SpecID: black-and-white
+    - ID: white
+      Value: White
+      ListOrder: 0
+      IsOpenText: false
+      PriceMarkupType: NoMarkup
+      PriceMarkup: null
+      xp:
+        hexColor: '#ffffff'
+      SpecID: black-and-white
+    - ID: black
+      Value: Black
+      ListOrder: 0
+      IsOpenText: false
+      PriceMarkupType: NoMarkup
+      PriceMarkup: null
+      xp:
+        hexColor: '#000000'
+      SpecID: bomber-jacket-color
+    - ID: olive
+      Value: Olive
+      ListOrder: 0
+      IsOpenText: false
+      PriceMarkupType: Percentage
+      PriceMarkup: 10
+      xp:
+        hexColor: '#5c6d16'
+      SpecID: bomber-jacket-color
+    - ID: Aqua
+      Value: aqua
+      ListOrder: 0
+      IsOpenText: false
+      PriceMarkupType: NoMarkup
+      PriceMarkup: null
+      xp:
+        hexColor: '#00eaff'
+      SpecID: short-sleeve-t-shirt-color
+    - ID: light-brown
+      Value: Light Brown
+      ListOrder: 0
+      IsOpenText: false
+      PriceMarkupType: NoMarkup
+      PriceMarkup: null
+      xp:
+        hexColor: '#c1a7a7'
+      SpecID: short-sleeve-t-shirt-color
+    - ID: orange
+      Value: Orange
+      ListOrder: 0
+      IsOpenText: false
+      PriceMarkupType: NoMarkup
+      PriceMarkup: null
+      xp:
+        hexColor: '#fccd4d'
+      SpecID: short-sleeve-t-shirt-color
+    - ID: Peach
+      Value: peach
+      ListOrder: 0
+      IsOpenText: false
+      PriceMarkupType: NoMarkup
+      PriceMarkup: null
+      xp:
+        hexColor: '#f7cf95'
+      SpecID: short-sleeve-t-shirt-color
+    - ID: L
+      Value: Large
       ListOrder: 0
       IsOpenText: false
       PriceMarkupType: NoMarkup
       PriceMarkup: null
       xp: null
-      SpecID: color
-    - ID: red
-      Value: red
-      ListOrder: 0
-      IsOpenText: false
-      PriceMarkupType: NoMarkup
-      PriceMarkup: null
-      xp: null
-      SpecID: color
+      SpecID: cross-product-size
     - ID: M
-      Value: M
+      Value: Medium
       ListOrder: 0
       IsOpenText: false
       PriceMarkupType: NoMarkup
       PriceMarkup: null
       xp: null
-      SpecID: size
+      SpecID: cross-product-size
     - ID: S
-      Value: S
+      Value: Small
       ListOrder: 0
       IsOpenText: false
       PriceMarkupType: NoMarkup
       PriceMarkup: null
       xp: null
-      SpecID: size
+      SpecID: cross-product-size
+    - ID: XL
+      Value: Extra Large
+      ListOrder: 0
+      IsOpenText: false
+      PriceMarkupType: NoMarkup
+      PriceMarkup: null
+      xp: null
+      SpecID: cross-product-size
   ProductFacets: []
   Promotions: []
+  SellerApprovalRules:
+    - OwnerID: supplier1
+      ApprovalType: OrderReturn
+      ID: CuKwKfHG2UORsxF7s9JYgg
+      Name: null
+      Description: null
+      ApprovingGroupID: supplier-group-1
+      RuleExpression: 'true'
+      xp: null
+    - OwnerID: <MarketplaceID placeholder>
+      ApprovalType: OrderReturn
+      ID: Ov2Qe_btoUuyTwFiyIFrEw
+      Name: null
+      Description: null
+      ApprovingGroupID: admin-user-group1
+      RuleExpression: 'true'
+      xp: null
+    - OwnerID: <MarketplaceID placeholder>
+      ApprovalType: OrderReturn
+      ID: vVO1hG82_UqfqBDgCamPAg
+      Name: null
+      Description: null
+      ApprovingGroupID: admin-user-group1
+      RuleExpression: 'true'
+      xp: null
+    - OwnerID: <MarketplaceID placeholder>
+      ApprovalType: OrderReturn
+      ID: wBU88yY5w0uZQEShQ8rsSQ
+      Name: null
+      Description: null
+      ApprovingGroupID: admin-user-group1
+      RuleExpression: 'true'
+      xp: null
 Assignments:
+  UserGroupAssignments: []
+  SpendingAccountAssignments: []
+  AddressAssignments: []
+  CostCenterAssignments: []
+  CreditCardAssignments: []
+  CategoryAssignments: []
+  CategoryProductAssignments:
+    - CategoryID: bottoms
+      ProductID: joggers
+      ListOrder: null
+      CatalogID: solitary-storefront
+    - CategoryID: bottoms
+      ProductID: skinny-joggers
+      ListOrder: null
+      CatalogID: solitary-storefront
+    - CategoryID: headwear
+      ProductID: black-hat
+      ListOrder: null
+      CatalogID: solitary-storefront
+    - CategoryID: headwear
+      ProductID: mask
+      ListOrder: null
+      CatalogID: solitary-storefront
+    - CategoryID: jackets
+      ProductID: bomber-jacket
+      ListOrder: null
+      CatalogID: solitary-storefront
+    - CategoryID: jackets
+      ProductID: champion-jacket
+      ListOrder: null
+      CatalogID: solitary-storefront
+    - CategoryID: jackets
+      ProductID: letterman-jacket
+      ListOrder: null
+      CatalogID: solitary-storefront
+    - CategoryID: jackets
+      ProductID: lightweight-jacket
+      ListOrder: null
+      CatalogID: solitary-storefront
+    - CategoryID: shirts
+      ProductID: short-sleeve-t-shirt
+      ListOrder: null
+      CatalogID: solitary-storefront
+    - CategoryID: shirts
+      ProductID: t-shirt
+      ListOrder: null
+      CatalogID: solitary-storefront
   SupplierUserGroupsAssignments: []
   SupplierBuyerAssignment: []
   ProductSupplierAssignment: []
-  SecurityProfileAssignments: []
+  SecurityProfileAssignments:
+    - SecurityProfileID: anonymous-shopper
+      BuyerID: solitary-storefront
+      SupplierID: null
+      UserID: null
+      UserGroupID: null
+    - SecurityProfileID: full-access-admin
+      BuyerID: null
+      SupplierID: null
+      UserID: null
+      UserGroupID: null
   AdminUserGroupAssignments: []
-  ApiClientAssignments: []
+  ApiClientAssignments:
+    - ApiClientID: 70086830-42bf-41a8-9480-dd8be3d7bf56
+      BuyerID: solitary-storefront
+      SupplierID: null
   LocaleAssignments: []
   ProductAssignments: []
-  CatalogAssignments: []
-  ProductCatalogAssignment: []
+  CatalogAssignments:
+    - CatalogID: 3VF-bRTcs0mWpho8QGWiXQ
+      BuyerID: 3VF-bRTcs0mWpho8QGWiXQ
+      ViewAllCategories: true
+      ViewAllProducts: true
+    - CatalogID: solitary-storefront
+      BuyerID: solitary-storefront
+      ViewAllCategories: true
+      ViewAllProducts: true
+  ProductCatalogAssignment:
+    - CatalogID: solitary-storefront
+      ProductID: black-hat
+    - CatalogID: solitary-storefront
+      ProductID: bomber-jacket
+    - CatalogID: solitary-storefront
+      ProductID: champion-jacket
+    - CatalogID: solitary-storefront
+      ProductID: joggers
+    - CatalogID: solitary-storefront
+      ProductID: letterman-jacket
+    - CatalogID: solitary-storefront
+      ProductID: lightweight-jacket
+    - CatalogID: solitary-storefront
+      ProductID: mask
+    - CatalogID: solitary-storefront
+      ProductID: short-sleeve-t-shirt
+    - CatalogID: solitary-storefront
+      ProductID: skinny-joggers
+    - CatalogID: solitary-storefront
+      ProductID: t-shirt
   SpecProductAssignments:
-    - SpecID: color
-      ProductID: product1
+    - SpecID: black-and-white
+      ProductID: lightweight-jacket
       DefaultValue: null
-      DefaultOptionID: red
-    - SpecID: size
-      ProductID: product1
+      DefaultOptionID: null
+    - SpecID: black-and-white
+      ProductID: mask
       DefaultValue: null
-      DefaultOptionID: S
+      DefaultOptionID: null
+    - SpecID: black-and-white
+      ProductID: t-shirt
+      DefaultValue: null
+      DefaultOptionID: null
+    - SpecID: bomber-jacket-color
+      ProductID: bomber-jacket
+      DefaultValue: null
+      DefaultOptionID: null
+    - SpecID: cross-product-size
+      ProductID: bomber-jacket
+      DefaultValue: null
+      DefaultOptionID: null
+    - SpecID: cross-product-size
+      ProductID: champion-jacket
+      DefaultValue: null
+      DefaultOptionID: null
+    - SpecID: cross-product-size
+      ProductID: joggers
+      DefaultValue: null
+      DefaultOptionID: null
+    - SpecID: cross-product-size
+      ProductID: letterman-jacket
+      DefaultValue: null
+      DefaultOptionID: null
+    - SpecID: cross-product-size
+      ProductID: lightweight-jacket
+      DefaultValue: null
+      DefaultOptionID: null
+    - SpecID: cross-product-size
+      ProductID: short-sleeve-t-shirt
+      DefaultValue: null
+      DefaultOptionID: null
+    - SpecID: cross-product-size
+      ProductID: skinny-joggers
+      DefaultValue: null
+      DefaultOptionID: null
+    - SpecID: cross-product-size
+      ProductID: t-shirt
+      DefaultValue: null
+      DefaultOptionID: null
+    - SpecID: short-sleeve-t-shirt-color
+      ProductID: short-sleeve-t-shirt
+      DefaultValue: null
+      DefaultOptionID: null
   PromotionAssignment: []
