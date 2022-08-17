@@ -130,7 +130,7 @@ yargs.scriptName("@ordercloud/seeding")
     if (!filePath.startsWith('http')) {
       try {
         stringData = fs.readFileSync(filePath, 'utf8') // consider switching to streams
-        defaultLogger(`Found file \"${filePath}\"`, MessageType.Success);
+        defaultLogger(`Found file \"${filePath}\".`, MessageType.Success);
       } catch (err) {
           return defaultLogger(`No such file or directory \"${filePath}\" found`, MessageType.Error);
       }

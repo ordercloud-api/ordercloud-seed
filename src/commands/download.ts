@@ -6,7 +6,7 @@ import { defaultLogger, LogCallBackFunc, MessageType } from '../services/logger'
 import { BuildResourceDirectory } from '../models/oc-resource-directory';
 import { OCResource } from '../models/oc-resources';
 import _  from 'lodash';
-import { MARKETPLACE_ID, REDACTED_MESSAGE } from '../constants';
+import { MARKETPLACE_ID as MARKETPLACE_ID_PLACEHOLDER, REDACTED_MESSAGE } from '../constants';
 import PortalAPI from '../services/portal';
 import Bottleneck from 'bottleneck';
 import { OCResourceEnum } from '../models/oc-resource-enum';
@@ -62,7 +62,7 @@ export async function download(args: DownloadArgs): Promise<SerializedMarketplac
 
     Tokens.SetAccessToken(org_token);
 
-    logger(`Found your Marketplace \"${marketplaceID}\" . Beginning download.`, MessageType.Success);
+    logger(`Found your Marketplace \"${marketplaceID}\". Beginning download.`, MessageType.Success);
 
     // Pull Data from Ordercloud
     var ordercloudBulk = new OrderCloudBulk(new Bottleneck({
@@ -140,8 +140,10 @@ export async function download(args: DownloadArgs): Promise<SerializedMarketplac
     function PlaceHoldMarketplaceID(resource: OCResource, records: any[]): void {
         if (resource.hasOwnerIDField) {
             for (var record of records) {  
-                if (record[resource.hasOwnerIDField] === marketplaceID) {
-                    record[resource.hasOwnerIDField] = MARKETPLACE_ID;
+                // when Sandbox and Staging were created, marketplace IDs were appended with env to keep them unique
+                var mktplID = marketplaceID.replace(/_Sandbox$/, "").replace(/_Staging$/, "");
+                if (record[resource.hasOwnerIDField] === mktplID) {
+                    record[resource.hasOwnerIDField] = MARKETPLACE_ID_PLACEHOLDER;
                 }
             }
         }

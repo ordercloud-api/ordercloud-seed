@@ -6,6 +6,13 @@ Objects:
     - ID: productA
       Name: productA
       Currency: USD
+    - ID: priceB
+      Name: priceB
+      Currency: USD  
+      PriceBreaks:
+        - Quantity: 1
+          Price: 0
+          SalePrice: null
   Catalogs: 
     - ID: US-catalog
       Name: United States
@@ -26,3 +33,6 @@ Assignments:
     - ProductID: productA
       BuyerID: US
       PriceScheduleID: productA
+    - ProductID: productA
+      BuyerID: US
+      PriceScheduleID: priceB

@@ -1,0 +1,31 @@
+Objects: 
+  Buyers:
+    - Name: string
+      xp: abc
+    - Name: int
+      xp: 12   
+    - Name: number
+      xp: 1.2
+    - Name: boolean
+      xp: true 
+    - Name: object
+      xp:
+        prop1: value1
+        prop2: value2
+    - Name: array  
+      xp:
+        - element1
+        - element2
+  Webhooks:
+    - Name: a
+      Url: a
+      HashKey: a
+      ConfigData: 12
+    - Name: a
+      Url: a
+      HashKey: a
+      ConfigData: false
+    - Name: a
+      Url: a
+      HashKey: a
+      ConfigData: "abc"

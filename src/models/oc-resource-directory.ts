@@ -3,7 +3,7 @@ import { Addresses, AdminAddresses, InventoryRecords, AdminUserGroups, AdminUser
 import { OCResourceEnum } from "./oc-resource-enum";
 import { OCResource } from "./oc-resources";
 import _ from 'lodash';
-import { ApiClientValidationFunc, ImpersonationConfigValidationFunc, InventoryRecordValidation, LocaleAssignmentCustomValidationFunc, ProductAssignmentValidationFunc, SecurityProfileAssignmentValidationFunc, SellerApprovalRuleValidationFunc, VariantInventoryRecordValidation, VariantValidationFunc, WebhookValidationFunc } from "../services/custom-validation-func";
+import { ApiClientValidationFunc, ImpersonationConfigValidationFunc, InventoryRecordValidationFunc, LocaleAssignmentCustomValidationFunc, ProductAssignmentValidationFunc, ProductValidationFunc, SecurityProfileAssignmentValidationFunc, SellerApprovalRuleValidationFunc, VariantInventoryRecordValidationFunc, VariantValidationFunc, WebhookValidationFunc } from "../services/custom-validation-func";
 
 const Directory: OCResource[] = [
     { 
@@ -297,10 +297,10 @@ const Directory: OCResource[] = [
         hasOwnerIDField: "OwnerID",
         foreignKeys: {
             DefaultPriceScheduleID: { foreignResource: OCResourceEnum.PriceSchedules },
-            ShipFromAddressID: { foreignResource: OCResourceEnum.AdminAddresses },
             DefaultSupplierID: { foreignResource: OCResourceEnum.Suppliers }
         },
-        children: [OCResourceEnum.ProductSupplierAssignment, OCResourceEnum.Variants, OCResourceEnum.InventoryRecords]
+        children: [OCResourceEnum.ProductSupplierAssignment, OCResourceEnum.Variants, OCResourceEnum.InventoryRecords],
+        customValidationFunc: ProductValidationFunc
     },
     {
         name: OCResourceEnum.PriceSchedules, 
@@ -369,7 +369,7 @@ const Directory: OCResource[] = [
         parentRefField: "ProductID",
         isChild: true,
         hasOwnerIDField: "OwnerID",
-        customValidationFunc: InventoryRecordValidation,
+        customValidationFunc: InventoryRecordValidationFunc,
     },
     {
         name: OCResourceEnum.VariantInventoryRecords, 
@@ -389,7 +389,7 @@ const Directory: OCResource[] = [
             },
             ProductID: { foreignResource: OCResourceEnum.Products }
         },
-        customValidationFunc: VariantInventoryRecordValidation,
+        customValidationFunc: VariantInventoryRecordValidationFunc,
     },
     {
         name: OCResourceEnum.SellerApprovalRules,

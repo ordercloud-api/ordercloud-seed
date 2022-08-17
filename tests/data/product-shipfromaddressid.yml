@@ -1,0 +1,42 @@
+Objects:
+  Products:
+    - Name: product-1
+      DefaultSupplierID: supplier-1
+      ShipFromAddressID: supplier-address-1
+    - Name: product-2
+      DefaultSupplierID: supplier-2
+      ShipFromAddressID: supplier-address-1
+    - Name: product-3
+      ShipFromAddressID: supplier-address-1
+    - Name: product-4
+      ShipFromAddressID: admin-address-1
+    - Name: product-5
+      DefaultSupplierID: supplier-1
+      ShipFromAddressID: admin-address-1
+  AdminAddresses:
+    - ID: admin-address-1
+      Street1: Heinemannstraße 36
+      City: Bonn
+      State: Nordrhein-Westfalen
+      Zip: '53175'
+      Country: DE
+  Suppliers:
+    - ID: supplier-1 
+      Name: supplier-1   
+    - ID: supplier-2 
+      Name: supplier-2
+  SupplierAddresses:
+    - ID: supplier-address-1
+      SupplierID: supplier-1
+      Street1: street
+      City: Bonn
+      State: Nordrhein-Westfalen
+      Zip: '53175'
+      Country: DE   
+    - ID: supplier-address-2
+      SupplierID: supplier-2
+      Street1: street
+      City: Bonn
+      State: Nordrhein-Westfalen
+      Zip: '53175'
+      Country: DE    

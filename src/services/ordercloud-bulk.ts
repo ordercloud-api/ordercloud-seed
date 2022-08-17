@@ -9,7 +9,7 @@ const { flatten } = pkg;
 
 export default class OrderCloudBulk {
     limiter: Bottleneck;
-    retryWaitScheduleInMS = [1000, 5000];
+    retryWaitScheduleInMS = [1000, 4000, 9000];
 
     constructor(limiter: Bottleneck) {
         this.limiter = limiter;

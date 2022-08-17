@@ -11,8 +11,9 @@ import Random from '../services/random';
 import { REDACTED_MESSAGE,MARKETPLACE_ID } from '../constants';
 import PortalAPI from '../services/portal';
 import { SerializedMarketplace } from '../models/serialized-marketplace';
-import { ApiClient, Organization } from '@ordercloud/portal-javascript-sdk';
+import { ApiClient } from '@ordercloud/portal-javascript-sdk';
 import Bottleneck from 'bottleneck';
+import { AxiosError } from 'axios';
 
 export interface SeedArgs {
     username?: string;
@@ -83,7 +84,7 @@ export async function seed(args: SeedArgs): Promise<SeedResponse | void> {
     }
     catch(exception)
     {
-        logger(`Couldn't create marketplace with Name \"${marketplaceName}\" and ID \"${marketplaceID}\" in the region \"${regionId}\".`, MessageType.Error);
+        logger(`Couldn't create marketplace with Name \"${marketplaceName}\" and ID \"${marketplaceID}\" in the region \"${regionId}\" because: \n\"${exception.response.data.Errors[0].Message}\"`, MessageType.Error);
         return;
     }
     
@@ -182,7 +183,8 @@ export async function seed(args: SeedArgs): Promise<SeedResponse | void> {
     }
 
     async function GenerateAndPutVariants() : Promise<void> {
-        var productsWithVariants = marketplaceData.Objects[OCResourceEnum.Products].filter((p: Product) => p.VariantCount > 0);
+        var products = marketplaceData.Objects[OCResourceEnum.Products] || [];
+        var productsWithVariants = products.filter((p: Product) => p.VariantCount > 0);
         ordercloudBulk.Run("Variants" as any, productsWithVariants, (p: Product) => Products.GenerateVariants(p.ID));
         var variants = marketplaceData.Objects[OCResourceEnum.Variants];
         await ordercloudBulk.Run(OCResourceEnum.Variants, variants, (v: any) => {

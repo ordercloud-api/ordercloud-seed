@@ -145,7 +145,7 @@ test('price schedule must have at least one price break before it can be assigne
     var resp = await validateFile("./tests/data/product-assignment-missing-price-break.yml");
     expect(resp.errors.length).toBe(2);
     expect(resp.errors[0]).toBe("Invalid reference ProductAssignments.PriceScheduleID: no PriceSchedules found with ID \"productA-US\".");
-    expect(resp.errors[1]).toBe("Price Schedule with ID \"productA\": must have at least one price break before it can be assigned to a product.");
+    expect(resp.errors[1]).toBe("Price Schedule with ID \"productA\": must have at least one valid price break before it can be assigned to a product.");
 });
 
 test('partys assigned Locale must match  the price schedules currency', async () => {
@@ -203,4 +203,17 @@ test('seller approval rules', async () => {
     expect(resp.errors.length).toBe(2);
     expect(resp.errors[0]).toBe("Invalid reference SellerApprovalRule.ApprovingGroupID: no User Group found with ID \"supplier-group-2\" under supplier with ID \"supplier1\".");
     expect(resp.errors[1]).toBe("Invalid reference SellerApprovalRule.ApprovingGroupID: no Admin User Group found with ID \"supplier-group-1\".");
+});
+
+test('xp different data types', async () => {
+    var resp = await validateFile("./tests/data/xp-different-data-types.yml");
+    expect(resp.errors.length).toBe(0);
+});
+
+test('product ShipFromAddressID validation', async () => {
+    var resp = await validateFile("./tests/data/product-shipfromaddressid.yml");
+    expect(resp.errors.length).toBe(3);
+    expect(resp.errors[0]).toBe("Invalid reference Product.ShipFromAddressID: no Supplier Address found with ID \"supplier-address-1\" under DefaultSupplierID \"supplier-2\".");
+    expect(resp.errors[1]).toBe("Invalid reference Product.ShipFromAddressID: no Admin Address found with ID \"supplier-address-1\".");
+    expect(resp.errors[2]).toBe("Invalid reference Product.ShipFromAddressID: no Supplier Address found with ID \"admin-address-1\" under DefaultSupplierID \"supplier-1\".");
 });

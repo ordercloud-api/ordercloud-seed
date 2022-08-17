@@ -81,7 +81,8 @@ export async function validate(args: ValidateArgs): Promise<ValidateResponse> {
                 if (_.isNil(value)) {
                     validator.validateIsRequired(propName);
                 } else {
-                    var typeMatches = validator.validateFieldTypeMatches(value, spec);
+                    var canHoldAnyType = ["xp", "ConfigData"].includes(propName); // these fields are "object" in the open api spec
+                    var typeMatches = canHoldAnyType || validator.validateFieldTypeMatches(value, spec);
                     if (typeMatches && resource.hasOwnerIDField && propName === resource.hasOwnerIDField) {
                         validator.validateOwnerIDIsValid(value)
                     }

@@ -48,8 +48,8 @@ export const ProductAssignmentValidationFunc: RecordValidationFunc = (record, va
     if (hasBuyerID && hasProductID && hasPriceScheduleID) {
         // check price breaks exists
         var priceSchedule = allData.Objects[OCResourceEnum.PriceSchedules]?.find(x => x.ID === priceScheduleID);
-        if (priceSchedule && (!priceSchedule?.PriceBreaks?.length || !priceSchedule?.PriceBreaks[0]?.Price)) {
-            validator.addError(`Price Schedule with ID \"${priceScheduleID}\": must have at least one price break before it can be assigned to a product.`)
+        if (priceSchedule && (!priceSchedule?.PriceBreaks?.length || isNaN(priceSchedule?.PriceBreaks[0]?.Price))) {
+            validator.addError(`Price Schedule with ID \"${priceScheduleID}\": must have at least one valid price break before it can be assigned to a product.`)
         }
 
         // check currencies match locale
@@ -195,7 +195,7 @@ export const VariantValidationFunc: RecordValidationFunc = (record, validator, a
     }
 }
 
-export const InventoryRecordValidation: RecordValidationFunc = (record, validator, allData) => {
+export const InventoryRecordValidationFunc: RecordValidationFunc = (record, validator, allData) => {
     var productID: string = record["ProductID"];
     var addressID: string = record["AddressID"];
     var ownerID: string = record["OwnerID"];
@@ -225,7 +225,7 @@ export const InventoryRecordValidation: RecordValidationFunc = (record, validato
     }
 }
 
-export const VariantInventoryRecordValidation: RecordValidationFunc = (record, validator, allData) => {
+export const VariantInventoryRecordValidationFunc: RecordValidationFunc = (record, validator, allData) => {
     var productID: string = record["ProductID"];
     var addressID: string = record["AddressID"];
     var ownerID: string = record["OwnerID"];
@@ -283,4 +283,26 @@ export const SellerApprovalRuleValidationFunc: RecordValidationFunc = (record, v
     }
 }
 
+export const ProductValidationFunc: RecordValidationFunc = (record, validator, allData) => {
+    // This is all about validating ShipFromAddressID. It must be an address under the DefaultSupplierID (or marketplace owner if no supplier)
 
+    var shipFromAddressID: string = record["ShipFromAddressID"];
+    var defaultSupplierID: string = record["DefaultSupplierID"];
+
+    var hasShipFromAddressID = !_.isNil(shipFromAddressID);
+    var hasDefaultSupplierID = !_.isNil(defaultSupplierID);
+
+    if (hasShipFromAddressID) {
+        if (hasDefaultSupplierID) {
+            // address must exist under supplier
+            if (!validator.idCache.has(OCResourceEnum.SupplierAddresses, `${defaultSupplierID}/${shipFromAddressID}`)) {
+                validator.addError(`Invalid reference Product.ShipFromAddressID: no Supplier Address found with ID \"${shipFromAddressID}\" under DefaultSupplierID \"${defaultSupplierID}\".`)
+            }
+        } else {
+            // address must exist under marketplace owner
+            if (!validator.idCache.has(OCResourceEnum.AdminAddresses, `${shipFromAddressID}`)) {
+                validator.addError(`Invalid reference Product.ShipFromAddressID: no Admin Address found with ID \"${shipFromAddressID}\".`)
+            }
+        }
+    }
+}
