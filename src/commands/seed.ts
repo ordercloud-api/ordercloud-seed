@@ -2,7 +2,7 @@ import * as SeedingTemplates from '../../seeds/meta.json';
 import { Configuration, Product, Products, Specs, Tokens, Variant } from 'ordercloud-javascript-sdk';
 import OrderCloudBulk from '../services/ordercloud-bulk';
 import _ from 'lodash';
-import { defaultLogger, LogCallBackFunc, MessageType } from '../services/logger';
+import { defaultLogger, getElapsedTime, LogCallBackFunc, MessageType } from '../services/logger';
 import { validate } from './validate';
 import { BuildResourceDirectory } from '../models/oc-resource-directory';
 import { OCResourceEnum } from '../models/oc-resource-enum';
@@ -46,7 +46,7 @@ export async function seed(args: SeedArgs): Promise<SeedResponse | void> {
         regionId,
         logger = defaultLogger
     } = args;
-
+    var startTime = Date.now();
     var template = SeedingTemplates.templates.find(x => x.name === dataUrl);
     if (!_.isNil(template)) {
         dataUrl = template.dataUrl;
@@ -71,6 +71,7 @@ export async function seed(args: SeedArgs): Promise<SeedResponse | void> {
 
     // Confirm orgID doesn't already exist
     marketplaceID = marketplaceID || Random.generateOrgID();
+    var regionID = regionId || "usw";
     try {
         await portal.GetOrganization(marketplaceID, portalToken);
         return logger(`A marketplace with ID \"${marketplaceID}\" already exists.`, MessageType.Error)
@@ -80,11 +81,11 @@ export async function seed(args: SeedArgs): Promise<SeedResponse | void> {
     marketplaceName = marketplaceName || dataUrl?.split("/")?.pop()?.split(".")[0] || marketplaceID;
     try
     {
-        await portal.CreateOrganization(marketplaceID, marketplaceName, portalToken, regionId);
+        await portal.CreateOrganization(marketplaceID, marketplaceName, portalToken, regionID);
     }
     catch(exception)
     {
-        logger(`Couldn't create marketplace with Name \"${marketplaceName}\" and ID \"${marketplaceID}\" in the region \"${regionId}\" because: \n\"${exception.response.data.Errors[0].Message}\"`, MessageType.Error);
+        logger(`Couldn't create marketplace with Name \"${marketplaceName}\" and ID \"${marketplaceID}\" in the region \"${regionID}\" because: \n\"${exception.response.data.Errors[0].Message}\"`, MessageType.Error);
         return;
     }
     
@@ -155,8 +156,8 @@ export async function seed(args: SeedArgs): Promise<SeedResponse | void> {
     }
 
     
-
-    logger(`Done! Seeded a new marketplace with ID \"${marketplaceID}\" and Name \"${marketplaceName}\".`, MessageType.Success); 
+    var endTime = Date.now();
+    logger(`Done! Seeded a new marketplace with ID \"${marketplaceID}\" and Name \"${marketplaceName}\". Total elapsed time: ${getElapsedTime(startTime, endTime)}`, MessageType.Success); 
 
     var apiClients = marketplaceData.Objects[OCResourceEnum.ApiClients]?.map(apiClient => {
         apiClient.ID = apiClientIDMap[apiClient.ID];

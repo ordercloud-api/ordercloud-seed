@@ -4,7 +4,7 @@ import { validate } from './commands/validate';
 import { seed } from './commands/seed';
 import fs from 'fs';
 import yaml, { YAMLException } from 'js-yaml';
-import { defaultLogger, MessageType } from './services/logger';
+import { defaultLogger, getElapsedTime, MessageType } from './services/logger';
 import { SerializedMarketplace } from './models/serialized-marketplace';
 import * as SeedingTemplates from '../seeds/meta.json';
 import _ from 'lodash';
@@ -106,6 +106,7 @@ yargs.scriptName("@ordercloud/seeding")
       describe: 'File path'
     })
   }, async function (argv) {
+    var startTime = Date.now();
     var data = await download({
       username: argv.u as string,
       password: argv.p as string,
@@ -114,7 +115,8 @@ yargs.scriptName("@ordercloud/seeding")
     if (data) {
       var path = argv.f as string ?? 'ordercloud-seed.yml';
       fs.writeFileSync(path, yaml.dump(data));
-      defaultLogger(`Wrote to file ${path}.`, MessageType.Success);
+      var endTime = Date.now();
+      defaultLogger(`Wrote to file ${path}. Total elapsed time: ${getElapsedTime(startTime, endTime)}`, MessageType.Success);
     }
   })
   .command('validate [data]', 'Validate a potential data source for seeding.', (yargs) => {

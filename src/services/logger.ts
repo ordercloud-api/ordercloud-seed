@@ -19,3 +19,10 @@ export enum MessageType {
     Progress,
     Success
 }
+
+export function getElapsedTime(startTime: number, endTime: number): string {
+    var miliseconds = Math.abs(startTime - endTime);
+    var minutes = Math.floor(miliseconds / 60000);
+    var seconds = ((miliseconds % 60000) / 1000).toFixed(0) as unknown as number;
+    return `${minutes}:${(seconds < 10 ? "0" : "")}${seconds}`;
+} 
