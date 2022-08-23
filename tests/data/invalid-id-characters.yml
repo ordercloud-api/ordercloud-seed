@@ -1,0 +1,20 @@
+Objects:  
+  Locales:
+    - ID: U--__S
+      Currency: USD
+    - ID: "U S"
+      Currency: USD
+    - ID: "US!"
+      Currency: USD
+    - ID: "US@"
+      Currency: USD
+    - ID: "US#"
+      Currency: USD
+    - ID: "US}"
+      Currency: USD
+    - ID: "US%"
+      Currency: USD
+    - ID: "US^"
+      Currency: USD
+    - ID: "US?"
+      Currency: USD    

@@ -83,6 +83,9 @@ export async function validate(args: ValidateArgs): Promise<ValidateResponse> {
                 } else {
                     var canHoldAnyType = ["xp", "ConfigData"].includes(propName); // these fields are "object" in the open api spec
                     var typeMatches = canHoldAnyType || validator.validateFieldTypeMatches(value, spec);
+                    if (typeMatches && propName === "ID") {
+                        validator.validateIDChars(value);
+                    }
                     if (typeMatches && resource.hasOwnerIDField && propName === resource.hasOwnerIDField) {
                         validator.validateOwnerIDIsValid(value)
                     }
@@ -134,6 +137,15 @@ export class Validator {
 
     addError(message:string) {
         this.errors.push(message);
+    }
+
+    validateIDChars(fieldValue: string): boolean {
+        var regex = /^[A-Za-z0-9_-]*$/;
+        var isValid = regex.test(fieldValue);
+        if (!isValid) {
+            this.addError(`Invalid ID value \"${fieldValue}\". ID can only contain characters Aa-Zz 0-9 - _`);
+        }
+        return isValid;
     }
 
     validateOwnerIDIsValid(fieldValue: string): boolean {

@@ -217,3 +217,10 @@ test('product ShipFromAddressID validation', async () => {
     expect(resp.errors[1]).toBe("Invalid reference Product.ShipFromAddressID: no Admin Address found with ID \"supplier-address-1\".");
     expect(resp.errors[2]).toBe("Invalid reference Product.ShipFromAddressID: no Supplier Address found with ID \"admin-address-1\" under DefaultSupplierID \"supplier-1\".");
 });
+
+test('ID field character validation', async () => {
+    var resp = await validateFile("./tests/data/invalid-id-characters.yml");
+    expect(resp.errors.length).toBe(8);
+    expect(resp.errors[0]).toBe("Invalid ID value \"U S\". ID can only contain characters Aa-Zz 0-9 - _");
+    expect(resp.errors[1]).toBe("Invalid ID value \"US!\". ID can only contain characters Aa-Zz 0-9 - _");
+});
