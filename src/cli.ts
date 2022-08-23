@@ -113,8 +113,8 @@ yargs.scriptName("@ordercloud/seeding")
     });
     if (data) {
       var path = argv.f as string ?? 'ordercloud-seed.yml';
-      defaultLogger(`Writing to file ${path}`);
       fs.writeFileSync(path, yaml.dump(data));
+      defaultLogger(`Wrote to file ${path}.`, MessageType.Success);
     }
   })
   .command('validate [data]', 'Validate a potential data source for seeding.', (yargs) => {
