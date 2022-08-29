@@ -68,7 +68,7 @@ export async function download(args: DownloadArgs): Promise<SerializedMarketplac
     var ordercloudBulk = new OrderCloudBulk(new Bottleneck({
         minTime: 100,
         maxConcurrent: 8
-    }));
+    }), logger);
     var marketplace = new SerializedMarketplace();
     var directory = await BuildResourceDirectory(false);
     var childResourceRecordCounts = {}; 

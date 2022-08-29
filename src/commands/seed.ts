@@ -13,7 +13,6 @@ import PortalAPI from '../services/portal';
 import { SerializedMarketplace } from '../models/serialized-marketplace';
 import { ApiClient } from '@ordercloud/portal-javascript-sdk';
 import Bottleneck from 'bottleneck';
-import { AxiosError } from 'axios';
 
 export interface SeedArgs {
     username?: string;
@@ -38,21 +37,23 @@ export async function seed(args: SeedArgs): Promise<SeedResponse | void> {
     var { 
         username, 
         password, 
-        marketplaceID, 
+        marketplaceID = Random.generateOrgID(), 
         marketplaceName,
         portalToken,
         rawData,
         dataUrl,
-        regionId,
+        regionId = "usw",
         logger = defaultLogger
     } = args;
     var startTime = Date.now();
+
+    // Check if the args contain an alias for a example seed template
     var template = SeedingTemplates.templates.find(x => x.name === dataUrl);
     if (!_.isNil(template)) {
         dataUrl = template.dataUrl;
     }
     
-    // Run file validation
+    // Run validation on the shape of the seed data
     var validateResponse = await validate({ rawData, dataUrl});
     if (validateResponse?.errors?.length !== 0) return;
 
@@ -70,8 +71,6 @@ export async function seed(args: SeedArgs): Promise<SeedResponse | void> {
     }
 
     // Confirm orgID doesn't already exist
-    marketplaceID = marketplaceID || Random.generateOrgID();
-    var regionID = regionId || "usw";
     try {
         await portal.GetOrganization(marketplaceID, portalToken);
         return logger(`A marketplace with ID \"${marketplaceID}\" already exists.`, MessageType.Error)
@@ -81,11 +80,11 @@ export async function seed(args: SeedArgs): Promise<SeedResponse | void> {
     marketplaceName = marketplaceName || dataUrl?.split("/")?.pop()?.split(".")[0] || marketplaceID;
     try
     {
-        await portal.CreateOrganization(marketplaceID, marketplaceName, portalToken, regionID);
+        await portal.CreateOrganization(marketplaceID, marketplaceName, portalToken, regionId);
     }
     catch(exception)
     {
-        logger(`Couldn't create marketplace with Name \"${marketplaceName}\" and ID \"${marketplaceID}\" in the region \"${regionID}\" because: \n\"${exception.response.data.Errors[0].Message}\"`, MessageType.Error);
+        logger(`Couldn't create marketplace with Name \"${marketplaceName}\" and ID \"${marketplaceID}\" in the region \"${regionId}\" because: \n\"${exception.response.data.Errors[0].Message}\"`, MessageType.Error);
         return;
     }
     
@@ -116,8 +115,8 @@ export async function seed(args: SeedArgs): Promise<SeedResponse | void> {
     var marketplaceData = new SerializedMarketplace(validateResponse.rawData);
     var ordercloudBulk = new OrderCloudBulk(new Bottleneck({
         minTime: 100,
-        maxConcurrent: 6
-    }));
+        maxConcurrent: 8
+    }), logger);
     var apiClientIDMap = {};
     var specDefaultOptionIDList = [];
     var webhookSecret = Random.generateWebhookSecret(); // use one webhook secret for all webhooks, integration events and message senders
@@ -151,7 +150,7 @@ export async function seed(args: SeedArgs): Promise<SeedResponse | void> {
             await ordercloudBulk.CreateAll(resource, records);
         }
         if (records.length != 0) {
-            logger(`Created ${records.length} ${resource.name}.`, MessageType.Progress);
+            logger(`Created ${records.length} ${resource.name}.`, MessageType.Info);
         }   
     }
 
@@ -186,13 +185,13 @@ export async function seed(args: SeedArgs): Promise<SeedResponse | void> {
     async function GenerateAndPutVariants() : Promise<void> {
         var products = marketplaceData.Objects[OCResourceEnum.Products] || [];
         var productsWithVariants = products.filter((p: Product) => p.VariantCount > 0);
-        ordercloudBulk.Run("Variants" as any, productsWithVariants, (p: Product) => Products.GenerateVariants(p.ID));
+        ordercloudBulk.RunMany("Variants" as any, productsWithVariants, (p: Product) => Products.GenerateVariants(p.ID));
         var variants = marketplaceData.Objects[OCResourceEnum.Variants];
-        await ordercloudBulk.Run(OCResourceEnum.Variants, variants, (v: any) => {
+        await ordercloudBulk.RunMany(OCResourceEnum.Variants, variants, (v: any) => {
             var variantID = v.Specs.reduce((acc, spec) => `${acc}-${spec.OptionID}`, v.ProductID);
             return Products.SaveVariant(v.ProductID, variantID, v);
         });
-        logger(`Generated variants for ${productsWithVariants.length} products.`, MessageType.Progress);
+        logger(`Generated variants for ${productsWithVariants.length} products.`, MessageType.Info);
     }
 
     // Need to remove and cache Spec.DefaultOptionID in order to PATCH it after the options are created.
@@ -209,7 +208,7 @@ export async function seed(args: SeedArgs): Promise<SeedResponse | void> {
     // Patch Spec.DefaultOptionID after the options are created.
     async function UploadSpecOptions(resource: OCResource): Promise<void> {
         await ordercloudBulk.CreateAll(resource, records); 
-        await ordercloudBulk.Run("SpecOption" as any, specDefaultOptionIDList, x => Specs.Patch(x.ID, { DefaultOptionID: x.DefaultOptionID }));
+        await ordercloudBulk.RunMany("SpecOption" as any, specDefaultOptionIDList, x => Specs.Patch(x.ID, { DefaultOptionID: x.DefaultOptionID }));
     }
 
     async function UploadApiClients(resource: OCResource): Promise<void> {
