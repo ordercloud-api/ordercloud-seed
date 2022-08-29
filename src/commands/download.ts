@@ -56,7 +56,6 @@ export async function download(args: DownloadArgs): Promise<SerializedMarketplac
 
         Configuration.Set({ baseApiUrl: organization.CoreApiUrl });
     } catch (e) {
-        console.log(e);
         return logger(`Marketplace with ID \"${marketplaceID}\" not found`, MessageType.Error)
     }
 

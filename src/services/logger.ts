@@ -6,7 +6,7 @@ const multibar = new _progress.MultiBar({
     stopOnComplete: true,
     format: '{resource} [{bar}] {percentage}% | {value}/{total}', 
 });
-let bar = multibar.create(0, 0);
+let bar = multibar.create(1, 0, { resource: "Starting" });
 // see https://unicode.org/emoji/charts-14.0/full-emoji-list.html
 const check_mark = "\u2714";
 const red_x = "\u274C"; 
