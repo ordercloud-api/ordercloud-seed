@@ -156,7 +156,7 @@ export async function seed(args: SeedArgs): Promise<SeedResponse | void> {
 
     
     var endTime = Date.now();
-    logger(`Done! Seeded a new marketplace with ID \"${marketplaceID}\" and Name \"${marketplaceName}\". Total elapsed time: ${getElapsedTime(startTime, endTime)}`, MessageType.Success); 
+    logger(`Done! Seeded a new marketplace with ID \"${marketplaceID}\" and Name \"${marketplaceName}\". Total elapsed time: ${getElapsedTime(startTime, endTime)}`, MessageType.Done); 
 
     var apiClients = marketplaceData.Objects[OCResourceEnum.ApiClients]?.map(apiClient => {
         apiClient.ID = apiClientIDMap[apiClient.ID];

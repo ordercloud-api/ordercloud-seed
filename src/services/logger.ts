@@ -2,8 +2,7 @@ import chalk from "chalk";
 import { RESET_PROGRESS_BAR_SUFFIX } from "../constants";
 const _progress = require('cli-progress');
 const multibar = new _progress.MultiBar({ 
-    clearOnComplete: true,
-    stopOnComplete: true,
+    //clearOnComplete: true,
     format: '{resource} [{bar}] {percentage}% | {value}/{total}', 
 });
 let bar = multibar.create(1, 0, { resource: "Starting" });
@@ -13,18 +12,24 @@ const red_x = "\u274C";
 const clock = "\u23F1";
 const warning = "\u26A0";
 
+// All logging is going through the multibar because otherwise messages are mangled when the bar re-renders.
 export function defaultLogger(message: string, messageType: MessageType = MessageType.Info) {
-    if (messageType == MessageType.Success) {
+    if (messageType == MessageType.Success || messageType == MessageType.Done) {
         multibar.log(chalk.green(`${check_mark} SUCCESS - ${message}\n`));
+        multibar.update();
     } 
     if (messageType == MessageType.Error) {
         multibar.log(chalk.red(`${red_x} ERROR - ${message}\n`));
+        multibar.update();
     }
     if (messageType == MessageType.Info) {
         multibar.log(`${clock}  PROGRESS - ${message}\n`);
     }
     if (messageType == MessageType.Warn) {
         multibar.log(chalk.yellow(`${warning}  WARN - ${message}\n`));
+    }
+    if (messageType == MessageType.Done || messageType == MessageType.Error) {
+        multibar.stop();
     }
     if (messageType == MessageType.Progress) {
         var split = message.split("-");
@@ -46,7 +51,8 @@ export enum MessageType {
     Info,
     Success,
     Warn,
-    Progress
+    Progress,
+    Done
 }
 
 export function getElapsedTime(startTime: number, endTime: number): string {

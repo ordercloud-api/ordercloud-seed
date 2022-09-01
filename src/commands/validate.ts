@@ -108,7 +108,7 @@ export async function validate(args: ValidateArgs): Promise<ValidateResponse> {
     }
     var isValid = validator.errors.length === 0
     if (isValid) {
-        logger("Data source ready for seeding!", MessageType.Success);
+        logger("Data validated and ready for seeding.", MessageType.Success);
     }
 
     return { errors: validator.errors, isValid, rawData: marketplace };

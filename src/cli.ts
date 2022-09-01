@@ -116,7 +116,7 @@ yargs.scriptName("@ordercloud/seeding")
       var path = argv.f as string ?? 'ordercloud-seed.yml';
       fs.writeFileSync(path, yaml.dump(data));
       var endTime = Date.now();
-      defaultLogger(`Wrote to file ${path}. Total elapsed time: ${getElapsedTime(startTime, endTime)}`, MessageType.Success);
+      defaultLogger(`Wrote to file ${path}. Total elapsed time: ${getElapsedTime(startTime, endTime)}`, MessageType.Done);
     }
   })
   .command('validate [data]', 'Validate a potential data source for seeding.', (yargs) => {
@@ -126,7 +126,7 @@ yargs.scriptName("@ordercloud/seeding")
       default: 'ordercloud-seed.yml',
       describe: 'Local file path or HTTP(S) link'
     })
-  }, function (argv) {
+  }, async function (argv) {
     var filePath = argv.d as string;
     var stringData;
     if (!filePath.startsWith('http')) {
@@ -138,13 +138,15 @@ yargs.scriptName("@ordercloud/seeding")
       }
       try {
         var data = yaml.load(stringData) as SerializedMarketplace;
-        return validate({ rawData: data })
+        await validate({ rawData: data })
+        return defaultLogger(`Validation done!`, MessageType.Done);
       } catch (e) {
         var ex = e as YAMLException;
         return defaultLogger(`YAML Exception in \"${filePath}\": ${ex.message}`, MessageType.Error)
       }
     }
-    validate({ dataUrl: argv.d as string })
+    await validate({ dataUrl: argv.d as string });
+    defaultLogger(`Validation done!`, MessageType.Done);
   })
   .help()
   .argv
