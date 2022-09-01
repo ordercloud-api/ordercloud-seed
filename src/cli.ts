@@ -4,7 +4,7 @@ import { validate } from './commands/validate';
 import { seed } from './commands/seed';
 import fs from 'fs';
 import yaml, { YAMLException } from 'js-yaml';
-import { defaultLogger, MessageType } from './services/logger';
+import { defaultLogger, getElapsedTime, MessageType } from './services/logger';
 import { SerializedMarketplace } from './models/serialized-marketplace';
 import * as SeedingTemplates from '../seeds/meta.json';
 import _ from 'lodash';
@@ -106,6 +106,7 @@ yargs.scriptName("@ordercloud/seeding")
       describe: 'File path'
     })
   }, async function (argv) {
+    var startTime = Date.now();
     var data = await download({
       username: argv.u as string,
       password: argv.p as string,
@@ -113,8 +114,9 @@ yargs.scriptName("@ordercloud/seeding")
     });
     if (data) {
       var path = argv.f as string ?? 'ordercloud-seed.yml';
-      defaultLogger(`Writing to file ${path}`);
       fs.writeFileSync(path, yaml.dump(data));
+      var endTime = Date.now();
+      defaultLogger(`Wrote to file ${path}. Total elapsed time: ${getElapsedTime(startTime, endTime)}`, MessageType.Done);
     }
   })
   .command('validate [data]', 'Validate a potential data source for seeding.', (yargs) => {
@@ -124,7 +126,7 @@ yargs.scriptName("@ordercloud/seeding")
       default: 'ordercloud-seed.yml',
       describe: 'Local file path or HTTP(S) link'
     })
-  }, function (argv) {
+  }, async function (argv) {
     var filePath = argv.d as string;
     var stringData;
     if (!filePath.startsWith('http')) {
@@ -136,13 +138,15 @@ yargs.scriptName("@ordercloud/seeding")
       }
       try {
         var data = yaml.load(stringData) as SerializedMarketplace;
-        return validate({ rawData: data })
+        await validate({ rawData: data })
+        return defaultLogger(`Validation done!`, MessageType.Done);
       } catch (e) {
         var ex = e as YAMLException;
         return defaultLogger(`YAML Exception in \"${filePath}\": ${ex.message}`, MessageType.Error)
       }
     }
-    validate({ dataUrl: argv.d as string })
+    await validate({ dataUrl: argv.d as string });
+    defaultLogger(`Validation done!`, MessageType.Done);
   })
   .help()
   .argv

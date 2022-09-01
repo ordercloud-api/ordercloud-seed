@@ -1,6 +1,6 @@
 Objects:
   Buyers:
-    - ID: buyer yum
+    - ID: buyer_yum
       Name: Bakery
       OwnerID: Actually Ok b/c this field doesn't exist and can be ignored
   Catalogs:

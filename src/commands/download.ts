@@ -56,7 +56,6 @@ export async function download(args: DownloadArgs): Promise<SerializedMarketplac
 
         Configuration.Set({ baseApiUrl: organization.CoreApiUrl });
     } catch (e) {
-        console.log(e);
         return logger(`Marketplace with ID \"${marketplaceID}\" not found`, MessageType.Error)
     }
 
@@ -68,9 +67,10 @@ export async function download(args: DownloadArgs): Promise<SerializedMarketplac
     var ordercloudBulk = new OrderCloudBulk(new Bottleneck({
         minTime: 100,
         maxConcurrent: 8
-    }));
+    }), logger);
     var marketplace = new SerializedMarketplace();
-    var directory = await BuildResourceDirectory(false); 
+    var directory = await BuildResourceDirectory(false);
+    var childResourceRecordCounts = {}; 
     for (let resource of directory) {
         if (resource.isChild) {
             continue; // resource will be handled as part of its parent
@@ -81,13 +81,17 @@ export async function download(args: DownloadArgs): Promise<SerializedMarketplac
         if (resource.downloadTransformFunc !== undefined) {
             records = records.map(resource.downloadTransformFunc)
         }
+        logger(`Found ${records?.length || 0} ${resource.name}`);
         marketplace.AddRecords(resource, records);
         for (let childResourceName of resource.children)
         {
             let childResource = directory.find(x => x.name === childResourceName);
+            childResourceRecordCounts[childResourceName] = 0;
+            childResourceRecordCounts[OCResourceEnum.VariantInventoryRecords] = 0;
             for (let parentRecord of records) {
                 if (childResource.shouldAttemptListFunc(parentRecord)) {
                     var childRecords = await ordercloudBulk.ListAll(childResource, parentRecord.ID); // assume ID exists. Which is does for all parent types.
+                    childResourceRecordCounts[childResourceName] += childRecords.length;
                     PlaceHoldMarketplaceID(childResource, childRecords);
                     if (childResource.downloadTransformFunc !== undefined) {
                         childRecords = childRecords.map(childResource.downloadTransformFunc)
@@ -100,25 +104,21 @@ export async function download(args: DownloadArgs): Promise<SerializedMarketplac
                         var grandChildResource = directory.find(x => x.name === OCResourceEnum.VariantInventoryRecords);
                         for (var variant of childRecords) {
                             var variantInventoryRecords = await ordercloudBulk.ListAll(grandChildResource, parentRecord.ID, variant.ID);
+                            childResourceRecordCounts[OCResourceEnum.VariantInventoryRecords] += variantInventoryRecords.length;
                             PlaceHoldMarketplaceID(grandChildResource, variantInventoryRecords);
                             for (let grandChildRecord of variantInventoryRecords) {
                                 grandChildRecord["ProductID"] = parentRecord.ID;
                                 grandChildRecord["VariantID"] = variant.ID;
                             }
-                            if (variantInventoryRecords.length !== 0) {
-                                logger("Found " + variantInventoryRecords.length + " " + grandChildResource.name);
-                            }
                             marketplace.AddRecords(grandChildResource, variantInventoryRecords);
                         }                      
                     }   
                 }
+            } 
+            logger(`Found ${childResourceRecordCounts[childResourceName]} ${childResourceName}`);
+            if (childResource.name === OCResourceEnum.Variants) {
+                logger(`Found ${childResourceRecordCounts[OCResourceEnum.VariantInventoryRecords]} ${OCResourceEnum.VariantInventoryRecords}`);
             }
-            if (childRecords && childRecords.length !== 0) {
-                logger("Found " + childRecords.length + " " + childResourceName);
-            }
-        }
-        if (records && records.length !== 0) {
-            logger("Found " + records.length + " " + resource.name);
         }
     }
     // Write to file

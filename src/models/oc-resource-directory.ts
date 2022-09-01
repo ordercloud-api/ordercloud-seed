@@ -54,6 +54,7 @@ const Directory: OCResource[] = [
         sdkObject: AdminUsers,
         path: "/adminusers",
         createPriority: 2,
+        hasOwnerIDField: "CompanyID",
         downloadTransformFunc: (x) => { 
             delete x.Locale;
             return x;
@@ -382,6 +383,7 @@ const Directory: OCResource[] = [
         isChild: true,
         listMethodName: 'ListVariant',
         createMethodName: 'CreateVariant',
+        hasOwnerIDField: 'OwnerID',
         foreignKeys: {
             VariantID: { 
                 foreignParentRefField: "ProductID",
