@@ -781,21 +781,16 @@ function ApplyDefaults(resource: OCResource): OCResource {
 
 }
 
-export async function BuildResourceDirectory(includeOpenAPI: boolean = false): Promise<OCResource[]> {
-    var openAPISpec;
-    if (includeOpenAPI) {
-        openAPISpec = await axios.get(`https://api.ordercloud.io/v1/openapi/v3`) 
-    }
+export async function BuildResourceDirectory(): Promise<OCResource[]> {
+    var openAPISpec = await axios.get(`https://api.ordercloud.io/v1/openapi/v3`) 
     return Directory.map(resource => {  
         var modified = ApplyDefaults(resource);
-        if (includeOpenAPI) {
-            var path = openAPISpec.data.paths[resource.path];
-            var operation = path.post ?? path.put;
-            modified.requiredCreateFields = operation?.requestBody?.content?.["application/json"]?.schema?.required ?? [];
-            modified.openAPIProperties = openAPISpec.data.components.schemas[resource.modelName].properties;
-            if (modified.isChild) {
-                modified.parentResource = Directory.find(x => x.children?.includes(modified.name));
-            }
+        var path = openAPISpec.data.paths[resource.path];
+        var operation = path.post ?? path.put;
+        modified.requiredCreateFields = operation?.requestBody?.content?.["application/json"]?.schema?.required ?? [];
+        modified.openAPIProperties = openAPISpec.data.components.schemas[resource.modelName].properties;
+        if (modified.isChild) {
+            modified.parentResource = Directory.find(x => x.children?.includes(modified.name));
         }
         return modified;
     });

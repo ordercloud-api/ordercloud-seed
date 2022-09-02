@@ -12,6 +12,10 @@ export default class PortalAPI {
     return await Auth.Login(username, password);
   }
 
+  async refreshToken(refreshToken: string): Promise<PortalAuthentication> {
+    return await Auth.RefreshToken(refreshToken);
+  }
+
   async getOrganizationToken(orgID: string, accessToken: string): Promise<string> {
     return (await ApiClients.GetToken(orgID, null, { accessToken })).access_token;
   }

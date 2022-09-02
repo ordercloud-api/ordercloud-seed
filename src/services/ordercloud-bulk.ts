@@ -7,33 +7,35 @@ import { OCResourceEnum } from '../models/oc-resource-enum';
 import Random from './random';
 import {  LogCallBackFunc, MessageType } from './logger';
 import { RESET_PROGRESS_BAR_SUFFIX } from '../constants';
+import { JobActionType, JobGroupMetaData, JobMetaData } from '../models/job-metadata';
 const { flatten } = pkg;
 
 export default class OrderCloudBulk {
     logger: LogCallBackFunc
     limiter: Bottleneck;
-    currentResource = "";
+    currentResourceName = "";
+    currentParentResourceID = "";
     currentProgress = 0;
     retryWaitScheduleInMS = [1000, 3000, 7000];
 
     constructor(limiter: Bottleneck, logger: LogCallBackFunc) {
         this.limiter = limiter;
         this.logger = logger;
+
         this.limiter.on("done", (jobInfo) => {
-            var split = jobInfo.options.id.split("-");
-            var resource = split[0];
-            var progress = parseInt(split[1]);
-            if (progress > 1) {
-                var total = parseInt(split[3]);
-                if (resource !== this.currentResource) {
-                    this.logger(`${resource}-${progress}-${total}-${RESET_PROGRESS_BAR_SUFFIX}`, MessageType.Progress)
+            const meta = JobMetaData.fromString(jobInfo.options.id);
+            if (meta.progress > 1) {
+                const message = `${meta.actionType} ${meta.resourceName}${meta.parentResourceID ? ` under ${meta.parentResourceName} with ID "${meta.parentResourceID}"` : ""}`;
+                if (meta.resourceName !== this.currentResourceName || meta.parentResourceID !== this.currentParentResourceID) {
+                    this.logger(message + RESET_PROGRESS_BAR_SUFFIX, MessageType.Progress, meta);
                     this.currentProgress = 0; // new resource, reset progress
-                } else if (progress > this.currentProgress) {
+                } else if (meta.progress > this.currentProgress) {
                     // only show increases, small decreases are possible from concurrancy issues.
-                    this.logger(`${resource}-${progress}-${total}`, MessageType.Progress)
-                    this.currentProgress = progress;
+                    this.logger(message, MessageType.Progress, meta);
+                    this.currentProgress = meta.progress;
                 }
-                this.currentResource = resource;
+                this.currentResourceName = meta.resourceName;
+                this.currentParentResourceID = meta.parentResourceID;
             }
         });
         
@@ -42,7 +44,7 @@ export default class OrderCloudBulk {
                 // returning a number does a retry in that many milliseconds
                 // https://www.npmjs.com/package/bottleneck#retries
                 var wait = this.retryWaitScheduleInMS[jobInfo.retryCount];
-                this.logger(`Job ${jobInfo.options.id} failed ${jobInfo.retryCount} time(s). Will retry after ${wait} ms.`, MessageType.Warn)
+                this.logger(`Job "${jobInfo.options.id}" failed ${jobInfo.retryCount} time(s). Will retry after ${wait} ms.`, MessageType.Warn)
                 return wait; 
             }
             this.throwError(error); 
@@ -62,27 +64,37 @@ export default class OrderCloudBulk {
     async ListAll(resource: OCResource, ...routeParams: string[]): Promise<any[]> {
         const listFunc = resource.sdkObject[resource.listMethodName] as Function; 
 
-        return await this.ListAllWithFunction(resource.name, listFunc, ...routeParams);
+        return await this.ListAllWithFunction(resource, listFunc, ...routeParams);
     }
 
-    async ListAllWithFunction(resourceName: OCResourceEnum, listFunc: Function, ...routeParams: string[]): Promise<any[]> {
+    async ListAllWithFunction(resource: OCResource, listFunc: Function, ...routeParams: string[]): Promise<any[]> {
         const queryParams = { page: 1, pageSize: 100, depth: 'all'}; // depth only applies to categories
-        const jobOptions = { id: `${resourceName}-1-of-unknown-${Random.generate(6)}` };
+        const meta: JobGroupMetaData = {
+            actionType: JobActionType.LIST,
+            resourceName: resource.name,
+            parentResourceID: routeParams.length ? routeParams[0] : undefined,
+            parentResourceName: resource?.parentResource?.name || undefined
+        };
 
         // use limiter for the first page to take advantage of retries and error handling 
-        const page1 = await this.limiter.schedule(jobOptions, () => listFunc(...routeParams, queryParams), null) as any;
+        const page1JobId = new JobMetaData(meta, 1, 1).toString()
+        const page1 = await this.limiter.schedule({id: page1JobId }, () => listFunc(...routeParams, queryParams), null) as any;
 
         const additionalPages = range(2, Math.max(page1?.Meta.TotalPages + 1, 2)) as number[];
 
-        const results = await this.RunMany(resourceName, additionalPages, (page) => listFunc(...routeParams, { ...queryParams, page }))
+        const results = await this.RunMany(meta, additionalPages, (page) => listFunc(...routeParams, { ...queryParams, page }))
       
         // combine and flatten items
         return flatten([page1, ...results].map((r) => r.Items));
     }
 
     async CreateAll(resource: OCResource, records: any[]): Promise<any[]> {
-        const createFunc = resource.sdkObject[resource.createMethodName] as Function;   
-        return await this.RunMany(resource.name, records, (record) => {
+        const createFunc = resource.sdkObject[resource.createMethodName] as Function;  
+        const meta: JobGroupMetaData = {
+            actionType: JobActionType.CREATE,
+            resourceName: resource.name
+        }; 
+        return await this.RunMany(meta, records, (record) => {
             if (resource.secondRouteParam) {
                 return createFunc(record[resource.parentRefField], record[resource.secondRouteParam], record);  
             } else if (resource.parentRefField) {          
@@ -93,7 +105,7 @@ export default class OrderCloudBulk {
         });
     }
 
-    async RunMany<T, K>(resourceName: OCResourceEnum, argForRequests: T[], func: (arg: T) => Promise<K>): Promise<K[]> {
+    async RunMany<T, K>(jobGroupMetaData: JobGroupMetaData, argForRequests: T[], func: (arg: T) => Promise<K>): Promise<K[]> {
         if (_.isNil(argForRequests)) {
              return [];
         }
@@ -101,10 +113,11 @@ export default class OrderCloudBulk {
 
         for (let i = 0; i < argForRequests.length; i++) {
             const record = argForRequests[i]; 
-            const jobOptions = { id: `${resourceName}-${i}-of-${argForRequests.length}-${Random.generate(6)}` };
-            var task = this.limiter.schedule(jobOptions, () => func(record));
+            const jobId = new JobMetaData(jobGroupMetaData, i, argForRequests.length).toString()
+            var task = this.limiter.schedule({id: jobId }, () => func(record));
             tasks.push(task);
         }
         return await Promise.all(tasks);
     }
 }
+

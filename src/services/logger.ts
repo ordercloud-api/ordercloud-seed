@@ -1,9 +1,10 @@
 import chalk from "chalk";
 import { RESET_PROGRESS_BAR_SUFFIX } from "../constants";
+import { JobMetaData } from "../models/job-metadata";
 const _progress = require('cli-progress');
 const multibar = new _progress.MultiBar({ 
     //clearOnComplete: true,
-    format: '{resource} [{bar}] {percentage}% | {value}/{total}', 
+    format: '{text} [{bar}] {percentage}% | {value}/{total}', 
 });
 let bar = multibar.create(1, 0, { resource: "Starting" });
 // see https://unicode.org/emoji/charts-14.0/full-emoji-list.html
@@ -13,7 +14,7 @@ const clock = "\u23F1";
 const warning = "\u26A0";
 
 // All logging is going through the multibar because otherwise messages are mangled when the bar re-renders.
-export function defaultLogger(message: string, messageType: MessageType = MessageType.Info) {
+export function defaultLogger(message: string, messageType: MessageType = MessageType.Info, job: JobMetaData = null) {
     if (messageType == MessageType.Success || messageType == MessageType.Done) {
         multibar.log(chalk.green(`${check_mark} SUCCESS - ${message}\n`));
         multibar.update();
@@ -32,19 +33,15 @@ export function defaultLogger(message: string, messageType: MessageType = Messag
         multibar.stop();
     }
     if (messageType == MessageType.Progress) {
-        var split = message.split("-");
-        var resource = split[0]
-        var progress = parseInt(split[1]);
-        var total = parseInt(split[2]);
-
         if (message.endsWith(RESET_PROGRESS_BAR_SUFFIX)) {
-            bar.setTotal(total);
+            bar.setTotal(job.total);
+            message = message.replace(RESET_PROGRESS_BAR_SUFFIX, "");
         }
-        bar.update(progress, { resource });
+        bar.update(job.progress, { text: message });
     }
 }
 
-export type LogCallBackFunc = (message: string, type: MessageType) => void;
+export type LogCallBackFunc = (message: string, type?: MessageType, job?: JobMetaData) => void;
 
 export enum MessageType {
     Error,

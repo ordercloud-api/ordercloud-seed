@@ -50,7 +50,7 @@ export async function validate(args: ValidateArgs): Promise<ValidateResponse> {
     } 
 
     var marketplace = new SerializedMarketplace(rawData);
-    var directory = await BuildResourceDirectory(true);
+    var directory = await BuildResourceDirectory();
     // validate duplicate IDs 
     for (let resource of directory) {
         validator.currentResource = resource;

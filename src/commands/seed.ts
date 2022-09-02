@@ -8,11 +8,12 @@ import { BuildResourceDirectory } from '../models/oc-resource-directory';
 import { OCResourceEnum } from '../models/oc-resource-enum';
 import { OCResource } from '../models/oc-resources';
 import Random from '../services/random';
-import { REDACTED_MESSAGE,MARKETPLACE_ID } from '../constants';
+import { REDACTED_MESSAGE,MARKETPLACE_ID, TEN_MINUTES } from '../constants';
 import PortalAPI from '../services/portal';
 import { SerializedMarketplace } from '../models/serialized-marketplace';
 import { ApiClient } from '@ordercloud/portal-javascript-sdk';
 import Bottleneck from 'bottleneck';
+import { JobActionType, JobGroupMetaData, JobMetaData } from '../models/job-metadata';
 
 export interface SeedArgs {
     username?: string;
@@ -59,12 +60,18 @@ export async function seed(args: SeedArgs): Promise<SeedResponse | void> {
 
     // Authenticate To Portal
     var portal = new PortalAPI();
-    if (_.isNil(portalToken)) {
+    var portalRefreshToken: string;
+    var userLoginAuthUsed = _.isNil(portalToken);
+
+    if (userLoginAuthUsed) {
         if (_.isNil(username) || _.isNil(password)) {
             return logger(`Missing required arguments: username and password`, MessageType.Error)
         }
         try {
-            portalToken = (await portal.login(username, password)).access_token;
+            var portalTokenData = await portal.login(username, password);
+            portalToken = portalTokenData.access_token;
+            portalRefreshToken = portalTokenData.refresh_token;
+            setInterval(refreshTokenFunc, TEN_MINUTES)
         } catch {
             return logger(`Username \"${username}\" and Password \"${password}\" were not valid`, MessageType.Error)
         }
@@ -120,7 +127,7 @@ export async function seed(args: SeedArgs): Promise<SeedResponse | void> {
     var apiClientIDMap = {};
     var specDefaultOptionIDList = [];
     var webhookSecret = Random.generateWebhookSecret(); // use one webhook secret for all webhooks, integration events and message senders
-    var directory = await BuildResourceDirectory(false);
+    var directory = await BuildResourceDirectory();
     for (let resource of directory.sort((a, b) => a.createPriority - b.createPriority)) {
         var records = marketplaceData.GetRecords(resource);
         SetOwnerID(resource, records);
@@ -185,9 +192,13 @@ export async function seed(args: SeedArgs): Promise<SeedResponse | void> {
     async function GenerateAndPutVariants() : Promise<void> {
         var products = marketplaceData.Objects[OCResourceEnum.Products] || [];
         var productsWithVariants = products.filter((p: Product) => p.VariantCount > 0);
-        ordercloudBulk.RunMany("Variants" as any, productsWithVariants, (p: Product) => Products.GenerateVariants(p.ID));
+        var meta: JobGroupMetaData = {
+            resourceName: OCResourceEnum.Variants,
+            actionType: JobActionType.CREATE,
+        };
+        ordercloudBulk.RunMany(meta, productsWithVariants, (p: Product) => Products.GenerateVariants(p.ID));
         var variants = marketplaceData.Objects[OCResourceEnum.Variants];
-        await ordercloudBulk.RunMany(OCResourceEnum.Variants, variants, (v: any) => {
+        await ordercloudBulk.RunMany(meta, variants, (v: any) => {
             var variantID = v.Specs.reduce((acc, spec) => `${acc}-${spec.OptionID}`, v.ProductID);
             return Products.SaveVariant(v.ProductID, variantID, v);
         });
@@ -275,5 +286,16 @@ export async function seed(args: SeedArgs): Promise<SeedResponse | void> {
     async function UploadApiClientAssignments(resource: OCResource): Promise<void> {
         records.forEach(r => r.ApiClientID = apiClientIDMap[r.ApiClientID]);
         await ordercloudBulk.CreateAll(resource, records);
+    }
+
+    async function refreshTokenFunc() {
+        logger(`Refreshing the access token for Marketplace \"${marketplaceID}\". This should happen every 10 mins.`, MessageType.Warn)
+  
+        const portalTokenData = await portal.refreshToken(portalRefreshToken);
+        portalToken = portalTokenData.access_token;
+        portalRefreshToken = portalTokenData.refresh_token;
+
+        org_token = await portal.getOrganizationToken(marketplaceID, portalToken);
+        Tokens.SetAccessToken(org_token);
     }
 } 

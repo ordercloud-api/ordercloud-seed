@@ -53,7 +53,7 @@ export enum OCResourceEnum {
     CategoryAssignments = "CategoryAssignments",
     CategoryProductAssignments = "CategoryProductAssignments",
     SpecProductAssignments = "SpecProductAssignments",
-    PromotionAssignment = "PromotionAssignment",
-    ProductSupplierAssignment = "ProductSupplierAssignment",
-    SupplierBuyerAssignment = "SupplierBuyerAssignment"
+    PromotionAssignments = "PromotionAssignments",
+    ProductSupplierAssignments = "ProductSupplierAssignments",
+    SupplierBuyerAssignments = "SupplierBuyerAssignments"
 }

@@ -6,7 +6,7 @@ import { defaultLogger, LogCallBackFunc, MessageType } from '../services/logger'
 import { BuildResourceDirectory } from '../models/oc-resource-directory';
 import { OCResource } from '../models/oc-resources';
 import _  from 'lodash';
-import { MARKETPLACE_ID as MARKETPLACE_ID_PLACEHOLDER, REDACTED_MESSAGE } from '../constants';
+import { MARKETPLACE_ID as MARKETPLACE_ID_PLACEHOLDER, REDACTED_MESSAGE, TEN_MINUTES } from '../constants';
 import PortalAPI from '../services/portal';
 import Bottleneck from 'bottleneck';
 import { OCResourceEnum } from '../models/oc-resource-enum';
@@ -34,13 +34,18 @@ export async function download(args: DownloadArgs): Promise<SerializedMarketplac
 
     // Authenticate
     var portal = new PortalAPI();
+    var portalRefreshToken: string;
     var org_token: string;
-    if (_.isNil(portalToken)) {
+    var userLoginAuthUsed = _.isNil(portalToken);
+    if (userLoginAuthUsed) {
         if (_.isNil(username) || _.isNil(password)) {
             return logger(`Missing required arguments: username and password`, MessageType.Error)
         }
         try {
-            portalToken = (await portal.login(username, password)).access_token;
+            var portalTokenData = await portal.login(username, password);
+            portalToken = portalTokenData.access_token;
+            portalRefreshToken = portalTokenData.refresh_token;
+            setInterval(refreshTokenFunc, TEN_MINUTES)
         } catch {
             return logger(`Username \"${username}\" and Password \"${password}\" were not valid`, MessageType.Error)
         }
@@ -69,7 +74,7 @@ export async function download(args: DownloadArgs): Promise<SerializedMarketplac
         maxConcurrent: 8
     }), logger);
     var marketplace = new SerializedMarketplace();
-    var directory = await BuildResourceDirectory(false);
+    var directory = await BuildResourceDirectory();
     var childResourceRecordCounts = {}; 
     for (let resource of directory) {
         if (resource.isChild) {
@@ -147,5 +152,16 @@ export async function download(args: DownloadArgs): Promise<SerializedMarketplac
                 }
             }
         }
+    }
+
+    async function refreshTokenFunc() {
+        logger(`Refreshing the access token for Marketplace \"${marketplaceID}\". This should happen every 10 mins.`, MessageType.Warn)
+  
+        const portalTokenData = await portal.refreshToken(portalRefreshToken);
+        portalToken = portalTokenData.access_token;
+        portalRefreshToken = portalTokenData.refresh_token;
+
+        org_token = await portal.getOrganizationToken(marketplaceID, portalToken);
+        Tokens.SetAccessToken(org_token);
     }
 } 
