@@ -22,12 +22,12 @@ Download and upload serialized representations of full ordercloud marketplaces.
 
 Create a marketplace from a "SimpleB2C" template.
 ```
-seed Simple-B2C -u={username} -p={password}
+npx @ordercloud/seeding seed Simple-B2C -u={username} -p={password}
 ```
 
 Create a marketplace based on a local file. 
 ```
-seed ./folder/seed-data.yml -u={username} -p={password}
+npx @ordercloud/seeding seed ./folder/seed-data.yml -u={username} -p={password}
 ```
 
 Create a marketplace based on a public url.
