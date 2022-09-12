@@ -256,7 +256,7 @@ const Directory: OCResource[] = [
         sdkObject: Suppliers,
         createPriority: 2,
         path: "/suppliers",
-        children: [OCResourceEnum.SupplierUsers, OCResourceEnum.SupplierUserGroups, OCResourceEnum.SupplierAddresses, OCResourceEnum.SupplierUserGroupsAssignments, OCResourceEnum.SupplierBuyerAssignment]
+        children: [OCResourceEnum.SupplierUsers, OCResourceEnum.SupplierUserGroups, OCResourceEnum.SupplierAddresses, OCResourceEnum.SupplierUserGroupsAssignments, OCResourceEnum.SupplierBuyerAssignments]
     },
     {
         name: OCResourceEnum.SupplierUsers, 
@@ -300,7 +300,7 @@ const Directory: OCResource[] = [
             DefaultPriceScheduleID: { foreignResource: OCResourceEnum.PriceSchedules },
             DefaultSupplierID: { foreignResource: OCResourceEnum.Suppliers }
         },
-        children: [OCResourceEnum.ProductSupplierAssignment, OCResourceEnum.Variants, OCResourceEnum.InventoryRecords],
+        children: [OCResourceEnum.ProductSupplierAssignments, OCResourceEnum.Variants, OCResourceEnum.InventoryRecords],
         customValidationFunc: ProductValidationFunc
     },
     {
@@ -708,7 +708,7 @@ const Directory: OCResource[] = [
         },
     },
     {
-        name: OCResourceEnum.PromotionAssignment, 
+        name: OCResourceEnum.PromotionAssignments, 
         modelName: "PromotionAssignment",
         sdkObject: Promotions,
         createPriority: 6,
@@ -724,7 +724,7 @@ const Directory: OCResource[] = [
         },
     },
     {
-        name: OCResourceEnum.ProductSupplierAssignment, 
+        name: OCResourceEnum.ProductSupplierAssignments, 
         modelName: "ProductSupplier",
         sdkObject: Products,
         createPriority: 5,
@@ -745,7 +745,7 @@ const Directory: OCResource[] = [
         }
     },
     {
-        name: OCResourceEnum.SupplierBuyerAssignment, 
+        name: OCResourceEnum.SupplierBuyerAssignments, 
         modelName: "SupplierBuyer",
         sdkObject: Suppliers,
         createPriority: 5,

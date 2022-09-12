@@ -3,15 +3,13 @@ import { OCResource } from "../models/oc-resources";
 import Bottleneck from 'bottleneck';
 import chalk from 'chalk';
 import _ from 'lodash';
-import { OCResourceEnum } from '../models/oc-resource-enum';
-import Random from './random';
 import {  LogCallBackFunc, MessageType } from './logger';
 import { RESET_PROGRESS_BAR_SUFFIX } from '../constants';
 import { JobActionType, JobGroupMetaData, JobMetaData } from '../models/job-metadata';
 const { flatten } = pkg;
 
 export default class OrderCloudBulk {
-    logger: LogCallBackFunc
+    logger: LogCallBackFunc;
     limiter: Bottleneck;
     currentResourceName = "";
     currentParentResourceID = "";
@@ -25,7 +23,10 @@ export default class OrderCloudBulk {
         this.limiter.on("done", (jobInfo) => {
             const meta = JobMetaData.fromString(jobInfo.options.id);
             if (meta.progress > 1) {
-                const message = `${meta.actionType} ${meta.resourceName}${meta.parentResourceID ? ` under ${meta.parentResourceName} with ID "${meta.parentResourceID}"` : ""}`;
+                let message = `${meta.actionType} ${meta.resourceName}`;
+                if (meta.parentResourceID && meta.actionType === JobActionType.LIST) {
+                    message = message + ` under ${meta.parentResourceName.replace(/s$/,"")} with ID "${meta.parentResourceID}"`;
+                }
                 if (meta.resourceName !== this.currentResourceName || meta.parentResourceID !== this.currentParentResourceID) {
                     this.logger(message + RESET_PROGRESS_BAR_SUFFIX, MessageType.Progress, meta);
                     this.currentProgress = 0; // new resource, reset progress

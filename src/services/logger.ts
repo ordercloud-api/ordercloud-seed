@@ -1,12 +1,13 @@
 import chalk from "chalk";
 import { RESET_PROGRESS_BAR_SUFFIX } from "../constants";
 import { JobMetaData } from "../models/job-metadata";
+import { RefreshTimer } from "./refresh-timer";
 const _progress = require('cli-progress');
 const multibar = new _progress.MultiBar({ 
     //clearOnComplete: true,
     format: '{text} [{bar}] {percentage}% | {value}/{total}', 
 });
-let bar = multibar.create(1, 0, { resource: "Starting" });
+let bar = multibar.create(1, 0, { text: "Starting" });
 // see https://unicode.org/emoji/charts-14.0/full-emoji-list.html
 const check_mark = "\u2714";
 const red_x = "\u274C"; 
@@ -31,6 +32,7 @@ export function defaultLogger(message: string, messageType: MessageType = Messag
     }
     if (messageType == MessageType.Done || messageType == MessageType.Error) {
         multibar.stop();
+        RefreshTimer.clear();
     }
     if (messageType == MessageType.Progress) {
         if (message.endsWith(RESET_PROGRESS_BAR_SUFFIX)) {

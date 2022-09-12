@@ -10,6 +10,7 @@ import { MARKETPLACE_ID as MARKETPLACE_ID_PLACEHOLDER, REDACTED_MESSAGE, TEN_MIN
 import PortalAPI from '../services/portal';
 import Bottleneck from 'bottleneck';
 import { OCResourceEnum } from '../models/oc-resource-enum';
+import { RefreshTimer } from '../services/refresh-timer';
 
 export interface DownloadArgs {
     username?: string; 
@@ -45,7 +46,7 @@ export async function download(args: DownloadArgs): Promise<SerializedMarketplac
             var portalTokenData = await portal.login(username, password);
             portalToken = portalTokenData.access_token;
             portalRefreshToken = portalTokenData.refresh_token;
-            setInterval(refreshTokenFunc, TEN_MINUTES)
+            RefreshTimer.set(refreshTokenFunc, TEN_MINUTES)
         } catch {
             return logger(`Username \"${username}\" and Password \"${password}\" were not valid`, MessageType.Error)
         }

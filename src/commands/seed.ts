@@ -14,6 +14,7 @@ import { SerializedMarketplace } from '../models/serialized-marketplace';
 import { ApiClient } from '@ordercloud/portal-javascript-sdk';
 import Bottleneck from 'bottleneck';
 import { JobActionType, JobGroupMetaData, JobMetaData } from '../models/job-metadata';
+import { RefreshTimer } from '../services/refresh-timer';
 
 export interface SeedArgs {
     username?: string;
@@ -71,7 +72,7 @@ export async function seed(args: SeedArgs): Promise<SeedResponse | void> {
             var portalTokenData = await portal.login(username, password);
             portalToken = portalTokenData.access_token;
             portalRefreshToken = portalTokenData.refresh_token;
-            setInterval(refreshTokenFunc, TEN_MINUTES)
+            RefreshTimer.set(refreshTokenFunc, TEN_MINUTES)
         } catch {
             return logger(`Username \"${username}\" and Password \"${password}\" were not valid`, MessageType.Error)
         }
