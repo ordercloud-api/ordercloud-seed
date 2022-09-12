@@ -32,17 +32,17 @@ seed ./folder/seed-data.yml -u={username} -p={password}
 
 Create a marketplace based on a public url.
 ```
-seed https://raw.githubusercontent.com/ordercloud-api/ordercloud-seed/main/seeds/Simple-B2C.yml -u={username} -p={password}
+npx @ordercloud/seeding seed https://raw.githubusercontent.com/ordercloud-api/ordercloud-seed/main/seeds/Simple-B2C.yml -u={username} -p={password}
 ```
 
 Download the data from an existing marketplace to a seed file.
 ```
-download ./folder/new-file-to-create.yml -i={existing-marketplace-id} -u={username} -p={password}
+npx @ordercloud/seeding download ./new-file-to-create.yml -i={existing-marketplace-id} -u={username} -p={password}
 ```
 
 Validate that a local file would seed successfully. 
 ```
-validate ./folder/my-file.yml
+npx @ordercloud/seeding validate ./folder/my-file.yml
 ``` 
 
 ## Javascript API Usage
@@ -88,7 +88,6 @@ These are seeding files maintained as part of this repo that represent templates
 
 
 ## Nice to Have features
-- Progress bar for import and export commands
 - JSON as an option
 - Reference other files
 - Template variables in YAML for imports. Including allowing OC to define an ID and then applying it later.
