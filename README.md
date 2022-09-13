@@ -20,7 +20,7 @@ Download and upload serialized representations of full ordercloud marketplaces.
 
 ## CLI Usage 
 
-Create a marketplace from a "SimpleB2C" template.
+Create a marketplace from a "Simple-B2C" template.
 ```
 npx @ordercloud/seeding seed Simple-B2C -u={username} -p={password}
 ```
