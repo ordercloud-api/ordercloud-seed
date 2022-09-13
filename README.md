@@ -82,7 +82,7 @@ These are seeding files maintained as part of this repo that represent templates
 ## Development
 
 - Run `npm install`
-- Run `npm build` everytime you change source files.
+- Run `npm run build` everytime you change source files.
 - Run `node ./dist/cli.js [command]` to debug a command.
 - Run `npm run test` to run unit tests.
 
