@@ -6,10 +6,12 @@ Download and upload serialized representations of full ordercloud marketplaces.
 ## Ways to get started
 
 - For node.js users, install with `npm i @ordercloud/seeding -g` and then run `seeding --help`.
+    - Alternatively, node.js users can run without install `npx @ordercloud/seeding --help`.
 
-- Alternatively, node.js users can run without install `npx @ordercloud/seeding --help`.
+- For docker users `docker run --mount type=bind,source=<local directory>,target=/app oliverheywood/ordercloud-seeding --help`.
+    - Subsitute `<local directory>` for an absolute path in order for local file reading and writing to be mounted on the container. 
 
-- Download an executable. Run like `seeding-win.exe --help`.
+- Download an executable. Run like `./seeding-win.exe --help`.
 
 | Operating System | Executable |
 | --- | --- |                                
@@ -25,9 +27,9 @@ Create a marketplace from a "Simple-B2C" template.
 npx @ordercloud/seeding seed Simple-B2C -u={username} -p={password}
 ```
 
-Create a marketplace based on a local file. 
+Create a marketplace based on data in a local file. Looks for files based on the directory the command is run from.
 ```
-npx @ordercloud/seeding seed ./folder/seed-data.yml -u={username} -p={password}
+npx @ordercloud/seeding seed seed-data-file.yml -u={username} -p={password}
 ```
 
 Create a marketplace based on a public url.
@@ -37,29 +39,20 @@ npx @ordercloud/seeding seed https://raw.githubusercontent.com/ordercloud-api/or
 
 Download the data from an existing marketplace to a seed file.
 ```
-npx @ordercloud/seeding download ./new-file-to-create.yml -i={existing-marketplace-id} -u={username} -p={password}
+npx @ordercloud/seeding download new-file-to-create.yml -i={existing-marketplace-id} -u={username} -p={password}
 ```
 
 Validate that a local file would seed successfully. 
 ```
-npx @ordercloud/seeding validate ./folder/my-file.yml
+npx @ordercloud/seeding validate my-file.yml
 ``` 
 
 ## Javascript API Usage
-
-```typescript
-import { download, seed, validate } from "@ordercloud/seeding";
-
-await seed({
-    portalJWT: "xxxxxx", 
-    filePath: "./folder/ordercloud-data.yml",
-    logger: (message:string, type: MessageType) => {
-         console.log(message)
-    }
-}); 
- ```
  
  ```typescript
+import { download, seed, validate, SerializedMarketplace } from "@ordercloud/seeding";
+
+
 var myData: SerializedMarketplace = { ... };
 
 await seed({
