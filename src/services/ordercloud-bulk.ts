@@ -45,7 +45,7 @@ export default class OrderCloudBulk {
                 // returning a number does a retry in that many milliseconds
                 // https://www.npmjs.com/package/bottleneck#retries
                 var wait = this.retryWaitScheduleInMS[jobInfo.retryCount];
-                this.logger(`Job "${jobInfo.options.id}" failed ${jobInfo.retryCount} time(s). Will retry after ${wait} ms.`, MessageType.Warn)
+                this.logger(`Job "${jobInfo.options.id}" failed ${jobInfo.retryCount + 1} time(s). Will retry after ${wait} ms.`, MessageType.Warn)
                 return wait; 
             }
             this.throwError(error); 

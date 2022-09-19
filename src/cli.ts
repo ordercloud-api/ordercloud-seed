@@ -16,7 +16,7 @@ yargs.scriptName("@ordercloud/seeding")
       type: 'string',
       alias: 'd',
       default: 'ordercloud-seed.yml',
-      describe: 'Local file path or HTTP(S) link'
+      describe: 'Local file name or HTTP(S) link'
     });
     yargs.option('username', {
       type: 'string',
@@ -57,7 +57,7 @@ yargs.scriptName("@ordercloud/seeding")
         stringData = fs.readFileSync(dataUrl, 'utf8') // consider switching to streams
         defaultLogger(`Found file \"${dataUrl}\"`, MessageType.Success);
       } catch (err) {
-          return defaultLogger(`No such file or directory \"${dataUrl}\" found`, MessageType.Error);
+          return defaultLogger(`No such file \"${dataUrl}\" found`, MessageType.Error);
       }
       try {
         var data = yaml.load(stringData) as SerializedMarketplace;
@@ -99,11 +99,11 @@ yargs.scriptName("@ordercloud/seeding")
       alias: 'p',
       describe: 'Portal password'
     })
-    yargs.positional('filePath', {
+    yargs.positional('fileName', {
       type: 'string',
       alias: 'f',
       default: 'ordercloud-seed.yml',
-      describe: 'File path'
+      describe: 'File name'
     })
   }, async function (argv) {
     var startTime = Date.now();
@@ -134,7 +134,7 @@ yargs.scriptName("@ordercloud/seeding")
         stringData = fs.readFileSync(filePath, 'utf8') // consider switching to streams
         defaultLogger(`Found file \"${filePath}\".`, MessageType.Success);
       } catch (err) {
-          return defaultLogger(`No such file or directory \"${filePath}\" found`, MessageType.Error);
+          return defaultLogger(`No such file \"${filePath}\" found`, MessageType.Error);
       }
       try {
         var data = yaml.load(stringData) as SerializedMarketplace;
