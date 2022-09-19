@@ -9,7 +9,7 @@ Download and upload serialized representations of full ordercloud marketplaces.
     - Alternatively, node.js users can run without install `npx @ordercloud/seeding --help`.
 
 - For docker users `docker run --mount type=bind,source=<local directory>,target=/app oliverheywood/ordercloud-seeding --help`.
-    - Subsitute `<local directory>` in order for local file reading and writing to be mounted on the container. 
+    - Subsitute `<local directory>` for an absolute path in order for local file reading and writing to be mounted on the container. 
 
 - Download an executable. Run like `./seeding-win.exe --help`.
 
