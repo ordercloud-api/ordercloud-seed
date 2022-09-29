@@ -1,5 +1,5 @@
 # @ordercloud/seeding
-Download and upload serialized representations of ordercloud marketplaces via CLI or Javascript API. 
+A CLI to download and upload serialized representations of full ordercloud marketplaces. 
 
 [npm package](https://www.npmjs.com/package/@ordercloud/seeding)
 
