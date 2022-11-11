@@ -58,16 +58,16 @@ test('minimum number', async () => {
 
 test('required fields', async () => {
     var resp = await validateFile("./tests/data/required-fields.yml");
-    expect(resp.errors.length).toBe(10);
+    expect(resp.errors.length).toBe(9);
     expect(resp.errors[0]).toBe("Required field Incrementors.LastNumber: cannot have value undefined.");
     expect(resp.errors[1]).toBe("Required field Incrementors.LeftPaddingCount: cannot have value undefined.");
     expect(resp.errors[2]).toBe("Required field Webhooks.Name: cannot have value undefined.");
     expect(resp.errors[3]).toBe("Required field Webhooks.Url: cannot have value undefined.");
     expect(resp.errors[4]).toBe("Required field Webhooks.HashKey: cannot have value undefined.");
     expect(resp.errors[5]).toBe("Required field ProductFacets.Name: cannot have value undefined.");
-    expect(resp.errors[7]).toBe("Required field ProductAssignments.ProductID: cannot have value undefined.");
-    expect(resp.errors[8]).toBe("Required field ProductAssignments.BuyerID: cannot have value undefined.");
-    expect(resp.errors[9]).toBe("Invalid reference ProductAssignments.UserGroupID: no UserGroups found with ID \"missing_fields_1\". within the BuyerID \"undefined\"");
+    expect(resp.errors[6]).toBe("Required field ProductAssignments.ProductID: cannot have value undefined.");
+    expect(resp.errors[7]).toBe("Required field ProductAssignments.BuyerID: cannot have value undefined.");
+    expect(resp.errors[8]).toBe("Invalid reference ProductAssignments.UserGroupID: no UserGroups found with ID \"missing_fields_1\". within the BuyerID \"undefined\"");
 });
 
 test('parent ref', async () => {
