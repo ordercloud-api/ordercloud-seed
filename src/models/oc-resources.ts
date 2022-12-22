@@ -3,35 +3,48 @@ import { OCResourceEnum } from "./oc-resource-enum";
 import { OpenAPIProperties } from "./open-api";
 export interface OCResource {
     name: OCResourceEnum;
-    modelName: string; // matches open api spec model for POST
+    openApiSchemaName: string; // matches open api spec model for POST
     children?: OCResourceEnum[];
-    isChild?: boolean;
+    isAssignment: boolean,
+    isChild: boolean;
+    isParent: boolean;
+    isSellerOwned: boolean;
     parentResource?: OCResource;
-    parentRefField?: string; // will be populated if and only if isChild is true
     secondRouteParam?: string
     sdkObject: any;
-    isAssignment?: boolean,
     createPriority: number; // higher numbers need to be created first
-    listMethodName?: string;
-    createMethodName?: string;
-    foreignKeys?: ForeignKeys;
-    openAPIProperties?: OpenAPIProperties;
-    path: string;
+    openApiListOperation?: string;
+    openApiCreateOperation?: string;
+    outgoingResourceReferences?: ResourceReference[];
+    //incommingResourceReferences?: ResourceReference[];
+    openApiProperties?: OpenAPIProperties;
+    openApiCreatePath: string;
     requiredCreateFields?: string[];
     redactFields?: string[];
-    hasOwnerIDField?: string;
     downloadTransformFunc?: (x: any) => any,
     customValidationFunc?: RecordValidationFunc,
     shouldAttemptListFunc?: (parentRecord: any) => boolean
 }
+
 export interface ForeignKeys {
-    [fieldName: string]: ForeignKey;
+    [fieldName: string]: ResourceReference;
 }
 
-export interface ForeignKey {
-    foreignResource: OCResourceEnum,
-    foreignParentRefField?: string
+export interface ResourceReference {
+    fieldOnThisResource: string;
+    fieldOnOtherReasource: string;
+    otherResourceName: OCResourceEnum;
+    foreignParentRefField?: string;
+    referenceType: ResourceReferenceType;
 }
+
+export enum ResourceReferenceType {
+    Parent = "Parent",
+    Child = "Child",
+    Owner = "Owner", // reference to a Supplier ID or the Marketplace ID. Special b/c marketplace IDs need special handling
+    Horizontal = "Horizontal",  // any reference that is not parent, child, or Seller
+}
+
 
 
 

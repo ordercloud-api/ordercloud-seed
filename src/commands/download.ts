@@ -144,12 +144,12 @@ export async function download(args: DownloadArgs): Promise<SerializedMarketplac
     }
 
     function PlaceHoldMarketplaceID(resource: OCResource, records: any[]): void {
-        if (resource.hasOwnerIDField) {
+        if (resource.isSellerOwned) {
             for (var record of records) {  
                 // when Sandbox and Staging were created, marketplace IDs were appended with env to keep them unique
                 var mktplID = marketplaceID.replace(/_Sandbox$/, "").replace(/_Staging$/, "");
-                if (record[resource.hasOwnerIDField] === mktplID) {
-                    record[resource.hasOwnerIDField] = MARKETPLACE_ID_PLACEHOLDER;
+                if (record[resource.isSellerOwned] === mktplID) {
+                    record[resource.isSellerOwned] = MARKETPLACE_ID_PLACEHOLDER;
                 }
             }
         }

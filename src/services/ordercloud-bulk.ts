@@ -63,7 +63,7 @@ export default class OrderCloudBulk {
     }
 
     async ListAll(resource: OCResource, ...routeParams: string[]): Promise<any[]> {
-        const listFunc = resource.sdkObject[resource.listMethodName] as Function; 
+        const listFunc = resource.sdkObject[resource.openApiListOperation] as Function; 
 
         return await this.ListAllWithFunction(resource, listFunc, ...routeParams);
     }
@@ -90,7 +90,7 @@ export default class OrderCloudBulk {
     }
 
     async CreateAll(resource: OCResource, records: any[]): Promise<any[]> {
-        const createFunc = resource.sdkObject[resource.createMethodName] as Function;  
+        const createFunc = resource.sdkObject[resource.openApiCreateOperation] as Function;  
         const meta: JobGroupMetaData = {
             actionType: JobActionType.CREATE,
             resourceName: resource.name

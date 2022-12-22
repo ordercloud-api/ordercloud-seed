@@ -1,99 +1,183 @@
 import axios from "axios";
 import { Addresses, AdminAddresses, InventoryRecords, AdminUserGroups, AdminUsers, ApiClients, ApprovalRules, Buyers, Catalogs, Categories, CostCenters, CreditCards, ImpersonationConfigs, Incrementors, IntegrationEvents, Locales, MessageSenders, OpenIdConnects, PriceSchedules, ProductFacets, Products, Promotions, SecurityProfiles, Specs, SpendingAccounts, SupplierAddresses, Suppliers, SupplierUserGroups, SupplierUsers, UserGroups, Users, Webhooks, XpIndices, SellerApprovalRules } from "ordercloud-javascript-sdk";
 import { OCResourceEnum } from "./oc-resource-enum";
-import { OCResource } from "./oc-resources";
+import { OCResource, ResourceReferenceType } from "./oc-resources";
 import _ from 'lodash';
 import { ApiClientValidationFunc, ImpersonationConfigValidationFunc, InventoryRecordValidationFunc, LocaleAssignmentCustomValidationFunc, ProductAssignmentValidationFunc, ProductValidationFunc, SecurityProfileAssignmentValidationFunc, SellerApprovalRuleValidationFunc, VariantInventoryRecordValidationFunc, VariantValidationFunc, WebhookValidationFunc } from "../services/custom-validation-func";
 
 const Directory: OCResource[] = [
     { 
         name: OCResourceEnum.SecurityProfiles,
-        modelName: 'SecurityProfile',
+        openApiSchemaName: 'SecurityProfile',
         sdkObject: SecurityProfiles,
         createPriority: 2,
-        path: "/securityprofiles"
+        isAssignment: false,
+        isChild: false,
+        isParent: false,
+        isSellerOwned: false,
+        openApiCreatePath: "/securityprofiles"
     },
     { 
         name: OCResourceEnum.ImpersonationConfigs,
-        modelName: 'ImpersonationConfig',
+        openApiSchemaName: 'ImpersonationConfig',
         sdkObject: ImpersonationConfigs,
         createPriority: 7,
-        path: "/impersonationconfig",
+        isAssignment: false,
+        isChild: false,
+        isParent: false,
+        isSellerOwned: false,
+        openApiCreatePath: "/impersonationconfig",
         customValidationFunc: ImpersonationConfigValidationFunc,
-        foreignKeys: {
-            ClientID: { foreignResource: OCResourceEnum.ApiClients },
-            SecurityProfileID: { foreignResource: OCResourceEnum.SecurityProfiles },
-            BuyerID: { foreignResource: OCResourceEnum.Buyers },
-            GroupID: { 
-                foreignResource: OCResourceEnum.UserGroups,
-                foreignParentRefField: "BuyerID" 
+        outgoingResourceReferences: [
+            { 
+                referenceType: ResourceReferenceType.Horizontal,
+                fieldOnThisResource: "ClientID",
+                fieldOnOtherReasource: "ID",
+                otherResourceName: OCResourceEnum.ApiClients,  
             },
-            UserID: { 
-                foreignResource: OCResourceEnum.Users,
-                foreignParentRefField: "BuyerID"  
+            { 
+                referenceType: ResourceReferenceType.Horizontal,
+                fieldOnThisResource: "SecurityProfileID", 
+                fieldOnOtherReasource: "ID",
+                otherResourceName: OCResourceEnum.SecurityProfiles,
             },
-            ImpersonationBuyerID: { foreignResource: OCResourceEnum.Buyers },
-        }
+            { 
+                referenceType: ResourceReferenceType.Horizontal,
+                fieldOnThisResource: "BuyerID", 
+                fieldOnOtherReasource: "ID",
+                otherResourceName: OCResourceEnum.Buyers, 
+            },
+            { 
+                referenceType: ResourceReferenceType.Horizontal,
+                fieldOnThisResource: "GroupID",
+                fieldOnOtherReasource: "ID",
+                otherResourceName: OCResourceEnum.UserGroups,
+                foreignParentRefField: "BuyerID",
+            },
+            { 
+                referenceType: ResourceReferenceType.Horizontal,  
+                fieldOnThisResource: "UserID",
+                fieldOnOtherReasource: "ID",
+                otherResourceName: OCResourceEnum.Users,
+                foreignParentRefField: "BuyerID",
+            },
+            { 
+                referenceType: ResourceReferenceType.Horizontal, 
+                fieldOnThisResource: "ImpersonationBuyerID",
+                fieldOnOtherReasource: "ID", 
+                otherResourceName: OCResourceEnum.Buyers,
+            },
+        ]
     },
     {
         name: OCResourceEnum.OpenIdConnects,
-        modelName: 'OpenIdConnect',
+        openApiSchemaName: 'OpenIdConnect',
         sdkObject: OpenIdConnects,
         createPriority: 7,
-        path: "/openidconnects",
+        isAssignment: false,
+        isChild: false,
+        isParent: false,
+        isSellerOwned: false,
+        openApiCreatePath: "/openidconnects",
         redactFields: ["ConnectClientSecret"],
-        foreignKeys: 
-        {
-            OrderCloudApiClientID: { foreignResource: OCResourceEnum.ApiClients },
-            IntegrationEventID: { foreignResource: OCResourceEnum.IntegrationEvents }
-        }
+        outgoingResourceReferences: 
+        [
+            { 
+                referenceType: ResourceReferenceType.Horizontal,  
+                fieldOnThisResource: "OrderCloudApiClientID",
+                fieldOnOtherReasource: "ID",
+                otherResourceName: OCResourceEnum.ApiClients,
+            },
+            { 
+                referenceType: ResourceReferenceType.Horizontal, 
+                fieldOnThisResource: "IntegrationEventID",
+                fieldOnOtherReasource: "ID", 
+                otherResourceName: OCResourceEnum.IntegrationEvents,
+            }
+        ]
     },
     {
         name: OCResourceEnum.AdminUsers,
-        modelName: 'User',
+        openApiSchemaName: 'User',
         sdkObject: AdminUsers,
-        path: "/adminusers",
+        openApiCreatePath: "/adminusers",
         createPriority: 2,
-        hasOwnerIDField: "CompanyID",
+        isAssignment: false,
+        isChild: false,
+        isParent: false,
+        isSellerOwned: false,
         downloadTransformFunc: (x) => { 
             delete x.Locale;
+            delete x.CompanyID; // this is always a reference to the marketplace ID. 
             return x;
         }
     },
     {
         name: OCResourceEnum.AdminUserGroups, 
-        modelName: 'UserGroup',
+        openApiSchemaName: 'UserGroup',
         sdkObject: AdminUserGroups,
-        path: "/usergroups",
-        createPriority: 2
+        openApiCreatePath: "/usergroups",
+        createPriority: 2,
+        isAssignment: false,
+        isChild: false,
+        isParent: false,
+        isSellerOwned: false,
     },
     {
         name: OCResourceEnum.AdminAddresses, 
-        modelName: 'Address',
+        openApiSchemaName: 'Address',
         sdkObject: AdminAddresses,
-        path: "/addresses",
-        createPriority: 2
+        openApiCreatePath: "/addresses",
+        createPriority: 2,
+        isAssignment: false,
+        isChild: false,
+        isParent: false,
+        isSellerOwned: false,
     },
     {
         name: OCResourceEnum.MessageSenders,  
-        modelName: 'MessageSender',
+        openApiSchemaName: 'MessageSender',
         sdkObject: MessageSenders,
-        path: "/messagesenders",
+        openApiCreatePath: "/messagesenders",
         createPriority: 2,
+        isAssignment: false,
+        isChild: false,
+        isParent: false,
+        isSellerOwned: false,
         redactFields: ["SharedKey"],
     },
     {
         name: OCResourceEnum.ApiClients, 
-        modelName: 'ApiClient',
+        openApiSchemaName: 'ApiClient',
         sdkObject: ApiClients,
         createPriority: 6,
-        path: "/apiclients",
+        isAssignment: false,
+        isChild: false,
+        isParent: false,
+        isSellerOwned: false,
+        openApiCreatePath: "/apiclients",
         redactFields: ["ClientSecret"],
-        foreignKeys:
-        {
-            OrderCheckoutIntegrationEventID: { foreignResource: OCResourceEnum.IntegrationEvents },
-            OrderReturnIntegrationEventID: { foreignResource: OCResourceEnum.IntegrationEvents }
-        },
+        outgoingResourceReferences:
+        [
+            { 
+                referenceType: ResourceReferenceType.Horizontal,  
+                fieldOnThisResource: "OrderCheckoutIntegrationEventID",
+                fieldOnOtherReasource: "ID",
+                otherResourceName: OCResourceEnum.IntegrationEvents,
+            },
+            { 
+                referenceType: ResourceReferenceType.Horizontal, 
+                fieldOnThisResource: "OrderReturnIntegrationEventID",
+                fieldOnOtherReasource: "ID", 
+                otherResourceName: OCResourceEnum.IntegrationEvents,
+            },
+            { 
+                referenceType: ResourceReferenceType.Horizontal, 
+                fieldOnThisResource: "AddToCartIntegrationEventID",
+                fieldOnOtherReasource: "ID", 
+                otherResourceName: OCResourceEnum.IntegrationEvents,
+            },
+        ],
         downloadTransformFunc: (x) => {
             x.ID = x.ID.toLowerCase(); // funky platform thing with API CLient ID casing
             return x;
@@ -102,65 +186,110 @@ const Directory: OCResource[] = [
     },
     {
         name: OCResourceEnum.Locales,
-        modelName: 'Locale',
+        openApiSchemaName: 'Locale',
         sdkObject: Locales,
-        path: "/locales",
+        openApiCreatePath: "/locales",
         createPriority: 3,
-        hasOwnerIDField: "OwnerID",
+        isAssignment: false,
+        isChild: false,
+        isParent: false,
+        isSellerOwned: true,
+        outgoingResourceReferences: [
+            { 
+                referenceType: ResourceReferenceType.Owner,
+                fieldOnThisResource: "OwnerID",
+                fieldOnOtherReasource: "ID", 
+                otherResourceName: OCResourceEnum.Suppliers,
+            },
+        ],
     },
     {
         name: OCResourceEnum.Incrementors,
-        modelName: 'Incrementor',
+        openApiSchemaName: 'Incrementor',
         sdkObject: Incrementors,
-        path: "/incrementors",
+        openApiCreatePath: "/incrementors",
         createPriority: 1,
+        isAssignment: false,
+        isChild: false,
+        isParent: false,
+        isSellerOwned: false,
     },
     {
         name: OCResourceEnum.Webhooks, 
-        modelName: 'Webhook',
+        openApiSchemaName: 'Webhook',
         sdkObject: Webhooks,
         createPriority: 7,
-        path: "/webhooks",
+        isAssignment: false,
+        isChild: false,
+        isParent: false,
+        isSellerOwned: false,
+        openApiCreatePath: "/webhooks",
         redactFields: ["HashKey"],
         // for .ApiClientIDs
         customValidationFunc: WebhookValidationFunc
     },
     {
         name: OCResourceEnum.IntegrationEvents, 
-        modelName: 'IntegrationEvent',
+        openApiSchemaName: 'IntegrationEvent',
         sdkObject: IntegrationEvents,
-        path: "/integrationEvents",
+        openApiCreatePath: "/integrationEvents",
         createPriority: 2,
+        isAssignment: false,
+        isChild: false,
+        isParent: false,
+        isSellerOwned: false,
         redactFields: ["HashKey"],
     },
     {
         name: OCResourceEnum.XpIndices, 
-        modelName: "XpIndex",
+        openApiSchemaName: "XpIndex",
         sdkObject: XpIndices,
-        path: "/xpindices",
+        openApiCreatePath: "/xpindices",
         createPriority: 1,
-        createMethodName: "Put"
+        isAssignment: false,
+        isChild: false,
+        isParent: false,
+        isSellerOwned: false,
+        openApiCreateOperation: "Put"
     },
     {
         name: OCResourceEnum.Buyers, 
-        modelName: "Buyer",
+        openApiSchemaName: "Buyer",
         sdkObject: Buyers,
         createPriority: 4,
-        path: "/buyers",
-        foreignKeys:
-        {
-            DefaultCatalogID: { foreignResource: OCResourceEnum.Catalogs }
-        },
+        isAssignment: false,
+        isChild: false,
+        isParent: true,
+        isSellerOwned: false,
+        openApiCreatePath: "/buyers",
+        outgoingResourceReferences: [
+            { 
+                referenceType: ResourceReferenceType.Horizontal, 
+                fieldOnThisResource: "DefaultCatalogID",
+                fieldOnOtherReasource: "ID", 
+                otherResourceName: OCResourceEnum.Catalogs,
+            }
+        ],
         children: [OCResourceEnum.Users, OCResourceEnum.UserGroups, OCResourceEnum.Addresses, OCResourceEnum.CostCenters, OCResourceEnum.CreditCards, OCResourceEnum.SpendingAccounts, OCResourceEnum.ApprovalRules, OCResourceEnum.UserGroupAssignments, OCResourceEnum.SpendingAccountAssignments, OCResourceEnum.AddressAssignments, OCResourceEnum.CostCenterAssignments, OCResourceEnum.CreditCardAssignments],
     },
     {
         name: OCResourceEnum.Users, 
-        modelName: "User",
+        openApiSchemaName: "User",
         sdkObject: Users,
         createPriority: 5,
-        parentRefField: "BuyerID",
-        path: "/buyers/{buyerID}/users",
+        isAssignment: false,
         isChild: true,
+        isParent: false,
+        isSellerOwned: false,
+        outgoingResourceReferences: [
+            { 
+                referenceType: ResourceReferenceType.Parent,
+                fieldOnThisResource: "BuyerID",
+                fieldOnOtherReasource: "ID", 
+                otherResourceName: OCResourceEnum.Buyers,
+            },
+        ],
+        openApiCreatePath: "/buyers/{buyerID}/users",
         downloadTransformFunc: (x) => { 
             delete x.Locale;
             return x;
@@ -168,104 +297,201 @@ const Directory: OCResource[] = [
     },
     {
         name: OCResourceEnum.UserGroups,
-        modelName: "UserGroup",
+        openApiSchemaName: "UserGroup",
         sdkObject: UserGroups,
         createPriority: 5,
-        parentRefField: "BuyerID",
-        path: "/buyers/{buyerID}/usergroups",
+        isAssignment: false,
         isChild: true,
+        isParent: false,
+        isSellerOwned: false,
+        outgoingResourceReferences: [
+            { 
+                referenceType: ResourceReferenceType.Parent,
+                fieldOnThisResource: "BuyerID",
+                fieldOnOtherReasource: "ID", 
+                otherResourceName: OCResourceEnum.Buyers,
+            },
+        ],
+        openApiCreatePath: "/buyers/{buyerID}/usergroups",
     },
     {
         name: OCResourceEnum.Addresses,
-        modelName: "Address",
+        openApiSchemaName: "Address",
         sdkObject: Addresses,
         createPriority: 5,
-        parentRefField: "BuyerID",
-        path: "/buyers/{buyerID}/addresses",
+        isAssignment: false,
         isChild: true,
+        isParent: false,
+        isSellerOwned: false,
+        outgoingResourceReferences: [
+            { 
+                referenceType: ResourceReferenceType.Parent,
+                fieldOnThisResource: "BuyerID",
+                fieldOnOtherReasource: "ID", 
+                otherResourceName: OCResourceEnum.Buyers,
+            },
+        ],
+        openApiCreatePath: "/buyers/{buyerID}/addresses",
     },
     {
         name: OCResourceEnum.CostCenters,
-        modelName: "CostCenter",
+        openApiSchemaName: "CostCenter",
         sdkObject: CostCenters,
         createPriority: 5,
-        parentRefField: "BuyerID",
-        path: "/buyers/{buyerID}/costcenters",
+        isAssignment: false,
         isChild: true,
+        isParent: false,
+        isSellerOwned: false,
+        outgoingResourceReferences: [
+            { 
+                referenceType: ResourceReferenceType.Parent,
+                fieldOnThisResource: "BuyerID",
+                fieldOnOtherReasource: "ID", 
+                otherResourceName: OCResourceEnum.Buyers,
+            },
+        ],
+        openApiCreatePath: "/buyers/{buyerID}/costcenters",
     },
     {
         name: OCResourceEnum.CreditCards,
-        modelName: "CreditCard",
+        openApiSchemaName: "CreditCard",
         sdkObject: CreditCards,
         createPriority: 5,
-        parentRefField: "BuyerID",
-        path: "/buyers/{buyerID}/creditcards",
+        isAssignment: false,
         isChild: true,
+        isParent: false,
+        isSellerOwned: false,
+        outgoingResourceReferences: [
+            { 
+                referenceType: ResourceReferenceType.Parent,
+                fieldOnThisResource: "BuyerID",
+                fieldOnOtherReasource: "ID", 
+                otherResourceName: OCResourceEnum.Buyers,
+            },
+        ],
+        openApiCreatePath: "/buyers/{buyerID}/creditcards",
     },
     {
         name: OCResourceEnum.SpendingAccounts,
-        modelName: "SpendingAccount",
+        openApiSchemaName: "SpendingAccount",
         sdkObject: SpendingAccounts,
         createPriority: 5,
-        parentRefField: "BuyerID",
-        path: "/buyers/{buyerID}/spendingaccounts",
+        isAssignment: false,
         isChild: true,
+        isParent: false,
+        isSellerOwned: false,
+        outgoingResourceReferences: [
+            { 
+                referenceType: ResourceReferenceType.Parent,
+                fieldOnThisResource: "BuyerID",
+                fieldOnOtherReasource: "ID", 
+                otherResourceName: OCResourceEnum.Buyers,
+            },
+        ],
+        openApiCreatePath: "/buyers/{buyerID}/spendingaccounts",
     },
     {
         name: OCResourceEnum.ApprovalRules,
-        modelName:"ApprovalRule",
+        openApiSchemaName:"ApprovalRule",
         sdkObject: ApprovalRules,
         createPriority: 6,
-        parentRefField: "BuyerID",
+        isAssignment: false,
         isChild: true,
-        path: "/buyers/{buyerID}/approvalrules",
-        foreignKeys: {
-            ApprovingGroupID: { 
+        isParent: false,
+        isSellerOwned: false,
+        openApiCreatePath: "/buyers/{buyerID}/approvalrules",
+        outgoingResourceReferences: [
+            { 
+                referenceType: ResourceReferenceType.Parent,
+                fieldOnThisResource: "BuyerID",
+                fieldOnOtherReasource: "ID", 
+                otherResourceName: OCResourceEnum.Buyers,
+            },
+            { 
+                fieldOnThisResource: "ApprovingGroupID",
+                fieldOnOtherReasource: "ID", 
+                otherResourceName: OCResourceEnum.UserGroups,
+                referenceType: ResourceReferenceType.Horizontal,
                 foreignParentRefField: "BuyerID",
-                foreignResource: OCResourceEnum.UserGroups 
             }
-        }
+        ]
     },
     {
         name: OCResourceEnum.Catalogs, 
-        modelName: "Catalog",
+        openApiSchemaName: "Catalog",
         sdkObject: Catalogs,
         createPriority: 3,
-        path: "/catalogs",
-        hasOwnerIDField: "OwnerID",
+        isAssignment: false,
+        isChild: false,
+        isParent: true,
+        openApiCreatePath: "/catalogs",
+        isSellerOwned: true,
+        outgoingResourceReferences: [
+            { 
+                referenceType: ResourceReferenceType.Owner,
+                fieldOnThisResource: "OwnerID",
+                fieldOnOtherReasource: "ID", 
+                otherResourceName: OCResourceEnum.Suppliers,
+            },
+        ],
         children: [OCResourceEnum.Categories, OCResourceEnum.CategoryAssignments, OCResourceEnum.CategoryProductAssignments]
     },
     {
         name: OCResourceEnum.Categories,
-        modelName: "Category",
+        openApiSchemaName: "Category",
         sdkObject: Categories,
         createPriority: 4,
-        parentRefField: "CatalogID",
+        isAssignment: false,
         isChild: true,
-        path: "/catalogs/{catalogID}/categories",
-        foreignKeys: {
-            ParentID: {
+        isParent: false,
+        isSellerOwned: false,
+        openApiCreatePath: "/catalogs/{catalogID}/categories",
+        outgoingResourceReferences: [
+            { 
+                referenceType: ResourceReferenceType.Parent,
+                fieldOnThisResource: "CatalogID",
+                fieldOnOtherReasource: "ID", 
+                otherResourceName: OCResourceEnum.Catalogs,
+            },
+            { 
+                fieldOnThisResource: "CatalogID",
+                fieldOnOtherReasource: "ID", 
+                otherResourceName: OCResourceEnum.Categories,
+                referenceType: ResourceReferenceType.Horizontal,
                 foreignParentRefField: "CatalogID", 
-                foreignResource: OCResourceEnum.Categories 
             }
-        }
+        ]
     },
     {
         name: OCResourceEnum.Suppliers, 
-        modelName: "Supplier",
+        openApiSchemaName: "Supplier",
         sdkObject: Suppliers,
         createPriority: 2,
-        path: "/suppliers",
+        isAssignment: false,
+        isChild: false,
+        isParent: true,
+        isSellerOwned: false,
+        openApiCreatePath: "/suppliers",
         children: [OCResourceEnum.SupplierUsers, OCResourceEnum.SupplierUserGroups, OCResourceEnum.SupplierAddresses, OCResourceEnum.SupplierUserGroupsAssignments, OCResourceEnum.SupplierBuyerAssignments]
     },
     {
         name: OCResourceEnum.SupplierUsers, 
-        modelName: "User",
+        openApiSchemaName: "User",
         sdkObject: SupplierUsers,
         createPriority: 3,
-        parentRefField: "SupplierID",
-        path: "/suppliers/{supplierID}/users",
+        isAssignment: false,
         isChild: true,
+        isParent: false,
+        isSellerOwned: false,
+        outgoingResourceReferences: [
+            { 
+                referenceType: ResourceReferenceType.Parent,
+                fieldOnThisResource: "SupplierID",
+                fieldOnOtherReasource: "ID", 
+                otherResourceName: OCResourceEnum.Suppliers,
+            },
+        ],
+        openApiCreatePath: "/suppliers/{supplierID}/users",
         downloadTransformFunc: (x) => { 
             delete x.Locale;
             return x;
@@ -273,175 +499,372 @@ const Directory: OCResource[] = [
     },
     {
         name: OCResourceEnum.SupplierUserGroups, 
-        modelName: "UserGroup",
+        openApiSchemaName: "UserGroup",
         sdkObject: SupplierUserGroups,
         createPriority: 3,
-        parentRefField: "SupplierID",
-        path: "/suppliers/{supplierID}/usergroups",
+        isAssignment: false,
         isChild: true,
+        isParent: false,
+        isSellerOwned: false,
+        outgoingResourceReferences: [
+            { 
+                referenceType: ResourceReferenceType.Parent,
+                fieldOnThisResource: "SupplierID",
+                fieldOnOtherReasource: "ID", 
+                otherResourceName: OCResourceEnum.Suppliers,
+            },
+        ],
+        openApiCreatePath: "/suppliers/{supplierID}/usergroups",
     },
     {
         name: OCResourceEnum.SupplierAddresses,
-        modelName: "Address",
+        openApiSchemaName: "Address",
         sdkObject: SupplierAddresses,
         createPriority: 3,
-        parentRefField: "SupplierID",
-        path: "/suppliers/{supplierID}/addresses",
+        isAssignment: false,
         isChild: true,
+        isParent: false,
+        isSellerOwned: false,
+        outgoingResourceReferences: [
+            { 
+                referenceType: ResourceReferenceType.Parent,
+                fieldOnThisResource: "SupplierID",
+                fieldOnOtherReasource: "ID", 
+                otherResourceName: OCResourceEnum.Suppliers,
+            },
+        ],
+        openApiCreatePath: "/suppliers/{supplierID}/addresses",
     },
     {
         name: OCResourceEnum.Products, 
-        modelName: "Product",
+        openApiSchemaName: "Product",
         sdkObject: Products,
         createPriority: 4,
-        path: "/products",
-        hasOwnerIDField: "OwnerID",
-        foreignKeys: {
-            DefaultPriceScheduleID: { foreignResource: OCResourceEnum.PriceSchedules },
-            DefaultSupplierID: { foreignResource: OCResourceEnum.Suppliers }
-        },
+        isAssignment: false,
+        isChild: false,
+        isParent: true,
+        isSellerOwned: true,
+        openApiCreatePath: "/products",
+        outgoingResourceReferences: [
+            { 
+                referenceType: ResourceReferenceType.Owner,
+                fieldOnThisResource: "OwnerID",
+                fieldOnOtherReasource: "ID", 
+                otherResourceName: OCResourceEnum.Suppliers,
+            },
+            { 
+                referenceType: ResourceReferenceType.Horizontal,
+                fieldOnThisResource: "DefaultPriceScheduleID",
+                fieldOnOtherReasource: "ID", 
+                otherResourceName: OCResourceEnum.PriceSchedules,
+            },
+            { 
+                referenceType: ResourceReferenceType.Horizontal,
+                fieldOnThisResource: "DefaultSupplierID",
+                fieldOnOtherReasource: "ID", 
+                otherResourceName: OCResourceEnum.Suppliers,
+            },
+        ],
         children: [OCResourceEnum.ProductSupplierAssignments, OCResourceEnum.Variants, OCResourceEnum.InventoryRecords],
         customValidationFunc: ProductValidationFunc
     },
     {
         name: OCResourceEnum.PriceSchedules, 
-        modelName: "PriceSchedule",
+        openApiSchemaName: "PriceSchedule",
         sdkObject: PriceSchedules,
-        path: "/priceschedules",
+        openApiCreatePath: "/priceschedules",
         createPriority: 3,
-        hasOwnerIDField: "OwnerID",
+        isAssignment: false,
+        isChild: false,
+        isParent: false,
+        isSellerOwned: true,
+        outgoingResourceReferences: [
+            { 
+                referenceType: ResourceReferenceType.Owner,
+                fieldOnThisResource: "OwnerID",
+                fieldOnOtherReasource: "ID", 
+                otherResourceName: OCResourceEnum.Suppliers,
+            },
+        ]
     },
     {
         name: OCResourceEnum.Specs, 
-        modelName: "Spec",
+        openApiSchemaName: "Spec",
         sdkObject: Specs,
         createPriority: 3,
-        path: "/specs",
-        hasOwnerIDField: "OwnerID",
-        foreignKeys: {
-            DefaultOptionID: { foreignResource: OCResourceEnum.SpecOptions, foreignParentRefField: "ID" },
-        },
+        isAssignment: false,
+        isChild: false,
+        isParent: true,
+        openApiCreatePath: "/specs",
+        isSellerOwned: true,
+        outgoingResourceReferences: [
+            { 
+                referenceType: ResourceReferenceType.Owner,
+                fieldOnThisResource: "OwnerID",
+                fieldOnOtherReasource: "ID", 
+                otherResourceName: OCResourceEnum.Suppliers,
+            },
+            { 
+                referenceType: ResourceReferenceType.Horizontal,
+                fieldOnThisResource: "DefaultOptionID",
+                fieldOnOtherReasource: "ID", 
+                otherResourceName: OCResourceEnum.SpecOptions,
+                foreignParentRefField: "ID" // should this be "SpecID"?
+            },
+        ],
         children: [OCResourceEnum.SpecOptions]
     },
     {
         name: OCResourceEnum.SpecOptions, 
-        modelName: "SpecOption",
+        openApiSchemaName: "SpecOption",
         sdkObject: Specs,
         createPriority: 4,
-        path: "/specs/{specID}/options",
-        parentRefField: "SpecID",
-        listMethodName: "ListOptions",
-        createMethodName: "CreateOption",
-        isChild: true
+        isAssignment: false,
+        isChild: true,
+        isParent: false,
+        isSellerOwned: false,
+        openApiCreatePath: "/specs/{specID}/options",
+        outgoingResourceReferences: [
+            { 
+                referenceType: ResourceReferenceType.Parent,
+                fieldOnThisResource: "SpecID",
+                fieldOnOtherReasource: "ID", 
+                otherResourceName: OCResourceEnum.Specs,
+            },
+        ],
+        openApiListOperation: "ListOptions",
+        openApiCreateOperation: "CreateOption",
     },
     {
         name: OCResourceEnum.ProductFacets,
-        modelName: "ProductFacet",
+        openApiSchemaName: "ProductFacet",
         sdkObject: ProductFacets,
-        path: "/productfacets",
-        createPriority: 2
+        openApiCreatePath: "/productfacets",
+        createPriority: 2,
+        isAssignment: false,
+        isChild: false,
+        isParent: false,
+        isSellerOwned: false
     },
     {
         name: OCResourceEnum.Promotions, 
-        modelName: "Promotion",
+        openApiSchemaName: "Promotion",
         sdkObject: Promotions,
-        path: "/promotions",
+        openApiCreatePath: "/promotions",
         createPriority: 3,
-        hasOwnerIDField: "OwnerID"
+        isAssignment: false,
+        isChild: false,
+        isParent: false,
+        isSellerOwned: true,
+        outgoingResourceReferences: [
+            { 
+                referenceType: ResourceReferenceType.Owner,
+                fieldOnThisResource: "OwnerID",
+                fieldOnOtherReasource: "ID", 
+                otherResourceName: OCResourceEnum.Suppliers,
+            },
+        ],
     },
     {
         name: OCResourceEnum.Variants, 
-        modelName: "Variant",
+        openApiSchemaName: "Variant",
         sdkObject: Products,
         createPriority: 6,
-        path: "/products/{productID}/variants",
-        parentRefField: "ProductID",
+        isAssignment: false,
         isChild: true,
-        listMethodName: 'ListVariants',
+        isParent: true,
+        isSellerOwned: false,
+        openApiCreatePath: "/products/{productID}/variants",
+        openApiListOperation: 'ListVariants',
+        outgoingResourceReferences: [
+            { 
+                referenceType: ResourceReferenceType.Parent,
+                fieldOnThisResource: "ProductID",
+                fieldOnOtherReasource: "ID", 
+                otherResourceName: OCResourceEnum.Products,
+            },
+        ],
+        children: [OCResourceEnum.VariantInventoryRecords],
         customValidationFunc: VariantValidationFunc,
         shouldAttemptListFunc: (product) => (product?.VariantCount > 0)
     },
     {
         name: OCResourceEnum.InventoryRecords, 
-        modelName: "InventoryRecord",
+        openApiSchemaName: "InventoryRecord",
         sdkObject: InventoryRecords,
         createPriority: 5,
-        path: "/products/{productID}/inventoryrecords",
-        parentRefField: "ProductID",
+        isAssignment: false,
         isChild: true,
-        hasOwnerIDField: "OwnerID",
+        isParent: false,
+        openApiCreatePath: "/products/{productID}/inventoryrecords",
+        isSellerOwned: true,
+        outgoingResourceReferences: [
+            { 
+                referenceType: ResourceReferenceType.Parent,
+                fieldOnThisResource: "ProductID",
+                fieldOnOtherReasource: "ID", 
+                otherResourceName: OCResourceEnum.Products,
+            },
+            { 
+                referenceType: ResourceReferenceType.Owner,
+                fieldOnThisResource: "OwnerID",
+                fieldOnOtherReasource: "ID", 
+                otherResourceName: OCResourceEnum.Suppliers,
+            },
+        ],
         customValidationFunc: InventoryRecordValidationFunc,
     },
     {
         name: OCResourceEnum.VariantInventoryRecords, 
-        modelName: "InventoryRecord",
+        openApiSchemaName: "InventoryRecord",
         sdkObject: InventoryRecords,
         createPriority: 7,
-        path: "/products/{productID}/variants/{variantID}/inventoryrecords",
-        parentRefField: "ProductID",
-        secondRouteParam: "VariantID",
+        isAssignment: false,
         isChild: true,
-        listMethodName: 'ListVariant',
-        createMethodName: 'CreateVariant',
-        hasOwnerIDField: 'OwnerID',
-        foreignKeys: {
-            VariantID: { 
-                foreignParentRefField: "ProductID",
-                foreignResource: OCResourceEnum.Variants 
+        isParent: false,
+        openApiCreatePath: "/products/{productID}/variants/{variantID}/inventoryrecords",
+        secondRouteParam: "VariantID",
+        openApiListOperation: 'ListVariant',
+        openApiCreateOperation: 'CreateVariant',
+        isSellerOwned: true,
+        outgoingResourceReferences: [
+            { 
+                referenceType: ResourceReferenceType.Parent,
+                fieldOnThisResource: "ProductID",
+                fieldOnOtherReasource: "ID", 
+                otherResourceName: OCResourceEnum.Products,
             },
-            ProductID: { foreignResource: OCResourceEnum.Products }
-        },
+            { 
+                referenceType: ResourceReferenceType.Owner,
+                fieldOnThisResource: "OwnerID",
+                fieldOnOtherReasource: "ID", 
+                otherResourceName: OCResourceEnum.Suppliers,
+            },
+            { 
+                referenceType: ResourceReferenceType.Horizontal,
+                fieldOnThisResource: "VariantID",
+                fieldOnOtherReasource: "ID", 
+                otherResourceName: OCResourceEnum.Variants,
+                foreignParentRefField: "ProductID",
+            },
+            { 
+                referenceType: ResourceReferenceType.Horizontal,
+                fieldOnThisResource: "ProductID",
+                fieldOnOtherReasource: "ID", 
+                otherResourceName: OCResourceEnum.Products,
+            },
+        ],
         customValidationFunc: VariantInventoryRecordValidationFunc,
     },
     {
         name: OCResourceEnum.SellerApprovalRules,
-        modelName: "SellerApprovalRule",
+        openApiSchemaName: "SellerApprovalRule",
         sdkObject: SellerApprovalRules,
         createPriority: 4,
-        path: "/approvalrules",
-        hasOwnerIDField: "OwnerID",
+        isAssignment: false,
+        isChild: false,
+        isParent: false,
+        openApiCreatePath: "/approvalrules",
+        isSellerOwned: false,
+        outgoingResourceReferences: [
+            { 
+                referenceType: ResourceReferenceType.Owner,
+                fieldOnThisResource: "OwnerID",
+                fieldOnOtherReasource: "ID", 
+                otherResourceName: OCResourceEnum.Suppliers,
+            },
+        ],
         customValidationFunc: SellerApprovalRuleValidationFunc
     },
     {
         name: OCResourceEnum.SecurityProfileAssignments, 
-        modelName: "SecurityProfileAssignment",
+        openApiSchemaName: "SecurityProfileAssignment",
         sdkObject: SecurityProfiles,
-        path: "/securityprofiles/assignments",
+        openApiCreatePath: "/securityprofiles/assignments",
         createPriority: 6,
         isAssignment: true,
-        foreignKeys: {
-            SecurityProfileID: { foreignResource: OCResourceEnum.SecurityProfiles },
-            BuyerID: { foreignResource: OCResourceEnum.Buyers },
-            SupplierID: { foreignResource: OCResourceEnum.Suppliers },
-        },
+        isChild: false,
+        isParent: false,
+        isSellerOwned: false,
+        outgoingResourceReferences: [
+            { 
+                referenceType: ResourceReferenceType.Horizontal,
+                fieldOnThisResource: "SecurityProfileID",
+                fieldOnOtherReasource: "ID", 
+                otherResourceName: OCResourceEnum.SecurityProfiles,
+            },
+            { 
+                referenceType: ResourceReferenceType.Horizontal,
+                fieldOnThisResource: "BuyerID",
+                fieldOnOtherReasource: "ID", 
+                otherResourceName: OCResourceEnum.Buyers,
+            },
+            { 
+                referenceType: ResourceReferenceType.Horizontal,
+                fieldOnThisResource: "SupplierID",
+                fieldOnOtherReasource: "ID", 
+                otherResourceName: OCResourceEnum.Suppliers,
+            },
+        ], 
         customValidationFunc: SecurityProfileAssignmentValidationFunc
     },
     {
         name: OCResourceEnum.AdminUserGroupAssignments, 
-        modelName: "UserGroupAssignment",
+        openApiSchemaName: "UserGroupAssignment",
         sdkObject: AdminUserGroups,
         createPriority: 3,
         isAssignment: true,
-        path: "/usergroups/assignments",
-        listMethodName: 'ListUserAssignments',
-        createMethodName: 'SaveUserAssignment',
-        foreignKeys: {
-            UserID: { foreignResource: OCResourceEnum.AdminUsers },
-            UserGroupID: { foreignResource: OCResourceEnum.AdminUserGroups },
-        },
+        isChild: false,
+        isParent: false,
+        isSellerOwned: false,
+        openApiCreatePath: "/usergroups/assignments",
+        openApiListOperation: 'ListUserAssignments',
+        openApiCreateOperation: 'SaveUserAssignment',
+        outgoingResourceReferences: [
+            { 
+                referenceType: ResourceReferenceType.Horizontal,
+                fieldOnThisResource: "UserID",
+                fieldOnOtherReasource: "ID", 
+                otherResourceName: OCResourceEnum.AdminUsers,
+            },
+            { 
+                referenceType: ResourceReferenceType.Horizontal,
+                fieldOnThisResource: "UserGroupID",
+                fieldOnOtherReasource: "ID", 
+                otherResourceName: OCResourceEnum.AdminUserGroups,
+            },
+        ]
     },
     {
         name: OCResourceEnum.ApiClientAssignments, 
-        modelName: "ApiClientAssignment",
+        openApiSchemaName: "ApiClientAssignment",
         sdkObject: ApiClients,
         createPriority: 7,
         isAssignment: true,
-        path: "/apiclients/assignments",
-        foreignKeys: {
-            ApiClientID: { foreignResource: OCResourceEnum.ApiClients },
-            BuyerID: { foreignResource: OCResourceEnum.Buyers },
-            SupplierID: { foreignResource: OCResourceEnum.Suppliers },
-        },
+        isChild: false,
+        isParent: false,
+        isSellerOwned: false,
+        openApiCreatePath: "/apiclients/assignments",
+        outgoingResourceReferences: [
+            { 
+                referenceType: ResourceReferenceType.Horizontal,
+                fieldOnThisResource: "ApiClientID",
+                fieldOnOtherReasource: "ID", 
+                otherResourceName: OCResourceEnum.ApiClients,
+            },
+            { 
+                referenceType: ResourceReferenceType.Horizontal,
+                fieldOnThisResource: "BuyerID",
+                fieldOnOtherReasource: "ID", 
+                otherResourceName: OCResourceEnum.Buyers,
+            },
+            { 
+                referenceType: ResourceReferenceType.Horizontal,
+                fieldOnThisResource: "SupplierID",
+                fieldOnOtherReasource: "ID", 
+                otherResourceName: OCResourceEnum.Suppliers,
+            },
+        ],
         downloadTransformFunc: (x) => {
             x.ApiClientID = x.ApiClientID.toLowerCase(); // funky platform thing with API CLient ID casing
             return x;
@@ -449,317 +872,567 @@ const Directory: OCResource[] = [
     },
     {
         name: OCResourceEnum.LocaleAssignments, 
-        modelName: "LocaleAssignment",
+        openApiSchemaName: "LocaleAssignment",
         sdkObject: Locales,
         createPriority: 6,
         isAssignment: true,
-        path: "/locales/assignments",
+        isChild: false,
+        isParent: false,
+        isSellerOwned: false,
+        openApiCreatePath: "/locales/assignments",
         customValidationFunc: LocaleAssignmentCustomValidationFunc,
-        foreignKeys: {
-            LocaleID: { 
-                foreignResource: OCResourceEnum.Locales 
+        outgoingResourceReferences: [
+            { 
+                referenceType: ResourceReferenceType.Horizontal,
+                fieldOnThisResource: "LocaleID",
+                fieldOnOtherReasource: "ID", 
+                otherResourceName: OCResourceEnum.Locales,
             },
-            BuyerID: { 
-                foreignResource: OCResourceEnum.Buyers 
+            { 
+                referenceType: ResourceReferenceType.Horizontal,
+                fieldOnThisResource: "BuyerID",
+                fieldOnOtherReasource: "ID", 
+                otherResourceName: OCResourceEnum.Buyers,
             },
-            UserGroupID: {
+            { 
+                referenceType: ResourceReferenceType.Horizontal,
+                fieldOnThisResource: "UserGroupID",
+                fieldOnOtherReasource: "ID", 
+                otherResourceName: OCResourceEnum.Users,
                 foreignParentRefField: "BuyerID",
-                foreignResource: OCResourceEnum.Users
-            }
-        },
+            },
+        ],
     },
     {
         name: OCResourceEnum.UserGroupAssignments, 
-        modelName: "UserGroupAssignment",
+        openApiSchemaName: "UserGroupAssignment",
         sdkObject: UserGroups,
         createPriority: 6,
         isAssignment: true,
-        path: "/buyers/{buyerID}/usergroups/assignments",
-        parentRefField: "BuyerID",
+        openApiCreatePath: "/buyers/{buyerID}/usergroups/assignments",
         isChild: true,
-        createMethodName: "SaveUserAssignment",
-        listMethodName: 'ListUserAssignments',
-        foreignKeys: {
-            UserID: { 
-                foreignParentRefField: "BuyerID",
-                foreignResource: OCResourceEnum.Users 
+        isParent: false,
+        isSellerOwned: false,
+        openApiCreateOperation: "SaveUserAssignment",
+        openApiListOperation: 'ListUserAssignments',
+        outgoingResourceReferences: [
+            { 
+                referenceType: ResourceReferenceType.Parent,
+                fieldOnThisResource: "BuyerID",
+                fieldOnOtherReasource: "ID", 
+                otherResourceName: OCResourceEnum.Buyers,
             },
-            UserGroupID: { 
+            { 
+                referenceType: ResourceReferenceType.Horizontal,
+                fieldOnThisResource: "UserID",
+                fieldOnOtherReasource: "ID", 
+                otherResourceName: OCResourceEnum.Users,
                 foreignParentRefField: "BuyerID",
-                foreignResource: OCResourceEnum.UserGroups 
             },
-        },
+            { 
+                referenceType: ResourceReferenceType.Horizontal,
+                fieldOnThisResource: "UserGroupID",
+                fieldOnOtherReasource: "ID", 
+                otherResourceName: OCResourceEnum.UserGroups,
+                foreignParentRefField: "BuyerID",
+            },
+        ],           
     },
     {
         name: OCResourceEnum.AddressAssignments, 
-        modelName: "AddressAssignment",
+        openApiSchemaName: "AddressAssignment",
         sdkObject: Addresses,
         createPriority: 6,
-        path: "/buyers/{buyerID}/addresses/assignments",
+        openApiCreatePath: "/buyers/{buyerID}/addresses/assignments",
         isAssignment: true,
-        parentRefField: "BuyerID",
         isChild: true,
-        foreignKeys: {
-            AddressID: { 
-                foreignParentRefField: "BuyerID",
-                foreignResource: OCResourceEnum.Addresses 
+        isParent: false,
+        isSellerOwned: false,
+        outgoingResourceReferences: [
+            { 
+                referenceType: ResourceReferenceType.Parent,
+                fieldOnThisResource: "BuyerID",
+                fieldOnOtherReasource: "ID", 
+                otherResourceName: OCResourceEnum.Buyers,
             },
-            UserID: { 
+            { 
+                referenceType: ResourceReferenceType.Horizontal,
+                fieldOnThisResource: "AddressID",
+                fieldOnOtherReasource: "ID", 
+                otherResourceName: OCResourceEnum.Addresses,
                 foreignParentRefField: "BuyerID",
-                foreignResource: OCResourceEnum.Users 
             },
-            UserGroupID: { 
+            { 
+                referenceType: ResourceReferenceType.Horizontal,
+                fieldOnThisResource: "UserID",
+                fieldOnOtherReasource: "ID", 
+                otherResourceName: OCResourceEnum.Users,
                 foreignParentRefField: "BuyerID",
-                foreignResource: OCResourceEnum.UserGroups 
             },
-        },
+            { 
+                referenceType: ResourceReferenceType.Horizontal,
+                fieldOnThisResource: "UserGroupID",
+                fieldOnOtherReasource: "ID", 
+                otherResourceName: OCResourceEnum.UserGroups,
+                foreignParentRefField: "BuyerID",
+            },
+        ],
     },
     {
         name: OCResourceEnum.CostCenterAssignments, 
-        modelName: "CostCenterAssignment",
+        openApiSchemaName: "CostCenterAssignment",
         sdkObject: CostCenters,
         createPriority: 6,
-        path: "/buyers/{buyerID}/costcenters",
+        openApiCreatePath: "/buyers/{buyerID}/costcenters",
         isAssignment: true,
-        parentRefField: "BuyerID",
         isChild: true,
-        foreignKeys: {
-            CostCenterID: { 
-                foreignParentRefField: "BuyerID",
-                foreignResource: OCResourceEnum.CostCenters 
+        isParent: false,
+        isSellerOwned: false,
+        outgoingResourceReferences: [
+            { 
+                referenceType: ResourceReferenceType.Parent,
+                fieldOnThisResource: "BuyerID",
+                fieldOnOtherReasource: "ID", 
+                otherResourceName: OCResourceEnum.Buyers,
             },
-            UserGroupID: { 
+            { 
+                referenceType: ResourceReferenceType.Horizontal,
+                fieldOnThisResource: "CostCenterID",
+                fieldOnOtherReasource: "ID", 
+                otherResourceName: OCResourceEnum.CostCenters,
                 foreignParentRefField: "BuyerID",
-                foreignResource: OCResourceEnum.UserGroups, 
             },
-        },
+            { 
+                referenceType: ResourceReferenceType.Horizontal,
+                fieldOnThisResource: "UserGroupID",
+                fieldOnOtherReasource: "ID", 
+                otherResourceName: OCResourceEnum.UserGroups,
+                foreignParentRefField: "BuyerID",
+            },
+        ],       
     },
     {
         name: OCResourceEnum.CreditCardAssignments, 
-        modelName: "CreditCardAssignment",
+        openApiSchemaName: "CreditCardAssignment",
         sdkObject: CreditCards,
         createPriority: 6,
-        path: "/buyers/{buyerID}/creditcards/assignments",
+        openApiCreatePath: "/buyers/{buyerID}/creditcards/assignments",
         isAssignment: true,
-        parentRefField: "BuyerID",
         isChild: true,
-        foreignKeys: {
-            CreditCardID: { 
-                foreignParentRefField: "BuyerID",
-                foreignResource: OCResourceEnum.CreditCards 
+        isParent: false,
+        isSellerOwned: false,
+        outgoingResourceReferences: [
+            { 
+                referenceType: ResourceReferenceType.Parent,
+                fieldOnThisResource: "BuyerID",
+                fieldOnOtherReasource: "ID", 
+                otherResourceName: OCResourceEnum.Buyers,
             },
-            UserID: { 
+            { 
+                referenceType: ResourceReferenceType.Horizontal,
+                fieldOnThisResource: "CreditCardID",
+                fieldOnOtherReasource: "ID", 
+                otherResourceName: OCResourceEnum.CreditCards,
                 foreignParentRefField: "BuyerID",
-                foreignResource: OCResourceEnum.Users 
             },
-            UserGroupID: { 
+            { 
+                referenceType: ResourceReferenceType.Horizontal,
+                fieldOnThisResource: "UserID",
+                fieldOnOtherReasource: "ID", 
+                otherResourceName: OCResourceEnum.Users,
                 foreignParentRefField: "BuyerID",
-                foreignResource: OCResourceEnum.UserGroups 
             },
-        },
+            { 
+                referenceType: ResourceReferenceType.Horizontal,
+                fieldOnThisResource: "UserGroupID",
+                fieldOnOtherReasource: "ID", 
+                otherResourceName: OCResourceEnum.UserGroups,
+                foreignParentRefField: "BuyerID",
+            },
+        ],
     },
     {
         name: OCResourceEnum.SpendingAccountAssignments, 
-        modelName: "SpendingAccountAssignment",
+        openApiSchemaName: "SpendingAccountAssignment",
         sdkObject: SpendingAccounts,
         createPriority: 6,
-        path: "/buyers/{buyerID}/spendingaccounts/assignments",
+        openApiCreatePath: "/buyers/{buyerID}/spendingaccounts/assignments",
         isAssignment: true,
-        parentRefField: "BuyerID",
         isChild: true,
-        foreignKeys: {
-            SpendingAccountID: { 
-                foreignParentRefField: "BuyerID",
-                foreignResource: OCResourceEnum.SpendingAccounts 
+        isParent: false,
+        isSellerOwned: false,
+        outgoingResourceReferences: [
+            { 
+                referenceType: ResourceReferenceType.Parent,
+                fieldOnThisResource: "BuyerID",
+                fieldOnOtherReasource: "ID", 
+                otherResourceName: OCResourceEnum.Buyers,
             },
-            UserID: { 
+            { 
+                referenceType: ResourceReferenceType.Horizontal,
+                fieldOnThisResource: "SpendingAccountID",
+                fieldOnOtherReasource: "ID", 
+                otherResourceName: OCResourceEnum.SpendingAccounts,
                 foreignParentRefField: "BuyerID",
-                foreignResource: OCResourceEnum.Users 
             },
-            UserGroupID: { 
+            { 
+                referenceType: ResourceReferenceType.Horizontal,
+                fieldOnThisResource: "UserID",
+                fieldOnOtherReasource: "ID", 
+                otherResourceName: OCResourceEnum.Users,
                 foreignParentRefField: "BuyerID",
-                foreignResource: OCResourceEnum.UserGroups 
             },
-        },
+            { 
+                referenceType: ResourceReferenceType.Horizontal,
+                fieldOnThisResource: "UserGroupID",
+                fieldOnOtherReasource: "ID", 
+                otherResourceName: OCResourceEnum.UserGroups,
+                foreignParentRefField: "BuyerID",
+            },
+        ],   
     },
     {
         name: OCResourceEnum.SupplierUserGroupsAssignments, 
-        modelName: "UserGroupAssignment",
+        openApiSchemaName: "UserGroupAssignment",
         sdkObject: SupplierUserGroups,
         createPriority: 4,
-        path: "/suppliers/{supplierID}/usergroups/assignments",
+        openApiCreatePath: "/suppliers/{supplierID}/usergroups/assignments",
         isAssignment: true,
-        parentRefField: "SupplierID",
         isChild: true,
-        listMethodName: 'ListUserAssignments',
-        createMethodName: 'SaveUserAssignment',
-        foreignKeys: {
-            UserID: { 
-                foreignParentRefField: "SupplierID",
-                foreignResource: OCResourceEnum.SupplierUsers 
+        isParent: false,
+        isSellerOwned: false,
+        openApiListOperation: 'ListUserAssignments',
+        openApiCreateOperation: 'SaveUserAssignment',
+        outgoingResourceReferences: [
+            { 
+                referenceType: ResourceReferenceType.Parent,
+                fieldOnThisResource: "SupplierID",
+                fieldOnOtherReasource: "ID", 
+                otherResourceName: OCResourceEnum.Suppliers,
             },
-            UserGroupID: { 
+            { 
+                referenceType: ResourceReferenceType.Horizontal,
+                fieldOnThisResource: "UserID",
+                fieldOnOtherReasource: "ID", 
+                otherResourceName: OCResourceEnum.SupplierUsers,
                 foreignParentRefField: "SupplierID",
-                foreignResource: OCResourceEnum.SupplierUserGroups 
             },
-        },
+            { 
+                referenceType: ResourceReferenceType.Horizontal,
+                fieldOnThisResource: "UserGroupID",
+                fieldOnOtherReasource: "ID", 
+                otherResourceName: OCResourceEnum.SupplierUserGroups,
+                foreignParentRefField: "SupplierID",
+            },
+        ],           
     },
     {
         name: OCResourceEnum.ProductAssignments, 
-        modelName: "ProductAssignment",
+        openApiSchemaName: "ProductAssignment",
         sdkObject: Products,
         createPriority: 6,
-        path: "/products/assignments",
+        openApiCreatePath: "/products/assignments",
         isAssignment: true,
-        hasOwnerIDField: "SellerID",
+        isChild: false,
+        isParent: false,
+        isSellerOwned: true,
         customValidationFunc: ProductAssignmentValidationFunc,
-        foreignKeys: {
-            ProductID: { foreignResource: OCResourceEnum.Products },
-            BuyerID: { foreignResource: OCResourceEnum.Buyers },
-            UserGroupID: { 
-                foreignParentRefField: "BuyerID",
-                foreignResource: OCResourceEnum.UserGroups 
+        outgoingResourceReferences: [
+            { 
+                referenceType: ResourceReferenceType.Owner,
+                fieldOnThisResource: "SellerID",
+                fieldOnOtherReasource: "ID", 
+                otherResourceName: OCResourceEnum.Suppliers,
             },
-            PriceScheduleID: { foreignResource: OCResourceEnum.PriceSchedules }
-        },
+            { 
+                referenceType: ResourceReferenceType.Horizontal,
+                fieldOnThisResource: "ProductID",
+                fieldOnOtherReasource: "ID", 
+                otherResourceName: OCResourceEnum.Products,
+            },
+            { 
+                referenceType: ResourceReferenceType.Horizontal,
+                fieldOnThisResource: "BuyerID",
+                fieldOnOtherReasource: "ID", 
+                otherResourceName: OCResourceEnum.Buyers,
+            },
+            { 
+                referenceType: ResourceReferenceType.Horizontal,
+                fieldOnThisResource: "PriceScheduleID",
+                fieldOnOtherReasource: "ID", 
+                otherResourceName: OCResourceEnum.PriceSchedules,
+            },
+            { 
+                referenceType: ResourceReferenceType.Horizontal,
+                fieldOnThisResource: "UserGroupID",
+                fieldOnOtherReasource: "ID", 
+                otherResourceName: OCResourceEnum.UserGroups,
+                foreignParentRefField: "BuyerID",
+            },
+        ],         
     },
     {
         name: OCResourceEnum.CatalogAssignments,
-        modelName: "CatalogAssignment",
+        openApiSchemaName: "CatalogAssignment",
         sdkObject: Catalogs,
         createPriority: 5,
-        path: "/catalogs/assignments",
+        openApiCreatePath: "/catalogs/assignments",
         isAssignment: true,
-        foreignKeys: {
-            CatalogID: { foreignResource: OCResourceEnum.Catalogs },
-            BuyerID: { foreignResource: OCResourceEnum.Buyers }
-        },
+        isChild: false,
+        isParent: false,
+        isSellerOwned: false,
+        outgoingResourceReferences: [
+            { 
+                referenceType: ResourceReferenceType.Horizontal,
+                fieldOnThisResource: "CatalogID",
+                fieldOnOtherReasource: "ID", 
+                otherResourceName: OCResourceEnum.Catalogs,
+            },
+            { 
+                referenceType: ResourceReferenceType.Horizontal,
+                fieldOnThisResource: "BuyerID",
+                fieldOnOtherReasource: "ID", 
+                otherResourceName: OCResourceEnum.Buyers,
+            },
+        ]           
     },
     {
         name: OCResourceEnum.ProductCatalogAssignment, 
-        modelName: "ProductCatalogAssignment",
+        openApiSchemaName: "ProductCatalogAssignment",
         sdkObject: Catalogs,
         createPriority: 5,
-        path: "/catalogs/productassignments",
+        openApiCreatePath: "/catalogs/productassignments",
         isAssignment: true,
-        listMethodName: 'ListProductAssignments',
-        createMethodName: 'SaveProductAssignment',
-        foreignKeys: {
-            CatalogID: { foreignResource: OCResourceEnum.Catalogs },
-            ProductID: { foreignResource: OCResourceEnum.Products }
-        },
+        isChild: false,
+        isParent: false,
+        isSellerOwned: false,
+        openApiListOperation: 'ListProductAssignments',
+        openApiCreateOperation: 'SaveProductAssignment',
+        outgoingResourceReferences: [
+            { 
+                referenceType: ResourceReferenceType.Horizontal,
+                fieldOnThisResource: "CatalogID",
+                fieldOnOtherReasource: "ID", 
+                otherResourceName: OCResourceEnum.Catalogs,
+            },
+            { 
+                referenceType: ResourceReferenceType.Horizontal,
+                fieldOnThisResource: "ProductID",
+                fieldOnOtherReasource: "ID", 
+                otherResourceName: OCResourceEnum.Products,
+            },
+        ]                   
     },
     {
         name: OCResourceEnum.CategoryAssignments, 
-        modelName: "CategoryAssignment",
+        openApiSchemaName: "CategoryAssignment",
         sdkObject: Categories,
         createPriority: 6,
-        path: "/catalogs/{catalogID}/categories/assignments",
+        openApiCreatePath: "/catalogs/{catalogID}/categories/assignments",
         isAssignment: true,
-        parentRefField: "CatalogID",
         isChild: true,
-        foreignKeys: {
-            CategoryID: { 
+        isParent: false,
+        isSellerOwned: false,
+        outgoingResourceReferences: [
+            { 
+                referenceType: ResourceReferenceType.Parent,
+                fieldOnThisResource: "CatalogID",
+                fieldOnOtherReasource: "ID", 
+                otherResourceName: OCResourceEnum.Catalogs,
+            },
+            { 
+                referenceType: ResourceReferenceType.Horizontal,
+                fieldOnThisResource: "CategoryID",
+                fieldOnOtherReasource: "ID", 
+                otherResourceName: OCResourceEnum.Categories,
                 foreignParentRefField: "CatalogID",
-                foreignResource: OCResourceEnum.Categories 
             },
-            BuyerID: { foreignResource: OCResourceEnum.Buyers },
-            UserGroupID: { 
+            { 
+                referenceType: ResourceReferenceType.Horizontal,
+                fieldOnThisResource: "BuyerID",
+                fieldOnOtherReasource: "ID", 
+                otherResourceName: OCResourceEnum.Buyers,
+            },
+            { 
+                referenceType: ResourceReferenceType.Horizontal,
+                fieldOnThisResource: "UserGroupID",
+                fieldOnOtherReasource: "ID", 
+                otherResourceName: OCResourceEnum.UserGroups,
                 foreignParentRefField: "BuyerID",
-                foreignResource: OCResourceEnum.UserGroups 
             },
-        },
+        ]           
     },
     {
         name: OCResourceEnum.CategoryProductAssignments, 
-        modelName: "CategoryProductAssignment",
+        openApiSchemaName: "CategoryProductAssignment",
         sdkObject: Categories,
         createPriority: 5,
-        path: "/catalogs/{catalogID}/categories/productassignments",
+        openApiCreatePath: "/catalogs/{catalogID}/categories/productassignments",
         isAssignment: true,
-        parentRefField: "CatalogID",
         isChild: true,
-        listMethodName: 'ListProductAssignments',
-        createMethodName: 'SaveProductAssignment',
-        foreignKeys: {
-            CategoryID: { 
-                foreignParentRefField: "CatalogID",
-                foreignResource: OCResourceEnum.Categories 
+        isParent: false,
+        isSellerOwned: false,
+        openApiListOperation: 'ListProductAssignments',
+        openApiCreateOperation: 'SaveProductAssignment',
+        outgoingResourceReferences: [
+            { 
+                referenceType: ResourceReferenceType.Parent,
+                fieldOnThisResource: "CatalogID",
+                fieldOnOtherReasource: "ID", 
+                otherResourceName: OCResourceEnum.Catalogs,
             },
-            ProductID: { foreignResource: OCResourceEnum.Products },
-        },
+            { 
+                referenceType: ResourceReferenceType.Horizontal,
+                fieldOnThisResource: "CategoryID",
+                fieldOnOtherReasource: "ID", 
+                otherResourceName: OCResourceEnum.Categories,
+                foreignParentRefField: "CatalogID",
+            },
+            { 
+                referenceType: ResourceReferenceType.Horizontal,
+                fieldOnThisResource: "ProductID",
+                fieldOnOtherReasource: "ID", 
+                otherResourceName: OCResourceEnum.Products,
+            },
+        ]           
     },
     {
         name: OCResourceEnum.SpecProductAssignments, 
-        modelName: "SpecProductAssignment",
+        openApiSchemaName: "SpecProductAssignment",
         sdkObject: Specs,
         createPriority: 5,
-        path: "/specs/productassignments",
+        openApiCreatePath: "/specs/productassignments",
         isAssignment: true,
-        listMethodName: 'ListProductAssignments',
-        createMethodName: 'SaveProductAssignment',
-        foreignKeys: {
-            SpecID: { foreignResource: OCResourceEnum.Specs },
-            ProductID: { foreignResource: OCResourceEnum.Products },
-            DefaultOptionID: { 
-                foreignParentRefField: "SpecID",
-                foreignResource: OCResourceEnum.SpecOptions 
+        isChild: false,
+        isParent: false,
+        isSellerOwned: false,
+        openApiListOperation: 'ListProductAssignments',
+        openApiCreateOperation: 'SaveProductAssignment',
+        outgoingResourceReferences: [
+            { 
+                referenceType: ResourceReferenceType.Horizontal,
+                fieldOnThisResource: "SpecID",
+                fieldOnOtherReasource: "ID", 
+                otherResourceName: OCResourceEnum.Specs,
+                foreignParentRefField: "CatalogID",
             },
-        },
+            { 
+                referenceType: ResourceReferenceType.Horizontal,
+                fieldOnThisResource: "ProductID",
+                fieldOnOtherReasource: "ID", 
+                otherResourceName: OCResourceEnum.Products,
+            },
+            { 
+                referenceType: ResourceReferenceType.Horizontal,
+                fieldOnThisResource: "DefaultOptionID",
+                fieldOnOtherReasource: "ID", 
+                otherResourceName: OCResourceEnum.SpecOptions,
+                foreignParentRefField: "SpecID",
+            },
+        ]
     },
     {
         name: OCResourceEnum.PromotionAssignments, 
-        modelName: "PromotionAssignment",
+        openApiSchemaName: "PromotionAssignment",
         sdkObject: Promotions,
         createPriority: 6,
-        path: "/promotions/assignments",
+        openApiCreatePath: "/promotions/assignments",
         isAssignment: true,
-        foreignKeys: {
-            PromotionID: { foreignResource: OCResourceEnum.Promotions },
-            BuyerID: { foreignResource: OCResourceEnum.Buyers },
-            UserGroupID: { 
-                foreignParentRefField: "BuyerID",
-                foreignResource: OCResourceEnum.UserGroups 
+        isChild: false,
+        isParent: false,
+        isSellerOwned: false,
+        outgoingResourceReferences: [
+            { 
+                referenceType: ResourceReferenceType.Horizontal,
+                fieldOnThisResource: "PromotionID",
+                fieldOnOtherReasource: "ID", 
+                otherResourceName: OCResourceEnum.Promotions,
             },
-        },
+            { 
+                referenceType: ResourceReferenceType.Horizontal,
+                fieldOnThisResource: "BuyerID",
+                fieldOnOtherReasource: "ID", 
+                otherResourceName: OCResourceEnum.Buyers,
+            },
+            { 
+                referenceType: ResourceReferenceType.Horizontal,
+                fieldOnThisResource: "UserGroupID",
+                fieldOnOtherReasource: "ID", 
+                otherResourceName: OCResourceEnum.UserGroups,
+                foreignParentRefField: "BuyerID",
+            },
+        ]
     },
     {
         name: OCResourceEnum.ProductSupplierAssignments, 
-        modelName: "ProductSupplier",
+        openApiSchemaName: "ProductSupplier",
         sdkObject: Products,
         createPriority: 5,
-        path: "/products/{productID}/suppliers/{supplierID}",
-        parentRefField: "ProductID",
+        openApiCreatePath: "/products/{productID}/suppliers/{supplierID}",
         secondRouteParam: "SupplierID",
         isAssignment: true,
         isChild: true,
-        listMethodName: 'ListSuppliers',
-        createMethodName: 'SaveSupplier',
-        foreignKeys: {
-            ProductID: { foreignResource: OCResourceEnum.Products },
-            SupplierID: { foreignResource: OCResourceEnum.Suppliers },
-            DefaultPriceScheduleID: { foreignResource: OCResourceEnum.PriceSchedules } 
-        },
+        isParent: false,
+        isSellerOwned: false,
+        openApiListOperation: 'ListSuppliers',
+        openApiCreateOperation: 'SaveSupplier',
+        outgoingResourceReferences: [
+            { 
+                referenceType: ResourceReferenceType.Parent,
+                fieldOnThisResource: "ProductID",
+                fieldOnOtherReasource: "ID", 
+                otherResourceName: OCResourceEnum.Products,
+            },
+            { 
+                referenceType: ResourceReferenceType.Horizontal,
+                fieldOnThisResource: "SupplierID",
+                fieldOnOtherReasource: "ID", 
+                otherResourceName: OCResourceEnum.Suppliers,
+            },
+            { 
+                referenceType: ResourceReferenceType.Horizontal,
+                fieldOnThisResource: "DefaultPriceScheduleID",
+                fieldOnOtherReasource: "ID", 
+                otherResourceName: OCResourceEnum.PriceSchedules,
+            },
+        ],
         downloadTransformFunc: (x) => { 
             return { SupplierID: x.ID, DefaultPriceScheduleID: x.DefaultPriceScheduleID };
         }
     },
     {
         name: OCResourceEnum.SupplierBuyerAssignments, 
-        modelName: "SupplierBuyer",
+        openApiSchemaName: "SupplierBuyer",
         sdkObject: Suppliers,
         createPriority: 5,
-        path: "/suppliers/{supplierID}/buyers/{buyerID}",
-        parentRefField: "SupplierID",
+        openApiCreatePath: "/suppliers/{supplierID}/buyers/{buyerID}",
         secondRouteParam: "BuyerID",
         isChild: true,
         isAssignment: true,
-        listMethodName: 'ListBuyers',
-        createMethodName: 'SaveBuyer',
-        foreignKeys: {
-            BuyerID: { foreignResource: OCResourceEnum.Buyers },
-            SupplierID: { foreignResource: OCResourceEnum.Suppliers },
-        },
+        isParent: false,
+        isSellerOwned: false,
+        openApiListOperation: 'ListBuyers',
+        openApiCreateOperation: 'SaveBuyer',
+        outgoingResourceReferences: [
+            { 
+                referenceType: ResourceReferenceType.Parent,
+                fieldOnThisResource: "SupplierID",
+                fieldOnOtherReasource: "ID", 
+                otherResourceName: OCResourceEnum.Buyers,
+            },
+            { 
+                referenceType: ResourceReferenceType.Horizontal,
+                fieldOnThisResource: "BuyerID",
+                fieldOnOtherReasource: "ID", 
+                otherResourceName: OCResourceEnum.Buyers,
+            },
+            { 
+                referenceType: ResourceReferenceType.Horizontal,
+                fieldOnThisResource: "SupplierID",
+                fieldOnOtherReasource: "ID", 
+                otherResourceName: OCResourceEnum.Suppliers,
+            }
+        ],
         downloadTransformFunc: (x) => { 
             return { BuyerID: x.ID };
         }
@@ -767,15 +1440,13 @@ const Directory: OCResource[] = [
 ];
 
 function ApplyDefaults(resource: OCResource): OCResource {
-    resource.isAssignment = resource.isAssignment || false;
-    resource.listMethodName = resource.listMethodName || (resource.isAssignment ? "ListAssignments" : "List");
-    resource.createMethodName = resource.createMethodName || (resource.isAssignment ? "SaveAssignment" : "Create");
-    resource.foreignKeys = resource.foreignKeys || {};
+    resource.openApiListOperation = resource.openApiListOperation || (resource.isAssignment ? "ListAssignments" : "List");
+    resource.openApiCreateOperation = resource.openApiCreateOperation || (resource.isAssignment ? "SaveAssignment" : "Create");
+    resource.outgoingResourceReferences = resource.outgoingResourceReferences || [];
     resource.children = resource.children || [];
-    resource.isChild = resource.isChild || false;
     resource.requiredCreateFields = resource.requiredCreateFields ?? [];
     resource.redactFields = resource.redactFields ?? [];
-    resource.hasOwnerIDField = resource.hasOwnerIDField ?? null;
+    resource.isSellerOwned = resource.isSellerOwned ?? null;
     resource.shouldAttemptListFunc = resource.shouldAttemptListFunc ?? ((x) => true);
     return resource;
 
@@ -785,10 +1456,10 @@ export async function BuildResourceDirectory(): Promise<OCResource[]> {
     var openAPISpec = await axios.get(`https://api.ordercloud.io/v1/openapi/v3`) 
     return Directory.map(resource => {  
         var modified = ApplyDefaults(resource);
-        var path = openAPISpec.data.paths[resource.path];
+        var path = openAPISpec.data.paths[resource.openApiCreatePath];
         var operation = path.post ?? path.put;
         modified.requiredCreateFields = operation?.requestBody?.content?.["application/json"]?.schema?.required ?? [];
-        modified.openAPIProperties = openAPISpec.data.components.schemas[resource.modelName].properties;
+        modified.openApiProperties = openAPISpec.data.components.schemas[resource.openApiSchemaName].properties;
         if (modified.isChild) {
             modified.parentResource = Directory.find(x => x.children?.includes(modified.name));
         }

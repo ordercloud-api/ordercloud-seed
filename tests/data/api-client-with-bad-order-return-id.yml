@@ -4,16 +4,19 @@ Objects:
       AppName: api
       AccessTokenDuration: 1
       OrderReturnIntegrationEventID: does-not-exist
+      AddToCartIntegrationEventID: return
     - ID: api2 
       AppName: api
       AccessTokenDuration: 1
       OrderCheckoutIntegrationEventID: checkout
       OrderReturnIntegrationEventID: return
+      AddToCartIntegrationEventID: addtocart
     - ID: api3 
       AppName: api
       AccessTokenDuration: 1
       OrderCheckoutIntegrationEventID: return
       OrderReturnIntegrationEventID: checkout
+      AddToCartIntegrationEventID: doesnotexist
   IntegrationEvents:
     - ElevatedRoles:
         - FullAccess
@@ -28,6 +31,14 @@ Objects:
       ID: return
       ConfigData: null
       EventType: OrderReturn
+      CustomImplementationUrl: https://www.replace.this.com/api/checkout
+      Name: Checkout Commerce Integrations
+      HashKey: <Redacted. Leave unchanged.>
+    - ElevatedRoles:
+        - FullAccess
+      ID: addtocart
+      ConfigData: null
+      EventType: AddToCart
       CustomImplementationUrl: https://www.replace.this.com/api/checkout
       Name: Checkout Commerce Integrations
       HashKey: <Redacted. Leave unchanged.>

@@ -1,6 +1,6 @@
 import { BuildResourceDirectory } from "../models/oc-resource-directory";
 import { OCResourceEnum } from "../models/oc-resource-enum";
-import { ForeignKey, OCResource } from "../models/oc-resources";
+import { ResourceReference, OCResource } from "../models/oc-resources";
 import { SerializedMarketplace } from "../models/serialized-marketplace";
 import { OpenAPIProperty, OpenAPIType } from "../models/open-api";
 import _ from 'lodash';
@@ -54,7 +54,7 @@ export async function validate(args: ValidateArgs): Promise<ValidateResponse> {
     // validate duplicate IDs 
     for (let resource of directory) {
         validator.currentResource = resource;
-        var hasUsername = "Username" in validator.currentResource.openAPIProperties;
+        var hasUsername = "Username" in validator.currentResource.openApiProperties;
         var hasID = hasIDProperty(validator.currentResource)
         if (hasID || hasUsername) {         
             for (let record of marketplace.GetRecords(validator.currentResource)) {
@@ -71,13 +71,13 @@ export async function validate(args: ValidateArgs): Promise<ValidateResponse> {
         validator.currentResource = resource
         for (let record of marketplace.GetRecords(validator.currentResource)) {
             validator.currentRecord = record;
-            for (const [propName, spec] of Object.entries(validator.currentResource.openAPIProperties)) {
+            for (const [propName, spec] of Object.entries(validator.currentResource.openApiProperties)) {
                 validator.currentPropertyName = propName;
                 if (spec.readOnly) {
                     continue;
                 }
                 let value = record[propName];
-                let foreignKey = validator.currentResource.foreignKeys[propName];
+                let foreignKey = validator.currentResource.outgoingResourceReferences[propName];
                 if (_.isNil(value)) {
                     validator.validateIsRequired(propName);
                 } else {
@@ -86,7 +86,7 @@ export async function validate(args: ValidateArgs): Promise<ValidateResponse> {
                     if (typeMatches && propName === "ID") {
                         validator.validateIDChars(value);
                     }
-                    if (typeMatches && resource.hasOwnerIDField && propName === resource.hasOwnerIDField) {
+                    if (typeMatches && resource.isSellerOwned && propName === resource.isSellerOwned) {
                         validator.validateOwnerIDIsValid(value)
                     }
                     if (typeMatches &&!_.isNil(foreignKey)) {    
@@ -115,7 +115,7 @@ export async function validate(args: ValidateArgs): Promise<ValidateResponse> {
 }
 
 function hasIDProperty(resource: OCResource) {
-    return 'ID' in resource.openAPIProperties || resource.name === OCResourceEnum.ApiClients;
+    return 'ID' in resource.openApiProperties || resource.name === OCResourceEnum.ApiClients;
 }
 
 function getType(value: any): OpenAPIType {
@@ -183,15 +183,15 @@ export class Validator {
         return true;
     }
 
-    validateForeignKeyExists(foreignKey: ForeignKey):boolean {
+    validateForeignKeyExists(foreignKey: ResourceReference):boolean {
         var field = this.currentPropertyName;
         var value = this.currentRecord[field];
         
         var setEntry = foreignKey.foreignParentRefField === undefined ? value : `${this.currentRecord[foreignKey.foreignParentRefField]}/${value}`;
         // find an ID of a particular resource
-        var keyExists = this.idCache.has(foreignKey.foreignResource, setEntry);
+        var keyExists = this.idCache.has(foreignKey.otherResourceName, setEntry);
         if (!keyExists) {
-            var message = `Invalid reference ${this.currentResource.name}.${field}: no ${foreignKey.foreignResource} found with ID \"${value}\".`
+            var message = `Invalid reference ${this.currentResource.name}.${field}: no ${foreignKey.otherResourceName} found with ID \"${value}\".`
             if (setEntry.includes('/')) {
                 message = message.concat(` within the ${foreignKey.foreignParentRefField} \"${this.currentRecord[foreignKey.foreignParentRefField]}\"`)
             }
@@ -278,7 +278,7 @@ export class Validator {
     // username needs to be unique within a marketplace
     validateDuplicateUsernames(): boolean {
         var username: string = this.currentRecord.Username;     
-        if (_.isNil(username) || !('Username' in this.currentResource.openAPIProperties)) {
+        if (_.isNil(username) || !('Username' in this.currentResource.openApiProperties)) {
             return true;
         }
         if (this.usernameCache.has(username)) {

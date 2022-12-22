@@ -181,10 +181,10 @@ export async function seed(args: SeedArgs): Promise<SeedResponse | void> {
     return results;
 
     function SetOwnerID(resource: OCResource, records: any[]) {
-        if (resource.hasOwnerIDField) {
+        if (resource.isSellerOwned) {
             for (var record of records) {
-                if (record[resource.hasOwnerIDField] === MARKETPLACE_ID) {
-                    record[resource.hasOwnerIDField] = marketplaceID;
+                if (record[resource.isSellerOwned] === MARKETPLACE_ID) {
+                    record[resource.isSellerOwned] = marketplaceID;
                 }
             }
         }
