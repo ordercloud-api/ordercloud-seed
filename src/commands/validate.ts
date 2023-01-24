@@ -1,6 +1,6 @@
-import { BuildResourceDirectory } from "../models/oc-resource-directory";
+import { BuildOCResourceDirectory } from "../models/oc-resource-directory";
 import { OCResourceEnum } from "../models/oc-resource-enum";
-import { ResourceReference, OCResource } from "../models/oc-resources";
+import { ResourceReference, OCResourceDirectoryEntry } from "../models/oc-resources";
 import { SerializedMarketplace } from "../models/serialized-marketplace";
 import { OpenAPIProperty, OpenAPIType } from "../models/open-api";
 import _ from 'lodash';
@@ -50,7 +50,7 @@ export async function validate(args: ValidateArgs): Promise<ValidateResponse> {
     } 
 
     var marketplace = new SerializedMarketplace(rawData);
-    var directory = await BuildResourceDirectory();
+    var directory = await BuildOCResourceDirectory();
     // validate duplicate IDs 
     for (let resource of directory) {
         validator.currentResource = resource;
@@ -86,7 +86,7 @@ export async function validate(args: ValidateArgs): Promise<ValidateResponse> {
                     if (typeMatches && propName === "ID") {
                         validator.validateIDChars(value);
                     }
-                    if (typeMatches && resource.isSellerOwned && propName === resource.isSellerOwned) {
+                    if (typeMatches && resource.hasSellerOwnerField && propName === resource.hasSellerOwnerField) {
                         validator.validateOwnerIDIsValid(value)
                     }
                     if (typeMatches &&!_.isNil(foreignKey)) {    
@@ -114,7 +114,7 @@ export async function validate(args: ValidateArgs): Promise<ValidateResponse> {
     return { errors: validator.errors, isValid, rawData: marketplace };
 }
 
-function hasIDProperty(resource: OCResource) {
+function hasIDProperty(resource: OCResourceDirectoryEntry) {
     return 'ID' in resource.openApiProperties || resource.name === OCResourceEnum.ApiClients;
 }
 
@@ -131,7 +131,7 @@ export class Validator {
     errors: string[] = [];
     idCache = new IDCache();
     usernameCache = new Set<string>();
-    currentResource: OCResource;
+    currentResource: OCResourceDirectoryEntry;
     currentRecord: any;
     currentPropertyName: string;
 

@@ -1,5 +1,5 @@
-import { OCResource } from "./oc-resources";
 import { version } from "../../package.json";
+import { OCResource } from "./oc-resources";
 
 
 export class SerializedMarketplace {

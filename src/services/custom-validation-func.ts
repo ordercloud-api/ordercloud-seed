@@ -75,7 +75,7 @@ export const ProductAssignmentValidationFunc: RecordValidationFunc = (record, va
     }
 }
 
-export const LocaleAssignmentCustomValidationFunc: RecordValidationFunc = (record, validator) => {
+export const LocaleAssignmentValidationFunc: RecordValidationFunc = (record, validator) => {
     var buyerID: string = record["BuyerID"];
     var userID: string = record["UserID"];
     var hasBuyerID = !_.isNil(buyerID);

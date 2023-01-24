@@ -1,3 +1,9 @@
+export interface ReasourceSchema {
+    properties: OpenAPIProperty,
+    example: Object,
+    type: string;
+}
+
 export interface OpenAPIProperties {
     [propertyName: string]: OpenAPIProperty;
 }

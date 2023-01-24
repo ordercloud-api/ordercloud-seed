@@ -3,8 +3,8 @@ import { Configuration, InventoryRecords, Product, Products, Tokens } from 'orde
 import { SerializedMarketplace } from '../models/serialized-marketplace';
 import OrderCloudBulk from '../services/ordercloud-bulk';
 import { defaultLogger, LogCallBackFunc, MessageType } from '../services/logger';
-import { BuildResourceDirectory } from '../models/oc-resource-directory';
-import { OCResource } from '../models/oc-resources';
+import { BuildOCResourceDirectory } from '../models/oc-resource-directory';
+import { OCResourceDirectoryEntry } from '../models/oc-resources';
 import _  from 'lodash';
 import { MARKETPLACE_ID as MARKETPLACE_ID_PLACEHOLDER, REDACTED_MESSAGE, TEN_MINUTES } from '../constants';
 import PortalAPI from '../services/portal';
@@ -75,7 +75,7 @@ export async function download(args: DownloadArgs): Promise<SerializedMarketplac
         maxConcurrent: 8
     }), logger);
     var marketplace = new SerializedMarketplace();
-    var directory = await BuildResourceDirectory();
+    var directory = await BuildOCResourceDirectory();
     var childResourceRecordCounts = {}; 
     for (let resource of directory) {
         if (resource.isChild) {
@@ -131,7 +131,7 @@ export async function download(args: DownloadArgs): Promise<SerializedMarketplac
     logger(`Done downloading data from org \"${marketplaceID}\".`, MessageType.Success);
     return marketplace;
 
-    function RedactSensitiveFields(resource: OCResource, records: any[]): void {
+    function RedactSensitiveFields(resource: OCResourceDirectoryEntry, records: any[]): void {
         if (resource.redactFields.length === 0) return;
 
         for (var record of records) {
@@ -143,7 +143,7 @@ export async function download(args: DownloadArgs): Promise<SerializedMarketplac
         }
     }
 
-    function PlaceHoldMarketplaceID(resource: OCResource, records: any[]): void {
+    function PlaceHoldMarketplaceID(resource: OCResourceDirectoryEntry, records: any[]): void {
         if (resource.isSellerOwned) {
             for (var record of records) {  
                 // when Sandbox and Staging were created, marketplace IDs were appended with env to keep them unique

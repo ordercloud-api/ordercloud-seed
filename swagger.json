@@ -3,7 +3,7 @@
     "info": {
         "title": "OrderCloud",
         "description": "OrderCloud is an awesome C# platform API for making eCommerce applications. It is NOT a complete solution. It's designed to be used as the backend component with various other integrations and services.",
-        "version": "1.0.239.25688",
+        "version": "1.0.260.26968",
         "contact": {
             "name": "OrderCloud",
             "url": "http://ordercloud.io",
@@ -220,6 +220,11 @@
         {
             "name": "Orders",
             "description": "An Order represents a business transaction between two parties. It typically consists of a collection of Line Items, a Payment Method, Tax and Shipping information, etc. The OrderCloud platform defines various \"actions\" that can be performed against Orders, such as Submit, Approve, Ship, etc. These actions transform the state of the order and often trigger external events such as financial transactions.",
+            "x-section-id": "OrdersAndFulfillment"
+        },
+        {
+            "name": "Cart",
+            "description": "A Cart is a straightforward way for a buyer user to interact with an order prior to submit. Unlike Order endpoints, an OrderID is never needed to interact with a cart. This simplifies workflows and eliminates the need to keep track of the OrderID on the front end. Please note Cart should be used as a distinct alternative to Order endpoints for a buyer user during the shopping experience; combining the use of Cart endpoints with Order endpoints may have unexpected results, and is not supported. Only available to Buyer Users.",
             "x-section-id": "OrdersAndFulfillment"
         },
         {
@@ -573,6 +578,70 @@
                     }
                 }
             },
+            "AdHocProduct": {
+                "type": "object",
+                "example": {
+                    "ID": "",
+                    "Name": "",
+                    "Description": "",
+                    "QuantityMultiplier": 0,
+                    "ShipWeight": 0,
+                    "ShipHeight": 0,
+                    "ShipWidth": 0,
+                    "ShipLength": 0,
+                    "DefaultSupplierID": "",
+                    "Returnable": false,
+                    "xp": {}
+                },
+                "properties": {
+                    "ID": {
+                        "type": "string",
+                        "maxLength": 100
+                    },
+                    "Name": {
+                        "type": "string",
+                        "maxLength": 100
+                    },
+                    "Description": {
+                        "type": "string",
+                        "maxLength": 2000
+                    },
+                    "QuantityMultiplier": {
+                        "type": "integer",
+                        "format": "int32",
+                        "default": 1,
+                        "description": "Informational only, does not influence any OrderCloud behavior. Used to indicate an amount per Quantity.",
+                        "minimum": 1
+                    },
+                    "ShipWeight": {
+                        "type": "number",
+                        "format": "float"
+                    },
+                    "ShipHeight": {
+                        "type": "number",
+                        "format": "float"
+                    },
+                    "ShipWidth": {
+                        "type": "number",
+                        "format": "float"
+                    },
+                    "ShipLength": {
+                        "type": "number",
+                        "format": "float"
+                    },
+                    "DefaultSupplierID": {
+                        "type": "string",
+                        "description": "If this property has a value and a SupplierID isn't explicitly passed when creating a LineItem, this SupplierID will be used."
+                    },
+                    "Returnable": {
+                        "type": "boolean",
+                        "description": "If true, all suppliers are eligible to opt into selling this product."
+                    },
+                    "xp": {
+                        "type": "object"
+                    }
+                }
+            },
             "ApiClient": {
                 "type": "object",
                 "example": {
@@ -594,6 +663,8 @@
                     "OrderCheckoutIntegrationEventName": "",
                     "OrderReturnIntegrationEventID": "",
                     "OrderReturnIntegrationEventName": "",
+                    "AddToCartIntegrationEventID": "",
+                    "AddToCartIntegrationEventName": "",
                     "MinimumRequiredRoles": [
                         "ApiClientAdmin"
                     ],
@@ -678,6 +749,14 @@
                         "description": "If populated, and not overriden by an OrderAdmin, the integration event will be used to calculate ReturnAmount on the Order Return or each individual return item."
                     },
                     "OrderReturnIntegrationEventName": {
+                        "type": "string",
+                        "readOnly": true
+                    },
+                    "AddToCartIntegrationEventID": {
+                        "type": "string",
+                        "description": "If populated, the integration event will be used to fetch product information from an external system, instead of an OrderCloud catalog, when a line item is added to an unsubmitted order."
+                    },
+                    "AddToCartIntegrationEventName": {
                         "type": "string",
                         "readOnly": true
                     },
@@ -1501,6 +1580,7 @@
                         "ID": "",
                         "FromUser": {
                             "ID": "",
+                            "CompanyID": "",
                             "Username": "",
                             "Password": "",
                             "FirstName": "",
@@ -1880,6 +1960,7 @@
                     "ID": "",
                     "FromUser": {
                         "ID": "",
+                        "CompanyID": "",
                         "Username": "",
                         "Password": "",
                         "FirstName": "",
@@ -1967,11 +2048,11 @@
                     },
                     "ToCompanyID": {
                         "type": "string",
-                        "description": "ID of the Marketplace Owner or Supplier receiving the order, only writable on create. Mainly useful to the Buyer or Marketplace Owner placing it."
+                        "description": "ID of the Marketplace Owner or Supplier receiving the order, only writable on create. Mainly useful to the user placing it."
                     },
                     "FromUserID": {
                         "type": "string",
-                        "description": "This property is only writable when creating an order from the marketplace owner perspective on behalf of a buyer user."
+                        "description": "This property is only writable when creating an order on behalf of a buyer user."
                     },
                     "BillingAddressID": {
                         "type": "string"
@@ -2240,7 +2321,8 @@
                 "enum": [
                     "OrderCheckout",
                     "OpenIDConnect",
-                    "OrderReturn"
+                    "OrderReturn",
+                    "AddToCart"
                 ],
                 "description": ""
             },
@@ -2569,12 +2651,26 @@
                 "example": {
                     "LineItemID": "",
                     "UnitPrice": 0,
+                    "Product": {
+                        "ID": "",
+                        "Name": "",
+                        "Description": "",
+                        "QuantityMultiplier": 0,
+                        "ShipWeight": 0,
+                        "ShipHeight": 0,
+                        "ShipWidth": 0,
+                        "ShipLength": 0,
+                        "DefaultSupplierID": "",
+                        "Returnable": false,
+                        "xp": {}
+                    },
                     "PromotionOverrides": [
                         {
                             "PromotionID": "",
                             "Amount": 0
                         }
-                    ]
+                    ],
+                    "Remove": false
                 },
                 "properties": {
                     "LineItemID": {
@@ -2584,11 +2680,21 @@
                         "type": "number",
                         "format": "float"
                     },
+                    "Product": {
+                        "allOf": [
+                            {
+                                "$ref": "#/components/schemas/AdHocProduct"
+                            }
+                        ]
+                    },
                     "PromotionOverrides": {
                         "type": "array",
                         "items": {
                             "$ref": "#/components/schemas/PromotionOverride"
                         }
+                    },
+                    "Remove": {
+                        "type": "boolean"
                     }
                 }
             },
@@ -3095,6 +3201,7 @@
                         "ID": ""
                     },
                     "ID": "",
+                    "CompanyID": "",
                     "Username": "",
                     "Password": "",
                     "FirstName": "",
@@ -3144,6 +3251,10 @@
                     "ID": {
                         "type": "string",
                         "maxLength": 100
+                    },
+                    "CompanyID": {
+                        "type": "string",
+                        "readOnly": true
                     },
                     "Username": {
                         "type": "string",
@@ -3227,7 +3338,8 @@
                     "IntegrationEventName": "",
                     "AdditionalIdpScopes": [
                         ""
-                    ]
+                    ],
+                    "CustomErrorUrl": ""
                 },
                 "properties": {
                     "ID": {
@@ -3281,6 +3393,10 @@
                             "type": "string"
                         },
                         "description": "Any additional scopes needed by the IDP."
+                    },
+                    "CustomErrorUrl": {
+                        "type": "string",
+                        "description": "A URL on your front-end ordering site where users will be redirected if an error occurs while trying to authenticate."
                     }
                 }
             },
@@ -3290,6 +3406,7 @@
                     "ID": "",
                     "FromUser": {
                         "ID": "",
+                        "CompanyID": "",
                         "Username": "",
                         "Password": "",
                         "FirstName": "",
@@ -3371,11 +3488,11 @@
                     },
                     "ToCompanyID": {
                         "type": "string",
-                        "description": "ID of the Marketplace Owner or Supplier receiving the order, only writable on create. Mainly useful to the Buyer or Marketplace Owner placing it."
+                        "description": "ID of the Marketplace Owner or Supplier receiving the order, only writable on create. Mainly useful to the user placing it."
                     },
                     "FromUserID": {
                         "type": "string",
-                        "description": "This property is only writable when creating an order from the marketplace owner perspective on behalf of a buyer user."
+                        "description": "This property is only writable when creating an order on behalf of a buyer user."
                     },
                     "BillingAddressID": {
                         "type": "string"
@@ -3496,6 +3613,7 @@
                     "DateCompleted": "2018-01-01T00:00:00-06:00",
                     "Approver": {
                         "ID": "",
+                        "CompanyID": "",
                         "Username": "",
                         "Password": "",
                         "FirstName": "",
@@ -3584,7 +3702,8 @@
                 "example": {
                     "HttpStatusCode": 0,
                     "UnhandledErrorBody": "",
-                    "xp": {}
+                    "xp": {},
+                    "Succeeded": false
                 },
                 "properties": {
                     "HttpStatusCode": {
@@ -3596,6 +3715,9 @@
                     },
                     "xp": {
                         "type": "object"
+                    },
+                    "Succeeded": {
+                        "type": "boolean"
                     }
                 }
             },
@@ -3606,19 +3728,34 @@
                         {
                             "LineItemID": "",
                             "UnitPrice": 0,
+                            "Product": {
+                                "ID": "",
+                                "Name": "",
+                                "Description": "",
+                                "QuantityMultiplier": 0,
+                                "ShipWeight": 0,
+                                "ShipHeight": 0,
+                                "ShipWidth": 0,
+                                "ShipLength": 0,
+                                "DefaultSupplierID": "",
+                                "Returnable": false,
+                                "xp": {}
+                            },
                             "PromotionOverrides": [
                                 {
                                     "PromotionID": "",
                                     "Amount": 0
                                 }
-                            ]
+                            ],
+                            "Remove": false
                         }
                     ],
                     "ShippingTotal": 0,
                     "TaxTotal": 0,
                     "HttpStatusCode": 0,
                     "UnhandledErrorBody": "",
-                    "xp": {}
+                    "xp": {},
+                    "Succeeded": false
                 },
                 "properties": {
                     "LineItemOverrides": {
@@ -3644,6 +3781,9 @@
                     },
                     "xp": {
                         "type": "object"
+                    },
+                    "Succeeded": {
+                        "type": "boolean"
                     }
                 }
             },
@@ -3881,6 +4021,7 @@
                     "DateCompleted": "2018-01-01T00:00:00-06:00",
                     "Approver": {
                         "ID": "",
+                        "CompanyID": "",
                         "Username": "",
                         "Password": "",
                         "FirstName": "",
@@ -3999,6 +4140,7 @@
                             "ID": "",
                             "FromUser": {
                                 "ID": "",
+                                "CompanyID": "",
                                 "Username": "",
                                 "Password": "",
                                 "FirstName": "",
@@ -4099,7 +4241,8 @@
                 "example": {
                     "HttpStatusCode": 0,
                     "UnhandledErrorBody": "",
-                    "xp": {}
+                    "xp": {},
+                    "Succeeded": false
                 },
                 "properties": {
                     "HttpStatusCode": {
@@ -4111,6 +4254,9 @@
                     },
                     "xp": {
                         "type": "object"
+                    },
+                    "Succeeded": {
+                        "type": "boolean"
                     }
                 }
             },
@@ -4119,7 +4265,8 @@
                 "example": {
                     "HttpStatusCode": 0,
                     "UnhandledErrorBody": "",
-                    "xp": {}
+                    "xp": {},
+                    "Succeeded": false
                 },
                 "properties": {
                     "HttpStatusCode": {
@@ -4131,6 +4278,9 @@
                     },
                     "xp": {
                         "type": "object"
+                    },
+                    "Succeeded": {
+                        "type": "boolean"
                     }
                 }
             },
@@ -4141,6 +4291,7 @@
                         "ID": "",
                         "FromUser": {
                             "ID": "",
+                            "CompanyID": "",
                             "Username": "",
                             "Password": "",
                             "FirstName": "",
@@ -4338,41 +4489,60 @@
                         ],
                         "HttpStatusCode": 0,
                         "UnhandledErrorBody": "",
-                        "xp": {}
+                        "xp": {},
+                        "Succeeded": false
                     },
                     "OrderCalculateResponse": {
                         "LineItemOverrides": [
                             {
                                 "LineItemID": "",
                                 "UnitPrice": 0,
+                                "Product": {
+                                    "ID": "",
+                                    "Name": "",
+                                    "Description": "",
+                                    "QuantityMultiplier": 0,
+                                    "ShipWeight": 0,
+                                    "ShipHeight": 0,
+                                    "ShipWidth": 0,
+                                    "ShipLength": 0,
+                                    "DefaultSupplierID": "",
+                                    "Returnable": false,
+                                    "xp": {}
+                                },
                                 "PromotionOverrides": [
                                     {
                                         "PromotionID": "",
                                         "Amount": 0
                                     }
-                                ]
+                                ],
+                                "Remove": false
                             }
                         ],
                         "ShippingTotal": 0,
                         "TaxTotal": 0,
                         "HttpStatusCode": 0,
                         "UnhandledErrorBody": "",
-                        "xp": {}
+                        "xp": {},
+                        "Succeeded": false
                     },
                     "OrderSubmitResponse": {
                         "HttpStatusCode": 0,
                         "UnhandledErrorBody": "",
-                        "xp": {}
+                        "xp": {},
+                        "Succeeded": false
                     },
                     "OrderSubmitForApprovalResponse": {
                         "HttpStatusCode": 0,
                         "UnhandledErrorBody": "",
-                        "xp": {}
+                        "xp": {},
+                        "Succeeded": false
                     },
                     "OrderApprovedResponse": {
                         "HttpStatusCode": 0,
                         "UnhandledErrorBody": "",
-                        "xp": {}
+                        "xp": {},
+                        "Succeeded": false
                     }
                 },
                 "properties": {
@@ -5007,6 +5177,27 @@
                     }
                 }
             },
+            "ProductCollection": {
+                "type": "object",
+                "example": {
+                    "ID": "",
+                    "Name": "",
+                    "xp": {}
+                },
+                "properties": {
+                    "ID": {
+                        "type": "string",
+                        "maxLength": 100
+                    },
+                    "Name": {
+                        "type": "string",
+                        "maxLength": 100
+                    },
+                    "xp": {
+                        "type": "object"
+                    }
+                }
+            },
             "ProductFacet": {
                 "type": "object",
                 "example": {
@@ -5218,7 +5409,7 @@
                     "Amount": {
                         "type": "number",
                         "format": "float",
-                        "description": "Overrides the promotion's calculated discount to this amount, and prevents it from being recalculated unless order calculate is called again without an override."
+                        "description": "Overrides the promotion's calculated discount to this amount."
                     }
                 }
             },
@@ -5482,7 +5673,8 @@
                     ],
                     "HttpStatusCode": 0,
                     "UnhandledErrorBody": "",
-                    "xp": {}
+                    "xp": {},
+                    "Succeeded": false
                 },
                 "properties": {
                     "ShipEstimates": {
@@ -5500,6 +5692,9 @@
                     },
                     "xp": {
                         "type": "object"
+                    },
+                    "Succeeded": {
+                        "type": "boolean"
                     }
                 }
             },
@@ -6044,6 +6239,7 @@
                 "type": "object",
                 "example": {
                     "ID": "",
+                    "CompanyID": "",
                     "Username": "",
                     "Password": "",
                     "FirstName": "",
@@ -6069,6 +6265,10 @@
                     "ID": {
                         "type": "string",
                         "maxLength": 100
+                    },
+                    "CompanyID": {
+                        "type": "string",
+                        "readOnly": true
                     },
                     "Username": {
                         "type": "string",
@@ -6445,7 +6645,8 @@
                     "Catalog",
                     "ProductFacet",
                     "MessageSender",
-                    "InventoryRecord"
+                    "InventoryRecord",
+                    "ProductCollection"
                 ],
                 "description": ""
             },
@@ -7705,6 +7906,9 @@
                                     {
                                         "$ref": "#/components/schemas/ApiClientAssignment"
                                     }
+                                ],
+                                "required": [
+                                    "ApiClientID"
                                 ]
                             }
                         }
@@ -12099,6 +12303,10 @@
                                     {
                                         "$ref": "#/components/schemas/UserGroupAssignment"
                                     }
+                                ],
+                                "required": [
+                                    "UserGroupID",
+                                    "UserID"
                                 ]
                             }
                         }
@@ -12690,6 +12898,1446 @@
                         "OAuth2": [
                             "FullAccess",
                             "BuyerUserAdmin"
+                        ]
+                    }
+                ]
+            }
+        },
+        "/buyerusers": {
+            "get": {
+                "responses": {
+                    "200": {
+                        "description": "",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "properties": {
+                                        "Items": {
+                                            "type": "array",
+                                            "items": {
+                                                "$ref": "#/components/schemas/User"
+                                            }
+                                        },
+                                        "Meta": {
+                                            "$ref": "#/components/schemas/Meta"
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                },
+                "operationId": "Users.ListAcrossBuyers",
+                "tags": [
+                    "Users"
+                ],
+                "parameters": [
+                    {
+                        "name": "search",
+                        "in": "query",
+                        "description": "Word or phrase to search for.",
+                        "required": false,
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "name": "searchOn",
+                        "in": "query",
+                        "description": "Comma-delimited list of fields to search on.",
+                        "required": false,
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "type": "string",
+                                "enum": [
+                                    "ID",
+                                    "Username",
+                                    "LastName",
+                                    "FirstName",
+                                    "Email"
+                                ]
+                            }
+                        }
+                    },
+                    {
+                        "name": "sortBy",
+                        "in": "query",
+                        "description": "Comma-delimited list of fields to sort by.",
+                        "required": false,
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "type": "string",
+                                "enum": [
+                                    "LastName",
+                                    "FirstName",
+                                    "Username",
+                                    "ID",
+                                    "Email",
+                                    "DateCreated",
+                                    "PasswordLastSetDate",
+                                    "!LastName",
+                                    "!FirstName",
+                                    "!Username",
+                                    "!ID",
+                                    "!Email",
+                                    "!DateCreated",
+                                    "!PasswordLastSetDate"
+                                ]
+                            }
+                        }
+                    },
+                    {
+                        "name": "page",
+                        "in": "query",
+                        "description": "Page of results to return. Default: 1. When paginating through many items (> page 30), we recommend the \"Last ID\" method, as outlined in the Advanced Querying documentation.",
+                        "required": false,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    },
+                    {
+                        "name": "pageSize",
+                        "in": "query",
+                        "description": "Number of results to return per page. Default: 20, max: 100.",
+                        "required": false,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    },
+                    {
+                        "name": "filters",
+                        "in": "query",
+                        "description": "An object or dictionary representing key/value pairs to apply as filters. Valid keys are top-level properties of the returned model or 'xp.???'",
+                        "required": false,
+                        "schema": {
+                            "type": "object"
+                        }
+                    }
+                ],
+                "summary": "Get a list of user across buyers.",
+                "description": "",
+                "security": [
+                    {
+                        "OAuth2": [
+                            "FullAccess",
+                            "BuyerUserReader"
+                        ]
+                    }
+                ]
+            }
+        },
+        "/cart": {
+            "get": {
+                "responses": {
+                    "200": {
+                        "description": "If the ID of the Order returned is null, the cart has not yet been interacted with. Once an item is added, the Order.ID will be populated.",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/Order"
+                                }
+                            }
+                        }
+                    }
+                },
+                "operationId": "Cart.Get",
+                "tags": [
+                    "Cart"
+                ],
+                "summary": "Get a single cart.",
+                "description": "If the ID of the Order returned is null, the cart has not yet been interacted with. Once an item is added, the Order.ID will be populated.",
+                "security": [
+                    {
+                        "OAuth2": [
+                            "FullAccess",
+                            "Shopper"
+                        ]
+                    }
+                ]
+            },
+            "put": {
+                "responses": {
+                    "200": {
+                        "description": "If an object with the same ID already exists, it will be overwritten..The recommended way to initiate a new cart is to add a line item. If there is a specific reason an order needs to exist prior to adding a line item, this method can be used to initiate a new cart. It can also be used for updates.",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/Order"
+                                }
+                            }
+                        }
+                    }
+                },
+                "operationId": "Cart.Save",
+                "tags": [
+                    "Cart"
+                ],
+                "requestBody": {
+                    "required": true,
+                    "description": "",
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "allOf": [
+                                    {
+                                        "$ref": "#/components/schemas/Order"
+                                    }
+                                ]
+                            }
+                        }
+                    }
+                },
+                "summary": "Create or update a cart.",
+                "description": "If an object with the same ID already exists, it will be overwritten.<br/></br>The recommended way to initiate a new cart is to add a line item. If there is a specific reason an order needs to exist prior to adding a line item, this method can be used to initiate a new cart. It can also be used for updates.",
+                "security": [
+                    {
+                        "OAuth2": [
+                            "FullAccess",
+                            "Shopper"
+                        ]
+                    }
+                ]
+            },
+            "delete": {
+                "responses": {
+                    "204": {
+                        "description": "Empties the cart. Any promotions, payments or other items associated with the cart will also be removed."
+                    }
+                },
+                "operationId": "Cart.Delete",
+                "tags": [
+                    "Cart"
+                ],
+                "summary": "Delete a cart.",
+                "description": "Empties the cart. Any promotions, payments or other items associated with the cart will also be removed.",
+                "security": [
+                    {
+                        "OAuth2": [
+                            "FullAccess",
+                            "Shopper"
+                        ]
+                    }
+                ]
+            },
+            "patch": {
+                "responses": {
+                    "200": {
+                        "description": "",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/Order"
+                                }
+                            }
+                        }
+                    }
+                },
+                "operationId": "Cart.Patch",
+                "tags": [
+                    "Cart"
+                ],
+                "requestBody": {
+                    "required": true,
+                    "description": "",
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "allOf": [
+                                    {
+                                        "$ref": "#/components/schemas/Order"
+                                    }
+                                ]
+                            }
+                        }
+                    }
+                },
+                "summary": "Partially update a cart.",
+                "description": "",
+                "security": [
+                    {
+                        "OAuth2": [
+                            "FullAccess",
+                            "Shopper"
+                        ]
+                    }
+                ]
+            }
+        },
+        "/cart/{orderID}": {
+            "put": {
+                "responses": {
+                    "204": {
+                        "description": ""
+                    }
+                },
+                "operationId": "Cart.SetActiveCart",
+                "tags": [
+                    "Cart"
+                ],
+                "parameters": [
+                    {
+                        "name": "orderID",
+                        "in": "path",
+                        "description": "ID of the order.",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "summary": "Set an active cart.",
+                "description": "",
+                "security": [
+                    {
+                        "OAuth2": [
+                            "FullAccess",
+                            "Shopper"
+                        ]
+                    }
+                ]
+            }
+        },
+        "/cart/estimateshipping": {
+            "post": {
+                "responses": {
+                    "200": {
+                        "description": "",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/OrderWorksheet"
+                                }
+                            }
+                        }
+                    }
+                },
+                "operationId": "Cart.EstimateShipping",
+                "tags": [
+                    "Cart"
+                ],
+                "summary": "Estimate a shipping.",
+                "description": "",
+                "security": [
+                    {
+                        "OAuth2": [
+                            "FullAccess",
+                            "Shopper"
+                        ]
+                    }
+                ]
+            }
+        },
+        "/cart/fromuser": {
+            "patch": {
+                "responses": {
+                    "200": {
+                        "description": "",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/Order"
+                                }
+                            }
+                        }
+                    }
+                },
+                "operationId": "Cart.PatchFromUser",
+                "tags": [
+                    "Cart"
+                ],
+                "requestBody": {
+                    "required": true,
+                    "description": "",
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "allOf": [
+                                    {
+                                        "$ref": "#/components/schemas/User"
+                                    }
+                                ]
+                            }
+                        }
+                    }
+                },
+                "summary": "Partially update a cart from user.",
+                "description": "",
+                "security": [
+                    {
+                        "OAuth2": [
+                            "FullAccess",
+                            "Shopper"
+                        ]
+                    }
+                ]
+            }
+        },
+        "/cart/lineitems": {
+            "get": {
+                "responses": {
+                    "200": {
+                        "description": "",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "properties": {
+                                        "Items": {
+                                            "type": "array",
+                                            "items": {
+                                                "$ref": "#/components/schemas/LineItem"
+                                            }
+                                        },
+                                        "Meta": {
+                                            "$ref": "#/components/schemas/Meta"
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                },
+                "operationId": "Cart.ListLineItems",
+                "tags": [
+                    "Cart"
+                ],
+                "parameters": [
+                    {
+                        "name": "search",
+                        "in": "query",
+                        "description": "Word or phrase to search for.",
+                        "required": false,
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "name": "searchOn",
+                        "in": "query",
+                        "description": "Comma-delimited list of fields to search on.",
+                        "required": false,
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "type": "string",
+                                "enum": [
+                                    "ID",
+                                    "ProductID"
+                                ]
+                            }
+                        }
+                    },
+                    {
+                        "name": "sortBy",
+                        "in": "query",
+                        "description": "Comma-delimited list of fields to sort by.",
+                        "required": false,
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "type": "string",
+                                "enum": [
+                                    "DateAdded",
+                                    "ID",
+                                    "ProductID",
+                                    "!DateAdded",
+                                    "!ID",
+                                    "!ProductID"
+                                ]
+                            }
+                        }
+                    },
+                    {
+                        "name": "page",
+                        "in": "query",
+                        "description": "Page of results to return. Default: 1. When paginating through many items (> page 30), we recommend the \"Last ID\" method, as outlined in the Advanced Querying documentation.",
+                        "required": false,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    },
+                    {
+                        "name": "pageSize",
+                        "in": "query",
+                        "description": "Number of results to return per page. Default: 20, max: 100.",
+                        "required": false,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    },
+                    {
+                        "name": "filters",
+                        "in": "query",
+                        "description": "An object or dictionary representing key/value pairs to apply as filters. Valid keys are top-level properties of the returned model or 'xp.???'",
+                        "required": false,
+                        "schema": {
+                            "type": "object"
+                        }
+                    }
+                ],
+                "summary": "Get a list of cart line items.",
+                "description": "",
+                "security": [
+                    {
+                        "OAuth2": [
+                            "FullAccess",
+                            "Shopper"
+                        ]
+                    }
+                ]
+            },
+            "post": {
+                "responses": {
+                    "201": {
+                        "description": "Adds a line item to the cart",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/LineItem"
+                                }
+                            }
+                        }
+                    }
+                },
+                "operationId": "Cart.CreateLineItem",
+                "tags": [
+                    "Cart"
+                ],
+                "requestBody": {
+                    "required": true,
+                    "description": "",
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "allOf": [
+                                    {
+                                        "$ref": "#/components/schemas/LineItem"
+                                    }
+                                ],
+                                "required": [
+                                    "ProductID"
+                                ]
+                            }
+                        }
+                    }
+                },
+                "summary": "Create a new cart line item.",
+                "description": "Adds a line item to the cart",
+                "security": [
+                    {
+                        "OAuth2": [
+                            "FullAccess",
+                            "Shopper"
+                        ]
+                    }
+                ]
+            }
+        },
+        "/cart/lineitems/{lineItemID}": {
+            "get": {
+                "responses": {
+                    "200": {
+                        "description": "",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/LineItem"
+                                }
+                            }
+                        }
+                    }
+                },
+                "operationId": "Cart.GetLineItem",
+                "tags": [
+                    "Cart"
+                ],
+                "parameters": [
+                    {
+                        "name": "lineItemID",
+                        "in": "path",
+                        "description": "ID of the line item.",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "summary": "Get a single cart line item.",
+                "description": "",
+                "security": [
+                    {
+                        "OAuth2": [
+                            "FullAccess",
+                            "Shopper"
+                        ]
+                    }
+                ]
+            },
+            "put": {
+                "responses": {
+                    "200": {
+                        "description": "",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/LineItem"
+                                }
+                            }
+                        }
+                    }
+                },
+                "operationId": "Cart.SaveLineItem",
+                "tags": [
+                    "Cart"
+                ],
+                "requestBody": {
+                    "required": true,
+                    "description": "",
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "allOf": [
+                                    {
+                                        "$ref": "#/components/schemas/LineItem"
+                                    }
+                                ],
+                                "required": [
+                                    "ProductID"
+                                ]
+                            }
+                        }
+                    }
+                },
+                "parameters": [
+                    {
+                        "name": "lineItemID",
+                        "in": "path",
+                        "description": "ID of the line item.",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "summary": "Create or update a cart line item.",
+                "description": "",
+                "security": [
+                    {
+                        "OAuth2": [
+                            "FullAccess",
+                            "Shopper"
+                        ]
+                    }
+                ]
+            },
+            "delete": {
+                "responses": {
+                    "204": {
+                        "description": ""
+                    }
+                },
+                "operationId": "Cart.DeleteLineItem",
+                "tags": [
+                    "Cart"
+                ],
+                "parameters": [
+                    {
+                        "name": "lineItemID",
+                        "in": "path",
+                        "description": "ID of the line item.",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "summary": "Delete a cart line item.",
+                "description": "",
+                "security": [
+                    {
+                        "OAuth2": [
+                            "FullAccess",
+                            "Shopper"
+                        ]
+                    }
+                ]
+            },
+            "patch": {
+                "responses": {
+                    "200": {
+                        "description": "",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/LineItem"
+                                }
+                            }
+                        }
+                    }
+                },
+                "operationId": "Cart.PatchLineItem",
+                "tags": [
+                    "Cart"
+                ],
+                "requestBody": {
+                    "required": true,
+                    "description": "",
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "allOf": [
+                                    {
+                                        "$ref": "#/components/schemas/LineItem"
+                                    }
+                                ]
+                            }
+                        }
+                    }
+                },
+                "parameters": [
+                    {
+                        "name": "lineItemID",
+                        "in": "path",
+                        "description": "ID of the line item.",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "summary": "Partially update a cart line item.",
+                "description": "",
+                "security": [
+                    {
+                        "OAuth2": [
+                            "FullAccess",
+                            "Shopper"
+                        ]
+                    }
+                ]
+            }
+        },
+        "/cart/payments": {
+            "get": {
+                "responses": {
+                    "200": {
+                        "description": "",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "properties": {
+                                        "Items": {
+                                            "type": "array",
+                                            "items": {
+                                                "$ref": "#/components/schemas/Payment"
+                                            }
+                                        },
+                                        "Meta": {
+                                            "$ref": "#/components/schemas/Meta"
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                },
+                "operationId": "Cart.ListPayments",
+                "tags": [
+                    "Cart"
+                ],
+                "parameters": [
+                    {
+                        "name": "search",
+                        "in": "query",
+                        "description": "Word or phrase to search for.",
+                        "required": false,
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "name": "searchOn",
+                        "in": "query",
+                        "description": "Comma-delimited list of fields to search on.",
+                        "required": false,
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "type": "string",
+                                "enum": [
+                                    "ID",
+                                    "Description"
+                                ]
+                            }
+                        }
+                    },
+                    {
+                        "name": "sortBy",
+                        "in": "query",
+                        "description": "Comma-delimited list of fields to sort by.",
+                        "required": false,
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "type": "string",
+                                "enum": [
+                                    "DateCreated",
+                                    "ID",
+                                    "Type",
+                                    "CreditCardID",
+                                    "SpendingAccountID",
+                                    "!DateCreated",
+                                    "!ID",
+                                    "!Type",
+                                    "!CreditCardID",
+                                    "!SpendingAccountID"
+                                ]
+                            }
+                        }
+                    },
+                    {
+                        "name": "page",
+                        "in": "query",
+                        "description": "Page of results to return. Default: 1. When paginating through many items (> page 30), we recommend the \"Last ID\" method, as outlined in the Advanced Querying documentation.",
+                        "required": false,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    },
+                    {
+                        "name": "pageSize",
+                        "in": "query",
+                        "description": "Number of results to return per page. Default: 20, max: 100.",
+                        "required": false,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    },
+                    {
+                        "name": "filters",
+                        "in": "query",
+                        "description": "An object or dictionary representing key/value pairs to apply as filters. Valid keys are top-level properties of the returned model or 'xp.???'",
+                        "required": false,
+                        "schema": {
+                            "type": "object"
+                        }
+                    }
+                ],
+                "summary": "Get a list of cart payments.",
+                "description": "",
+                "security": [
+                    {
+                        "OAuth2": [
+                            "FullAccess",
+                            "Shopper"
+                        ]
+                    }
+                ]
+            },
+            "post": {
+                "responses": {
+                    "201": {
+                        "description": "",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/Payment"
+                                }
+                            }
+                        }
+                    }
+                },
+                "operationId": "Cart.CreatePayment",
+                "tags": [
+                    "Cart"
+                ],
+                "requestBody": {
+                    "required": true,
+                    "description": "",
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "allOf": [
+                                    {
+                                        "$ref": "#/components/schemas/Payment"
+                                    }
+                                ]
+                            }
+                        }
+                    }
+                },
+                "summary": "Create a new cart payment.",
+                "description": "",
+                "security": [
+                    {
+                        "OAuth2": [
+                            "FullAccess",
+                            "Shopper"
+                        ]
+                    }
+                ]
+            }
+        },
+        "/cart/payments/{paymentID}": {
+            "get": {
+                "responses": {
+                    "200": {
+                        "description": "",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/Payment"
+                                }
+                            }
+                        }
+                    }
+                },
+                "operationId": "Cart.GetPayment",
+                "tags": [
+                    "Cart"
+                ],
+                "parameters": [
+                    {
+                        "name": "paymentID",
+                        "in": "path",
+                        "description": "ID of the payment.",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "summary": "Get a single cart payment.",
+                "description": "",
+                "security": [
+                    {
+                        "OAuth2": [
+                            "FullAccess",
+                            "Shopper"
+                        ]
+                    }
+                ]
+            },
+            "delete": {
+                "responses": {
+                    "204": {
+                        "description": ""
+                    }
+                },
+                "operationId": "Cart.DeletePayment",
+                "tags": [
+                    "Cart"
+                ],
+                "parameters": [
+                    {
+                        "name": "paymentID",
+                        "in": "path",
+                        "description": "ID of the payment.",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "summary": "Delete a cart payment.",
+                "description": "",
+                "security": [
+                    {
+                        "OAuth2": [
+                            "FullAccess",
+                            "Shopper"
+                        ]
+                    }
+                ]
+            },
+            "patch": {
+                "responses": {
+                    "200": {
+                        "description": "",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/Payment"
+                                }
+                            }
+                        }
+                    }
+                },
+                "operationId": "Cart.PatchPayment",
+                "tags": [
+                    "Cart"
+                ],
+                "requestBody": {
+                    "required": true,
+                    "description": "",
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "allOf": [
+                                    {
+                                        "$ref": "#/components/schemas/Payment"
+                                    }
+                                ]
+                            }
+                        }
+                    }
+                },
+                "parameters": [
+                    {
+                        "name": "paymentID",
+                        "in": "path",
+                        "description": "ID of the payment.",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "summary": "Partially update a cart payment.",
+                "description": "",
+                "security": [
+                    {
+                        "OAuth2": [
+                            "FullAccess",
+                            "Shopper"
+                        ]
+                    }
+                ]
+            }
+        },
+        "/cart/payments/{paymentID}/transactions": {
+            "post": {
+                "responses": {
+                    "201": {
+                        "description": "",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/PaymentTransaction"
+                                }
+                            }
+                        }
+                    }
+                },
+                "operationId": "Cart.CreatePaymentTransaction",
+                "tags": [
+                    "Cart"
+                ],
+                "requestBody": {
+                    "required": true,
+                    "description": "",
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "allOf": [
+                                    {
+                                        "$ref": "#/components/schemas/PaymentTransaction"
+                                    }
+                                ],
+                                "required": [
+                                    "Type",
+                                    "DateExecuted"
+                                ]
+                            }
+                        }
+                    }
+                },
+                "parameters": [
+                    {
+                        "name": "paymentID",
+                        "in": "path",
+                        "description": "ID of the payment.",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "summary": "Create a new cart payment transaction.",
+                "description": "",
+                "security": [
+                    {
+                        "OAuth2": [
+                            "FullAccess",
+                            "Shopper"
+                        ]
+                    }
+                ]
+            }
+        },
+        "/cart/payments/{paymentID}/transactions/{transactionID}": {
+            "delete": {
+                "responses": {
+                    "204": {
+                        "description": ""
+                    }
+                },
+                "operationId": "Cart.DeletePaymentTransaction",
+                "tags": [
+                    "Cart"
+                ],
+                "parameters": [
+                    {
+                        "name": "paymentID",
+                        "in": "path",
+                        "description": "ID of the payment.",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "name": "transactionID",
+                        "in": "path",
+                        "description": "ID of the transaction.",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "summary": "Delete a cart payment transaction.",
+                "description": "",
+                "security": [
+                    {
+                        "OAuth2": [
+                            "FullAccess",
+                            "Shopper"
+                        ]
+                    }
+                ]
+            }
+        },
+        "/cart/promotions": {
+            "get": {
+                "responses": {
+                    "200": {
+                        "description": "",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "properties": {
+                                        "Items": {
+                                            "type": "array",
+                                            "items": {
+                                                "$ref": "#/components/schemas/OrderPromotion"
+                                            }
+                                        },
+                                        "Meta": {
+                                            "$ref": "#/components/schemas/Meta"
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                },
+                "operationId": "Cart.ListPromotions",
+                "tags": [
+                    "Cart"
+                ],
+                "parameters": [
+                    {
+                        "name": "search",
+                        "in": "query",
+                        "description": "Word or phrase to search for.",
+                        "required": false,
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "name": "searchOn",
+                        "in": "query",
+                        "description": "Comma-delimited list of fields to search on.",
+                        "required": false,
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "type": "string",
+                                "enum": [
+                                    "ID",
+                                    "Name",
+                                    "Code",
+                                    "Description",
+                                    "FinePrint",
+                                    "EligibleExpression",
+                                    "ValueExpression"
+                                ]
+                            }
+                        }
+                    },
+                    {
+                        "name": "sortBy",
+                        "in": "query",
+                        "description": "Comma-delimited list of fields to sort by.",
+                        "required": false,
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "type": "string",
+                                "enum": [
+                                    "Name",
+                                    "ID",
+                                    "Code",
+                                    "StartDate",
+                                    "ExpirationDate",
+                                    "EligibleExpression",
+                                    "ValueExpression",
+                                    "CanCombine",
+                                    "!Name",
+                                    "!ID",
+                                    "!Code",
+                                    "!StartDate",
+                                    "!ExpirationDate",
+                                    "!EligibleExpression",
+                                    "!ValueExpression",
+                                    "!CanCombine"
+                                ]
+                            }
+                        }
+                    },
+                    {
+                        "name": "page",
+                        "in": "query",
+                        "description": "Page of results to return. Default: 1. When paginating through many items (> page 30), we recommend the \"Last ID\" method, as outlined in the Advanced Querying documentation.",
+                        "required": false,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    },
+                    {
+                        "name": "pageSize",
+                        "in": "query",
+                        "description": "Number of results to return per page. Default: 20, max: 100.",
+                        "required": false,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    },
+                    {
+                        "name": "filters",
+                        "in": "query",
+                        "description": "An object or dictionary representing key/value pairs to apply as filters. Valid keys are top-level properties of the returned model or 'xp.???'",
+                        "required": false,
+                        "schema": {
+                            "type": "object"
+                        }
+                    }
+                ],
+                "summary": "Get a list of cart promotions.",
+                "description": "",
+                "security": [
+                    {
+                        "OAuth2": [
+                            "FullAccess",
+                            "Shopper"
+                        ]
+                    }
+                ]
+            }
+        },
+        "/cart/promotions/{promoCode}": {
+            "post": {
+                "responses": {
+                    "201": {
+                        "description": "",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/OrderPromotion"
+                                }
+                            }
+                        }
+                    }
+                },
+                "operationId": "Cart.AddPromotion",
+                "tags": [
+                    "Cart"
+                ],
+                "parameters": [
+                    {
+                        "name": "promoCode",
+                        "in": "path",
+                        "description": "Promo code of the order promotion.",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "summary": "Add a promotion.",
+                "description": "",
+                "security": [
+                    {
+                        "OAuth2": [
+                            "FullAccess",
+                            "Shopper"
+                        ]
+                    }
+                ]
+            },
+            "delete": {
+                "responses": {
+                    "204": {
+                        "description": ""
+                    }
+                },
+                "operationId": "Cart.DeletePromotion",
+                "tags": [
+                    "Cart"
+                ],
+                "parameters": [
+                    {
+                        "name": "promoCode",
+                        "in": "path",
+                        "description": "Promo code of the cart.",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "summary": "Delete a cart promotion.",
+                "description": "",
+                "security": [
+                    {
+                        "OAuth2": [
+                            "FullAccess",
+                            "Shopper"
+                        ]
+                    }
+                ]
+            }
+        },
+        "/cart/shipmethods": {
+            "post": {
+                "responses": {
+                    "200": {
+                        "description": "",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/OrderWorksheet"
+                                }
+                            }
+                        }
+                    }
+                },
+                "operationId": "Cart.SelectShipMethods",
+                "tags": [
+                    "Cart"
+                ],
+                "requestBody": {
+                    "required": true,
+                    "description": "",
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "allOf": [
+                                    {
+                                        "$ref": "#/components/schemas/OrderShipMethodSelection"
+                                    }
+                                ]
+                            }
+                        }
+                    }
+                },
+                "summary": "Select a ship methods.",
+                "description": "",
+                "security": [
+                    {
+                        "OAuth2": [
+                            "FullAccess",
+                            "Shopper"
+                        ]
+                    }
+                ]
+            }
+        },
+        "/cart/submit": {
+            "post": {
+                "responses": {
+                    "201": {
+                        "description": "",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/Order"
+                                }
+                            }
+                        }
+                    }
+                },
+                "operationId": "Cart.Submit",
+                "tags": [
+                    "Cart"
+                ],
+                "summary": "Submit a cart submit.",
+                "description": "",
+                "security": [
+                    {
+                        "OAuth2": [
+                            "FullAccess",
+                            "Shopper"
+                        ]
+                    }
+                ]
+            }
+        },
+        "/cart/validate": {
+            "post": {
+                "responses": {
+                    "204": {
+                        "description": ""
+                    }
+                },
+                "operationId": "Cart.Validate",
+                "tags": [
+                    "Cart"
+                ],
+                "summary": "Validate a cart validate.",
+                "description": "",
+                "security": [
+                    {
+                        "OAuth2": [
+                            "FullAccess",
+                            "Shopper"
+                        ]
+                    }
+                ]
+            }
+        },
+        "/cart/worksheet": {
+            "get": {
+                "responses": {
+                    "200": {
+                        "description": "",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/OrderWorksheet"
+                                }
+                            }
+                        }
+                    }
+                },
+                "operationId": "Cart.GetOrderWorksheet",
+                "tags": [
+                    "Cart"
+                ],
+                "summary": "Get a single cart order worksheet.",
+                "description": "",
+                "security": [
+                    {
+                        "OAuth2": [
+                            "FullAccess",
+                            "Shopper"
                         ]
                     }
                 ]
@@ -17717,6 +19365,565 @@
                 ]
             }
         },
+        "/me/productcollections": {
+            "get": {
+                "responses": {
+                    "200": {
+                        "description": "Only available to Buyer Users.",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "properties": {
+                                        "Items": {
+                                            "type": "array",
+                                            "items": {
+                                                "$ref": "#/components/schemas/ProductCollection"
+                                            }
+                                        },
+                                        "Meta": {
+                                            "$ref": "#/components/schemas/Meta"
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                },
+                "operationId": "Me.ListProductCollections",
+                "tags": [
+                    "Me"
+                ],
+                "parameters": [
+                    {
+                        "name": "search",
+                        "in": "query",
+                        "description": "Word or phrase to search for.",
+                        "required": false,
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "name": "searchOn",
+                        "in": "query",
+                        "description": "Comma-delimited list of fields to search on.",
+                        "required": false,
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "type": "string",
+                                "enum": [
+                                    "ID",
+                                    "Name"
+                                ]
+                            }
+                        }
+                    },
+                    {
+                        "name": "sortBy",
+                        "in": "query",
+                        "description": "Comma-delimited list of fields to sort by.",
+                        "required": false,
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "type": "string",
+                                "enum": [
+                                    "Name",
+                                    "ID",
+                                    "!Name",
+                                    "!ID"
+                                ]
+                            }
+                        }
+                    },
+                    {
+                        "name": "page",
+                        "in": "query",
+                        "description": "Page of results to return. Default: 1. When paginating through many items (> page 30), we recommend the \"Last ID\" method, as outlined in the Advanced Querying documentation.",
+                        "required": false,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    },
+                    {
+                        "name": "pageSize",
+                        "in": "query",
+                        "description": "Number of results to return per page. Default: 20, max: 100.",
+                        "required": false,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    },
+                    {
+                        "name": "filters",
+                        "in": "query",
+                        "description": "An object or dictionary representing key/value pairs to apply as filters. Valid keys are top-level properties of the returned model or 'xp.???'",
+                        "required": false,
+                        "schema": {
+                            "type": "object"
+                        }
+                    }
+                ],
+                "summary": "Get a list of product collections visible to this user.",
+                "description": "Only available to Buyer Users.",
+                "security": [
+                    {
+                        "OAuth2": [
+                            "FullAccess",
+                            "Shopper"
+                        ]
+                    }
+                ]
+            },
+            "post": {
+                "responses": {
+                    "201": {
+                        "description": "Only available to Buyer Users.",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ProductCollection"
+                                }
+                            }
+                        }
+                    }
+                },
+                "operationId": "Me.CreateProductCollection",
+                "tags": [
+                    "Me"
+                ],
+                "requestBody": {
+                    "required": true,
+                    "description": "",
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "allOf": [
+                                    {
+                                        "$ref": "#/components/schemas/ProductCollection"
+                                    }
+                                ],
+                                "required": [
+                                    "Name"
+                                ]
+                            }
+                        }
+                    }
+                },
+                "summary": "Create a new product collection.",
+                "description": "Only available to Buyer Users.",
+                "security": [
+                    {
+                        "OAuth2": [
+                            "FullAccess",
+                            "Shopper"
+                        ]
+                    }
+                ]
+            }
+        },
+        "/me/productcollections/{productCollectionID}": {
+            "get": {
+                "responses": {
+                    "200": {
+                        "description": "Only available to Buyer Users.",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ProductCollection"
+                                }
+                            }
+                        }
+                    }
+                },
+                "operationId": "Me.GetProductCollection",
+                "tags": [
+                    "Me"
+                ],
+                "parameters": [
+                    {
+                        "name": "productCollectionID",
+                        "in": "path",
+                        "description": "ID of the product collection.",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "summary": "Get a single product collection.",
+                "description": "Only available to Buyer Users.",
+                "security": [
+                    {
+                        "OAuth2": [
+                            "FullAccess",
+                            "Shopper"
+                        ]
+                    }
+                ]
+            },
+            "put": {
+                "responses": {
+                    "200": {
+                        "description": "Only available to Buyer Users.",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ProductCollection"
+                                }
+                            }
+                        }
+                    }
+                },
+                "operationId": "Me.SaveProductCollection",
+                "tags": [
+                    "Me"
+                ],
+                "requestBody": {
+                    "required": true,
+                    "description": "",
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "allOf": [
+                                    {
+                                        "$ref": "#/components/schemas/ProductCollection"
+                                    }
+                                ],
+                                "required": [
+                                    "Name"
+                                ]
+                            }
+                        }
+                    }
+                },
+                "parameters": [
+                    {
+                        "name": "productCollectionID",
+                        "in": "path",
+                        "description": "ID of the product collection.",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "summary": "Create or update a product collection.",
+                "description": "Only available to Buyer Users.",
+                "security": [
+                    {
+                        "OAuth2": [
+                            "FullAccess",
+                            "Shopper"
+                        ]
+                    }
+                ]
+            },
+            "delete": {
+                "responses": {
+                    "204": {
+                        "description": "Only available to Buyer Users."
+                    }
+                },
+                "operationId": "Me.DeleteProductCollection",
+                "tags": [
+                    "Me"
+                ],
+                "parameters": [
+                    {
+                        "name": "productCollectionID",
+                        "in": "path",
+                        "description": "ID of the product collection.",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "summary": "Delete a product collection.",
+                "description": "Only available to Buyer Users.",
+                "security": [
+                    {
+                        "OAuth2": [
+                            "FullAccess",
+                            "Shopper"
+                        ]
+                    }
+                ]
+            },
+            "patch": {
+                "responses": {
+                    "200": {
+                        "description": "Only available to Buyer Users.",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ProductCollection"
+                                }
+                            }
+                        }
+                    }
+                },
+                "operationId": "Me.PatchProductCollection",
+                "tags": [
+                    "Me"
+                ],
+                "requestBody": {
+                    "required": true,
+                    "description": "",
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "allOf": [
+                                    {
+                                        "$ref": "#/components/schemas/ProductCollection"
+                                    }
+                                ]
+                            }
+                        }
+                    }
+                },
+                "parameters": [
+                    {
+                        "name": "productCollectionID",
+                        "in": "path",
+                        "description": "ID of the product collection.",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "summary": "Partially update a product collection.",
+                "description": "Only available to Buyer Users.",
+                "security": [
+                    {
+                        "OAuth2": [
+                            "FullAccess",
+                            "Shopper"
+                        ]
+                    }
+                ]
+            }
+        },
+        "/me/productcollections/{productCollectionID}/{productID}": {
+            "put": {
+                "responses": {
+                    "204": {
+                        "description": "Only available to Buyer Users."
+                    }
+                },
+                "operationId": "Me.CreateProductCollectionEntry",
+                "tags": [
+                    "Me"
+                ],
+                "parameters": [
+                    {
+                        "name": "productCollectionID",
+                        "in": "path",
+                        "description": "ID of the product collection.",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "name": "productID",
+                        "in": "path",
+                        "description": "ID of the product.",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "summary": "Create a new product collection entry.",
+                "description": "Only available to Buyer Users.",
+                "security": [
+                    {
+                        "OAuth2": [
+                            "FullAccess",
+                            "Shopper"
+                        ]
+                    }
+                ]
+            },
+            "delete": {
+                "responses": {
+                    "204": {
+                        "description": "Only available to Buyer Users."
+                    }
+                },
+                "operationId": "Me.DeleteProductCollectionEntry",
+                "tags": [
+                    "Me"
+                ],
+                "parameters": [
+                    {
+                        "name": "productCollectionID",
+                        "in": "path",
+                        "description": "ID of the product collection.",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "name": "productID",
+                        "in": "path",
+                        "description": "ID of the product.",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "summary": "Delete a product collection entry.",
+                "description": "Only available to Buyer Users.",
+                "security": [
+                    {
+                        "OAuth2": [
+                            "FullAccess",
+                            "Shopper"
+                        ]
+                    }
+                ]
+            }
+        },
+        "/me/productcollections/{productCollectionID}/products": {
+            "get": {
+                "responses": {
+                    "200": {
+                        "description": "Only available to Buyer Users.",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "properties": {
+                                        "Items": {
+                                            "type": "array",
+                                            "items": {
+                                                "$ref": "#/components/schemas/BuyerProduct"
+                                            }
+                                        },
+                                        "Meta": {
+                                            "$ref": "#/components/schemas/MetaWithFacets"
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                },
+                "operationId": "Me.ListProductCollectionEntries",
+                "tags": [
+                    "Me"
+                ],
+                "parameters": [
+                    {
+                        "name": "productCollectionID",
+                        "in": "path",
+                        "description": "ID of the product collection.",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "name": "search",
+                        "in": "query",
+                        "description": "Word or phrase to search for.",
+                        "required": false,
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "name": "searchOn",
+                        "in": "query",
+                        "description": "Comma-delimited list of fields to search on.",
+                        "required": false,
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "type": "string",
+                                "enum": [
+                                    "ID",
+                                    "Name",
+                                    "Description"
+                                ]
+                            }
+                        }
+                    },
+                    {
+                        "name": "searchType",
+                        "in": "query",
+                        "description": "Type of search to perform. Possible values: AnyTerm (default), AllTermsAnyField, AllTermsSameField, ExactPhrase, ExactPhrasePrefix.",
+                        "required": false,
+                        "schema": {
+                            "$ref": "#/components/schemas/SearchType"
+                        }
+                    },
+                    {
+                        "name": "sortBy",
+                        "in": "query",
+                        "description": "Comma-delimited list of fields to sort by.",
+                        "required": false,
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "type": "string",
+                                "enum": [
+                                    "Name",
+                                    "ID",
+                                    "!Name",
+                                    "!ID"
+                                ]
+                            }
+                        }
+                    },
+                    {
+                        "name": "page",
+                        "in": "query",
+                        "description": "Page of results to return. Default: 1. When paginating through many items (> page 30), we recommend the \"Last ID\" method, as outlined in the Advanced Querying documentation.",
+                        "required": false,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    },
+                    {
+                        "name": "pageSize",
+                        "in": "query",
+                        "description": "Number of results to return per page. Default: 20, max: 100.",
+                        "required": false,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    },
+                    {
+                        "name": "filters",
+                        "in": "query",
+                        "description": "An object or dictionary representing key/value pairs to apply as filters. Valid keys are top-level properties of the returned model or 'xp.???'",
+                        "required": false,
+                        "schema": {
+                            "type": "object"
+                        }
+                    }
+                ],
+                "summary": "Get a list of product collection entries visible to this user.",
+                "description": "Only available to Buyer Users.",
+                "security": [
+                    {
+                        "OAuth2": [
+                            "FullAccess",
+                            "Shopper"
+                        ]
+                    }
+                ]
+            }
+        },
         "/me/products": {
             "get": {
                 "responses": {
@@ -19954,6 +22161,10 @@
                                     {
                                         "$ref": "#/components/schemas/MessageCCListenerAssignment"
                                     }
+                                ],
+                                "required": [
+                                    "MessageSenderAssignment",
+                                    "MessageType"
                                 ]
                             }
                         }
@@ -20381,7 +22592,10 @@
                             "type": "array",
                             "items": {
                                 "type": "string",
-                                "enum": []
+                                "enum": [
+                                    "ID",
+                                    "OrderID"
+                                ]
                             }
                         }
                     },
@@ -20397,6 +22611,8 @@
                                 "enum": [
                                     "DateSubmitted",
                                     "DateCreated",
+                                    "ID",
+                                    "OrderID",
                                     "DateApproved",
                                     "DateDeclined",
                                     "DateCanceled",
@@ -20404,6 +22620,8 @@
                                     "LastUpdated",
                                     "!DateSubmitted",
                                     "!DateCreated",
+                                    "!ID",
+                                    "!OrderID",
                                     "!DateApproved",
                                     "!DateDeclined",
                                     "!DateCanceled",
@@ -22772,8 +24990,7 @@
                                     }
                                 ],
                                 "required": [
-                                    "ProductID",
-                                    "Quantity"
+                                    "ProductID"
                                 ]
                             }
                         }
@@ -22901,8 +25118,7 @@
                                     }
                                 ],
                                 "required": [
-                                    "ProductID",
-                                    "Quantity"
+                                    "ProductID"
                                 ]
                             }
                         }
@@ -24643,7 +26859,7 @@
             "post": {
                 "responses": {
                     "204": {
-                        "description": "Sends a temporary verification code via email, which must subsequently be passed in a Reset Password call."
+                        "description": "Sends a temporary verification code via email, which must subsequently be passed in a Reset Password call. The verification code expires in 120 minutes."
                     }
                 },
                 "operationId": "PasswordResets.SendVerificationCode",
@@ -24669,7 +26885,7 @@
                     }
                 },
                 "summary": "Send a verification code.",
-                "description": "Sends a temporary verification code via email, which must subsequently be passed in a Reset Password call.",
+                "description": "Sends a temporary verification code via email, which must subsequently be passed in a Reset Password call. The verification code expires in 120 minutes.",
                 "security": [
                     {
                         "OAuth2": []
@@ -25323,8 +27539,7 @@
                                     }
                                 ],
                                 "required": [
-                                    "Name",
-                                    "MinCount"
+                                    "Name"
                                 ]
                             }
                         }
@@ -25412,8 +27627,7 @@
                                     }
                                 ],
                                 "required": [
-                                    "Name",
-                                    "MinCount"
+                                    "Name"
                                 ]
                             }
                         }
@@ -30552,6 +32766,10 @@
                                     {
                                         "$ref": "#/components/schemas/SpecProductAssignment"
                                     }
+                                ],
+                                "required": [
+                                    "SpecID",
+                                    "ProductID"
                                 ]
                             }
                         }
@@ -32167,6 +34385,10 @@
                                     {
                                         "$ref": "#/components/schemas/UserGroupAssignment"
                                     }
+                                ],
+                                "required": [
+                                    "UserGroupID",
+                                    "UserID"
                                 ]
                             }
                         }
@@ -33114,6 +35336,10 @@
                                     {
                                         "$ref": "#/components/schemas/UserGroupAssignment"
                                     }
+                                ],
+                                "required": [
+                                    "UserGroupID",
+                                    "UserID"
                                 ]
                             }
                         }
@@ -33646,7 +35872,7 @@
                     {
                         "name": "thingType",
                         "in": "path",
-                        "description": "Thing type of the xp index. Possible values: Address, Variant, Order, OrderReturn, LineItem, CostCenter, CreditCard, Payment, Spec, SpecOption, UserGroup, Company, Category, PriceSchedule, Shipment, SpendingAccount, User, Promotion, ApprovalRule, SellerApprovalRule, Catalog, ProductFacet, MessageSender, InventoryRecord.",
+                        "description": "Thing type of the xp index. Possible values: Address, Variant, Order, OrderReturn, LineItem, CostCenter, CreditCard, Payment, Spec, SpecOption, UserGroup, Company, Category, PriceSchedule, Shipment, SpendingAccount, User, Promotion, ApprovalRule, SellerApprovalRule, Catalog, ProductFacet, MessageSender, InventoryRecord, ProductCollection.",
                         "required": true,
                         "schema": {
                             "$ref": "#/components/schemas/XpThingType"

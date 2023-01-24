@@ -1,5 +1,5 @@
 import pkg, { range } from 'lodash';
-import { OCResource } from "../models/oc-resources";
+import { OCResourceDirectoryEntry } from "../models/oc-resources";
 import Bottleneck from 'bottleneck';
 import chalk from 'chalk';
 import _ from 'lodash';
@@ -62,13 +62,13 @@ export default class OrderCloudBulk {
         console.log("Response data:", error.errors.Errors[0]);
     }
 
-    async ListAll(resource: OCResource, ...routeParams: string[]): Promise<any[]> {
+    async ListAll(resource: OCResourceDirectoryEntry, ...routeParams: string[]): Promise<any[]> {
         const listFunc = resource.sdkObject[resource.openApiListOperation] as Function; 
 
         return await this.ListAllWithFunction(resource, listFunc, ...routeParams);
     }
 
-    async ListAllWithFunction(resource: OCResource, listFunc: Function, ...routeParams: string[]): Promise<any[]> {
+    async ListAllWithFunction(resource: OCResourceDirectoryEntry, listFunc: Function, ...routeParams: string[]): Promise<any[]> {
         const queryParams = { page: 1, pageSize: 100, depth: 'all'}; // depth only applies to categories
         const meta: JobGroupMetaData = {
             actionType: JobActionType.LIST,
@@ -89,7 +89,7 @@ export default class OrderCloudBulk {
         return flatten([page1, ...results].map((r) => r.Items));
     }
 
-    async CreateAll(resource: OCResource, records: any[]): Promise<any[]> {
+    async CreateAll(resource: OCResourceDirectoryEntry, records: any[]): Promise<any[]> {
         const createFunc = resource.sdkObject[resource.openApiCreateOperation] as Function;  
         const meta: JobGroupMetaData = {
             actionType: JobActionType.CREATE,
