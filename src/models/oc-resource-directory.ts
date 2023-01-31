@@ -1,52 +1,44 @@
 import axios from "axios";
 import { Addresses, AdminAddresses, InventoryRecords, AdminUserGroups, AdminUsers, ApiClients, ApprovalRules, Buyers, Catalogs, Categories, CostCenters, CreditCards, ImpersonationConfigs, Incrementors, IntegrationEvents, Locales, MessageSenders, OpenIdConnects, PriceSchedules, ProductFacets, Products, Promotions, SecurityProfiles, Specs, SpendingAccounts, SupplierAddresses, Suppliers, SupplierUserGroups, SupplierUsers, UserGroups, Users, Webhooks, XpIndices, SellerApprovalRules } from "ordercloud-javascript-sdk";
 import { OCResourceEnum } from "./oc-resource-enum";
-import { OCResource, ResourceReference, ResourceReferenceType } from "./oc-resources";
+import { OCResourceMetaData as OCResourceMetadata, OCResourceMetaDataHardCoded, RecordValidationFunc, ResourceReference, ResourceReferenceType } from "./oc-resources";
 import _ from 'lodash';
-import { ApiClientValidationFunc, ImpersonationConfigValidationFunc, InventoryRecordValidationFunc, LocaleAssignmentValidationFunc, ProductAssignmentValidationFunc, ProductValidationFunc, RecordValidationFunc, SecurityProfileAssignmentValidationFunc, SellerApprovalRuleValidationFunc, VariantInventoryRecordValidationFunc, VariantValidationFunc, WebhookValidationFunc } from "../services/custom-validation-func";
 import { OpenAPIProperties } from "./open-api";
+import { ImpersonationConfigValidationFunc } from "../services/custom-validation-functions/ImpersonationConfigValidationFunc";
+import { ApiClientValidationFunc } from "../services/custom-validation-functions/ApiClientValidationFunc";
+import { WebhookValidationFunc } from "../services/custom-validation-functions/WebhookValidationFunc";
+import { ProductValidationFunc } from "../services/custom-validation-functions/ProductValidationFunc";
+import { VariantValidationFunc } from "../services/custom-validation-functions/VariantValidationFunc";
+import { InventoryRecordValidationFunc } from "../services/custom-validation-functions/InventoryRecordValidationFunc";
+import { VariantInventoryRecordValidationFunc } from "../services/custom-validation-functions/VariantInventoryRecordValidationFunc";
+import { SellerApprovalRuleValidationFunc } from "../services/custom-validation-functions/SellerApprovalRuleValidationFunc";
+import { SecurityProfileAssignmentValidationFunc } from "../services/custom-validation-functions/SecurityProfileAssignmentValidationFunc";
+import { LocaleAssignmentValidationFunc } from "../services/custom-validation-functions/LocaleAssignmentValidationFunc";
+import { ProductAssignmentValidationFunc } from "../services/custom-validation-functions/ProductAssignmentValidationFunc";
 
-// Hard coded in the directory to match records with the Open API Spec
-interface OpenAPIDirectoryEntry {
-    schemaName: string; // matches open api spec model for POST
-    listFunction: Function;
-    createFunction: Function;
-    resourcePath: string;
-    schemaAllProperties?: OpenAPIProperties; // used to validate field types
-    createOperationRequiredProperties?: string[]; // used to validate required fields
+interface OCResourcesMetaData {
+    [key: string]: OCResourceMetadata
 }
 
-export interface OCResourceDirectoryEntry {
-    name: OCResourceEnum;
-    openApiSpec: OpenAPIDirectoryEntry;
-    isAssignment: boolean;
-    routeParams?: string[];
-    createPriority: number; // higher numbers need to be created first
-    outgoingResourceReferences?: ResourceReference[];
-    //incommingResourceReferences?: ResourceReference[];
-    redactFields?: string[];
-    downloadTransformFunc?: (x: any) => any,
-    customValidationFunc?: RecordValidationFunc,
-    shouldAttemptListFunc?: (parentRecord: any) => boolean
+interface OCResourcesMetaDataHardCoded {
+    [key: string]: OCResourceMetaDataHardCoded
 }
 
-const Directory: OCResourceDirectoryEntry[] = [
-    { 
-        name: OCResourceEnum.SecurityProfiles,
+const ocResourceMetaDataHardCoded: OCResourcesMetaDataHardCoded = {
+    [OCResourceEnum.SecurityProfiles]: { 
         openApiSpec: {
             schemaName: 'SecurityProfile',
-            resourcePath: "/securityprofiles",
+            resourceCreatePath: "/securityprofiles",
             listFunction: SecurityProfiles.List,
             createFunction: SecurityProfiles.Create
         }, 
         createPriority: 2,
         isAssignment: false,
     },
-    { 
-        name: OCResourceEnum.ImpersonationConfigs,
+    [OCResourceEnum.ImpersonationConfigs]: { 
         openApiSpec: {
             schemaName: 'ImpersonationConfig',
-            resourcePath: "/impersonationconfig",
+            resourceCreatePath: "/impersonationconfig",
             listFunction: ImpersonationConfigs.List,
             createFunction: ImpersonationConfigs.Create
         }, 
@@ -55,50 +47,47 @@ const Directory: OCResourceDirectoryEntry[] = [
         customValidationFunc: ImpersonationConfigValidationFunc,
         outgoingResourceReferences: [
             { 
-                referenceType: ResourceReferenceType.Horizontal,
+                referenceType: ResourceReferenceType.Reference,
                 fieldNameOnThisResource: "ClientID",
                 fieldNameOnOtherReasource: "ID",
                 otherResourceName: OCResourceEnum.ApiClients,  
             },
             { 
-                referenceType: ResourceReferenceType.Horizontal,
+                referenceType: ResourceReferenceType.Reference,
                 fieldNameOnThisResource: "SecurityProfileID", 
                 fieldNameOnOtherReasource: "ID",
                 otherResourceName: OCResourceEnum.SecurityProfiles,
             },
             { 
-                referenceType: ResourceReferenceType.Horizontal,
+                referenceType: ResourceReferenceType.Reference,
                 fieldNameOnThisResource: "BuyerID", 
                 fieldNameOnOtherReasource: "ID",
                 otherResourceName: OCResourceEnum.Buyers, 
             },
             { 
-                referenceType: ResourceReferenceType.Horizontal,
+                referenceType: ResourceReferenceType.Reference,
                 fieldNameOnThisResource: "GroupID",
                 fieldNameOnOtherReasource: "ID",
                 otherResourceName: OCResourceEnum.UserGroups,
-                foreignParentRefField: "BuyerID",
             },
             { 
-                referenceType: ResourceReferenceType.Horizontal,  
+                referenceType: ResourceReferenceType.Reference,  
                 fieldNameOnThisResource: "UserID",
                 fieldNameOnOtherReasource: "ID",
                 otherResourceName: OCResourceEnum.Users,
-                foreignParentRefField: "BuyerID",
             },
             { 
-                referenceType: ResourceReferenceType.Horizontal, 
+                referenceType: ResourceReferenceType.Reference, 
                 fieldNameOnThisResource: "ImpersonationBuyerID",
                 fieldNameOnOtherReasource: "ID", 
                 otherResourceName: OCResourceEnum.Buyers,
             },
         ]
     },
-    {
-        name: OCResourceEnum.OpenIdConnects,
+    [OCResourceEnum.OpenIdConnects]: {
         openApiSpec: {
             schemaName: 'OpenIdConnect',
-            resourcePath: "/openidconnects",
+            resourceCreatePath: "/openidconnects",
             listFunction: OpenIdConnects.List,
             createFunction: OpenIdConnects.Create
         }, 
@@ -108,24 +97,23 @@ const Directory: OCResourceDirectoryEntry[] = [
         outgoingResourceReferences: 
         [
             { 
-                referenceType: ResourceReferenceType.Horizontal,  
+                referenceType: ResourceReferenceType.Reference,  
                 fieldNameOnThisResource: "OrderCloudApiClientID",
                 fieldNameOnOtherReasource: "ID",
                 otherResourceName: OCResourceEnum.ApiClients,
             },
             { 
-                referenceType: ResourceReferenceType.Horizontal, 
+                referenceType: ResourceReferenceType.Reference, 
                 fieldNameOnThisResource: "IntegrationEventID",
                 fieldNameOnOtherReasource: "ID", 
                 otherResourceName: OCResourceEnum.IntegrationEvents,
             }
         ]
     },
-    {
-        name: OCResourceEnum.AdminUsers,
+    [OCResourceEnum.AdminUsers]: {
         openApiSpec: {
             schemaName: 'UserGroup',
-            resourcePath: "/adminusers",
+            resourceCreatePath: "/adminusers",
             listFunction: AdminUsers.List,
             createFunction: AdminUsers.Create
         }, 
@@ -137,33 +125,30 @@ const Directory: OCResourceDirectoryEntry[] = [
             return x;
         }
     },
-    {
-        name: OCResourceEnum.AdminUserGroups,
+    [OCResourceEnum.AdminUserGroups]: {
         openApiSpec: {
             schemaName: 'UserGroup',
-            resourcePath: "/usergroups",
+            resourceCreatePath: "/usergroups",
             listFunction: AdminUserGroups.List,
             createFunction: AdminUserGroups.Create
         },  
         createPriority: 2,
         isAssignment: false,
     },
-    {
-        name: OCResourceEnum.AdminAddresses, 
+    [OCResourceEnum.AdminAddresses]: {
         openApiSpec: {
             schemaName: 'Address',
-            resourcePath: "/addresses",
+            resourceCreatePath: "/addresses",
             listFunction: AdminAddresses.List,
             createFunction: AdminAddresses.Create
         }, 
         createPriority: 2,
         isAssignment: false,
     },
-    {
-        name: OCResourceEnum.MessageSenders,  
+    [OCResourceEnum.MessageSenders]: {
         openApiSpec: {
             schemaName: 'MessageSender',
-            resourcePath: "/messagesenders",
+            resourceCreatePath: "/messagesenders",
             listFunction: MessageSenders.List,
             createFunction: MessageSenders.Create
         }, 
@@ -171,11 +156,10 @@ const Directory: OCResourceDirectoryEntry[] = [
         isAssignment: false,
         redactFields: ["SharedKey"],
     },
-    {
-        name: OCResourceEnum.ApiClients,
+    [OCResourceEnum.ApiClients]: {
         openApiSpec: {
             schemaName: 'ApiClient',
-            resourcePath: "/apiclients",
+            resourceCreatePath: "/apiclients",
             listFunction: ApiClients.List,
             createFunction: ApiClients.Create
         }, 
@@ -185,19 +169,19 @@ const Directory: OCResourceDirectoryEntry[] = [
         outgoingResourceReferences:
         [
             { 
-                referenceType: ResourceReferenceType.Horizontal,  
+                referenceType: ResourceReferenceType.Reference,  
                 fieldNameOnThisResource: "OrderCheckoutIntegrationEventID",
                 fieldNameOnOtherReasource: "ID",
                 otherResourceName: OCResourceEnum.IntegrationEvents,
             },
             { 
-                referenceType: ResourceReferenceType.Horizontal, 
+                referenceType: ResourceReferenceType.Reference, 
                 fieldNameOnThisResource: "OrderReturnIntegrationEventID",
                 fieldNameOnOtherReasource: "ID", 
                 otherResourceName: OCResourceEnum.IntegrationEvents,
             },
             { 
-                referenceType: ResourceReferenceType.Horizontal, 
+                referenceType: ResourceReferenceType.Reference, 
                 fieldNameOnThisResource: "AddToCartIntegrationEventID",
                 fieldNameOnOtherReasource: "ID", 
                 otherResourceName: OCResourceEnum.IntegrationEvents,
@@ -209,11 +193,10 @@ const Directory: OCResourceDirectoryEntry[] = [
         },
         customValidationFunc: ApiClientValidationFunc, 
     },
-    {
-        name: OCResourceEnum.Locales,
+    [OCResourceEnum.Locales]: {
         openApiSpec: {
             schemaName: 'Locale',
-            resourcePath: "/locales",
+            resourceCreatePath: "/locales",
             listFunction: Incrementors.List,
             createFunction: Incrementors.Create
         },
@@ -228,22 +211,20 @@ const Directory: OCResourceDirectoryEntry[] = [
             },
         ],
     },
-    {
-        name: OCResourceEnum.Incrementors,
+    [OCResourceEnum.Incrementors]: {
         openApiSpec: {
             schemaName: 'Incrementor',
-            resourcePath: "/incrementors",
+            resourceCreatePath: "/incrementors",
             listFunction: Incrementors.List,
             createFunction: Incrementors.Create
         }, 
         createPriority: 1,
         isAssignment: false,
     },
-    {
-        name: OCResourceEnum.Webhooks, 
+    [OCResourceEnum.Webhooks]: {
         openApiSpec: {
             schemaName: "Webhook",
-            resourcePath: "/webhooks",
+            resourceCreatePath: "/webhooks",
             listFunction: Webhooks.List,
             createFunction: Webhooks.Create
         }, 
@@ -253,11 +234,10 @@ const Directory: OCResourceDirectoryEntry[] = [
         // for .ApiClientIDs
         customValidationFunc: WebhookValidationFunc
     },
-    {
-        name: OCResourceEnum.IntegrationEvents,
+    [OCResourceEnum.IntegrationEvents]: {
         openApiSpec: {
             schemaName: "IntegrationEvent",
-            resourcePath: "/integrationEvents",
+            resourceCreatePath: "/integrationEvents",
             listFunction: IntegrationEvents.List,
             createFunction: IntegrationEvents.Create
         },  
@@ -265,22 +245,20 @@ const Directory: OCResourceDirectoryEntry[] = [
         isAssignment: false,
         redactFields: ["HashKey"],
     },
-    {
-        name: OCResourceEnum.XpIndices, 
+    [OCResourceEnum.XpIndices]: {
         openApiSpec: {
             schemaName: "XpIndex",
-            resourcePath: "/xpindices",
+            resourceCreatePath: "/xpindices",
             listFunction: XpIndices.List,
             createFunction: XpIndices.Put
         }, 
         createPriority: 1,
         isAssignment: false,
     },
-    {
-        name: OCResourceEnum.Buyers, 
+    [OCResourceEnum.Buyers]: {
         openApiSpec: {
             schemaName: "User",
-            resourcePath: "/buyers",
+            resourceCreatePath: "/buyers",
             listFunction: Buyers.List,
             createFunction: Buyers.Create
         }, 
@@ -288,18 +266,17 @@ const Directory: OCResourceDirectoryEntry[] = [
         isAssignment: false,
         outgoingResourceReferences: [
             { 
-                referenceType: ResourceReferenceType.Horizontal, 
+                referenceType: ResourceReferenceType.Reference, 
                 fieldNameOnThisResource: "DefaultCatalogID",
                 fieldNameOnOtherReasource: "ID", 
                 otherResourceName: OCResourceEnum.Catalogs,
             }
         ]
     },
-    {
-        name: OCResourceEnum.Users, 
+    [OCResourceEnum.Users]: {
         openApiSpec: {
             schemaName: "User",
-            resourcePath: "/buyers/{buyerID}/users",
+            resourceCreatePath: "/buyers/{buyerID}/users",
             listFunction: Users.List,
             createFunction: Users.Create
         }, 
@@ -319,11 +296,10 @@ const Directory: OCResourceDirectoryEntry[] = [
             return x;
         }
     },
-    {
-        name: OCResourceEnum.UserGroups,
+    [OCResourceEnum.UserGroups]: {
         openApiSpec: {
             schemaName: "UserGroup",
-            resourcePath: "/buyers/{buyerID}/usergroups",
+            resourceCreatePath: "/buyers/{buyerID}/usergroups",
             listFunction: UserGroups.List,
             createFunction: UserGroups.Create
         }, 
@@ -339,11 +315,10 @@ const Directory: OCResourceDirectoryEntry[] = [
             },
         ],
     },
-    {
-        name: OCResourceEnum.Addresses,
+    [OCResourceEnum.Addresses]: {
         openApiSpec: {
             schemaName: "Address",
-            resourcePath: "/buyers/{buyerID}/addresses",
+            resourceCreatePath: "/buyers/{buyerID}/addresses",
             listFunction: Addresses.List,
             createFunction: Addresses.Create
         }, 
@@ -359,11 +334,10 @@ const Directory: OCResourceDirectoryEntry[] = [
             },
         ],
     },
-    {
-        name: OCResourceEnum.CostCenters,
+    [OCResourceEnum.CostCenters]: {
         openApiSpec: {
             schemaName: "CostCenter",
-            resourcePath: "/buyers/{buyerID}/costcenters",
+            resourceCreatePath: "/buyers/{buyerID}/costcenters",
             listFunction: CostCenters.List,
             createFunction: CostCenters.Create
         },
@@ -379,11 +353,10 @@ const Directory: OCResourceDirectoryEntry[] = [
             },
         ],
     },
-    {
-        name: OCResourceEnum.CreditCards,
+    [OCResourceEnum.CreditCards]: {
         openApiSpec: {
             schemaName: "CreditCard",
-            resourcePath: "/buyers/{buyerID}/creditcards",
+            resourceCreatePath: "/buyers/{buyerID}/creditcards",
             listFunction: CreditCards.List,
             createFunction: CreditCards.Create
         }, 
@@ -399,11 +372,10 @@ const Directory: OCResourceDirectoryEntry[] = [
             },
         ],
     },
-    {
-        name: OCResourceEnum.SpendingAccounts,
+    [OCResourceEnum.SpendingAccounts]: {
         openApiSpec: {
             schemaName: "SpendingAccount",
-            resourcePath: "/buyers/{buyerID}/spendingaccounts",
+            resourceCreatePath: "/buyers/{buyerID}/spendingaccounts",
             listFunction: SpendingAccounts.List,
             createFunction: SpendingAccounts.Create
         }, 
@@ -419,11 +391,10 @@ const Directory: OCResourceDirectoryEntry[] = [
             },
         ]
     },
-    {
-        name: OCResourceEnum.ApprovalRules,
+    [OCResourceEnum.ApprovalRules]: {
         openApiSpec: {
             schemaName: "ApprovalRule",
-            resourcePath: "/buyers/{buyerID}/approvalrules",
+            resourceCreatePath: "/buyers/{buyerID}/approvalrules",
             listFunction: ApprovalRules.List,
             createFunction: ApprovalRules.Create
         },
@@ -441,16 +412,14 @@ const Directory: OCResourceDirectoryEntry[] = [
                 fieldNameOnThisResource: "ApprovingGroupID",
                 fieldNameOnOtherReasource: "ID", 
                 otherResourceName: OCResourceEnum.UserGroups,
-                referenceType: ResourceReferenceType.Horizontal,
-                foreignParentRefField: "BuyerID",
+                referenceType: ResourceReferenceType.Reference,
             }
         ]
     },
-    {
-        name: OCResourceEnum.Catalogs,
+    [OCResourceEnum.Catalogs]: {
         openApiSpec: {
             schemaName: "Catalog",
-            resourcePath: "/catalogs",
+            resourceCreatePath: "/catalogs",
             listFunction: Catalogs.List,
             createFunction: Catalogs.Create
         }, 
@@ -465,11 +434,10 @@ const Directory: OCResourceDirectoryEntry[] = [
             },
         ]
     },
-    {
-        name: OCResourceEnum.Categories,
+    [OCResourceEnum.Categories]: {
         openApiSpec: {
             schemaName: "Category",
-            resourcePath: "/catalogs/{catalogID}/categories",
+            resourceCreatePath: "/catalogs/{catalogID}/categories",
             listFunction: Categories.List,
             createFunction: Categories.Create
         },
@@ -487,27 +455,24 @@ const Directory: OCResourceDirectoryEntry[] = [
                 fieldNameOnThisResource: "CatalogID",
                 fieldNameOnOtherReasource: "ID", 
                 otherResourceName: OCResourceEnum.Categories,
-                referenceType: ResourceReferenceType.Horizontal,
-                foreignParentRefField: "CatalogID", 
+                referenceType: ResourceReferenceType.Reference,
             }
         ]
     },
-    {
-        name: OCResourceEnum.Suppliers, 
+    [OCResourceEnum.Suppliers]: {
         openApiSpec: {
             schemaName: "Supplier",
-            resourcePath: "/suppliers",
+            resourceCreatePath: "/suppliers",
             listFunction: Suppliers.List,
             createFunction: Suppliers.Create
         },
         createPriority: 2,
         isAssignment: false,
     },
-    {
-        name: OCResourceEnum.SupplierUsers, 
+    [OCResourceEnum.SupplierUsers]: {
         openApiSpec: {
             schemaName: "User",
-            resourcePath: "/suppliers/{supplierID}/users",
+            resourceCreatePath: "/suppliers/{supplierID}/users",
             listFunction: SupplierUsers.List,
             createFunction: SupplierUsers.Create
         },
@@ -527,11 +492,10 @@ const Directory: OCResourceDirectoryEntry[] = [
             return x;
         }
     },
-    {
-        name: OCResourceEnum.SupplierUserGroups, 
+    [OCResourceEnum.SupplierUserGroups]: {
         openApiSpec: {
             schemaName: "UserGroup",
-            resourcePath: "/suppliers/{supplierID}/usergroups",
+            resourceCreatePath: "/suppliers/{supplierID}/usergroups",
             listFunction: SupplierUserGroups.List,
             createFunction: SupplierUserGroups.Create
         },
@@ -547,11 +511,10 @@ const Directory: OCResourceDirectoryEntry[] = [
             },
         ],
     },
-    {
-        name: OCResourceEnum.SupplierAddresses,
+    [OCResourceEnum.SupplierAddresses]: {
         openApiSpec: {
             schemaName: "Address",
-            resourcePath: "/suppliers/{supplierID}/addresses",
+            resourceCreatePath: "/suppliers/{supplierID}/addresses",
             listFunction: SupplierAddresses.List,
             createFunction: SupplierAddresses.Create
         },
@@ -567,11 +530,10 @@ const Directory: OCResourceDirectoryEntry[] = [
             },
         ]
     },
-    {
-        name: OCResourceEnum.Products, 
+    [OCResourceEnum.Products]: {
         openApiSpec: {
             schemaName: "Product",
-            resourcePath: "/products",
+            resourceCreatePath: "/products",
             listFunction: Products.List,
             createFunction: Products.Create
         },
@@ -585,13 +547,13 @@ const Directory: OCResourceDirectoryEntry[] = [
                 otherResourceName: OCResourceEnum.Suppliers,
             },
             { 
-                referenceType: ResourceReferenceType.Horizontal,
+                referenceType: ResourceReferenceType.Reference,
                 fieldNameOnThisResource: "DefaultPriceScheduleID",
                 fieldNameOnOtherReasource: "ID", 
                 otherResourceName: OCResourceEnum.PriceSchedules,
             },
             { 
-                referenceType: ResourceReferenceType.Horizontal,
+                referenceType: ResourceReferenceType.Reference,
                 fieldNameOnThisResource: "DefaultSupplierID",
                 fieldNameOnOtherReasource: "ID", 
                 otherResourceName: OCResourceEnum.Suppliers,
@@ -599,11 +561,10 @@ const Directory: OCResourceDirectoryEntry[] = [
         ],
         customValidationFunc: ProductValidationFunc
     },
-    {
-        name: OCResourceEnum.PriceSchedules,
+    [OCResourceEnum.PriceSchedules]: {
         openApiSpec: {
             schemaName: "PriceSchedule",
-            resourcePath: "/priceschedules",
+            resourceCreatePath: "/priceschedules",
             listFunction: PriceSchedules.List,
             createFunction: PriceSchedules.Create
         },  
@@ -618,11 +579,10 @@ const Directory: OCResourceDirectoryEntry[] = [
             },
         ]
     },
-    {
-        name: OCResourceEnum.Specs, 
+    [OCResourceEnum.Specs]: {
         openApiSpec: {
             schemaName: "Spec",
-            resourcePath: "/specs",
+            resourceCreatePath: "/specs",
             listFunction: Specs.List,
             createFunction: Specs.Create
         }, 
@@ -636,19 +596,17 @@ const Directory: OCResourceDirectoryEntry[] = [
                 otherResourceName: OCResourceEnum.Suppliers,
             },
             { 
-                referenceType: ResourceReferenceType.Horizontal,
+                referenceType: ResourceReferenceType.Reference,
                 fieldNameOnThisResource: "DefaultOptionID",
                 fieldNameOnOtherReasource: "ID", 
                 otherResourceName: OCResourceEnum.SpecOptions,
-                foreignParentRefField: "ID" // should this be "SpecID"?
             },
         ],
     },
-    {
-        name: OCResourceEnum.SpecOptions, 
+    [OCResourceEnum.SpecOptions]: {
         openApiSpec: {
             schemaName: "SpecOption",
-            resourcePath: "/specs/{specID}/options",
+            resourceCreatePath: "/specs/{specID}/options",
             listFunction: Specs.ListOptions,
             createFunction: Specs.CreateOption
         }, 
@@ -664,22 +622,20 @@ const Directory: OCResourceDirectoryEntry[] = [
             },
         ]
     },
-    {
-        name: OCResourceEnum.ProductFacets,
+    [OCResourceEnum.ProductFacets]: {
         openApiSpec: {
             schemaName: "ProductFacet",
-            resourcePath: "/productfacets",
+            resourceCreatePath: "/productfacets",
             listFunction: ProductFacets.List,
             createFunction: ProductFacets.Create
         }, 
         createPriority: 2,
         isAssignment: false,
     },
-    {
-        name: OCResourceEnum.Promotions, 
+    [OCResourceEnum.Promotions]: {
         openApiSpec: {
             schemaName: "Promotion",
-            resourcePath: "/promotions",
+            resourceCreatePath: "/promotions",
             listFunction: Promotions.List,
             createFunction: Promotions.Create
         }, 
@@ -694,11 +650,10 @@ const Directory: OCResourceDirectoryEntry[] = [
             },
         ],
     },
-    {
-        name: OCResourceEnum.Variants,
+    [OCResourceEnum.Variants]: {
         openApiSpec: {
             schemaName: "Variant",
-            resourcePath: "/products/{productID}/variants",
+            resourceCreatePath: "/products/{productID}/variants",
             listFunction: Products.ListVariants,
             createFunction: null // variants are generated
         }, 
@@ -716,11 +671,10 @@ const Directory: OCResourceDirectoryEntry[] = [
         customValidationFunc: VariantValidationFunc,
         shouldAttemptListFunc: (product) => (product?.VariantCount > 0)
     },
-    {
-        name: OCResourceEnum.InventoryRecords, 
+    [OCResourceEnum.InventoryRecords]: {
         openApiSpec: {
             schemaName: "InventoryRecord",
-            resourcePath: "/products/{productID}/inventoryrecords",
+            resourceCreatePath: "/products/{productID}/inventoryrecords",
             listFunction: InventoryRecords.List,
             createFunction: InventoryRecords.Create
         },
@@ -743,11 +697,10 @@ const Directory: OCResourceDirectoryEntry[] = [
         ],
         customValidationFunc: InventoryRecordValidationFunc,
     },
-    {
-        name: OCResourceEnum.VariantInventoryRecords, 
+    [OCResourceEnum.VariantInventoryRecords]: {
         openApiSpec: {
             schemaName: "InventoryRecord",
-            resourcePath: "/products/{productID}/variants/{variantID}/inventoryrecords",
+            resourceCreatePath: "/products/{productID}/variants/{variantID}/inventoryrecords",
             listFunction: InventoryRecords.ListVariant,
             createFunction: InventoryRecords.CreateVariant
         },
@@ -768,14 +721,13 @@ const Directory: OCResourceDirectoryEntry[] = [
                 otherResourceName: OCResourceEnum.Suppliers,
             },
             { 
-                referenceType: ResourceReferenceType.Horizontal,
+                referenceType: ResourceReferenceType.Reference,
                 fieldNameOnThisResource: "VariantID",
                 fieldNameOnOtherReasource: "ID", 
                 otherResourceName: OCResourceEnum.Variants,
-                foreignParentRefField: "ProductID",
             },
             { 
-                referenceType: ResourceReferenceType.Horizontal,
+                referenceType: ResourceReferenceType.Reference,
                 fieldNameOnThisResource: "ProductID",
                 fieldNameOnOtherReasource: "ID", 
                 otherResourceName: OCResourceEnum.Products,
@@ -783,11 +735,10 @@ const Directory: OCResourceDirectoryEntry[] = [
         ],
         customValidationFunc: VariantInventoryRecordValidationFunc,
     },
-    {
-        name: OCResourceEnum.SellerApprovalRules,
+    [OCResourceEnum.SellerApprovalRules]: {
         openApiSpec: {
             schemaName: "SellerApprovalRule",
-            resourcePath: "/approvalrules",
+            resourceCreatePath: "/approvalrules",
             listFunction: SellerApprovalRules.List,
             createFunction: SellerApprovalRules.Create
         },
@@ -803,11 +754,10 @@ const Directory: OCResourceDirectoryEntry[] = [
         ],
         customValidationFunc: SellerApprovalRuleValidationFunc
     },
-    {
-        name: OCResourceEnum.SecurityProfileAssignments, 
+    [OCResourceEnum.SecurityProfileAssignments]: {
         openApiSpec: {
             schemaName: "SecurityProfileAssignment",
-            resourcePath: "/securityprofiles/assignments",
+            resourceCreatePath: "/securityprofiles/assignments",
             listFunction: SecurityProfiles.ListAssignments,
             createFunction: SecurityProfiles.SaveAssignment
         },
@@ -815,19 +765,19 @@ const Directory: OCResourceDirectoryEntry[] = [
         isAssignment: true,
         outgoingResourceReferences: [
             { 
-                referenceType: ResourceReferenceType.Horizontal,
+                referenceType: ResourceReferenceType.Reference,
                 fieldNameOnThisResource: "SecurityProfileID",
                 fieldNameOnOtherReasource: "ID", 
                 otherResourceName: OCResourceEnum.SecurityProfiles,
             },
             { 
-                referenceType: ResourceReferenceType.Horizontal,
+                referenceType: ResourceReferenceType.Reference,
                 fieldNameOnThisResource: "BuyerID",
                 fieldNameOnOtherReasource: "ID", 
                 otherResourceName: OCResourceEnum.Buyers,
             },
             { 
-                referenceType: ResourceReferenceType.Horizontal,
+                referenceType: ResourceReferenceType.Reference,
                 fieldNameOnThisResource: "SupplierID",
                 fieldNameOnOtherReasource: "ID", 
                 otherResourceName: OCResourceEnum.Suppliers,
@@ -835,11 +785,10 @@ const Directory: OCResourceDirectoryEntry[] = [
         ], 
         customValidationFunc: SecurityProfileAssignmentValidationFunc
     },
-    {
-        name: OCResourceEnum.AdminUserGroupAssignments, 
+    [OCResourceEnum.AdminUserGroupAssignments]: {
         openApiSpec: {
             schemaName: "UserGroupAssignment",
-            resourcePath: "/usergroups/assignments",
+            resourceCreatePath: "/usergroups/assignments",
             listFunction: AdminUserGroups.ListUserAssignments,
             createFunction: AdminUserGroups.SaveUserAssignment
         },
@@ -847,24 +796,23 @@ const Directory: OCResourceDirectoryEntry[] = [
         isAssignment: true,
         outgoingResourceReferences: [
             { 
-                referenceType: ResourceReferenceType.Horizontal,
+                referenceType: ResourceReferenceType.Reference,
                 fieldNameOnThisResource: "UserID",
                 fieldNameOnOtherReasource: "ID", 
                 otherResourceName: OCResourceEnum.AdminUsers,
             },
             { 
-                referenceType: ResourceReferenceType.Horizontal,
+                referenceType: ResourceReferenceType.Reference,
                 fieldNameOnThisResource: "UserGroupID",
                 fieldNameOnOtherReasource: "ID", 
                 otherResourceName: OCResourceEnum.AdminUserGroups,
             },
         ]
     },
-    {
-        name: OCResourceEnum.ApiClientAssignments, 
+    [OCResourceEnum.ApiClientAssignments]: {
         openApiSpec: {
             schemaName: "ApiClientAssignment",
-            resourcePath: "/apiclients/assignments",
+            resourceCreatePath: "/apiclients/assignments",
             listFunction: ApiClients.SaveAssignment,
             createFunction: ApiClients.ListAssignments
         },
@@ -872,19 +820,19 @@ const Directory: OCResourceDirectoryEntry[] = [
         isAssignment: true,
         outgoingResourceReferences: [
             { 
-                referenceType: ResourceReferenceType.Horizontal,
+                referenceType: ResourceReferenceType.Reference,
                 fieldNameOnThisResource: "ApiClientID",
                 fieldNameOnOtherReasource: "ID", 
                 otherResourceName: OCResourceEnum.ApiClients,
             },
             { 
-                referenceType: ResourceReferenceType.Horizontal,
+                referenceType: ResourceReferenceType.Reference,
                 fieldNameOnThisResource: "BuyerID",
                 fieldNameOnOtherReasource: "ID", 
                 otherResourceName: OCResourceEnum.Buyers,
             },
             { 
-                referenceType: ResourceReferenceType.Horizontal,
+                referenceType: ResourceReferenceType.Reference,
                 fieldNameOnThisResource: "SupplierID",
                 fieldNameOnOtherReasource: "ID", 
                 otherResourceName: OCResourceEnum.Suppliers,
@@ -895,11 +843,10 @@ const Directory: OCResourceDirectoryEntry[] = [
             return x;
         },
     },
-    {
-        name: OCResourceEnum.LocaleAssignments, 
+    [OCResourceEnum.LocaleAssignments]: {
         openApiSpec: {
             schemaName: "LocaleAssignment",
-            resourcePath: "/locales/assignments",
+            resourceCreatePath: "/locales/assignments",
             listFunction: Locales.SaveAssignment,
             createFunction: Locales.ListAssignments
         },
@@ -908,31 +855,29 @@ const Directory: OCResourceDirectoryEntry[] = [
         customValidationFunc: LocaleAssignmentValidationFunc,
         outgoingResourceReferences: [
             { 
-                referenceType: ResourceReferenceType.Horizontal,
+                referenceType: ResourceReferenceType.Reference,
                 fieldNameOnThisResource: "LocaleID",
                 fieldNameOnOtherReasource: "ID", 
                 otherResourceName: OCResourceEnum.Locales,
             },
             { 
-                referenceType: ResourceReferenceType.Horizontal,
+                referenceType: ResourceReferenceType.Reference,
                 fieldNameOnThisResource: "BuyerID",
                 fieldNameOnOtherReasource: "ID", 
                 otherResourceName: OCResourceEnum.Buyers,
             },
             { 
-                referenceType: ResourceReferenceType.Horizontal,
+                referenceType: ResourceReferenceType.Reference,
                 fieldNameOnThisResource: "UserGroupID",
                 fieldNameOnOtherReasource: "ID", 
                 otherResourceName: OCResourceEnum.Users,
-                foreignParentRefField: "BuyerID",
             },
         ],
     },
-    {
-        name: OCResourceEnum.UserGroupAssignments, 
+    [OCResourceEnum.UserGroupAssignments]: {
         openApiSpec: {
             schemaName: "UserGroupAssignment",
-            resourcePath: "/buyers/{buyerID}/usergroups/assignments",
+            resourceCreatePath: "/buyers/{buyerID}/usergroups/assignments",
             listFunction: UserGroups.SaveUserAssignment,
             createFunction: UserGroups.ListUserAssignments
         },
@@ -947,26 +892,23 @@ const Directory: OCResourceDirectoryEntry[] = [
                 otherResourceName: OCResourceEnum.Buyers,
             },
             { 
-                referenceType: ResourceReferenceType.Horizontal,
+                referenceType: ResourceReferenceType.Reference,
                 fieldNameOnThisResource: "UserID",
                 fieldNameOnOtherReasource: "ID", 
                 otherResourceName: OCResourceEnum.Users,
-                foreignParentRefField: "BuyerID",
             },
             { 
-                referenceType: ResourceReferenceType.Horizontal,
+                referenceType: ResourceReferenceType.Reference,
                 fieldNameOnThisResource: "UserGroupID",
                 fieldNameOnOtherReasource: "ID", 
                 otherResourceName: OCResourceEnum.UserGroups,
-                foreignParentRefField: "BuyerID",
             },
         ],           
     },
-    {
-        name: OCResourceEnum.AddressAssignments, 
+    [OCResourceEnum.AddressAssignments]: {
         openApiSpec: {
             schemaName: "AddressAssignment",
-            resourcePath: "/buyers/{buyerID}/addresses/assignments",
+            resourceCreatePath: "/buyers/{buyerID}/addresses/assignments",
             listFunction: Addresses.ListAssignments,
             createFunction: Addresses.SaveAssignment
         },
@@ -981,33 +923,29 @@ const Directory: OCResourceDirectoryEntry[] = [
                 otherResourceName: OCResourceEnum.Buyers,
             },
             { 
-                referenceType: ResourceReferenceType.Horizontal,
+                referenceType: ResourceReferenceType.Reference,
                 fieldNameOnThisResource: "AddressID",
                 fieldNameOnOtherReasource: "ID", 
                 otherResourceName: OCResourceEnum.Addresses,
-                foreignParentRefField: "BuyerID",
             },
             { 
-                referenceType: ResourceReferenceType.Horizontal,
+                referenceType: ResourceReferenceType.Reference,
                 fieldNameOnThisResource: "UserID",
                 fieldNameOnOtherReasource: "ID", 
                 otherResourceName: OCResourceEnum.Users,
-                foreignParentRefField: "BuyerID",
             },
             { 
-                referenceType: ResourceReferenceType.Horizontal,
+                referenceType: ResourceReferenceType.Reference,
                 fieldNameOnThisResource: "UserGroupID",
                 fieldNameOnOtherReasource: "ID", 
                 otherResourceName: OCResourceEnum.UserGroups,
-                foreignParentRefField: "BuyerID",
             },
         ],
     },
-    {
-        name: OCResourceEnum.CostCenterAssignments, 
+    [OCResourceEnum.CostCenterAssignments]: {
         openApiSpec: {
             schemaName: "CostCenterAssignment",
-            resourcePath: "/buyers/{buyerID}/costcenters",
+            resourceCreatePath: "/buyers/{buyerID}/costcenters",
             listFunction: CostCenters.ListAssignments,
             createFunction: CostCenters.SaveAssignment
         },
@@ -1022,26 +960,23 @@ const Directory: OCResourceDirectoryEntry[] = [
                 otherResourceName: OCResourceEnum.Buyers,
             },
             { 
-                referenceType: ResourceReferenceType.Horizontal,
+                referenceType: ResourceReferenceType.Reference,
                 fieldNameOnThisResource: "CostCenterID",
                 fieldNameOnOtherReasource: "ID", 
                 otherResourceName: OCResourceEnum.CostCenters,
-                foreignParentRefField: "BuyerID",
             },
             { 
-                referenceType: ResourceReferenceType.Horizontal,
+                referenceType: ResourceReferenceType.Reference,
                 fieldNameOnThisResource: "UserGroupID",
                 fieldNameOnOtherReasource: "ID", 
                 otherResourceName: OCResourceEnum.UserGroups,
-                foreignParentRefField: "BuyerID",
             },
         ],       
     },
-    {
-        name: OCResourceEnum.CreditCardAssignments, 
+    [OCResourceEnum.CreditCardAssignments]: {
         openApiSpec: {
             schemaName: "CreditCardAssignment",
-            resourcePath: "/buyers/{buyerID}/creditcards/assignments",
+            resourceCreatePath: "/buyers/{buyerID}/creditcards/assignments",
             listFunction: CreditCards.ListAssignments,
             createFunction: CreditCards.SaveAssignment
         },
@@ -1056,33 +991,29 @@ const Directory: OCResourceDirectoryEntry[] = [
                 otherResourceName: OCResourceEnum.Buyers,
             },
             { 
-                referenceType: ResourceReferenceType.Horizontal,
+                referenceType: ResourceReferenceType.Reference,
                 fieldNameOnThisResource: "CreditCardID",
                 fieldNameOnOtherReasource: "ID", 
                 otherResourceName: OCResourceEnum.CreditCards,
-                foreignParentRefField: "BuyerID",
             },
             { 
-                referenceType: ResourceReferenceType.Horizontal,
+                referenceType: ResourceReferenceType.Reference,
                 fieldNameOnThisResource: "UserID",
                 fieldNameOnOtherReasource: "ID", 
                 otherResourceName: OCResourceEnum.Users,
-                foreignParentRefField: "BuyerID",
             },
             { 
-                referenceType: ResourceReferenceType.Horizontal,
+                referenceType: ResourceReferenceType.Reference,
                 fieldNameOnThisResource: "UserGroupID",
                 fieldNameOnOtherReasource: "ID", 
                 otherResourceName: OCResourceEnum.UserGroups,
-                foreignParentRefField: "BuyerID",
             },
         ],
     },
-    {
-        name: OCResourceEnum.SpendingAccountAssignments, 
+    [OCResourceEnum.SpendingAccountAssignments]: {
         openApiSpec: {
             schemaName: "SpendingAccountAssignment",
-            resourcePath: "/buyers/{buyerID}/spendingaccounts/assignments",
+            resourceCreatePath: "/buyers/{buyerID}/spendingaccounts/assignments",
             listFunction: SpendingAccounts.ListAssignments,
             createFunction: SpendingAccounts.SaveAssignment
         },
@@ -1097,33 +1028,29 @@ const Directory: OCResourceDirectoryEntry[] = [
                 otherResourceName: OCResourceEnum.Buyers,
             },
             { 
-                referenceType: ResourceReferenceType.Horizontal,
+                referenceType: ResourceReferenceType.Reference,
                 fieldNameOnThisResource: "SpendingAccountID",
                 fieldNameOnOtherReasource: "ID", 
                 otherResourceName: OCResourceEnum.SpendingAccounts,
-                foreignParentRefField: "BuyerID",
             },
             { 
-                referenceType: ResourceReferenceType.Horizontal,
+                referenceType: ResourceReferenceType.Reference,
                 fieldNameOnThisResource: "UserID",
                 fieldNameOnOtherReasource: "ID", 
                 otherResourceName: OCResourceEnum.Users,
-                foreignParentRefField: "BuyerID",
             },
             { 
-                referenceType: ResourceReferenceType.Horizontal,
+                referenceType: ResourceReferenceType.Reference,
                 fieldNameOnThisResource: "UserGroupID",
                 fieldNameOnOtherReasource: "ID", 
                 otherResourceName: OCResourceEnum.UserGroups,
-                foreignParentRefField: "BuyerID",
             },
         ],   
     },
-    {
-        name: OCResourceEnum.SupplierUserGroupsAssignments, 
+    [OCResourceEnum.SupplierUserGroupsAssignments]: {
         openApiSpec: {
             schemaName: "UserGroupAssignment",
-            resourcePath: "/suppliers/{supplierID}/usergroups/assignments",
+            resourceCreatePath: "/suppliers/{supplierID}/usergroups/assignments",
             listFunction: SupplierUserGroups.ListUserAssignments,
             createFunction: SupplierUserGroups.SaveUserAssignment
         },
@@ -1138,26 +1065,23 @@ const Directory: OCResourceDirectoryEntry[] = [
                 otherResourceName: OCResourceEnum.Suppliers,
             },
             { 
-                referenceType: ResourceReferenceType.Horizontal,
+                referenceType: ResourceReferenceType.Reference,
                 fieldNameOnThisResource: "UserID",
                 fieldNameOnOtherReasource: "ID", 
                 otherResourceName: OCResourceEnum.SupplierUsers,
-                foreignParentRefField: "SupplierID",
             },
             { 
-                referenceType: ResourceReferenceType.Horizontal,
+                referenceType: ResourceReferenceType.Reference,
                 fieldNameOnThisResource: "UserGroupID",
                 fieldNameOnOtherReasource: "ID", 
                 otherResourceName: OCResourceEnum.SupplierUserGroups,
-                foreignParentRefField: "SupplierID",
             },
         ],           
     },
-    {
-        name: OCResourceEnum.ProductAssignments, 
+    [OCResourceEnum.ProductAssignments]: {
         openApiSpec: {
             schemaName: "ProductAssignment",
-            resourcePath: "/products/assignments",
+            resourceCreatePath: "/products/assignments",
             listFunction: Products.ListAssignments,
             createFunction: Products.SaveAssignment
         },
@@ -1172,37 +1096,35 @@ const Directory: OCResourceDirectoryEntry[] = [
                 otherResourceName: OCResourceEnum.Suppliers,
             },
             { 
-                referenceType: ResourceReferenceType.Horizontal,
+                referenceType: ResourceReferenceType.Reference,
                 fieldNameOnThisResource: "ProductID",
                 fieldNameOnOtherReasource: "ID", 
                 otherResourceName: OCResourceEnum.Products,
             },
             { 
-                referenceType: ResourceReferenceType.Horizontal,
+                referenceType: ResourceReferenceType.Reference,
                 fieldNameOnThisResource: "BuyerID",
                 fieldNameOnOtherReasource: "ID", 
                 otherResourceName: OCResourceEnum.Buyers,
             },
             { 
-                referenceType: ResourceReferenceType.Horizontal,
+                referenceType: ResourceReferenceType.Reference,
                 fieldNameOnThisResource: "PriceScheduleID",
                 fieldNameOnOtherReasource: "ID", 
                 otherResourceName: OCResourceEnum.PriceSchedules,
             },
             { 
-                referenceType: ResourceReferenceType.Horizontal,
+                referenceType: ResourceReferenceType.Reference,
                 fieldNameOnThisResource: "UserGroupID",
                 fieldNameOnOtherReasource: "ID", 
                 otherResourceName: OCResourceEnum.UserGroups,
-                foreignParentRefField: "BuyerID",
             },
         ],         
     },
-    {
-        name: OCResourceEnum.CatalogAssignments,
+    [OCResourceEnum.CatalogAssignments]: {
         openApiSpec: {
             schemaName: "CatalogAssignment",
-            resourcePath: "/catalogs/assignments",
+            resourceCreatePath: "/catalogs/assignments",
             listFunction: Catalogs.ListAssignments,
             createFunction: Catalogs.SaveAssignment
         },
@@ -1210,24 +1132,23 @@ const Directory: OCResourceDirectoryEntry[] = [
         isAssignment: true,
         outgoingResourceReferences: [
             { 
-                referenceType: ResourceReferenceType.Horizontal,
+                referenceType: ResourceReferenceType.Reference,
                 fieldNameOnThisResource: "CatalogID",
                 fieldNameOnOtherReasource: "ID", 
                 otherResourceName: OCResourceEnum.Catalogs,
             },
             { 
-                referenceType: ResourceReferenceType.Horizontal,
+                referenceType: ResourceReferenceType.Reference,
                 fieldNameOnThisResource: "BuyerID",
                 fieldNameOnOtherReasource: "ID", 
                 otherResourceName: OCResourceEnum.Buyers,
             },
         ]           
     },
-    {
-        name: OCResourceEnum.ProductCatalogAssignment, 
+    [OCResourceEnum.ProductCatalogAssignment]: {
         openApiSpec: {
             schemaName: "ProductCatalogAssignment",
-            resourcePath: "/catalogs/productassignments",
+            resourceCreatePath: "/catalogs/productassignments",
             listFunction: Catalogs.ListProductAssignments,
             createFunction: Catalogs.SaveProductAssignment
         },
@@ -1235,24 +1156,23 @@ const Directory: OCResourceDirectoryEntry[] = [
         isAssignment: true,
         outgoingResourceReferences: [
             { 
-                referenceType: ResourceReferenceType.Horizontal,
+                referenceType: ResourceReferenceType.Reference,
                 fieldNameOnThisResource: "CatalogID",
                 fieldNameOnOtherReasource: "ID", 
                 otherResourceName: OCResourceEnum.Catalogs,
             },
             { 
-                referenceType: ResourceReferenceType.Horizontal,
+                referenceType: ResourceReferenceType.Reference,
                 fieldNameOnThisResource: "ProductID",
                 fieldNameOnOtherReasource: "ID", 
                 otherResourceName: OCResourceEnum.Products,
             },
         ]                   
     },
-    {
-        name: OCResourceEnum.CategoryAssignments, 
+    [OCResourceEnum.CategoryAssignments]: {
         openApiSpec: {
             schemaName: "CategoryAssignment",
-            resourcePath: "/catalogs/{catalogID}/categories/assignments",
+            resourceCreatePath: "/catalogs/{catalogID}/categories/assignments",
             listFunction: Categories.ListAssignments,
             createFunction: Categories.SaveAssignment
         },
@@ -1267,32 +1187,29 @@ const Directory: OCResourceDirectoryEntry[] = [
                 otherResourceName: OCResourceEnum.Catalogs,
             },
             { 
-                referenceType: ResourceReferenceType.Horizontal,
+                referenceType: ResourceReferenceType.Reference,
                 fieldNameOnThisResource: "CategoryID",
                 fieldNameOnOtherReasource: "ID", 
                 otherResourceName: OCResourceEnum.Categories,
-                foreignParentRefField: "CatalogID",
             },
             { 
-                referenceType: ResourceReferenceType.Horizontal,
+                referenceType: ResourceReferenceType.Reference,
                 fieldNameOnThisResource: "BuyerID",
                 fieldNameOnOtherReasource: "ID", 
                 otherResourceName: OCResourceEnum.Buyers,
             },
             { 
-                referenceType: ResourceReferenceType.Horizontal,
+                referenceType: ResourceReferenceType.Reference,
                 fieldNameOnThisResource: "UserGroupID",
                 fieldNameOnOtherReasource: "ID", 
                 otherResourceName: OCResourceEnum.UserGroups,
-                foreignParentRefField: "BuyerID",
             },
         ]           
     },
-    {
-        name: OCResourceEnum.CategoryProductAssignments, 
+    [OCResourceEnum.CategoryProductAssignments]: {
         openApiSpec: {
             schemaName: "CategoryProductAssignment",
-            resourcePath: "/catalogs/{catalogID}/categories/productassignments",
+            resourceCreatePath: "/catalogs/{catalogID}/categories/productassignments",
             listFunction: Categories.ListProductAssignments,
             createFunction: Categories.SaveProductAssignment
         },
@@ -1307,25 +1224,23 @@ const Directory: OCResourceDirectoryEntry[] = [
                 otherResourceName: OCResourceEnum.Catalogs,
             },
             { 
-                referenceType: ResourceReferenceType.Horizontal,
+                referenceType: ResourceReferenceType.Reference,
                 fieldNameOnThisResource: "CategoryID",
                 fieldNameOnOtherReasource: "ID", 
                 otherResourceName: OCResourceEnum.Categories,
-                foreignParentRefField: "CatalogID",
             },
             { 
-                referenceType: ResourceReferenceType.Horizontal,
+                referenceType: ResourceReferenceType.Reference,
                 fieldNameOnThisResource: "ProductID",
                 fieldNameOnOtherReasource: "ID", 
                 otherResourceName: OCResourceEnum.Products,
             },
         ]           
     },
-    {
-        name: OCResourceEnum.SpecProductAssignments, 
+    [OCResourceEnum.SpecProductAssignments]: {
         openApiSpec: {
             schemaName: "SpecProductAssignment",
-            resourcePath: "/specs/productassignments",
+            resourceCreatePath: "/specs/productassignments",
             listFunction: Specs.ListProductAssignments,
             createFunction: Specs.SaveProductAssignment
         },
@@ -1333,32 +1248,29 @@ const Directory: OCResourceDirectoryEntry[] = [
         isAssignment: true,
         outgoingResourceReferences: [
             { 
-                referenceType: ResourceReferenceType.Horizontal,
+                referenceType: ResourceReferenceType.Reference,
                 fieldNameOnThisResource: "SpecID",
                 fieldNameOnOtherReasource: "ID", 
                 otherResourceName: OCResourceEnum.Specs,
-                foreignParentRefField: "CatalogID",
             },
             { 
-                referenceType: ResourceReferenceType.Horizontal,
+                referenceType: ResourceReferenceType.Reference,
                 fieldNameOnThisResource: "ProductID",
                 fieldNameOnOtherReasource: "ID", 
                 otherResourceName: OCResourceEnum.Products,
             },
             { 
-                referenceType: ResourceReferenceType.Horizontal,
+                referenceType: ResourceReferenceType.Reference,
                 fieldNameOnThisResource: "DefaultOptionID",
                 fieldNameOnOtherReasource: "ID", 
                 otherResourceName: OCResourceEnum.SpecOptions,
-                foreignParentRefField: "SpecID",
             },
         ]
     },
-    {
-        name: OCResourceEnum.PromotionAssignments, 
+    [OCResourceEnum.PromotionAssignments]: {
         openApiSpec: {
             schemaName: "PromotionAssignment",
-            resourcePath: "/promotions/assignments",
+            resourceCreatePath: "/promotions/assignments",
             listFunction: Promotions.ListAssignments,
             createFunction: Promotions.SaveAssignment
         },
@@ -1366,31 +1278,29 @@ const Directory: OCResourceDirectoryEntry[] = [
         isAssignment: true,
         outgoingResourceReferences: [
             { 
-                referenceType: ResourceReferenceType.Horizontal,
+                referenceType: ResourceReferenceType.Reference,
                 fieldNameOnThisResource: "PromotionID",
                 fieldNameOnOtherReasource: "ID", 
                 otherResourceName: OCResourceEnum.Promotions,
             },
             { 
-                referenceType: ResourceReferenceType.Horizontal,
+                referenceType: ResourceReferenceType.Reference,
                 fieldNameOnThisResource: "BuyerID",
                 fieldNameOnOtherReasource: "ID", 
                 otherResourceName: OCResourceEnum.Buyers,
             },
             { 
-                referenceType: ResourceReferenceType.Horizontal,
+                referenceType: ResourceReferenceType.Reference,
                 fieldNameOnThisResource: "UserGroupID",
                 fieldNameOnOtherReasource: "ID", 
                 otherResourceName: OCResourceEnum.UserGroups,
-                foreignParentRefField: "BuyerID",
             },
         ]
     },
-    {
-        name: OCResourceEnum.ProductSupplierAssignments, 
+    [OCResourceEnum.ProductSupplierAssignments]: {
         openApiSpec: {
             schemaName: "ProductSupplier",
-            resourcePath: "/products/{productID}/suppliers/{supplierID}",
+            resourceCreatePath: "/products/{productID}/suppliers/{supplierID}",
             listFunction: Products.ListSuppliers,
             createFunction: Products.SaveSupplier
         },
@@ -1405,13 +1315,13 @@ const Directory: OCResourceDirectoryEntry[] = [
                 otherResourceName: OCResourceEnum.Products,
             },
             { 
-                referenceType: ResourceReferenceType.Horizontal,
+                referenceType: ResourceReferenceType.Reference,
                 fieldNameOnThisResource: "SupplierID",
                 fieldNameOnOtherReasource: "ID", 
                 otherResourceName: OCResourceEnum.Suppliers,
             },
             { 
-                referenceType: ResourceReferenceType.Horizontal,
+                referenceType: ResourceReferenceType.Reference,
                 fieldNameOnThisResource: "DefaultPriceScheduleID",
                 fieldNameOnOtherReasource: "ID", 
                 otherResourceName: OCResourceEnum.PriceSchedules,
@@ -1421,11 +1331,10 @@ const Directory: OCResourceDirectoryEntry[] = [
             return { SupplierID: x.ID, DefaultPriceScheduleID: x.DefaultPriceScheduleID };
         }
     },
-    {
-        name: OCResourceEnum.SupplierBuyerAssignments,
+    [OCResourceEnum.SupplierBuyerAssignments]: {
         openApiSpec: {
             schemaName: "SupplierBuyer",
-            resourcePath: "/suppliers/{supplierID}/buyers/{buyerID}",
+            resourceCreatePath: "/suppliers/{supplierID}/buyers/{buyerID}",
             listFunction: Suppliers.ListBuyers,
             createFunction: Suppliers.SaveBuyer
         },
@@ -1437,33 +1346,56 @@ const Directory: OCResourceDirectoryEntry[] = [
                 referenceType: ResourceReferenceType.Parent,
                 fieldNameOnThisResource: "SupplierID",
                 fieldNameOnOtherReasource: "ID", 
-                otherResourceName: OCResourceEnum.Buyers,
+                otherResourceName: OCResourceEnum.Suppliers,
             },
             { 
-                referenceType: ResourceReferenceType.Horizontal,
+                referenceType: ResourceReferenceType.Reference,
                 fieldNameOnThisResource: "BuyerID",
                 fieldNameOnOtherReasource: "ID", 
                 otherResourceName: OCResourceEnum.Buyers,
-            },
-            { 
-                referenceType: ResourceReferenceType.Horizontal,
-                fieldNameOnThisResource: "SupplierID",
-                fieldNameOnOtherReasource: "ID", 
-                otherResourceName: OCResourceEnum.Suppliers,
             }
         ],
         downloadTransformFunc: (x) => { 
             return { BuyerID: x.ID };
         }
     },
-];
+};
 
+export class OCResourceDirectory {
+    private resources: OCResourcesMetaData;
 
-export async function BuildOCResourceDirectory(): Promise<OCResource[]> {
+    public constructor(resources: OCResourcesMetaData) {
+        this.resources = resources;
+    }
+
+    listResourceNames(): OCResourceEnum[] {
+        return Object.keys(this.resources) as OCResourceEnum[];
+    }
+
+    listResourceMetadata(): OCResourceMetadata[] {
+        return Object.values(this.resources);
+    } 
+
+    getResourceMetaData(name: OCResourceEnum): OCResourceMetadata {
+        let metaData = this.resources[name];
+        if (!metaData) {
+            throw "Resource name " + name + " not found";
+        }
+        return metaData;
+    }
+
+    listResourceRelationships(name: OCResourceEnum): ResourceReference[] {
+        let metaData = this.getResourceMetaData(name);
+        return metaData.outgoingResourceReferences;
+    }
+}
+
+export async function BuildOCResourceDirectory(): Promise<OCResourceDirectory> {
     var openAPISpec = await axios.get(`https://api.ordercloud.io/v1/openapi/v3`) 
-    return Directory.map(resource => {  
+    var dir = Object.entries(ocResourceMetaDataHardCoded).map([name, metaData] => {  
 
-        return new OCResource(resource, openAPISpec, null, []);
+        return new OCResourceMetadata(name, metaData, openAPISpec, null, []);
     });
+    return new OCResourceDirectory(dir);
 }
 

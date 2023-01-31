@@ -1,11 +1,11 @@
 import pkg, { range } from 'lodash';
-import { OCResourceDirectoryEntry } from "../models/oc-resources";
 import Bottleneck from 'bottleneck';
 import chalk from 'chalk';
 import _ from 'lodash';
 import {  LogCallBackFunc, MessageType } from './logger';
 import { RESET_PROGRESS_BAR_SUFFIX } from '../constants';
 import { JobActionType, JobGroupMetaData, JobMetaData } from '../models/job-metadata';
+import { OCResourceMetaData } from '../models/oc-resource-metadata';
 const { flatten } = pkg;
 
 export default class OrderCloudBulk {
@@ -62,19 +62,14 @@ export default class OrderCloudBulk {
         console.log("Response data:", error.errors.Errors[0]);
     }
 
-    async ListAll(resource: OCResourceDirectoryEntry, ...routeParams: string[]): Promise<any[]> {
-        const listFunc = resource.sdkObject[resource.openApiListOperation] as Function; 
-
-        return await this.ListAllWithFunction(resource, listFunc, ...routeParams);
-    }
-
-    async ListAllWithFunction(resource: OCResourceDirectoryEntry, listFunc: Function, ...routeParams: string[]): Promise<any[]> {
+    async ListAll(resource: OCResourceMetaData, ...routeParams: string[]): Promise<any[]> {
+        const listFunc = resource.openApiSpec.listFunction as Function; 
         const queryParams = { page: 1, pageSize: 100, depth: 'all'}; // depth only applies to categories
         const meta: JobGroupMetaData = {
             actionType: JobActionType.LIST,
             resourceName: resource.name,
             parentResourceID: routeParams.length ? routeParams[0] : undefined,
-            parentResourceName: resource?.parentResource?.name || undefined
+            parentResourceName: resource?.parentReference?.otherResourceName || undefined
         };
 
         // use limiter for the first page to take advantage of retries and error handling 
@@ -89,20 +84,15 @@ export default class OrderCloudBulk {
         return flatten([page1, ...results].map((r) => r.Items));
     }
 
-    async CreateAll(resource: OCResourceDirectoryEntry, records: any[]): Promise<any[]> {
-        const createFunc = resource.sdkObject[resource.openApiCreateOperation] as Function;  
+    async CreateAll(resource: OCResourceMetaData, records: any[]): Promise<any[]> {
+        const createFunc = resource.openApiSpec.createFunction as Function; 
         const meta: JobGroupMetaData = {
             actionType: JobActionType.CREATE,
             resourceName: resource.name
         }; 
         return await this.RunMany(meta, records, (record) => {
-            if (resource.secondRouteParam) {
-                return createFunc(record[resource.parentRefField], record[resource.secondRouteParam], record);  
-            } else if (resource.parentRefField) {          
-                return createFunc(record[resource.parentRefField], record);  
-            } else {
-                return createFunc(record); 
-            }
+            var routeParams = resource.routeParamNames.map(paramName => record[paramName]);
+            return createFunc(...routeParams, record); 
         });
     }
 

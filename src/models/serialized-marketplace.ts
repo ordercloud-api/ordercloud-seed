@@ -1,5 +1,5 @@
 import { version } from "../../package.json";
-import { OCResource } from "./oc-resources";
+import { OCResourceMetaData } from "./oc-resources";
 
 
 export class SerializedMarketplace {
@@ -15,13 +15,13 @@ export class SerializedMarketplace {
         this.Assignments = data?.Assignments || {}
     }    
 
-    AddRecords<T = any>(resource: OCResource, records: T[]) {
+    AddRecords<T = any>(resource: OCResourceMetaData, records: T[]) {
         var typeField = resource.isAssignment ? "Assignments" : "Objects";
         this[typeField][resource.name] = this[typeField][resource.name] || [];
         this[typeField][resource.name].push(...records);
     }
 
-    GetRecords<T = any>(resource: OCResource): T[] {
+    GetRecords<T = any>(resource: OCResourceMetaData): T[] {
         var typeField = resource.isAssignment ? "Assignments" : "Objects";
         return this[typeField]?.[resource.name] || [];
     }

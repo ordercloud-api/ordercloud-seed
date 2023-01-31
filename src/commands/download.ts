@@ -4,13 +4,13 @@ import { SerializedMarketplace } from '../models/serialized-marketplace';
 import OrderCloudBulk from '../services/ordercloud-bulk';
 import { defaultLogger, LogCallBackFunc, MessageType } from '../services/logger';
 import { BuildOCResourceDirectory } from '../models/oc-resource-directory';
-import { OCResourceDirectoryEntry } from '../models/oc-resources';
 import _  from 'lodash';
-import { MARKETPLACE_ID as MARKETPLACE_ID_PLACEHOLDER, REDACTED_MESSAGE, TEN_MINUTES } from '../constants';
+import { MARKETPLACE_ID_PLACEHOLDER as MARKETPLACE_ID_PLACEHOLDER, REDACTED_MESSAGE, TEN_MINUTES } from '../constants';
 import PortalAPI from '../services/portal';
 import Bottleneck from 'bottleneck';
 import { OCResourceEnum } from '../models/oc-resource-enum';
 import { RefreshTimer } from '../services/refresh-timer';
+import { OCResourceMetaData } from '../models/oc-resources';
 
 export interface DownloadArgs {
     username?: string; 
@@ -77,7 +77,7 @@ export async function download(args: DownloadArgs): Promise<SerializedMarketplac
     var marketplace = new SerializedMarketplace();
     var directory = await BuildOCResourceDirectory();
     var childResourceRecordCounts = {}; 
-    for (let resource of directory) {
+    for (let resource of directory.listResourceMetadata()) {
         if (resource.isChild) {
             continue; // resource will be handled as part of its parent
         }
@@ -89,15 +89,14 @@ export async function download(args: DownloadArgs): Promise<SerializedMarketplac
         }
         logger(`Found ${records?.length || 0} ${resource.name}`);
         marketplace.AddRecords(resource, records);
-        for (let childResourceName of resource.children)
+        for (let childResource of resource.children)
         {
-            let childResource = directory.find(x => x.name === childResourceName);
-            childResourceRecordCounts[childResourceName] = 0;
+            childResourceRecordCounts[childResource.name] = 0;
             childResourceRecordCounts[OCResourceEnum.VariantInventoryRecords] = 0;
             for (let parentRecord of records) {
                 if (childResource.shouldAttemptListFunc(parentRecord)) {
                     var childRecords = await ordercloudBulk.ListAll(childResource, parentRecord.ID); // assume ID exists. Which is does for all parent types.
-                    childResourceRecordCounts[childResourceName] += childRecords.length;
+                    childResourceRecordCounts[childResource.name] += childRecords.length;
                     PlaceHoldMarketplaceID(childResource, childRecords);
                     if (childResource.downloadTransformFunc !== undefined) {
                         childRecords = childRecords.map(childResource.downloadTransformFunc)
@@ -107,7 +106,7 @@ export async function download(args: DownloadArgs): Promise<SerializedMarketplac
                     }
                     marketplace.AddRecords(childResource, childRecords);
                     if (childResource.name === OCResourceEnum.Variants) {
-                        var grandChildResource = directory.find(x => x.name === OCResourceEnum.VariantInventoryRecords);
+                        var grandChildResource = directory.getResourceMetaData(OCResourceEnum.VariantInventoryRecords);
                         for (var variant of childRecords) {
                             var variantInventoryRecords = await ordercloudBulk.ListAll(grandChildResource, parentRecord.ID, variant.ID);
                             childResourceRecordCounts[OCResourceEnum.VariantInventoryRecords] += variantInventoryRecords.length;
@@ -121,7 +120,7 @@ export async function download(args: DownloadArgs): Promise<SerializedMarketplac
                     }   
                 }
             } 
-            logger(`Found ${childResourceRecordCounts[childResourceName]} ${childResourceName}`);
+            logger(`Found ${childResourceRecordCounts[childResource.name]} ${childResource.name}`);
             if (childResource.name === OCResourceEnum.Variants) {
                 logger(`Found ${childResourceRecordCounts[OCResourceEnum.VariantInventoryRecords]} ${OCResourceEnum.VariantInventoryRecords}`);
             }
@@ -131,7 +130,7 @@ export async function download(args: DownloadArgs): Promise<SerializedMarketplac
     logger(`Done downloading data from org \"${marketplaceID}\".`, MessageType.Success);
     return marketplace;
 
-    function RedactSensitiveFields(resource: OCResourceDirectoryEntry, records: any[]): void {
+    function RedactSensitiveFields(resource: OCResourceMetaData, records: any[]): void {
         if (resource.redactFields.length === 0) return;
 
         for (var record of records) {
@@ -143,13 +142,13 @@ export async function download(args: DownloadArgs): Promise<SerializedMarketplac
         }
     }
 
-    function PlaceHoldMarketplaceID(resource: OCResourceDirectoryEntry, records: any[]): void {
-        if (resource.isSellerOwned) {
+    function PlaceHoldMarketplaceID(resource: OCResourceMetaData, records: any[]): void {
+        if (resource.hasSellerOwnerField) {
             for (var record of records) {  
                 // when Sandbox and Staging were created, marketplace IDs were appended with env to keep them unique
                 var mktplID = marketplaceID.replace(/_Sandbox$/, "").replace(/_Staging$/, "");
-                if (record[resource.isSellerOwned] === mktplID) {
-                    record[resource.isSellerOwned] = MARKETPLACE_ID_PLACEHOLDER;
+                if (record[resource.sellerOwnerReference.fieldNameOnThisResource] === mktplID) {
+                    record[resource.sellerOwnerReference.fieldNameOnThisResource] = MARKETPLACE_ID_PLACEHOLDER;
                 }
             }
         }

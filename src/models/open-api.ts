@@ -1,5 +1,5 @@
 export interface ReasourceSchema {
-    properties: OpenAPIProperty,
+    properties: OpenAPIProperties,
     example: Object,
     type: string;
 }
