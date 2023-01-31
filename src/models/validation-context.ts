@@ -1,20 +1,22 @@
 import { SEPARATOR_FOR_SERIALIZATION } from "../constants";
-import { OCResourceDirectory } from "../models/oc-resource-directory";
-import { OCResourceEnum } from "../models/oc-resource-enum";
-import { OCResourceMetaData } from "../models/oc-resource-metadata";
-import { SerializedMarketplace } from "../models/serialized-marketplace";
-import { LogCallBackFunc, MessageType } from "./logger";
+import { OCResourceDirectory } from "./oc-resource-directory";
+import { OCResourceEnum } from "./oc-resource-enum";
+import { OCResourceMetaData } from "./oc-resource-metadata";
+import { SerializedMarketplace } from "./serialized-marketplace";
+import { LogCallBackFunc, MessageType } from "../services/logger";
 
 export class ValidationContext {
     directory: OCResourceDirectory;
     marketplaceData: SerializedMarketplace;
     logger: LogCallBackFunc;
-    private errors: string[] = [];
-    idCache: IDCache;
-    usernameCache = new Set<string>();
+
     currentResource: OCResourceMetaData;
     currentRecord: any;
     currentFieldName: string;
+
+    private errors: string[] = [];
+    idCache: IDCache;
+    usernameCache = new Set<string>();
 
     constructor(directory: OCResourceDirectory, marketplaceData: SerializedMarketplace, logger: LogCallBackFunc) {
         this.directory = directory;

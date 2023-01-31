@@ -4,7 +4,7 @@ import _ from 'lodash';
 import { defaultLogger, LogCallBackFunc, MessageType } from "../services/logger";
 import axios from "axios";
 import yaml, { YAMLException } from 'js-yaml';
-import { ValidationContext } from "../services/validation-context";
+import { ValidationContext } from "../models/validation-context";
 import { DuplicateIDRecordValidationFunc } from "../services/shared-validation-functions/duplicate-id-record-validation-func";
 import { DuplicateUsernameRecordValidationFunc } from "../services/shared-validation-functions/duplicate-username-record-validation-func";
 import { RequiredFieldValidationFunc } from "../services/shared-validation-functions/required-field-validation-func";

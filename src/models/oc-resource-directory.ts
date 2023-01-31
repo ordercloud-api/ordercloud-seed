@@ -1,27 +1,32 @@
 import axios from "axios";
 import { Addresses, AdminAddresses, InventoryRecords, AdminUserGroups, AdminUsers, ApiClients, ApprovalRules, Buyers, Catalogs, Categories, CostCenters, CreditCards, ImpersonationConfigs, Incrementors, IntegrationEvents, Locales, MessageSenders, OpenIdConnects, PriceSchedules, ProductFacets, Products, Promotions, SecurityProfiles, Specs, SpendingAccounts, SupplierAddresses, Suppliers, SupplierUserGroups, SupplierUsers, UserGroups, Users, Webhooks, XpIndices, SellerApprovalRules } from "ordercloud-javascript-sdk";
 import { OCResourceEnum } from "./oc-resource-enum";
-import { OCResourceMetaData as OCResourceMetadata, OCResourceMetaDataHardCoded, RecordValidationFunc, ResourceReference, ResourceReferenceType } from "./oc-resources";
+import { OCResourceMetaData as OCResourceMetadata, OCResourceMetaDataHardCoded, ResourceReference, ResourceReferenceType } from "./oc-resource-metadata";
 import _ from 'lodash';
-import { OpenAPIProperties } from "./open-api";
-import { ImpersonationConfigValidationFunc } from "../services/custom-validation-functions/ImpersonationConfigValidationFunc";
-import { ApiClientValidationFunc } from "../services/custom-validation-functions/ApiClientValidationFunc";
-import { WebhookValidationFunc } from "../services/custom-validation-functions/WebhookValidationFunc";
-import { ProductValidationFunc } from "../services/custom-validation-functions/ProductValidationFunc";
-import { VariantValidationFunc } from "../services/custom-validation-functions/VariantValidationFunc";
-import { InventoryRecordValidationFunc } from "../services/custom-validation-functions/InventoryRecordValidationFunc";
-import { VariantInventoryRecordValidationFunc } from "../services/custom-validation-functions/VariantInventoryRecordValidationFunc";
-import { SellerApprovalRuleValidationFunc } from "../services/custom-validation-functions/SellerApprovalRuleValidationFunc";
-import { SecurityProfileAssignmentValidationFunc } from "../services/custom-validation-functions/SecurityProfileAssignmentValidationFunc";
-import { LocaleAssignmentValidationFunc } from "../services/custom-validation-functions/LocaleAssignmentValidationFunc";
-import { ProductAssignmentValidationFunc } from "../services/custom-validation-functions/ProductAssignmentValidationFunc";
+import { ImpersonationConfigValidationFunc } from "../services/custom-validation-functions/impersonation-config-validation-func";
+import { ApiClientValidationFunc } from "../services/custom-validation-functions/api-client-validation-func";
+import { WebhookValidationFunc } from "../services/custom-validation-functions/webhook-validation-func";
+import { ProductValidationFunc } from "../services/custom-validation-functions/product-validation-func";
+import { VariantValidationFunc } from "../services/custom-validation-functions/variant-validation-func";
+import { InventoryRecordValidationFunc } from "../services/custom-validation-functions/inventory-record-validation-func";
+import { VariantInventoryRecordValidationFunc } from "../services/custom-validation-functions/variant-inventory-record-validation-func";
+import { SellerApprovalRuleValidationFunc } from "../services/custom-validation-functions/seller-approval-rule-validation-func";
+import { SecurityProfileAssignmentValidationFunc } from "../services/custom-validation-functions/security-profiles-assignment-validation-func";
+import { LocaleAssignmentValidationFunc } from "../services/custom-validation-functions/locale-assignment-validation-func";
+import { ProductAssignmentValidationFunc } from "../services/custom-validation-functions/product-assignment-validation-func";
+import { UploadContext } from "./upload-context";
+import Random from "../services/random";
 
 interface OCResourcesMetaData {
     [key: string]: OCResourceMetadata
 }
 
 interface OCResourcesMetaDataHardCoded {
-    [key: string]: OCResourceMetaDataHardCoded
+    [key: OCResourceEnum]: OCResourceMetaDataHardCoded
+}
+
+function GetWebhookSecret(context: UploadContext): string {
+    return context.webhookSecret;
 }
 
 const ocResourceMetaDataHardCoded: OCResourcesMetaDataHardCoded = {
@@ -93,7 +98,12 @@ const ocResourceMetaDataHardCoded: OCResourcesMetaDataHardCoded = {
         }, 
         createPriority: 7,
         isAssignment: false,
-        redactFields: ["ConnectClientSecret"],
+        redact: [
+            { 
+                field: "ConnectClientSecret", 
+                onSeedReplaceBy: (_ => "")
+            }
+        ],
         outgoingResourceReferences: 
         [
             { 
@@ -154,7 +164,12 @@ const ocResourceMetaDataHardCoded: OCResourcesMetaDataHardCoded = {
         }, 
         createPriority: 2,
         isAssignment: false,
-        redactFields: ["SharedKey"],
+        redact: [
+            { 
+                field: "SharedKey", 
+                onSeedReplaceBy: GetWebhookSecret
+            }
+        ],
     },
     [OCResourceEnum.ApiClients]: {
         openApiSpec: {
@@ -165,7 +180,12 @@ const ocResourceMetaDataHardCoded: OCResourcesMetaDataHardCoded = {
         }, 
         createPriority: 6,
         isAssignment: false,
-        redactFields: ["ClientSecret"],
+        redact: [
+            { 
+                field: "ShareClientSecretdKey", 
+                onSeedReplaceBy: ((_) => Random.generateClientSecret())
+            }
+        ],
         outgoingResourceReferences:
         [
             { 
@@ -230,7 +250,12 @@ const ocResourceMetaDataHardCoded: OCResourcesMetaDataHardCoded = {
         }, 
         createPriority: 7,
         isAssignment: false,
-        redactFields: ["HashKey"],
+        redact: [
+            { 
+                field: "HashKey", 
+                onSeedReplaceBy: GetWebhookSecret
+            }
+        ],
         // for .ApiClientIDs
         customValidationFunc: WebhookValidationFunc
     },
@@ -243,7 +268,12 @@ const ocResourceMetaDataHardCoded: OCResourcesMetaDataHardCoded = {
         },  
         createPriority: 2,
         isAssignment: false,
-        redactFields: ["HashKey"],
+        redact: [
+            { 
+                field: "HashKey", 
+                onSeedReplaceBy: GetWebhookSecret
+            }
+        ],
     },
     [OCResourceEnum.XpIndices]: {
         openApiSpec: {
@@ -602,6 +632,12 @@ const ocResourceMetaDataHardCoded: OCResourcesMetaDataHardCoded = {
                 otherResourceName: OCResourceEnum.SpecOptions,
             },
         ],
+        uploadTransformFunc: (record, context) => {
+            if (!_.isNil(record.DefaultOptionID)) { 
+                context.addSpecDefaultOption(record); // need these later to patch specs after options are created
+                record.DefaultOptionID = null; // set null so create spec succeeds 
+            }
+        },
     },
     [OCResourceEnum.SpecOptions]: {
         openApiSpec: {

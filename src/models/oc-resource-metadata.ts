@@ -1,4 +1,5 @@
-import { ValidationContext } from "../services/validation-context";
+import { UploadContext } from "./upload-context";
+import { ValidationContext } from "./validation-context";
 import { OCResourceEnum } from "./oc-resource-enum";
 import { OpenAPIProperties, ReasourceSchema } from "./open-api";
 
@@ -19,8 +20,11 @@ export class OCResourceMetaData {
     outgoingResourceReferences?: ResourceReference[];
     // Fields on other resources that point to the ID of this resource
     incommingResourceReferences?: ResourceReference[];
-    redactFields: string[];
+    apiClientRefFields: string[]
+    redactedFields: RedactionDetails[];
+    uploadTransformFunc: UploadTransformFunc;
     downloadTransformFunc: (x: any) => any;
+    customBulkUploadFunc: BulkUploadFunc;
     customRecordValidationFunc: ValidationFunc;
     shouldAttemptListFunc: (parentRecord: any) => boolean;
 
@@ -29,11 +33,16 @@ export class OCResourceMetaData {
         this.isAssignment = meta.isAssignment;
         this.createPriority = meta.createPriority;
         this.outgoingResourceReferences = meta.outgoingResourceReferences ?? [];
-        this.redactFields = meta.redactFields ?? [];
+        this.redactedFields = meta.redact ?? [];
+        this.apiClientRefFields = meta.outgoingResourceReferences
+                                    .filter(x => x.otherResourceName === OCResourceEnum.ApiClients)
+                                    .map(x => x.fieldNameOnThisResource);
         this.routeParamNames = meta.routeParams ?? [];
         this.downloadTransformFunc = meta.downloadTransformFunc ?? (x => x)
         this.customRecordValidationFunc = meta.customValidationFunc ?? (_ => {});
         this.shouldAttemptListFunc = meta.shouldAttemptListFunc ?? (_ => true);
+        this.uploadTransformFunc = meta.uploadTransformFunc ?? ((x, __) => x)
+        this.customBulkUploadFunc = meta.customBulkUploadFunc ?? (async (ctx) => { await ctx.defaultBulkCreate() });
         var path = openAPISpec.paths[meta.openApiSpec.resourceCreatePath];
         var createOperation = path.post ?? path.put;
         this.openApiSpec = {
@@ -104,8 +113,13 @@ export enum ResourceReferenceType {
     Reference = "Reference",  // any reference that is not parent, child, or Seller
 }
 
-export type ValidationFunc = (context: ValidationContext) => void
+export type ValidationFunc = (context: ValidationContext) => void;
 
+export type UploadTransformFunc = (record: any, context: UploadContext) => any;
+
+export type BulkUploadFunc = (context: UploadContext) => Promise<void>;
+
+export type RedactionReplaceFunc = (context: UploadContext) => string;
 
 // Hard coded in the directory to match records with the Open API Spec
 interface OpenAPISpecHardCoded {
@@ -123,11 +137,17 @@ export interface OCResourceMetaDataHardCoded {
     routeParams?: string[];
     createPriority: number; // higher numbers need to be created first
     outgoingResourceReferences?: ResourceReference[];
-    //incommingResourceReferences?: ResourceReference[];
-    redactFields?: string[];
-    downloadTransformFunc?: (x: any) => any,
-    customValidationFunc?: ValidationFunc,
-    shouldAttemptListFunc?: (parentRecord: any) => boolean
+    redact?: RedactionDetails[];
+    uploadTransformFunc: UploadTransformFunc
+    downloadTransformFunc?: (x: any) => any;
+    customValidationFunc?: ValidationFunc;
+    shouldAttemptListFunc?: (parentRecord: any) => boolean;
+    customBulkUploadFunc: BulkUploadFunc;
+}
+
+export interface RedactionDetails {
+    field: string;
+    onSeedReplaceBy: RedactionReplaceFunc
 }
 
 

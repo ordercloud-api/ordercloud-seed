@@ -1,5 +1,5 @@
 import { OpenAPIProperty, OpenAPIType } from "../../models/open-api";
-import { ValidationContext } from "../validation-context";
+import { ValidationContext } from "../../models/validation-context";
 import _ from "lodash";
 
 // TODO - validate things inside objects or arrays

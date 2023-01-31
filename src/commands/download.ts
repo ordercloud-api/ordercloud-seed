@@ -10,7 +10,7 @@ import PortalAPI from '../services/portal';
 import Bottleneck from 'bottleneck';
 import { OCResourceEnum } from '../models/oc-resource-enum';
 import { RefreshTimer } from '../services/refresh-timer';
-import { OCResourceMetaData } from '../models/oc-resources';
+import { OCResourceMetaData } from '../models/oc-resource-metadata';
 
 export interface DownloadArgs {
     username?: string; 
@@ -84,9 +84,8 @@ export async function download(args: DownloadArgs): Promise<SerializedMarketplac
         var records = await ordercloudBulk.ListAll(resource);
         RedactSensitiveFields(resource, records);
         PlaceHoldMarketplaceID(resource, records);
-        if (resource.downloadTransformFunc !== undefined) {
-            records = records.map(resource.downloadTransformFunc)
-        }
+        records = records.map(resource.downloadTransformFunc)
+
         logger(`Found ${records?.length || 0} ${resource.name}`);
         marketplace.AddRecords(resource, records);
         for (let childResource of resource.children)
@@ -98,11 +97,9 @@ export async function download(args: DownloadArgs): Promise<SerializedMarketplac
                     var childRecords = await ordercloudBulk.ListAll(childResource, parentRecord.ID); // assume ID exists. Which is does for all parent types.
                     childResourceRecordCounts[childResource.name] += childRecords.length;
                     PlaceHoldMarketplaceID(childResource, childRecords);
-                    if (childResource.downloadTransformFunc !== undefined) {
-                        childRecords = childRecords.map(childResource.downloadTransformFunc)
-                    }
+                    childRecords = childRecords.map(childResource.downloadTransformFunc)
                     for (let childRecord of childRecords) {
-                        childRecord[childResource.parentRefField] = parentRecord.ID;
+                        childRecord[childResource.parentReference.fieldNameOnThisResource] = parentRecord.ID;
                     }
                     marketplace.AddRecords(childResource, childRecords);
                     if (childResource.name === OCResourceEnum.Variants) {
@@ -131,12 +128,12 @@ export async function download(args: DownloadArgs): Promise<SerializedMarketplac
     return marketplace;
 
     function RedactSensitiveFields(resource: OCResourceMetaData, records: any[]): void {
-        if (resource.redactFields.length === 0) return;
+        if (resource.redactedFields.length === 0) return;
 
         for (var record of records) {
-            for (var field of resource.redactFields) {
-                if (!_.isNil(record[field])) {
-                    record[field] = REDACTED_MESSAGE;
+            for (var field of resource.redactedFields) {
+                if (!_.isNil(record[field.field])) {
+                    record[field.field] = REDACTED_MESSAGE;
                 }
             }
         }
