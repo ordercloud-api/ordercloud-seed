@@ -5,7 +5,7 @@ import { BulkUploadFunc } from "../../models/oc-resource-metadata";
 import { MessageType } from "../logger";
 
 // Need a custom upload function because variants are generated, not created normally.
-export const VariantUploadFunc: BulkUploadFunc = async (context) => {
+export const VariantBulkUploadFunc: BulkUploadFunc = async (context) => {
     var products = context.marketplaceData.Objects[OCResourceEnum.Products] || [];
     var productsWithVariants = products.filter((p: Product) => p.VariantCount > 0);
     var meta: JobGroupMetaData = {

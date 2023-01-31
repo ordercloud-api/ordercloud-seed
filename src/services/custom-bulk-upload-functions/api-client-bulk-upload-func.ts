@@ -1,6 +1,4 @@
-import { REDACTED_MESSAGE } from "../../constants";
 import { BulkUploadFunc } from "../../models/oc-resource-metadata";
-import Random from "../random";
 
 // Need a custom upload function because unlike most resources we actually need the results for something.
 export const ApiClientUploadFunc: BulkUploadFunc = async (context) => {

@@ -16,6 +16,10 @@ import { LocaleAssignmentValidationFunc } from "../services/custom-validation-fu
 import { ProductAssignmentValidationFunc } from "../services/custom-validation-functions/product-assignment-validation-func";
 import { UploadContext } from "./upload-context";
 import Random from "../services/random";
+import { ApiClientUploadFunc } from "../services/custom-bulk-upload-functions/api-client-bulk-upload-func";
+import { CategoryBulkUploadFunc } from "../services/custom-bulk-upload-functions/category-bulk-upload-func";
+import { SpecOptionBulkUploadFunc } from "../services/custom-bulk-upload-functions/spec-options-bulk-upload-func";
+import { VariantBulkUploadFunc as VariantBulkUploadFunc } from "../services/custom-bulk-upload-functions/variant-bulk-upload-func";
 
 interface OCResourcesMetaData {
     [key: string]: OCResourceMetadata
@@ -211,6 +215,7 @@ const ocResourceMetaDataHardCoded: OCResourcesMetaDataHardCoded = {
             x.ID = x.ID.toLowerCase(); // funky platform thing with API CLient ID casing
             return x;
         },
+        customBulkUploadFunc: ApiClientUploadFunc,
         customValidationFunc: ApiClientValidationFunc, 
     },
     [OCResourceEnum.Locales]: {
@@ -487,7 +492,8 @@ const ocResourceMetaDataHardCoded: OCResourcesMetaDataHardCoded = {
                 otherResourceName: OCResourceEnum.Categories,
                 referenceType: ResourceReferenceType.Reference,
             }
-        ]
+        ],
+        customBulkUploadFunc: CategoryBulkUploadFunc,
     },
     [OCResourceEnum.Suppliers]: {
         openApiSpec: {
@@ -656,7 +662,8 @@ const ocResourceMetaDataHardCoded: OCResourcesMetaDataHardCoded = {
                 fieldNameOnOtherReasource: "ID", 
                 otherResourceName: OCResourceEnum.Specs,
             },
-        ]
+        ],
+        customBulkUploadFunc: SpecOptionBulkUploadFunc,
     },
     [OCResourceEnum.ProductFacets]: {
         openApiSpec: {
@@ -705,7 +712,8 @@ const ocResourceMetaDataHardCoded: OCResourcesMetaDataHardCoded = {
             },
         ],
         customValidationFunc: VariantValidationFunc,
-        shouldAttemptListFunc: (product) => (product?.VariantCount > 0)
+        shouldAttemptListFunc: (product) => (product?.VariantCount > 0),
+        customBulkUploadFunc: VariantBulkUploadFunc,
     },
     [OCResourceEnum.InventoryRecords]: {
         openApiSpec: {
