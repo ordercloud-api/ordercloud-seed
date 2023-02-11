@@ -1,7 +1,7 @@
 import yargs from 'yargs';
 import fs from 'fs';
 import yaml from 'js-yaml';
-import { AllMarketplaceData } from './models/all-marketplace-data';
+import { AllMarketplaceData } from './models/serialized-marketplace';
 import * as SeedingTemplates from '../seeds/meta.json';
 import _ from 'lodash';
 import { LogCallBackFunc, MessageType, OCSeeding } from './js-api';
