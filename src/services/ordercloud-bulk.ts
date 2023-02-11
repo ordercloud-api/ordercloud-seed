@@ -2,24 +2,22 @@ import pkg, { range } from 'lodash';
 import Bottleneck from 'bottleneck';
 import chalk from 'chalk';
 import _ from 'lodash';
-import {  LogCallBackFunc, MessageType } from './logger';
 import { RESET_PROGRESS_BAR_SUFFIX } from '../constants';
 import { JobActionType, JobGroupMetaData, JobMetaData } from '../models/job-metadata';
 import { OCResourceMetaData } from '../models/oc-resource-metadata';
+import { LogCallBackFunc, MessageType } from '../js-api';
 const { flatten } = pkg;
 
 export default class OrderCloudBulk {
     logger: LogCallBackFunc;
-    limiter: Bottleneck;
+    limiter = new Bottleneck({ minTime: 100, maxConcurrent: 8 });
     currentResourceName = "";
     currentParentResourceID = "";
     currentProgress = 0;
     retryWaitScheduleInMS = [1000, 3000, 7000];
 
-    constructor(limiter: Bottleneck, logger: LogCallBackFunc) {
-        this.limiter = limiter;
+    constructor(logger: LogCallBackFunc) {
         this.logger = logger;
-
         this.limiter.on("done", (jobInfo) => {
             const meta = JobMetaData.fromString(jobInfo.options.id);
             if (meta.progress > 1) {
@@ -50,7 +48,6 @@ export default class OrderCloudBulk {
             }
             this.throwError(error); 
         });
-        this.limiter = limiter;
     }
 
     private throwError(error: any) {

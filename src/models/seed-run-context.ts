@@ -1,19 +1,18 @@
 import { OCResourceDirectory } from "./oc-resource-directory";
 import { OCResourceEnum } from "./oc-resource-enum";
 import { OCResourceMetaData } from "./oc-resource-metadata";
-import { SerializedMarketplace } from "./serialized-marketplace";
 import OrderCloudBulk from "../services/ordercloud-bulk";
-import Random from "../services/random";
-import { LogCallBackFunc } from "../services/logger";
+import { LogCallBackFunc } from "../js-api";
+import { Random } from "../services/util";
+import { AllMarketplaceData } from "./all-marketplace-data";
 
-export class UploadContext {
+export class SeedRunContext {
     directory: OCResourceDirectory;
-    marketplaceData: SerializedMarketplace;
+    marketplaceData: AllMarketplaceData;
     logger: LogCallBackFunc;
     ordercloudBulk: OrderCloudBulk;
 
     currentResource: OCResourceMetaData;
-    currentRecords: any[];
 
     // needed to replace placeholder references on OwnerID fields
     newMarketplaceID: string;
@@ -24,12 +23,12 @@ export class UploadContext {
     // needed to replace redacted secrets
     webhookSecret: string;
 
-    constructor(newMarketplaceID: string, directory: OCResourceDirectory, marketplaceData: SerializedMarketplace, ordercloudBulk: OrderCloudBulk, logger: LogCallBackFunc) {
+    constructor(newMarketplaceID: string, directory: OCResourceDirectory, marketplaceData: AllMarketplaceData, logger: LogCallBackFunc) {
         this.newMarketplaceID = newMarketplaceID;
         this.directory = directory;
-        this.marketplaceData = marketplaceData;
-        this.ordercloudBulk = ordercloudBulk;
+        this.marketplaceData = new AllMarketplaceData(marketplaceData);
         this.logger = logger;
+        this.ordercloudBulk = new OrderCloudBulk(logger);
         this.webhookSecret = Random.generateWebhookSecret(); // use one webhook secret for all webhooks, integration events and message senders
     }
 
@@ -38,14 +37,10 @@ export class UploadContext {
     }
 
     getNewlyCreatedApiClientRecords(): any[] {
-        var apiClients = this.marketplaceData.Objects[OCResourceEnum.ApiClients]?.map(apiClient => {
+        var apiClients = this.marketplaceData.Objects[OCResourceEnum.ApiClient]?.map(apiClient => {
             apiClient.ID = this.apiClientIDMap[apiClient.ID];
             return apiClient;
         });
         return apiClients ?? [];
-    }
-
-    async defaultBulkCreate(): Promise<void> {
-        await this.ordercloudBulk.CreateAll(this.currentResource, this.currentRecords)
     }
 }

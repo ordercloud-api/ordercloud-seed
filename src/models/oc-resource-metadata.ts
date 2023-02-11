@@ -1,12 +1,11 @@
-import { UploadContext } from "./upload-context";
-import { ValidationContext } from "./validation-context";
+import { SeedRunContext } from "./seed-run-context";
+import { ValidationRunContext } from "./validation-run-context";
 import { OCResourceEnum } from "./oc-resource-enum";
-import { OpenAPIProperties, ReasourceSchema } from "./open-api";
+import { ReasourceSchema } from "./open-api";
+import { OCResourceMetaDataHardCoded } from "./oc-resource-directory";
 
 export class OCResourceMetaData {
     name: OCResourceEnum;
-    children: OCResourceMetaData[];
-    parent: OCResourceMetaData;
     openApiSpec: OpenAPISpec;
     isAssignment: boolean;
     isParent: boolean;
@@ -15,34 +14,31 @@ export class OCResourceMetaData {
     routeParamNames: string[];
     sellerOwnerReference?: ResourceReference;
     parentReference?: ResourceReference;
+    childrenReferences?: ResourceReference[];
     createPriority: number; // higher numbers need to be created first
     // Fields on this resource that point to the ID of a different resource
     outgoingResourceReferences?: ResourceReference[];
     // Fields on other resources that point to the ID of this resource
-    incommingResourceReferences?: ResourceReference[];
+    // incommingResourceReferences?: ResourceReference[];
     apiClientRefFields: string[]
     redactedFields: RedactionDetails[];
     uploadTransformFunc: UploadTransformFunc;
     downloadTransformFunc: (x: any) => any;
-    customBulkUploadFunc: BulkUploadFunc;
-    customRecordValidationFunc: ValidationFunc;
     shouldAttemptListFunc: (parentRecord: any) => boolean;
 
-    constructor(name: OCResourceEnum, meta: OCResourceMetaDataHardCoded, openAPISpec: any, children: OCResourceMetaData[] = []) {
+    constructor(name: OCResourceEnum, meta: OCResourceMetaDataHardCoded, openAPISpec: any) {
         this.name = name;
         this.isAssignment = meta.isAssignment;
         this.createPriority = meta.createPriority;
         this.outgoingResourceReferences = meta.outgoingResourceReferences ?? [];
         this.redactedFields = meta.redact ?? [];
         this.apiClientRefFields = meta.outgoingResourceReferences
-                                    .filter(x => x.otherResourceName === OCResourceEnum.ApiClients)
+                                    .filter(x => x.otherResourceName === OCResourceEnum.ApiClient)
                                     .map(x => x.fieldNameOnThisResource);
         this.routeParamNames = meta.routeParams ?? [];
         this.downloadTransformFunc = meta.downloadTransformFunc ?? (x => x)
-        this.customRecordValidationFunc = meta.customValidationFunc ?? (_ => {});
         this.shouldAttemptListFunc = meta.shouldAttemptListFunc ?? (_ => true);
         this.uploadTransformFunc = meta.uploadTransformFunc ?? ((x, __) => x)
-        this.customBulkUploadFunc = meta.customBulkUploadFunc ?? (async (ctx) => { await ctx.defaultBulkCreate() });
         var path = openAPISpec.paths[meta.openApiSpec.resourceCreatePath];
         var createOperation = path.post ?? path.put;
         this.openApiSpec = {
@@ -52,7 +48,7 @@ export class OCResourceMetaData {
             resourceSchema: openAPISpec.components.schemas[meta.openApiSpec.schemaName],
             requiredCreateFields: createOperation?.requestBody?.content?.["application/json"]?.schema?.required ?? [],
         }
-        let owner = meta.outgoingResourceReferences.find(x => x.referenceType === ResourceReferenceType.Owner);
+        let owner = meta.outgoingResourceReferences.find(x => x.referenceType === ResourceReferenceType.SellerOwner);
         this.hasSellerOwnerField = !!owner;
         this.sellerOwnerReference = owner ?? null;
         let parent = meta.outgoingResourceReferences.find(x => x.referenceType === ResourceReferenceType.Parent);
@@ -62,10 +58,6 @@ export class OCResourceMetaData {
             this.openApiSpec.requiredCreateFields.push(this.parentReference.fieldNameOnThisResource);
             this.openApiSpec.resourceSchema.properties[this.parentReference.fieldNameOnThisResource] = { type: "string", readOnly: false };
         }
-
-        this.children = children;
-        this.parent = parent;
-        this.isParent = children.length > 0;
     }
 
     getIdentifyingData(record: any): string[][] {
@@ -80,7 +72,7 @@ export class OCResourceMetaData {
     }
 
     hasIDField(): boolean {
-        return 'ID' in this.openApiSpec.resourceSchema.properties || this.name === OCResourceEnum.ApiClients;
+        return 'ID' in this.openApiSpec.resourceSchema.properties || this.name === OCResourceEnum.ApiClient;
     }
 
     hasUsernameField(): boolean {
@@ -101,49 +93,19 @@ export interface ResourceReference {
     fieldNameOnOtherReasource: string;
     otherResourceName: OCResourceEnum;
     referenceType: ResourceReferenceType;
-    // Always true for type Child, always false for type Parent and Owner. Usually false for type Reference
-    mulitpleReferencesAllowed?: boolean; 
     otherResource?: OCResourceMetaData;
 }
 
 export enum ResourceReferenceType {
     Parent = "Parent",
     Child = "Child",
-    Owner = "Owner", // reference to a Supplier ID or the Marketplace ID. Special b/c marketplace IDs need special handling
+    SellerOwner = "SellerOwner", // reference to a Supplier ID or the Marketplace ID. Special b/c marketplace IDs need special handling
     Reference = "Reference",  // any reference that is not parent, child, or Seller
 }
 
-export type ValidationFunc = (context: ValidationContext) => void;
+export type UploadTransformFunc = (record: any, context: SeedRunContext) => any;
 
-export type UploadTransformFunc = (record: any, context: UploadContext) => any;
-
-export type BulkUploadFunc = (context: UploadContext) => Promise<void>;
-
-export type RedactionReplaceFunc = (context: UploadContext) => string;
-
-// Hard coded in the directory to match records with the Open API Spec
-interface OpenAPISpecHardCoded {
-    schemaName: string; // matches open api spec model for POST
-    listFunction: Function;
-    createFunction: Function;
-    resourceCreatePath: string;
-    schemaAllProperties?: OpenAPIProperties; // used to validate field types
-    createOperationRequiredProperties?: string[]; // used to validate required fields
-}
-
-export interface OCResourceMetaDataHardCoded {
-    openApiSpec: OpenAPISpecHardCoded;
-    isAssignment: boolean;
-    routeParams?: string[];
-    createPriority: number; // higher numbers need to be created first
-    outgoingResourceReferences?: ResourceReference[];
-    redact?: RedactionDetails[];
-    uploadTransformFunc: UploadTransformFunc
-    downloadTransformFunc?: (x: any) => any;
-    customValidationFunc?: ValidationFunc;
-    shouldAttemptListFunc?: (parentRecord: any) => boolean;
-    customBulkUploadFunc: BulkUploadFunc;
-}
+export type RedactionReplaceFunc = (context: SeedRunContext) => string;
 
 export interface RedactionDetails {
     field: string;

@@ -1,4 +1,4 @@
-export default class Random {
+export class Random {
     private static readonly charset = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
 
     static generateWebhookSecret(): string {
@@ -22,3 +22,17 @@ export default class Random {
         return retVal;
     }
 }
+
+class Interval {
+    id; 
+  
+    set(fn: Function, interval: number) {
+      this.id = setInterval(fn, interval)
+    }
+  
+    clear() {
+      clearInterval(this.id)
+    }
+  }
+  
+export const RefreshTimer = new Interval();

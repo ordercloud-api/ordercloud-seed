@@ -1,13 +1,13 @@
 import { SEPARATOR_FOR_SERIALIZATION } from "../constants";
+import { LogCallBackFunc, MessageType } from "../js-api";
+import { AllMarketplaceData } from "./all-marketplace-data";
 import { OCResourceDirectory } from "./oc-resource-directory";
 import { OCResourceEnum } from "./oc-resource-enum";
 import { OCResourceMetaData } from "./oc-resource-metadata";
-import { SerializedMarketplace } from "./serialized-marketplace";
-import { LogCallBackFunc, MessageType } from "../services/logger";
 
-export class ValidationContext {
+export class ValidationRunContext {
     directory: OCResourceDirectory;
-    marketplaceData: SerializedMarketplace;
+    marketplaceData: AllMarketplaceData;
     logger: LogCallBackFunc;
 
     currentResource: OCResourceMetaData;
@@ -18,9 +18,9 @@ export class ValidationContext {
     idCache: IDCache;
     usernameCache = new Set<string>();
 
-    constructor(directory: OCResourceDirectory, marketplaceData: SerializedMarketplace, logger: LogCallBackFunc) {
+    constructor(directory: OCResourceDirectory, marketplaceData: AllMarketplaceData, logger: LogCallBackFunc) {
         this.directory = directory;
-        this.marketplaceData = marketplaceData;
+        this.marketplaceData = new AllMarketplaceData(marketplaceData);;
         this.logger = logger;
         this.idCache = new IDCache(directory);
     }

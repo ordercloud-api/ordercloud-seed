@@ -1,8 +1,7 @@
 import { version } from "../../package.json";
-import { OCResourceMetaData } from "./oc-resources";
+import { OCResourceMetaData } from "./oc-resource-metadata";
 
-
-export class SerializedMarketplace {
+export class AllMarketplaceData {
     Meta: MarketplaceMeta = {};
     Objects = {};
     Assignments = {};

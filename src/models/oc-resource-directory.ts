@@ -1,40 +1,48 @@
 import axios from "axios";
 import { Addresses, AdminAddresses, InventoryRecords, AdminUserGroups, AdminUsers, ApiClients, ApprovalRules, Buyers, Catalogs, Categories, CostCenters, CreditCards, ImpersonationConfigs, Incrementors, IntegrationEvents, Locales, MessageSenders, OpenIdConnects, PriceSchedules, ProductFacets, Products, Promotions, SecurityProfiles, Specs, SpendingAccounts, SupplierAddresses, Suppliers, SupplierUserGroups, SupplierUsers, UserGroups, Users, Webhooks, XpIndices, SellerApprovalRules } from "ordercloud-javascript-sdk";
 import { OCResourceEnum } from "./oc-resource-enum";
-import { OCResourceMetaData as OCResourceMetadata, OCResourceMetaDataHardCoded, ResourceReference, ResourceReferenceType } from "./oc-resource-metadata";
+import { OCResourceMetaData as OCResourceMetadata, RedactionDetails, ResourceReference, ResourceReferenceType, UploadTransformFunc } from "./oc-resource-metadata";
 import _ from 'lodash';
-import { ImpersonationConfigValidationFunc } from "../services/custom-validation-functions/impersonation-config-validation-func";
-import { ApiClientValidationFunc } from "../services/custom-validation-functions/api-client-validation-func";
-import { WebhookValidationFunc } from "../services/custom-validation-functions/webhook-validation-func";
-import { ProductValidationFunc } from "../services/custom-validation-functions/product-validation-func";
-import { VariantValidationFunc } from "../services/custom-validation-functions/variant-validation-func";
-import { InventoryRecordValidationFunc } from "../services/custom-validation-functions/inventory-record-validation-func";
-import { VariantInventoryRecordValidationFunc } from "../services/custom-validation-functions/variant-inventory-record-validation-func";
-import { SellerApprovalRuleValidationFunc } from "../services/custom-validation-functions/seller-approval-rule-validation-func";
-import { SecurityProfileAssignmentValidationFunc } from "../services/custom-validation-functions/security-profiles-assignment-validation-func";
-import { LocaleAssignmentValidationFunc } from "../services/custom-validation-functions/locale-assignment-validation-func";
-import { ProductAssignmentValidationFunc } from "../services/custom-validation-functions/product-assignment-validation-func";
-import { UploadContext } from "./upload-context";
-import Random from "../services/random";
-import { ApiClientUploadFunc } from "../services/custom-bulk-upload-functions/api-client-bulk-upload-func";
-import { CategoryBulkUploadFunc } from "../services/custom-bulk-upload-functions/category-bulk-upload-func";
-import { SpecOptionBulkUploadFunc } from "../services/custom-bulk-upload-functions/spec-options-bulk-upload-func";
-import { VariantBulkUploadFunc as VariantBulkUploadFunc } from "../services/custom-bulk-upload-functions/variant-bulk-upload-func";
+import { SeedRunContext } from "./seed-run-context";
+import { OpenAPIProperties } from "./open-api";
+import { Random } from "../services/util";
 
-interface OCResourcesMetaData {
-    [key: string]: OCResourceMetadata
+type OCResourcesMetaData = {
+    [key in OCResourceEnum]: OCResourceMetadata
 }
 
-interface OCResourcesMetaDataHardCoded {
-    [key: OCResourceEnum]: OCResourceMetaDataHardCoded
+type OCResourcesMetaDataHardCoded = {
+    [key in OCResourceEnum]: OCResourceMetaDataHardCoded
 }
 
-function GetWebhookSecret(context: UploadContext): string {
+// Hard coded in the directory to match records with the Open API Spec
+interface OpenAPISpecHardCoded {
+    schemaName: string; // matches open api spec model for POST
+    listFunction: Function;
+    createFunction: Function;
+    resourceCreatePath: string;
+    schemaAllProperties?: OpenAPIProperties; // used to validate field types
+    createOperationRequiredProperties?: string[]; // used to validate required fields
+}
+
+export interface OCResourceMetaDataHardCoded {
+    openApiSpec: OpenAPISpecHardCoded;
+    isAssignment: boolean;
+    routeParams?: string[];
+    createPriority: number; // higher numbers need to be created first
+    outgoingResourceReferences?: ResourceReference[];
+    redact?: RedactionDetails[];
+    uploadTransformFunc?: UploadTransformFunc
+    downloadTransformFunc?: (x: any) => any;
+    shouldAttemptListFunc?: (parentRecord: any) => boolean;
+}
+
+function GetWebhookSecret(context: SeedRunContext): string {
     return context.webhookSecret;
 }
 
 const ocResourceMetaDataHardCoded: OCResourcesMetaDataHardCoded = {
-    [OCResourceEnum.SecurityProfiles]: { 
+    [OCResourceEnum.SecurityProfile]: { 
         openApiSpec: {
             schemaName: 'SecurityProfile',
             resourceCreatePath: "/securityprofiles",
@@ -44,7 +52,7 @@ const ocResourceMetaDataHardCoded: OCResourcesMetaDataHardCoded = {
         createPriority: 2,
         isAssignment: false,
     },
-    [OCResourceEnum.ImpersonationConfigs]: { 
+    [OCResourceEnum.ImpersonationConfig]: { 
         openApiSpec: {
             schemaName: 'ImpersonationConfig',
             resourceCreatePath: "/impersonationconfig",
@@ -53,47 +61,46 @@ const ocResourceMetaDataHardCoded: OCResourcesMetaDataHardCoded = {
         }, 
         createPriority: 7,
         isAssignment: false,
-        customValidationFunc: ImpersonationConfigValidationFunc,
         outgoingResourceReferences: [
             { 
                 referenceType: ResourceReferenceType.Reference,
                 fieldNameOnThisResource: "ClientID",
                 fieldNameOnOtherReasource: "ID",
-                otherResourceName: OCResourceEnum.ApiClients,  
+                otherResourceName: OCResourceEnum.ApiClient,  
             },
             { 
                 referenceType: ResourceReferenceType.Reference,
                 fieldNameOnThisResource: "SecurityProfileID", 
                 fieldNameOnOtherReasource: "ID",
-                otherResourceName: OCResourceEnum.SecurityProfiles,
+                otherResourceName: OCResourceEnum.SecurityProfile,
             },
             { 
                 referenceType: ResourceReferenceType.Reference,
                 fieldNameOnThisResource: "BuyerID", 
                 fieldNameOnOtherReasource: "ID",
-                otherResourceName: OCResourceEnum.Buyers, 
+                otherResourceName: OCResourceEnum.Buyer, 
             },
             { 
                 referenceType: ResourceReferenceType.Reference,
                 fieldNameOnThisResource: "GroupID",
                 fieldNameOnOtherReasource: "ID",
-                otherResourceName: OCResourceEnum.UserGroups,
+                otherResourceName: OCResourceEnum.UserGroup,
             },
             { 
                 referenceType: ResourceReferenceType.Reference,  
                 fieldNameOnThisResource: "UserID",
                 fieldNameOnOtherReasource: "ID",
-                otherResourceName: OCResourceEnum.Users,
+                otherResourceName: OCResourceEnum.User,
             },
             { 
                 referenceType: ResourceReferenceType.Reference, 
                 fieldNameOnThisResource: "ImpersonationBuyerID",
                 fieldNameOnOtherReasource: "ID", 
-                otherResourceName: OCResourceEnum.Buyers,
+                otherResourceName: OCResourceEnum.Buyer,
             },
         ]
     },
-    [OCResourceEnum.OpenIdConnects]: {
+    [OCResourceEnum.OpenIdConnect]: {
         openApiSpec: {
             schemaName: 'OpenIdConnect',
             resourceCreatePath: "/openidconnects",
@@ -114,17 +121,17 @@ const ocResourceMetaDataHardCoded: OCResourcesMetaDataHardCoded = {
                 referenceType: ResourceReferenceType.Reference,  
                 fieldNameOnThisResource: "OrderCloudApiClientID",
                 fieldNameOnOtherReasource: "ID",
-                otherResourceName: OCResourceEnum.ApiClients,
+                otherResourceName: OCResourceEnum.ApiClient,
             },
             { 
                 referenceType: ResourceReferenceType.Reference, 
                 fieldNameOnThisResource: "IntegrationEventID",
                 fieldNameOnOtherReasource: "ID", 
-                otherResourceName: OCResourceEnum.IntegrationEvents,
+                otherResourceName: OCResourceEnum.IntegrationEvent,
             }
         ]
     },
-    [OCResourceEnum.AdminUsers]: {
+    [OCResourceEnum.AdminUser]: {
         openApiSpec: {
             schemaName: 'UserGroup',
             resourceCreatePath: "/adminusers",
@@ -139,7 +146,7 @@ const ocResourceMetaDataHardCoded: OCResourcesMetaDataHardCoded = {
             return x;
         }
     },
-    [OCResourceEnum.AdminUserGroups]: {
+    [OCResourceEnum.AdminUserGroup]: {
         openApiSpec: {
             schemaName: 'UserGroup',
             resourceCreatePath: "/usergroups",
@@ -149,7 +156,7 @@ const ocResourceMetaDataHardCoded: OCResourcesMetaDataHardCoded = {
         createPriority: 2,
         isAssignment: false,
     },
-    [OCResourceEnum.AdminAddresses]: {
+    [OCResourceEnum.AdminAddress]: {
         openApiSpec: {
             schemaName: 'Address',
             resourceCreatePath: "/addresses",
@@ -159,7 +166,7 @@ const ocResourceMetaDataHardCoded: OCResourcesMetaDataHardCoded = {
         createPriority: 2,
         isAssignment: false,
     },
-    [OCResourceEnum.MessageSenders]: {
+    [OCResourceEnum.MessageSender]: {
         openApiSpec: {
             schemaName: 'MessageSender',
             resourceCreatePath: "/messagesenders",
@@ -175,7 +182,7 @@ const ocResourceMetaDataHardCoded: OCResourcesMetaDataHardCoded = {
             }
         ],
     },
-    [OCResourceEnum.ApiClients]: {
+    [OCResourceEnum.ApiClient]: {
         openApiSpec: {
             schemaName: 'ApiClient',
             resourceCreatePath: "/apiclients",
@@ -196,29 +203,27 @@ const ocResourceMetaDataHardCoded: OCResourcesMetaDataHardCoded = {
                 referenceType: ResourceReferenceType.Reference,  
                 fieldNameOnThisResource: "OrderCheckoutIntegrationEventID",
                 fieldNameOnOtherReasource: "ID",
-                otherResourceName: OCResourceEnum.IntegrationEvents,
+                otherResourceName: OCResourceEnum.IntegrationEvent,
             },
             { 
                 referenceType: ResourceReferenceType.Reference, 
                 fieldNameOnThisResource: "OrderReturnIntegrationEventID",
                 fieldNameOnOtherReasource: "ID", 
-                otherResourceName: OCResourceEnum.IntegrationEvents,
+                otherResourceName: OCResourceEnum.IntegrationEvent,
             },
             { 
                 referenceType: ResourceReferenceType.Reference, 
                 fieldNameOnThisResource: "AddToCartIntegrationEventID",
                 fieldNameOnOtherReasource: "ID", 
-                otherResourceName: OCResourceEnum.IntegrationEvents,
+                otherResourceName: OCResourceEnum.IntegrationEvent,
             },
         ],
         downloadTransformFunc: (x) => {
             x.ID = x.ID.toLowerCase(); // funky platform thing with API CLient ID casing
             return x;
         },
-        customBulkUploadFunc: ApiClientUploadFunc,
-        customValidationFunc: ApiClientValidationFunc, 
     },
-    [OCResourceEnum.Locales]: {
+    [OCResourceEnum.Locale]: {
         openApiSpec: {
             schemaName: 'Locale',
             resourceCreatePath: "/locales",
@@ -229,14 +234,14 @@ const ocResourceMetaDataHardCoded: OCResourcesMetaDataHardCoded = {
         isAssignment: false,
         outgoingResourceReferences: [
             { 
-                referenceType: ResourceReferenceType.Owner,
+                referenceType: ResourceReferenceType.SellerOwner,
                 fieldNameOnThisResource: "OwnerID",
                 fieldNameOnOtherReasource: "ID", 
-                otherResourceName: OCResourceEnum.Suppliers,
+                otherResourceName: OCResourceEnum.Supplier,
             },
         ],
     },
-    [OCResourceEnum.Incrementors]: {
+    [OCResourceEnum.Incrementor]: {
         openApiSpec: {
             schemaName: 'Incrementor',
             resourceCreatePath: "/incrementors",
@@ -246,7 +251,7 @@ const ocResourceMetaDataHardCoded: OCResourcesMetaDataHardCoded = {
         createPriority: 1,
         isAssignment: false,
     },
-    [OCResourceEnum.Webhooks]: {
+    [OCResourceEnum.Webhook]: {
         openApiSpec: {
             schemaName: "Webhook",
             resourceCreatePath: "/webhooks",
@@ -262,9 +267,8 @@ const ocResourceMetaDataHardCoded: OCResourcesMetaDataHardCoded = {
             }
         ],
         // for .ApiClientIDs
-        customValidationFunc: WebhookValidationFunc
     },
-    [OCResourceEnum.IntegrationEvents]: {
+    [OCResourceEnum.IntegrationEvent]: {
         openApiSpec: {
             schemaName: "IntegrationEvent",
             resourceCreatePath: "/integrationEvents",
@@ -280,7 +284,7 @@ const ocResourceMetaDataHardCoded: OCResourcesMetaDataHardCoded = {
             }
         ],
     },
-    [OCResourceEnum.XpIndices]: {
+    [OCResourceEnum.XpIndex]: {
         openApiSpec: {
             schemaName: "XpIndex",
             resourceCreatePath: "/xpindices",
@@ -290,7 +294,7 @@ const ocResourceMetaDataHardCoded: OCResourcesMetaDataHardCoded = {
         createPriority: 1,
         isAssignment: false,
     },
-    [OCResourceEnum.Buyers]: {
+    [OCResourceEnum.Buyer]: {
         openApiSpec: {
             schemaName: "User",
             resourceCreatePath: "/buyers",
@@ -304,11 +308,11 @@ const ocResourceMetaDataHardCoded: OCResourcesMetaDataHardCoded = {
                 referenceType: ResourceReferenceType.Reference, 
                 fieldNameOnThisResource: "DefaultCatalogID",
                 fieldNameOnOtherReasource: "ID", 
-                otherResourceName: OCResourceEnum.Catalogs,
+                otherResourceName: OCResourceEnum.Catalog,
             }
         ]
     },
-    [OCResourceEnum.Users]: {
+    [OCResourceEnum.User]: {
         openApiSpec: {
             schemaName: "User",
             resourceCreatePath: "/buyers/{buyerID}/users",
@@ -323,7 +327,7 @@ const ocResourceMetaDataHardCoded: OCResourcesMetaDataHardCoded = {
                 referenceType: ResourceReferenceType.Parent,
                 fieldNameOnThisResource: "BuyerID",
                 fieldNameOnOtherReasource: "ID", 
-                otherResourceName: OCResourceEnum.Buyers,
+                otherResourceName: OCResourceEnum.Buyer,
             },
         ],
         downloadTransformFunc: (x) => { 
@@ -331,7 +335,7 @@ const ocResourceMetaDataHardCoded: OCResourcesMetaDataHardCoded = {
             return x;
         }
     },
-    [OCResourceEnum.UserGroups]: {
+    [OCResourceEnum.UserGroup]: {
         openApiSpec: {
             schemaName: "UserGroup",
             resourceCreatePath: "/buyers/{buyerID}/usergroups",
@@ -346,11 +350,11 @@ const ocResourceMetaDataHardCoded: OCResourcesMetaDataHardCoded = {
                 referenceType: ResourceReferenceType.Parent,
                 fieldNameOnThisResource: "BuyerID",
                 fieldNameOnOtherReasource: "ID", 
-                otherResourceName: OCResourceEnum.Buyers,
+                otherResourceName: OCResourceEnum.Buyer,
             },
         ],
     },
-    [OCResourceEnum.Addresses]: {
+    [OCResourceEnum.Address]: {
         openApiSpec: {
             schemaName: "Address",
             resourceCreatePath: "/buyers/{buyerID}/addresses",
@@ -365,11 +369,11 @@ const ocResourceMetaDataHardCoded: OCResourcesMetaDataHardCoded = {
                 referenceType: ResourceReferenceType.Parent,
                 fieldNameOnThisResource: "BuyerID",
                 fieldNameOnOtherReasource: "ID", 
-                otherResourceName: OCResourceEnum.Buyers,
+                otherResourceName: OCResourceEnum.Buyer,
             },
         ],
     },
-    [OCResourceEnum.CostCenters]: {
+    [OCResourceEnum.CostCenter]: {
         openApiSpec: {
             schemaName: "CostCenter",
             resourceCreatePath: "/buyers/{buyerID}/costcenters",
@@ -384,11 +388,11 @@ const ocResourceMetaDataHardCoded: OCResourcesMetaDataHardCoded = {
                 referenceType: ResourceReferenceType.Parent,
                 fieldNameOnThisResource: "BuyerID",
                 fieldNameOnOtherReasource: "ID", 
-                otherResourceName: OCResourceEnum.Buyers,
+                otherResourceName: OCResourceEnum.Buyer,
             },
         ],
     },
-    [OCResourceEnum.CreditCards]: {
+    [OCResourceEnum.CreditCard]: {
         openApiSpec: {
             schemaName: "CreditCard",
             resourceCreatePath: "/buyers/{buyerID}/creditcards",
@@ -403,11 +407,11 @@ const ocResourceMetaDataHardCoded: OCResourcesMetaDataHardCoded = {
                 referenceType: ResourceReferenceType.Parent,
                 fieldNameOnThisResource: "BuyerID",
                 fieldNameOnOtherReasource: "ID", 
-                otherResourceName: OCResourceEnum.Buyers,
+                otherResourceName: OCResourceEnum.Buyer,
             },
         ],
     },
-    [OCResourceEnum.SpendingAccounts]: {
+    [OCResourceEnum.SpendingAccount]: {
         openApiSpec: {
             schemaName: "SpendingAccount",
             resourceCreatePath: "/buyers/{buyerID}/spendingaccounts",
@@ -422,11 +426,11 @@ const ocResourceMetaDataHardCoded: OCResourcesMetaDataHardCoded = {
                 referenceType: ResourceReferenceType.Parent,
                 fieldNameOnThisResource: "BuyerID",
                 fieldNameOnOtherReasource: "ID", 
-                otherResourceName: OCResourceEnum.Buyers,
+                otherResourceName: OCResourceEnum.Buyer,
             },
         ]
     },
-    [OCResourceEnum.ApprovalRules]: {
+    [OCResourceEnum.ApprovalRule]: {
         openApiSpec: {
             schemaName: "ApprovalRule",
             resourceCreatePath: "/buyers/{buyerID}/approvalrules",
@@ -441,17 +445,17 @@ const ocResourceMetaDataHardCoded: OCResourcesMetaDataHardCoded = {
                 referenceType: ResourceReferenceType.Parent,
                 fieldNameOnThisResource: "BuyerID",
                 fieldNameOnOtherReasource: "ID", 
-                otherResourceName: OCResourceEnum.Buyers,
+                otherResourceName: OCResourceEnum.Buyer,
             },
             { 
                 fieldNameOnThisResource: "ApprovingGroupID",
                 fieldNameOnOtherReasource: "ID", 
-                otherResourceName: OCResourceEnum.UserGroups,
+                otherResourceName: OCResourceEnum.UserGroup,
                 referenceType: ResourceReferenceType.Reference,
             }
         ]
     },
-    [OCResourceEnum.Catalogs]: {
+    [OCResourceEnum.Catalog]: {
         openApiSpec: {
             schemaName: "Catalog",
             resourceCreatePath: "/catalogs",
@@ -462,14 +466,14 @@ const ocResourceMetaDataHardCoded: OCResourcesMetaDataHardCoded = {
         isAssignment: false,
         outgoingResourceReferences: [
             { 
-                referenceType: ResourceReferenceType.Owner,
+                referenceType: ResourceReferenceType.SellerOwner,
                 fieldNameOnThisResource: "OwnerID",
                 fieldNameOnOtherReasource: "ID", 
-                otherResourceName: OCResourceEnum.Suppliers,
+                otherResourceName: OCResourceEnum.Supplier,
             },
         ]
     },
-    [OCResourceEnum.Categories]: {
+    [OCResourceEnum.Category]: {
         openApiSpec: {
             schemaName: "Category",
             resourceCreatePath: "/catalogs/{catalogID}/categories",
@@ -484,18 +488,17 @@ const ocResourceMetaDataHardCoded: OCResourcesMetaDataHardCoded = {
                 referenceType: ResourceReferenceType.Parent,
                 fieldNameOnThisResource: "CatalogID",
                 fieldNameOnOtherReasource: "ID", 
-                otherResourceName: OCResourceEnum.Catalogs,
+                otherResourceName: OCResourceEnum.Catalog,
             },
             { 
                 fieldNameOnThisResource: "CatalogID",
                 fieldNameOnOtherReasource: "ID", 
-                otherResourceName: OCResourceEnum.Categories,
+                otherResourceName: OCResourceEnum.Category,
                 referenceType: ResourceReferenceType.Reference,
             }
         ],
-        customBulkUploadFunc: CategoryBulkUploadFunc,
     },
-    [OCResourceEnum.Suppliers]: {
+    [OCResourceEnum.Supplier]: {
         openApiSpec: {
             schemaName: "Supplier",
             resourceCreatePath: "/suppliers",
@@ -505,7 +508,7 @@ const ocResourceMetaDataHardCoded: OCResourcesMetaDataHardCoded = {
         createPriority: 2,
         isAssignment: false,
     },
-    [OCResourceEnum.SupplierUsers]: {
+    [OCResourceEnum.SupplierUser]: {
         openApiSpec: {
             schemaName: "User",
             resourceCreatePath: "/suppliers/{supplierID}/users",
@@ -520,7 +523,7 @@ const ocResourceMetaDataHardCoded: OCResourcesMetaDataHardCoded = {
                 referenceType: ResourceReferenceType.Parent,
                 fieldNameOnThisResource: "SupplierID",
                 fieldNameOnOtherReasource: "ID", 
-                otherResourceName: OCResourceEnum.Suppliers,
+                otherResourceName: OCResourceEnum.Supplier,
             },
         ],
         downloadTransformFunc: (x) => { 
@@ -528,7 +531,7 @@ const ocResourceMetaDataHardCoded: OCResourcesMetaDataHardCoded = {
             return x;
         }
     },
-    [OCResourceEnum.SupplierUserGroups]: {
+    [OCResourceEnum.SupplierUserGroup]: {
         openApiSpec: {
             schemaName: "UserGroup",
             resourceCreatePath: "/suppliers/{supplierID}/usergroups",
@@ -543,11 +546,11 @@ const ocResourceMetaDataHardCoded: OCResourcesMetaDataHardCoded = {
                 referenceType: ResourceReferenceType.Parent,
                 fieldNameOnThisResource: "SupplierID",
                 fieldNameOnOtherReasource: "ID", 
-                otherResourceName: OCResourceEnum.Suppliers,
+                otherResourceName: OCResourceEnum.Supplier,
             },
         ],
     },
-    [OCResourceEnum.SupplierAddresses]: {
+    [OCResourceEnum.SupplierAddress]: {
         openApiSpec: {
             schemaName: "Address",
             resourceCreatePath: "/suppliers/{supplierID}/addresses",
@@ -562,11 +565,11 @@ const ocResourceMetaDataHardCoded: OCResourcesMetaDataHardCoded = {
                 referenceType: ResourceReferenceType.Parent,
                 fieldNameOnThisResource: "SupplierID",
                 fieldNameOnOtherReasource: "ID", 
-                otherResourceName: OCResourceEnum.Suppliers,
+                otherResourceName: OCResourceEnum.Supplier,
             },
         ]
     },
-    [OCResourceEnum.Products]: {
+    [OCResourceEnum.Product]: {
         openApiSpec: {
             schemaName: "Product",
             resourceCreatePath: "/products",
@@ -577,27 +580,26 @@ const ocResourceMetaDataHardCoded: OCResourcesMetaDataHardCoded = {
         isAssignment: false,
         outgoingResourceReferences: [
             { 
-                referenceType: ResourceReferenceType.Owner,
+                referenceType: ResourceReferenceType.SellerOwner,
                 fieldNameOnThisResource: "OwnerID",
                 fieldNameOnOtherReasource: "ID", 
-                otherResourceName: OCResourceEnum.Suppliers,
+                otherResourceName: OCResourceEnum.Supplier,
             },
             { 
                 referenceType: ResourceReferenceType.Reference,
                 fieldNameOnThisResource: "DefaultPriceScheduleID",
                 fieldNameOnOtherReasource: "ID", 
-                otherResourceName: OCResourceEnum.PriceSchedules,
+                otherResourceName: OCResourceEnum.PriceSchedule,
             },
             { 
                 referenceType: ResourceReferenceType.Reference,
                 fieldNameOnThisResource: "DefaultSupplierID",
                 fieldNameOnOtherReasource: "ID", 
-                otherResourceName: OCResourceEnum.Suppliers,
+                otherResourceName: OCResourceEnum.Supplier,
             },
         ],
-        customValidationFunc: ProductValidationFunc
     },
-    [OCResourceEnum.PriceSchedules]: {
+    [OCResourceEnum.PriceSchedule]: {
         openApiSpec: {
             schemaName: "PriceSchedule",
             resourceCreatePath: "/priceschedules",
@@ -608,14 +610,14 @@ const ocResourceMetaDataHardCoded: OCResourcesMetaDataHardCoded = {
         isAssignment: false,
         outgoingResourceReferences: [
             { 
-                referenceType: ResourceReferenceType.Owner,
+                referenceType: ResourceReferenceType.SellerOwner,
                 fieldNameOnThisResource: "OwnerID",
                 fieldNameOnOtherReasource: "ID", 
-                otherResourceName: OCResourceEnum.Suppliers,
+                otherResourceName: OCResourceEnum.Supplier,
             },
         ]
     },
-    [OCResourceEnum.Specs]: {
+    [OCResourceEnum.Spec]: {
         openApiSpec: {
             schemaName: "Spec",
             resourceCreatePath: "/specs",
@@ -626,16 +628,16 @@ const ocResourceMetaDataHardCoded: OCResourcesMetaDataHardCoded = {
         isAssignment: false,
         outgoingResourceReferences: [
             { 
-                referenceType: ResourceReferenceType.Owner,
+                referenceType: ResourceReferenceType.SellerOwner,
                 fieldNameOnThisResource: "OwnerID",
                 fieldNameOnOtherReasource: "ID", 
-                otherResourceName: OCResourceEnum.Suppliers,
+                otherResourceName: OCResourceEnum.Supplier,
             },
             { 
                 referenceType: ResourceReferenceType.Reference,
                 fieldNameOnThisResource: "DefaultOptionID",
                 fieldNameOnOtherReasource: "ID", 
-                otherResourceName: OCResourceEnum.SpecOptions,
+                otherResourceName: OCResourceEnum.SpecOption,
             },
         ],
         uploadTransformFunc: (record, context) => {
@@ -645,7 +647,7 @@ const ocResourceMetaDataHardCoded: OCResourcesMetaDataHardCoded = {
             }
         },
     },
-    [OCResourceEnum.SpecOptions]: {
+    [OCResourceEnum.SpecOption]: {
         openApiSpec: {
             schemaName: "SpecOption",
             resourceCreatePath: "/specs/{specID}/options",
@@ -660,12 +662,11 @@ const ocResourceMetaDataHardCoded: OCResourcesMetaDataHardCoded = {
                 referenceType: ResourceReferenceType.Parent,
                 fieldNameOnThisResource: "SpecID",
                 fieldNameOnOtherReasource: "ID", 
-                otherResourceName: OCResourceEnum.Specs,
+                otherResourceName: OCResourceEnum.Spec,
             },
         ],
-        customBulkUploadFunc: SpecOptionBulkUploadFunc,
     },
-    [OCResourceEnum.ProductFacets]: {
+    [OCResourceEnum.ProductFacet]: {
         openApiSpec: {
             schemaName: "ProductFacet",
             resourceCreatePath: "/productfacets",
@@ -675,7 +676,7 @@ const ocResourceMetaDataHardCoded: OCResourcesMetaDataHardCoded = {
         createPriority: 2,
         isAssignment: false,
     },
-    [OCResourceEnum.Promotions]: {
+    [OCResourceEnum.Promotion]: {
         openApiSpec: {
             schemaName: "Promotion",
             resourceCreatePath: "/promotions",
@@ -686,14 +687,14 @@ const ocResourceMetaDataHardCoded: OCResourcesMetaDataHardCoded = {
         isAssignment: false,
         outgoingResourceReferences: [
             { 
-                referenceType: ResourceReferenceType.Owner,
+                referenceType: ResourceReferenceType.SellerOwner,
                 fieldNameOnThisResource: "OwnerID",
                 fieldNameOnOtherReasource: "ID", 
-                otherResourceName: OCResourceEnum.Suppliers,
+                otherResourceName: OCResourceEnum.Supplier,
             },
         ],
     },
-    [OCResourceEnum.Variants]: {
+    [OCResourceEnum.Variant]: {
         openApiSpec: {
             schemaName: "Variant",
             resourceCreatePath: "/products/{productID}/variants",
@@ -708,14 +709,12 @@ const ocResourceMetaDataHardCoded: OCResourcesMetaDataHardCoded = {
                 referenceType: ResourceReferenceType.Parent,
                 fieldNameOnThisResource: "ProductID",
                 fieldNameOnOtherReasource: "ID", 
-                otherResourceName: OCResourceEnum.Products,
+                otherResourceName: OCResourceEnum.Product,
             },
         ],
-        customValidationFunc: VariantValidationFunc,
         shouldAttemptListFunc: (product) => (product?.VariantCount > 0),
-        customBulkUploadFunc: VariantBulkUploadFunc,
     },
-    [OCResourceEnum.InventoryRecords]: {
+    [OCResourceEnum.InventoryRecord]: {
         openApiSpec: {
             schemaName: "InventoryRecord",
             resourceCreatePath: "/products/{productID}/inventoryrecords",
@@ -730,18 +729,17 @@ const ocResourceMetaDataHardCoded: OCResourcesMetaDataHardCoded = {
                 referenceType: ResourceReferenceType.Parent,
                 fieldNameOnThisResource: "ProductID",
                 fieldNameOnOtherReasource: "ID", 
-                otherResourceName: OCResourceEnum.Products,
+                otherResourceName: OCResourceEnum.Product,
             },
             { 
-                referenceType: ResourceReferenceType.Owner,
+                referenceType: ResourceReferenceType.SellerOwner,
                 fieldNameOnThisResource: "OwnerID",
                 fieldNameOnOtherReasource: "ID", 
-                otherResourceName: OCResourceEnum.Suppliers,
+                otherResourceName: OCResourceEnum.Supplier,
             },
         ],
-        customValidationFunc: InventoryRecordValidationFunc,
     },
-    [OCResourceEnum.VariantInventoryRecords]: {
+    [OCResourceEnum.VariantInventoryRecord]: {
         openApiSpec: {
             schemaName: "InventoryRecord",
             resourceCreatePath: "/products/{productID}/variants/{variantID}/inventoryrecords",
@@ -756,30 +754,29 @@ const ocResourceMetaDataHardCoded: OCResourcesMetaDataHardCoded = {
                 referenceType: ResourceReferenceType.Parent,
                 fieldNameOnThisResource: "ProductID",
                 fieldNameOnOtherReasource: "ID", 
-                otherResourceName: OCResourceEnum.Products,
+                otherResourceName: OCResourceEnum.Product,
             },
             { 
-                referenceType: ResourceReferenceType.Owner,
+                referenceType: ResourceReferenceType.SellerOwner,
                 fieldNameOnThisResource: "OwnerID",
                 fieldNameOnOtherReasource: "ID", 
-                otherResourceName: OCResourceEnum.Suppliers,
+                otherResourceName: OCResourceEnum.Supplier,
             },
             { 
                 referenceType: ResourceReferenceType.Reference,
                 fieldNameOnThisResource: "VariantID",
                 fieldNameOnOtherReasource: "ID", 
-                otherResourceName: OCResourceEnum.Variants,
+                otherResourceName: OCResourceEnum.Variant,
             },
             { 
                 referenceType: ResourceReferenceType.Reference,
                 fieldNameOnThisResource: "ProductID",
                 fieldNameOnOtherReasource: "ID", 
-                otherResourceName: OCResourceEnum.Products,
+                otherResourceName: OCResourceEnum.Product,
             },
         ],
-        customValidationFunc: VariantInventoryRecordValidationFunc,
     },
-    [OCResourceEnum.SellerApprovalRules]: {
+    [OCResourceEnum.SellerApprovalRule]: {
         openApiSpec: {
             schemaName: "SellerApprovalRule",
             resourceCreatePath: "/approvalrules",
@@ -790,15 +787,14 @@ const ocResourceMetaDataHardCoded: OCResourcesMetaDataHardCoded = {
         isAssignment: false,
         outgoingResourceReferences: [
             { 
-                referenceType: ResourceReferenceType.Owner,
+                referenceType: ResourceReferenceType.SellerOwner,
                 fieldNameOnThisResource: "OwnerID",
                 fieldNameOnOtherReasource: "ID", 
-                otherResourceName: OCResourceEnum.Suppliers,
+                otherResourceName: OCResourceEnum.Supplier,
             },
         ],
-        customValidationFunc: SellerApprovalRuleValidationFunc
     },
-    [OCResourceEnum.SecurityProfileAssignments]: {
+    [OCResourceEnum.SecurityProfileAssignment]: {
         openApiSpec: {
             schemaName: "SecurityProfileAssignment",
             resourceCreatePath: "/securityprofiles/assignments",
@@ -812,24 +808,23 @@ const ocResourceMetaDataHardCoded: OCResourcesMetaDataHardCoded = {
                 referenceType: ResourceReferenceType.Reference,
                 fieldNameOnThisResource: "SecurityProfileID",
                 fieldNameOnOtherReasource: "ID", 
-                otherResourceName: OCResourceEnum.SecurityProfiles,
+                otherResourceName: OCResourceEnum.SecurityProfile,
             },
             { 
                 referenceType: ResourceReferenceType.Reference,
                 fieldNameOnThisResource: "BuyerID",
                 fieldNameOnOtherReasource: "ID", 
-                otherResourceName: OCResourceEnum.Buyers,
+                otherResourceName: OCResourceEnum.Buyer,
             },
             { 
                 referenceType: ResourceReferenceType.Reference,
                 fieldNameOnThisResource: "SupplierID",
                 fieldNameOnOtherReasource: "ID", 
-                otherResourceName: OCResourceEnum.Suppliers,
+                otherResourceName: OCResourceEnum.Supplier,
             },
         ], 
-        customValidationFunc: SecurityProfileAssignmentValidationFunc
     },
-    [OCResourceEnum.AdminUserGroupAssignments]: {
+    [OCResourceEnum.AdminUserGroupAssignment]: {
         openApiSpec: {
             schemaName: "UserGroupAssignment",
             resourceCreatePath: "/usergroups/assignments",
@@ -843,17 +838,17 @@ const ocResourceMetaDataHardCoded: OCResourcesMetaDataHardCoded = {
                 referenceType: ResourceReferenceType.Reference,
                 fieldNameOnThisResource: "UserID",
                 fieldNameOnOtherReasource: "ID", 
-                otherResourceName: OCResourceEnum.AdminUsers,
+                otherResourceName: OCResourceEnum.AdminUser,
             },
             { 
                 referenceType: ResourceReferenceType.Reference,
                 fieldNameOnThisResource: "UserGroupID",
                 fieldNameOnOtherReasource: "ID", 
-                otherResourceName: OCResourceEnum.AdminUserGroups,
+                otherResourceName: OCResourceEnum.AdminUserGroup,
             },
         ]
     },
-    [OCResourceEnum.ApiClientAssignments]: {
+    [OCResourceEnum.ApiClientAssignment]: {
         openApiSpec: {
             schemaName: "ApiClientAssignment",
             resourceCreatePath: "/apiclients/assignments",
@@ -867,19 +862,19 @@ const ocResourceMetaDataHardCoded: OCResourcesMetaDataHardCoded = {
                 referenceType: ResourceReferenceType.Reference,
                 fieldNameOnThisResource: "ApiClientID",
                 fieldNameOnOtherReasource: "ID", 
-                otherResourceName: OCResourceEnum.ApiClients,
+                otherResourceName: OCResourceEnum.ApiClient,
             },
             { 
                 referenceType: ResourceReferenceType.Reference,
                 fieldNameOnThisResource: "BuyerID",
                 fieldNameOnOtherReasource: "ID", 
-                otherResourceName: OCResourceEnum.Buyers,
+                otherResourceName: OCResourceEnum.Buyer,
             },
             { 
                 referenceType: ResourceReferenceType.Reference,
                 fieldNameOnThisResource: "SupplierID",
                 fieldNameOnOtherReasource: "ID", 
-                otherResourceName: OCResourceEnum.Suppliers,
+                otherResourceName: OCResourceEnum.Supplier,
             },
         ],
         downloadTransformFunc: (x) => {
@@ -887,7 +882,7 @@ const ocResourceMetaDataHardCoded: OCResourcesMetaDataHardCoded = {
             return x;
         },
     },
-    [OCResourceEnum.LocaleAssignments]: {
+    [OCResourceEnum.LocaleAssignment]: {
         openApiSpec: {
             schemaName: "LocaleAssignment",
             resourceCreatePath: "/locales/assignments",
@@ -896,29 +891,28 @@ const ocResourceMetaDataHardCoded: OCResourcesMetaDataHardCoded = {
         },
         createPriority: 6,
         isAssignment: true,
-        customValidationFunc: LocaleAssignmentValidationFunc,
         outgoingResourceReferences: [
             { 
                 referenceType: ResourceReferenceType.Reference,
                 fieldNameOnThisResource: "LocaleID",
                 fieldNameOnOtherReasource: "ID", 
-                otherResourceName: OCResourceEnum.Locales,
+                otherResourceName: OCResourceEnum.Locale,
             },
             { 
                 referenceType: ResourceReferenceType.Reference,
                 fieldNameOnThisResource: "BuyerID",
                 fieldNameOnOtherReasource: "ID", 
-                otherResourceName: OCResourceEnum.Buyers,
+                otherResourceName: OCResourceEnum.Buyer,
             },
             { 
                 referenceType: ResourceReferenceType.Reference,
                 fieldNameOnThisResource: "UserGroupID",
                 fieldNameOnOtherReasource: "ID", 
-                otherResourceName: OCResourceEnum.Users,
+                otherResourceName: OCResourceEnum.UserGroup,
             },
         ],
     },
-    [OCResourceEnum.UserGroupAssignments]: {
+    [OCResourceEnum.UserGroupAssignment]: {
         openApiSpec: {
             schemaName: "UserGroupAssignment",
             resourceCreatePath: "/buyers/{buyerID}/usergroups/assignments",
@@ -933,23 +927,23 @@ const ocResourceMetaDataHardCoded: OCResourcesMetaDataHardCoded = {
                 referenceType: ResourceReferenceType.Parent,
                 fieldNameOnThisResource: "BuyerID",
                 fieldNameOnOtherReasource: "ID", 
-                otherResourceName: OCResourceEnum.Buyers,
+                otherResourceName: OCResourceEnum.Buyer,
             },
             { 
                 referenceType: ResourceReferenceType.Reference,
                 fieldNameOnThisResource: "UserID",
                 fieldNameOnOtherReasource: "ID", 
-                otherResourceName: OCResourceEnum.Users,
+                otherResourceName: OCResourceEnum.User,
             },
             { 
                 referenceType: ResourceReferenceType.Reference,
                 fieldNameOnThisResource: "UserGroupID",
                 fieldNameOnOtherReasource: "ID", 
-                otherResourceName: OCResourceEnum.UserGroups,
+                otherResourceName: OCResourceEnum.UserGroup,
             },
         ],           
     },
-    [OCResourceEnum.AddressAssignments]: {
+    [OCResourceEnum.AddressAssignment]: {
         openApiSpec: {
             schemaName: "AddressAssignment",
             resourceCreatePath: "/buyers/{buyerID}/addresses/assignments",
@@ -964,29 +958,29 @@ const ocResourceMetaDataHardCoded: OCResourcesMetaDataHardCoded = {
                 referenceType: ResourceReferenceType.Parent,
                 fieldNameOnThisResource: "BuyerID",
                 fieldNameOnOtherReasource: "ID", 
-                otherResourceName: OCResourceEnum.Buyers,
+                otherResourceName: OCResourceEnum.Buyer,
             },
             { 
                 referenceType: ResourceReferenceType.Reference,
                 fieldNameOnThisResource: "AddressID",
                 fieldNameOnOtherReasource: "ID", 
-                otherResourceName: OCResourceEnum.Addresses,
+                otherResourceName: OCResourceEnum.Address,
             },
             { 
                 referenceType: ResourceReferenceType.Reference,
                 fieldNameOnThisResource: "UserID",
                 fieldNameOnOtherReasource: "ID", 
-                otherResourceName: OCResourceEnum.Users,
+                otherResourceName: OCResourceEnum.User,
             },
             { 
                 referenceType: ResourceReferenceType.Reference,
                 fieldNameOnThisResource: "UserGroupID",
                 fieldNameOnOtherReasource: "ID", 
-                otherResourceName: OCResourceEnum.UserGroups,
+                otherResourceName: OCResourceEnum.UserGroup,
             },
         ],
     },
-    [OCResourceEnum.CostCenterAssignments]: {
+    [OCResourceEnum.CostCenterAssignment]: {
         openApiSpec: {
             schemaName: "CostCenterAssignment",
             resourceCreatePath: "/buyers/{buyerID}/costcenters",
@@ -1001,23 +995,23 @@ const ocResourceMetaDataHardCoded: OCResourcesMetaDataHardCoded = {
                 referenceType: ResourceReferenceType.Parent,
                 fieldNameOnThisResource: "BuyerID",
                 fieldNameOnOtherReasource: "ID", 
-                otherResourceName: OCResourceEnum.Buyers,
+                otherResourceName: OCResourceEnum.Buyer,
             },
             { 
                 referenceType: ResourceReferenceType.Reference,
                 fieldNameOnThisResource: "CostCenterID",
                 fieldNameOnOtherReasource: "ID", 
-                otherResourceName: OCResourceEnum.CostCenters,
+                otherResourceName: OCResourceEnum.CostCenter,
             },
             { 
                 referenceType: ResourceReferenceType.Reference,
                 fieldNameOnThisResource: "UserGroupID",
                 fieldNameOnOtherReasource: "ID", 
-                otherResourceName: OCResourceEnum.UserGroups,
+                otherResourceName: OCResourceEnum.UserGroup,
             },
         ],       
     },
-    [OCResourceEnum.CreditCardAssignments]: {
+    [OCResourceEnum.CreditCardAssignment]: {
         openApiSpec: {
             schemaName: "CreditCardAssignment",
             resourceCreatePath: "/buyers/{buyerID}/creditcards/assignments",
@@ -1032,29 +1026,29 @@ const ocResourceMetaDataHardCoded: OCResourcesMetaDataHardCoded = {
                 referenceType: ResourceReferenceType.Parent,
                 fieldNameOnThisResource: "BuyerID",
                 fieldNameOnOtherReasource: "ID", 
-                otherResourceName: OCResourceEnum.Buyers,
+                otherResourceName: OCResourceEnum.Buyer,
             },
             { 
                 referenceType: ResourceReferenceType.Reference,
                 fieldNameOnThisResource: "CreditCardID",
                 fieldNameOnOtherReasource: "ID", 
-                otherResourceName: OCResourceEnum.CreditCards,
+                otherResourceName: OCResourceEnum.CreditCard,
             },
             { 
                 referenceType: ResourceReferenceType.Reference,
                 fieldNameOnThisResource: "UserID",
                 fieldNameOnOtherReasource: "ID", 
-                otherResourceName: OCResourceEnum.Users,
+                otherResourceName: OCResourceEnum.User,
             },
             { 
                 referenceType: ResourceReferenceType.Reference,
                 fieldNameOnThisResource: "UserGroupID",
                 fieldNameOnOtherReasource: "ID", 
-                otherResourceName: OCResourceEnum.UserGroups,
+                otherResourceName: OCResourceEnum.UserGroup,
             },
         ],
     },
-    [OCResourceEnum.SpendingAccountAssignments]: {
+    [OCResourceEnum.SpendingAccountAssignment]: {
         openApiSpec: {
             schemaName: "SpendingAccountAssignment",
             resourceCreatePath: "/buyers/{buyerID}/spendingaccounts/assignments",
@@ -1069,29 +1063,29 @@ const ocResourceMetaDataHardCoded: OCResourcesMetaDataHardCoded = {
                 referenceType: ResourceReferenceType.Parent,
                 fieldNameOnThisResource: "BuyerID",
                 fieldNameOnOtherReasource: "ID", 
-                otherResourceName: OCResourceEnum.Buyers,
+                otherResourceName: OCResourceEnum.Buyer,
             },
             { 
                 referenceType: ResourceReferenceType.Reference,
                 fieldNameOnThisResource: "SpendingAccountID",
                 fieldNameOnOtherReasource: "ID", 
-                otherResourceName: OCResourceEnum.SpendingAccounts,
+                otherResourceName: OCResourceEnum.SpendingAccount,
             },
             { 
                 referenceType: ResourceReferenceType.Reference,
                 fieldNameOnThisResource: "UserID",
                 fieldNameOnOtherReasource: "ID", 
-                otherResourceName: OCResourceEnum.Users,
+                otherResourceName: OCResourceEnum.User,
             },
             { 
                 referenceType: ResourceReferenceType.Reference,
                 fieldNameOnThisResource: "UserGroupID",
                 fieldNameOnOtherReasource: "ID", 
-                otherResourceName: OCResourceEnum.UserGroups,
+                otherResourceName: OCResourceEnum.UserGroup,
             },
         ],   
     },
-    [OCResourceEnum.SupplierUserGroupsAssignments]: {
+    [OCResourceEnum.SupplierUserGroupsAssignment]: {
         openApiSpec: {
             schemaName: "UserGroupAssignment",
             resourceCreatePath: "/suppliers/{supplierID}/usergroups/assignments",
@@ -1106,23 +1100,23 @@ const ocResourceMetaDataHardCoded: OCResourcesMetaDataHardCoded = {
                 referenceType: ResourceReferenceType.Parent,
                 fieldNameOnThisResource: "SupplierID",
                 fieldNameOnOtherReasource: "ID", 
-                otherResourceName: OCResourceEnum.Suppliers,
+                otherResourceName: OCResourceEnum.Supplier,
             },
             { 
                 referenceType: ResourceReferenceType.Reference,
                 fieldNameOnThisResource: "UserID",
                 fieldNameOnOtherReasource: "ID", 
-                otherResourceName: OCResourceEnum.SupplierUsers,
+                otherResourceName: OCResourceEnum.SupplierUser,
             },
             { 
                 referenceType: ResourceReferenceType.Reference,
                 fieldNameOnThisResource: "UserGroupID",
                 fieldNameOnOtherReasource: "ID", 
-                otherResourceName: OCResourceEnum.SupplierUserGroups,
+                otherResourceName: OCResourceEnum.SupplierUserGroup,
             },
         ],           
     },
-    [OCResourceEnum.ProductAssignments]: {
+    [OCResourceEnum.ProductAssignment]: {
         openApiSpec: {
             schemaName: "ProductAssignment",
             resourceCreatePath: "/products/assignments",
@@ -1131,41 +1125,40 @@ const ocResourceMetaDataHardCoded: OCResourcesMetaDataHardCoded = {
         },
         createPriority: 6,
         isAssignment: true,
-        customValidationFunc: ProductAssignmentValidationFunc,
         outgoingResourceReferences: [
             { 
-                referenceType: ResourceReferenceType.Owner,
+                referenceType: ResourceReferenceType.SellerOwner,
                 fieldNameOnThisResource: "SellerID",
                 fieldNameOnOtherReasource: "ID", 
-                otherResourceName: OCResourceEnum.Suppliers,
+                otherResourceName: OCResourceEnum.Supplier,
             },
             { 
                 referenceType: ResourceReferenceType.Reference,
                 fieldNameOnThisResource: "ProductID",
                 fieldNameOnOtherReasource: "ID", 
-                otherResourceName: OCResourceEnum.Products,
+                otherResourceName: OCResourceEnum.Product,
             },
             { 
                 referenceType: ResourceReferenceType.Reference,
                 fieldNameOnThisResource: "BuyerID",
                 fieldNameOnOtherReasource: "ID", 
-                otherResourceName: OCResourceEnum.Buyers,
+                otherResourceName: OCResourceEnum.Buyer,
             },
             { 
                 referenceType: ResourceReferenceType.Reference,
                 fieldNameOnThisResource: "PriceScheduleID",
                 fieldNameOnOtherReasource: "ID", 
-                otherResourceName: OCResourceEnum.PriceSchedules,
+                otherResourceName: OCResourceEnum.PriceSchedule,
             },
             { 
                 referenceType: ResourceReferenceType.Reference,
                 fieldNameOnThisResource: "UserGroupID",
                 fieldNameOnOtherReasource: "ID", 
-                otherResourceName: OCResourceEnum.UserGroups,
+                otherResourceName: OCResourceEnum.UserGroup,
             },
         ],         
     },
-    [OCResourceEnum.CatalogAssignments]: {
+    [OCResourceEnum.CatalogAssignment]: {
         openApiSpec: {
             schemaName: "CatalogAssignment",
             resourceCreatePath: "/catalogs/assignments",
@@ -1179,13 +1172,13 @@ const ocResourceMetaDataHardCoded: OCResourcesMetaDataHardCoded = {
                 referenceType: ResourceReferenceType.Reference,
                 fieldNameOnThisResource: "CatalogID",
                 fieldNameOnOtherReasource: "ID", 
-                otherResourceName: OCResourceEnum.Catalogs,
+                otherResourceName: OCResourceEnum.Catalog,
             },
             { 
                 referenceType: ResourceReferenceType.Reference,
                 fieldNameOnThisResource: "BuyerID",
                 fieldNameOnOtherReasource: "ID", 
-                otherResourceName: OCResourceEnum.Buyers,
+                otherResourceName: OCResourceEnum.Buyer,
             },
         ]           
     },
@@ -1203,17 +1196,17 @@ const ocResourceMetaDataHardCoded: OCResourcesMetaDataHardCoded = {
                 referenceType: ResourceReferenceType.Reference,
                 fieldNameOnThisResource: "CatalogID",
                 fieldNameOnOtherReasource: "ID", 
-                otherResourceName: OCResourceEnum.Catalogs,
+                otherResourceName: OCResourceEnum.Catalog,
             },
             { 
                 referenceType: ResourceReferenceType.Reference,
                 fieldNameOnThisResource: "ProductID",
                 fieldNameOnOtherReasource: "ID", 
-                otherResourceName: OCResourceEnum.Products,
+                otherResourceName: OCResourceEnum.Product,
             },
         ]                   
     },
-    [OCResourceEnum.CategoryAssignments]: {
+    [OCResourceEnum.CategoryAssignment]: {
         openApiSpec: {
             schemaName: "CategoryAssignment",
             resourceCreatePath: "/catalogs/{catalogID}/categories/assignments",
@@ -1228,29 +1221,29 @@ const ocResourceMetaDataHardCoded: OCResourcesMetaDataHardCoded = {
                 referenceType: ResourceReferenceType.Parent,
                 fieldNameOnThisResource: "CatalogID",
                 fieldNameOnOtherReasource: "ID", 
-                otherResourceName: OCResourceEnum.Catalogs,
+                otherResourceName: OCResourceEnum.Catalog,
             },
             { 
                 referenceType: ResourceReferenceType.Reference,
                 fieldNameOnThisResource: "CategoryID",
                 fieldNameOnOtherReasource: "ID", 
-                otherResourceName: OCResourceEnum.Categories,
+                otherResourceName: OCResourceEnum.Category,
             },
             { 
                 referenceType: ResourceReferenceType.Reference,
                 fieldNameOnThisResource: "BuyerID",
                 fieldNameOnOtherReasource: "ID", 
-                otherResourceName: OCResourceEnum.Buyers,
+                otherResourceName: OCResourceEnum.Buyer,
             },
             { 
                 referenceType: ResourceReferenceType.Reference,
                 fieldNameOnThisResource: "UserGroupID",
                 fieldNameOnOtherReasource: "ID", 
-                otherResourceName: OCResourceEnum.UserGroups,
+                otherResourceName: OCResourceEnum.UserGroup,
             },
         ]           
     },
-    [OCResourceEnum.CategoryProductAssignments]: {
+    [OCResourceEnum.CategoryProductAssignment]: {
         openApiSpec: {
             schemaName: "CategoryProductAssignment",
             resourceCreatePath: "/catalogs/{catalogID}/categories/productassignments",
@@ -1265,23 +1258,23 @@ const ocResourceMetaDataHardCoded: OCResourcesMetaDataHardCoded = {
                 referenceType: ResourceReferenceType.Parent,
                 fieldNameOnThisResource: "CatalogID",
                 fieldNameOnOtherReasource: "ID", 
-                otherResourceName: OCResourceEnum.Catalogs,
+                otherResourceName: OCResourceEnum.Catalog,
             },
             { 
                 referenceType: ResourceReferenceType.Reference,
                 fieldNameOnThisResource: "CategoryID",
                 fieldNameOnOtherReasource: "ID", 
-                otherResourceName: OCResourceEnum.Categories,
+                otherResourceName: OCResourceEnum.Category,
             },
             { 
                 referenceType: ResourceReferenceType.Reference,
                 fieldNameOnThisResource: "ProductID",
                 fieldNameOnOtherReasource: "ID", 
-                otherResourceName: OCResourceEnum.Products,
+                otherResourceName: OCResourceEnum.Product,
             },
         ]           
     },
-    [OCResourceEnum.SpecProductAssignments]: {
+    [OCResourceEnum.SpecProductAssignment]: {
         openApiSpec: {
             schemaName: "SpecProductAssignment",
             resourceCreatePath: "/specs/productassignments",
@@ -1295,23 +1288,23 @@ const ocResourceMetaDataHardCoded: OCResourcesMetaDataHardCoded = {
                 referenceType: ResourceReferenceType.Reference,
                 fieldNameOnThisResource: "SpecID",
                 fieldNameOnOtherReasource: "ID", 
-                otherResourceName: OCResourceEnum.Specs,
+                otherResourceName: OCResourceEnum.Spec,
             },
             { 
                 referenceType: ResourceReferenceType.Reference,
                 fieldNameOnThisResource: "ProductID",
                 fieldNameOnOtherReasource: "ID", 
-                otherResourceName: OCResourceEnum.Products,
+                otherResourceName: OCResourceEnum.Product,
             },
             { 
                 referenceType: ResourceReferenceType.Reference,
                 fieldNameOnThisResource: "DefaultOptionID",
                 fieldNameOnOtherReasource: "ID", 
-                otherResourceName: OCResourceEnum.SpecOptions,
+                otherResourceName: OCResourceEnum.SpecOption,
             },
         ]
     },
-    [OCResourceEnum.PromotionAssignments]: {
+    [OCResourceEnum.PromotionAssignment]: {
         openApiSpec: {
             schemaName: "PromotionAssignment",
             resourceCreatePath: "/promotions/assignments",
@@ -1325,23 +1318,23 @@ const ocResourceMetaDataHardCoded: OCResourcesMetaDataHardCoded = {
                 referenceType: ResourceReferenceType.Reference,
                 fieldNameOnThisResource: "PromotionID",
                 fieldNameOnOtherReasource: "ID", 
-                otherResourceName: OCResourceEnum.Promotions,
+                otherResourceName: OCResourceEnum.Promotion,
             },
             { 
                 referenceType: ResourceReferenceType.Reference,
                 fieldNameOnThisResource: "BuyerID",
                 fieldNameOnOtherReasource: "ID", 
-                otherResourceName: OCResourceEnum.Buyers,
+                otherResourceName: OCResourceEnum.Buyer,
             },
             { 
                 referenceType: ResourceReferenceType.Reference,
                 fieldNameOnThisResource: "UserGroupID",
                 fieldNameOnOtherReasource: "ID", 
-                otherResourceName: OCResourceEnum.UserGroups,
+                otherResourceName: OCResourceEnum.UserGroup,
             },
         ]
     },
-    [OCResourceEnum.ProductSupplierAssignments]: {
+    [OCResourceEnum.ProductSupplierAssignment]: {
         openApiSpec: {
             schemaName: "ProductSupplier",
             resourceCreatePath: "/products/{productID}/suppliers/{supplierID}",
@@ -1356,26 +1349,26 @@ const ocResourceMetaDataHardCoded: OCResourcesMetaDataHardCoded = {
                 referenceType: ResourceReferenceType.Parent,
                 fieldNameOnThisResource: "ProductID",
                 fieldNameOnOtherReasource: "ID", 
-                otherResourceName: OCResourceEnum.Products,
+                otherResourceName: OCResourceEnum.Product,
             },
             { 
                 referenceType: ResourceReferenceType.Reference,
                 fieldNameOnThisResource: "SupplierID",
                 fieldNameOnOtherReasource: "ID", 
-                otherResourceName: OCResourceEnum.Suppliers,
+                otherResourceName: OCResourceEnum.Supplier,
             },
             { 
                 referenceType: ResourceReferenceType.Reference,
                 fieldNameOnThisResource: "DefaultPriceScheduleID",
                 fieldNameOnOtherReasource: "ID", 
-                otherResourceName: OCResourceEnum.PriceSchedules,
+                otherResourceName: OCResourceEnum.PriceSchedule,
             },
         ],
         downloadTransformFunc: (x) => { 
             return { SupplierID: x.ID, DefaultPriceScheduleID: x.DefaultPriceScheduleID };
         }
     },
-    [OCResourceEnum.SupplierBuyerAssignments]: {
+    [OCResourceEnum.SupplierBuyerAssignment]: {
         openApiSpec: {
             schemaName: "SupplierBuyer",
             resourceCreatePath: "/suppliers/{supplierID}/buyers/{buyerID}",
@@ -1390,13 +1383,13 @@ const ocResourceMetaDataHardCoded: OCResourcesMetaDataHardCoded = {
                 referenceType: ResourceReferenceType.Parent,
                 fieldNameOnThisResource: "SupplierID",
                 fieldNameOnOtherReasource: "ID", 
-                otherResourceName: OCResourceEnum.Suppliers,
+                otherResourceName: OCResourceEnum.Supplier,
             },
             { 
                 referenceType: ResourceReferenceType.Reference,
                 fieldNameOnThisResource: "BuyerID",
                 fieldNameOnOtherReasource: "ID", 
-                otherResourceName: OCResourceEnum.Buyers,
+                otherResourceName: OCResourceEnum.Buyer,
             }
         ],
         downloadTransformFunc: (x) => { 
@@ -1436,10 +1429,12 @@ export class OCResourceDirectory {
 
 export async function BuildOCResourceDirectory(): Promise<OCResourceDirectory> {
     var openAPISpec = await axios.get(`https://api.ordercloud.io/v1/openapi/v3`) 
-    var dir = Object.entries(ocResourceMetaDataHardCoded).map([name, metaData] => {  
+    Object.entries(ocResourceMetaDataHardCoded).forEach(([name, metaData]) => {  
 
-        return new OCResourceMetadata(name, metaData, openAPISpec, null, []);
+        return new OCResourceMetadata(name, metaData, openAPISpec);
     });
     return new OCResourceDirectory(dir);
 }
+
+
 
