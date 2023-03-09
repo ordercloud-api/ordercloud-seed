@@ -102,3 +102,6 @@ dist
 
 # TernJS port file
 .tern-port
+
+# Temporary files bundled for the purposes of creating executables
+ncc/

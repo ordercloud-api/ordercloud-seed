@@ -85,3 +85,14 @@ These are seeding files maintained as part of this repo that represent templates
 - Reference other files
 - Template variables in YAML for imports. Including allowing OC to define an ID and then applying it later.
 
+## Steps to release new version
+> Note: You must have node version 16 to build the package, you will get errors on node v17 and higher
+
+1. Make your code changes
+2. Run `npm run build` to build the code
+3. Run `npm run test` to run the unit tests against your built code
+4. Run `npm run pkg` to generate the executables (The following warning can be safely ignored: Warning Cannot resolve 'config.)
+5. Update "version" field in package.json ([use semver](https://semver.org/))
+6. Commit all changes and push to master
+7. Create a git release/tag
+8. Run `npm publish`

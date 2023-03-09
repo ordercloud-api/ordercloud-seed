@@ -11,6 +11,7 @@ import _ from 'lodash';
 
 yargs.scriptName("@ordercloud/seeding")
   .usage('$0 <cmd> [args] -')
+  .command('', '', )
   .command('seed [data]', 'Create a new sandbox marketplace and seed data.', (yargs) => {
     yargs.positional('data', {
       type: 'string',
@@ -57,11 +58,12 @@ yargs.scriptName("@ordercloud/seeding")
         stringData = fs.readFileSync(dataUrl, 'utf8') // consider switching to streams
         defaultLogger(`Found file \"${dataUrl}\"`, MessageType.Success);
       } catch (err) {
-          return defaultLogger(`No such file \"${dataUrl}\" found`, MessageType.Error);
+          defaultLogger(`No such file \"${dataUrl}\" found`, MessageType.Error);
+          return;
       }
       try {
         var data = yaml.load(stringData) as SerializedMarketplace;
-        return seed({
+        seed({
           username: argv.u as string,
           password: argv.p as string,
           marketplaceID: argv.i as string,
@@ -69,9 +71,11 @@ yargs.scriptName("@ordercloud/seeding")
           regionId: argv.r as string,
           rawData: data
         });
+        return;
       } catch (e) {
         var ex = e as YAMLException;
-        return defaultLogger(`YAML Exception in \"${dataUrl}\": ${ex.message}`, MessageType.Error)
+        defaultLogger(`YAML Exception in \"${dataUrl}\": ${ex.message}`, MessageType.Error)
+        return;
       }
     }
     seed({
