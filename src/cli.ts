@@ -11,7 +11,6 @@ import _ from 'lodash';
 
 yargs.scriptName("@ordercloud/seeding")
   .usage('$0 <cmd> [args] -')
-  .command('', '', )
   .command('seed [data]', 'Create a new sandbox marketplace and seed data.', (yargs) => {
     yargs.positional('data', {
       type: 'string',
