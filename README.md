@@ -79,9 +79,14 @@ These are seeding files maintained as part of this repo that represent templates
 - Run `node ./dist/cli.js [command]` to debug a command.
 - Run `npm run test` to run unit tests.
 
+## Json File Support 
+- Run `npm install`
+- Run `npm run build` everytime you change source files.
+- Run `node ./dist/cli.js validate ./seeds/Order-Cloud-seeding.json` to validate the json file. 
+- Run `node ./dist/cli.js seed ./seeds/Order-Cloud-seeding.json -u=[your user name] -p=[your ordercloud password] -n=[Your ordercloud market place name]` to seed the json file. 
 
 ## Nice to Have features
-- JSON as an option
+- JSON as an option - Refer the above section
 - Reference other files
 - Template variables in YAML for imports. Including allowing OC to define an ID and then applying it later.
 
