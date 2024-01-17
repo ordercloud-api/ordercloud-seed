@@ -53,15 +53,28 @@ yargs.scriptName("@ordercloud/seeding")
 
     var stringData;
     if (!dataUrl.startsWith('http')) {
-      try {
+      try {        
         stringData = fs.readFileSync(dataUrl, 'utf8') // consider switching to streams
         defaultLogger(`Found file \"${dataUrl}\"`, MessageType.Success);
+
+        //find the file extension from the path "./seeds/Order-Cloud-seeding.json"
+        var fileExtensionArray = dataUrl.split('.');
+        var fileExtension = fileExtensionArray[fileExtensionArray.length - 1];
+        defaultLogger(`The file type is \"${fileExtension}\"`, MessageType.Info);
+
       } catch (err) {
           defaultLogger(`No such file \"${dataUrl}\" found`, MessageType.Error);
           return;
       }
       try {
-        var data = yaml.load(stringData) as SerializedMarketplace;
+
+        if(fileExtension === 'json'){
+          var data = JSON.parse(stringData) as SerializedMarketplace;        
+        }
+        else{
+          var data = yaml.load(stringData) as SerializedMarketplace;
+        }
+        
         seed({
           username: argv.u as string,
           password: argv.p as string,
@@ -134,12 +147,23 @@ yargs.scriptName("@ordercloud/seeding")
     var stringData;
     if (!filePath.startsWith('http')) {
       try {
+        defaultLogger(`starting point : Seeding local file = ${filePath}`, MessageType.Info);
         stringData = fs.readFileSync(filePath, 'utf8') // consider switching to streams
         defaultLogger(`Found file \"${filePath}\".`, MessageType.Success);
+        var fileExtensionArray = filePath.split('.');
+        var fileExtension = fileExtensionArray[fileExtensionArray.length - 1];
+        defaultLogger(`The file type is \"${fileExtension}\"`, MessageType.Info);
+        
       } catch (err) {
           return defaultLogger(`No such file \"${filePath}\" found`, MessageType.Error);
       }
       try {
+        if(fileExtension === 'json'){
+          var data = JSON.parse(stringData) as SerializedMarketplace;
+        }
+        else{
+          var data = yaml.load(stringData) as SerializedMarketplace;
+        }
         var data = yaml.load(stringData) as SerializedMarketplace;
         await validate({ rawData: data })
         return defaultLogger(`Validation done!`, MessageType.Done);
