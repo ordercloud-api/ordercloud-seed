@@ -1,5 +1,6 @@
 import { Organizations, Auth, Organization, ApiClients, Configuration } from '@ordercloud/portal-javascript-sdk'
 import { PortalAuthentication } from "@ordercloud/portal-javascript-sdk/dist/models/PortalAuthentication";
+import { Auth as OrderCloudAuth, AccessToken, Configuration as OrderCloudConfiguration } from 'ordercloud-javascript-sdk';
 
 export default class PortalAPI {
   constructor() {
@@ -14,6 +15,13 @@ export default class PortalAPI {
 
   async refreshToken(refreshToken: string): Promise<PortalAuthentication> {
     return await Auth.RefreshToken(refreshToken);
+  }
+
+  async loginWithClientCredentials(clientId: string, clientSecret: string, baseUrl: string): Promise<AccessToken> {
+    // Set the base URL before making the auth call
+    OrderCloudConfiguration.Set({ baseApiUrl: baseUrl });
+    // Using FullAccess role for admin-level operations required for seeding
+    return await OrderCloudAuth.ClientCredentials(clientSecret, clientId, ['FullAccess']);
   }
 
   async getOrganizationToken(orgID: string, accessToken: string): Promise<string> {

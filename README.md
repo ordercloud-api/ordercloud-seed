@@ -19,6 +19,31 @@ A CLI to download and upload serialized representations of full [ordercloud](htt
 | Mac | [seeding-macos](https://raw.githubusercontent.com/ordercloud-api/ordercloud-seed/main/exe/seeding-macos)  |
 | Linux | [seeding-linux](https://raw.githubusercontent.com/ordercloud-api/ordercloud-seed/main/exe/seeding-linux) |
 
+> [!NOTE]
+> The Portal credentials are no longer supported by the Sitecore Cloud Portal. Instead, you can use Client Credentials for the OrderCloud Seed tool to access your marketplace.
+
+### Client Credentials
+
+Create a JSON in the below format:
+
+```
+[
+    {
+        "Name": "Sandbox",
+        "OrderCloudBaseUrl": "https://sandbox.ordercloud.io",
+        "ApiClientId": "00000000-0000-0000-0000-000000000000",
+        "ApiClientSecret": "abcdefghijklmnopqrstuvwxyz"
+    },
+    {
+        "Name": "Staging",
+        "OrderCloudBaseUrl": "https://sandbox.ordercloud.io",
+        "ApiClientId": "00000000-0000-0000-0000-000000000000",
+        "ApiClientSecret": "abcdefghijklmnopqrstuvwxyz"
+    }
+]
+```
+
+The JSON file is used to request the access token using the client credentials. The API Client needs to have a default context user assigned that has the `FullAccess` role to ensure all API resources can be accessed.
 
 ## CLI Usage 
 
@@ -45,6 +70,16 @@ npx @ordercloud/seeding download new-file-to-create.yml -i={existing-marketplace
 Validate that a local file would seed successfully. 
 ```
 npx @ordercloud/seeding validate my-file.yml
+``` 
+
+Download a marketplace using Client Credentials
+```
+npx @ordercloud/seeding download new-file-to-create.yml --config ~/ordercloud-seed-config.json --target Sandbox
+``` 
+
+Seed a marketplace using Client Credentials
+```
+npx @ordercloud/seeding seed seed-data-file.yml --config ~/ordercloud-seed-config.json --target Staging
 ``` 
 
 ## Javascript API Usage

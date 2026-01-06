@@ -15,13 +15,17 @@ import { ApiClient } from '@ordercloud/portal-javascript-sdk';
 import Bottleneck from 'bottleneck';
 import { JobActionType, JobGroupMetaData, JobMetaData } from '../models/job-metadata';
 import { RefreshTimer } from '../services/refresh-timer';
+import { ConfigLoader } from '../services/config-loader';
+import jwtDecode from 'jwt-decode';
 
 export interface SeedArgs {
     username?: string;
-    password?: string; 
+    password?: string;
     marketplaceID?: string;
     marketplaceName?: string;
     portalToken?: string;
+    target?: string;
+    configPath?: string;
     dataUrl?: string;
     rawData?: SerializedMarketplace;
     regionId?: string;
@@ -36,12 +40,14 @@ export interface SeedResponse {
 }
 
 export async function seed(args: SeedArgs): Promise<SeedResponse | void> {
-    var { 
-        username, 
-        password, 
-        marketplaceID = Random.generateOrgID(), 
+    var {
+        username,
+        password,
+        marketplaceID = Random.generateOrgID(),
         marketplaceName,
         portalToken,
+        target,
+        configPath,
         rawData,
         dataUrl,
         regionId = "usw",
@@ -59,12 +65,41 @@ export async function seed(args: SeedArgs): Promise<SeedResponse | void> {
     var validateResponse = await validate({ rawData, dataUrl});
     if (validateResponse?.errors?.length !== 0) return;
 
-    // Authenticate To Portal
+    // Authenticate To Portal or using Client Credentials
     var portal = new PortalAPI();
     var portalRefreshToken: string;
     var userLoginAuthUsed = _.isNil(portalToken);
+    var clientCredentialsUsed = !_.isNil(target);
+    var org_token: string;
 
-    if (userLoginAuthUsed) {
+    if (clientCredentialsUsed) {
+        // Client Credentials Flow
+        try {
+            const config = ConfigLoader.load(target, configPath);
+            logger(`Using client credentials from target "${target}"`, MessageType.Success);
+
+            // Authenticate directly with OrderCloud API using client credentials
+            const tokenResponse = await portal.loginWithClientCredentials(
+                config.ApiClientId,
+                config.ApiClientSecret,
+                config.OrderCloudBaseUrl
+            );
+            org_token = tokenResponse.access_token;
+
+            // Decode the JWT token to extract the marketplace ID
+            const decodedToken: any = jwtDecode(org_token);
+            const tokenMarketplaceID = decodedToken.cid;
+            marketplaceID = tokenMarketplaceID;
+            
+            Configuration.Set({ baseApiUrl: config.OrderCloudBaseUrl });
+            Tokens.SetAccessToken(org_token);
+
+            logger(`Authenticated with client credentials to ${config.OrderCloudBaseUrl}`, MessageType.Success);
+        } catch (error) {
+            return logger(`Client credentials authentication failed: ${error.message}`, MessageType.Error);
+        }
+    } else if (userLoginAuthUsed) {
+        // Portal Login Flow
         if (_.isNil(username) || _.isNil(password)) {
             return logger(`Missing required arguments: username and password`, MessageType.Error)
         }
@@ -78,46 +113,50 @@ export async function seed(args: SeedArgs): Promise<SeedResponse | void> {
         }
     }
 
-    // Confirm orgID doesn't already exist
-    try {
-        await portal.GetOrganization(marketplaceID, portalToken);
-        return logger(`A marketplace with ID \"${marketplaceID}\" already exists.`, MessageType.Error)
-    } catch {}
+    if (!clientCredentialsUsed) {
+        // Portal-based workflow: create marketplace and get organization token
+        // Confirm orgID doesn't already exist
+        try {
+            await portal.GetOrganization(marketplaceID, portalToken);
+            return logger(`A marketplace with ID \"${marketplaceID}\" already exists.`, MessageType.Error)
+        } catch {}
 
-    // Create Marketplace
-    marketplaceName = marketplaceName || dataUrl?.split("/")?.pop()?.split(".")[0] || marketplaceID;
-    try
-    {
-        await portal.CreateOrganization(marketplaceID, marketplaceName, portalToken, regionId);
+        // Create Marketplace
+        marketplaceName = marketplaceName || dataUrl?.split("/")?.pop()?.split(".")[0] || marketplaceID;
+        try
+        {
+            await portal.CreateOrganization(marketplaceID, marketplaceName, portalToken, regionId);
+        }
+        catch(exception)
+        {
+            logger(`Couldn't create marketplace with Name \"${marketplaceName}\" and ID \"${marketplaceID}\" in the region \"${regionId}\" because: \n\"${exception.response.data.Errors[0].Message}\"`, MessageType.Error);
+            return;
+        }
+
+        logger(`Created new marketplace with Name \"${marketplaceName}\" and ID \"${marketplaceID}\".`, MessageType.Success);
+
+        var organization = await portal.GetOrganization(marketplaceID, portalToken);
+
+        if(!organization)
+        {
+            logger(`Couldn't get the newly created organization with name \"${marketplaceName}\" and ID \"${marketplaceID}\".`, MessageType.Error);
+            return;
+        }
+
+        if(!organization.CoreApiUrl.includes("sandbox"))
+        {
+            logger(`Seeding is not allowed for production accounts. Marketplace name \"${marketplaceName}\" and ID \"${marketplaceID}\".`, MessageType.Error);
+            return;
+        }
+
+        logger(`Seeding the newly created marketplace using api url \"${organization.CoreApiUrl}\".`, MessageType.Success);
+
+        // Authenticate to Core API
+        org_token = await portal.getOrganizationToken(marketplaceID, portalToken);
+        Configuration.Set({ baseApiUrl: organization.CoreApiUrl }); // always sandbox for upload
+        Tokens.SetAccessToken(org_token);
     }
-    catch(exception)
-    {
-        logger(`Couldn't create marketplace with Name \"${marketplaceName}\" and ID \"${marketplaceID}\" in the region \"${regionId}\" because: \n\"${exception.response.data.Errors[0].Message}\"`, MessageType.Error);
-        return;
-    }
-    
-    logger(`Created new marketplace with Name \"${marketplaceName}\" and ID \"${marketplaceID}\".`, MessageType.Success); 
-
-    var organization = await portal.GetOrganization(marketplaceID, portalToken);
-
-    if(!organization)
-    {
-        logger(`Couldn't get the newly created organization with name \"${marketplaceName}\" and ID \"${marketplaceID}\".`, MessageType.Error);
-        return;
-    }
-
-    if(!organization.CoreApiUrl.includes("sandbox"))
-    {
-        logger(`Seeding is not allowed for production accounts. Marketplace name \"${marketplaceName}\" and ID \"${marketplaceID}\".`, MessageType.Error);
-        return;
-    }
-
-    logger(`Seeding the newly created marketplace using api url \"${organization.CoreApiUrl}\".`, MessageType.Success);
-
-    // Authenticate to Core API
-    var org_token = await portal.getOrganizationToken(marketplaceID, portalToken);
-    Configuration.Set({ baseApiUrl: organization.CoreApiUrl }); // always sandbox for upload
-    Tokens.SetAccessToken(org_token);
+    // If clientCredentialsUsed, org_token is already set and Configuration is already set above
     
     // Upload to Ordercloud
     var marketplaceData = new SerializedMarketplace(validateResponse.rawData);

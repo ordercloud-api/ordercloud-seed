@@ -11,34 +11,72 @@ import PortalAPI from '../services/portal';
 import Bottleneck from 'bottleneck';
 import { OCResourceEnum } from '../models/oc-resource-enum';
 import { RefreshTimer } from '../services/refresh-timer';
+import { ConfigLoader } from '../services/config-loader';
+import jwtDecode from 'jwt-decode';
 
 export interface DownloadArgs {
-    username?: string; 
-    password?: string; 
-    marketplaceID: string; 
+    username?: string;
+    password?: string;
+    marketplaceID?: string;
     portalToken?: string;
+    target?: string;
+    configPath?: string;
     logger?: LogCallBackFunc
 }
 
 export async function download(args: DownloadArgs): Promise<SerializedMarketplace | void> {
-    var { 
-        username, 
-        password, 
-        marketplaceID, 
+    var {
+        username,
+        password,
+        marketplaceID,
         portalToken,
+        target,
+        configPath,
         logger = defaultLogger
     } = args;
    
-    if (!marketplaceID) {
-        return logger(`Missing required argument: marketplaceID`, MessageType.Error);
-    }
-
     // Authenticate
     var portal = new PortalAPI();
     var portalRefreshToken: string;
     var org_token: string;
     var userLoginAuthUsed = _.isNil(portalToken);
-    if (userLoginAuthUsed) {
+    var clientCredentialsUsed = !_.isNil(target);
+
+    if (clientCredentialsUsed) {
+        // Client Credentials Flow
+        try {
+            const config = ConfigLoader.load(target, configPath);
+            logger(`Using client credentials from target "${target}"`, MessageType.Success);
+
+            // Authenticate directly with OrderCloud API using client credentials
+            const tokenResponse = await portal.loginWithClientCredentials(
+                config.ApiClientId,
+                config.ApiClientSecret,
+                config.OrderCloudBaseUrl
+            );
+            org_token = tokenResponse.access_token;
+
+            // Decode the JWT token to extract the marketplace ID
+            const decodedToken: any = jwtDecode(org_token);
+            const tokenMarketplaceID = decodedToken.cid;
+
+            // Use marketplace ID from token if not provided
+            if (_.isNil(marketplaceID)) {
+                marketplaceID = tokenMarketplaceID;
+                logger(`Using marketplace ID from token: ${marketplaceID}`, MessageType.Success);
+            } else if (marketplaceID !== tokenMarketplaceID) {
+                return logger(`Provided marketplace ID "${marketplaceID}" does not match the client credentials marketplace ID "${tokenMarketplaceID}"`, MessageType.Error);
+            }
+
+            Configuration.Set({ baseApiUrl: config.OrderCloudBaseUrl });
+            Tokens.SetAccessToken(org_token);
+
+            logger(`Authenticated with client credentials to ${config.OrderCloudBaseUrl}`, MessageType.Success);
+        } catch (error) {
+            return logger(`Client credentials authentication failed: ${error.message}`, MessageType.Error);
+        }
+    } else if (userLoginAuthUsed) {
+        // Portal Login Flow
         if (_.isNil(username) || _.isNil(password)) {
             return logger(`Missing required arguments: username and password`, MessageType.Error)
         }
@@ -51,21 +89,29 @@ export async function download(args: DownloadArgs): Promise<SerializedMarketplac
             return logger(`Username \"${username}\" and Password \"${password}\" were not valid`, MessageType.Error)
         }
     }
-    try {
-        org_token = await portal.getOrganizationToken(marketplaceID, portalToken);
-        
-        var organization = await portal.GetOrganization(marketplaceID, portalToken);        
-        if(!organization)
-        {
-            return logger(`Couldn't get the marketplace with ID \"${marketplaceID}\".`, MessageType.Error);            
+
+    if (!clientCredentialsUsed) {
+        // Portal-based workflow: get organization token
+        if (!marketplaceID) {
+            return logger(`Missing required argument: marketplaceID`, MessageType.Error);
         }
 
-        Configuration.Set({ baseApiUrl: organization.CoreApiUrl });
-    } catch (e) {
-        return logger(`Marketplace with ID \"${marketplaceID}\" not found`, MessageType.Error)
-    }
+        try {
+            org_token = await portal.getOrganizationToken(marketplaceID, portalToken);
 
-    Tokens.SetAccessToken(org_token);
+            var organization = await portal.GetOrganization(marketplaceID, portalToken);
+            if(!organization)
+            {
+                return logger(`Couldn't get the marketplace with ID \"${marketplaceID}\".`, MessageType.Error);
+            }
+
+            Configuration.Set({ baseApiUrl: organization.CoreApiUrl });
+        } catch (e) {
+            return logger(`Marketplace with ID \"${marketplaceID}\" not found`, MessageType.Error)
+        }
+
+        Tokens.SetAccessToken(org_token);
+    }
 
     logger(`Found your Marketplace \"${marketplaceID}\". Beginning download.`, MessageType.Success);
 

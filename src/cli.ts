@@ -43,6 +43,16 @@ yargs.scriptName("@ordercloud/seeding")
       alias: 'r',
       describe: 'Region for the marketplace. See the API docs for more information'
     })
+    yargs.option('target', {
+      type: 'string',
+      alias: 't',
+      describe: 'Target environment name matching the Name attribute in your config file'
+    })
+    yargs.option('config', {
+      type: 'string',
+      alias: 'c',
+      describe: 'Path to the config file for client credentials authentication'
+    })
   }, function (argv) {
     var dataUrl = argv.d as string;
     // Check for short-cut aliases
@@ -68,6 +78,8 @@ yargs.scriptName("@ordercloud/seeding")
           marketplaceID: argv.i as string,
           marketplaceName: argv.n as string,
           regionId: argv.r as string,
+          target: argv.t as string,
+          configPath: argv.c as string,
           rawData: data
         });
         return;
@@ -83,6 +95,8 @@ yargs.scriptName("@ordercloud/seeding")
       marketplaceID: argv.i as string,
       marketplaceName: argv.n as string,
       regionId: argv.r as string,
+      target: argv.t as string,
+      configPath: argv.c as string,
       dataUrl: dataUrl as string
     });
   })
@@ -102,6 +116,16 @@ yargs.scriptName("@ordercloud/seeding")
       alias: 'p',
       describe: 'Portal password'
     })
+    yargs.option('target', {
+      type: 'string',
+      alias: 't',
+      describe: 'Target environment name matching the Name attribute in your config file'
+    })
+    yargs.option('config', {
+      type: 'string',
+      alias: 'c',
+      describe: 'Path to the environments config file'
+    })
     yargs.positional('fileName', {
       type: 'string',
       alias: 'f',
@@ -113,7 +137,9 @@ yargs.scriptName("@ordercloud/seeding")
     var data = await download({
       username: argv.u as string,
       password: argv.p as string,
-      marketplaceID: argv.i as string, 
+      marketplaceID: argv.i as string,
+      target: argv.t as string,
+      configPath: argv.c as string,
     });
     if (data) {
       var path = argv.f as string ?? 'ordercloud-seed.yml';
